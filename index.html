@@ -56,6 +56,7 @@ h1,h2,h3,.serif{font-family:Georgia,'Times New Roman',serif}
 .zone-lbl{font-size:11px;font-weight:700;paint-order:stroke;stroke:#fffdf8;stroke-width:3px;fill:var(--ink);pointer-events:none}
 .edge-lbl{font-size:11px;font-weight:700;paint-order:stroke;stroke:#fffdf8;stroke-width:3px;fill:var(--ink)}
 .mapfoot{display:flex;gap:16px;align-items:center;padding:9px 14px;border-top:1px solid var(--line);font-size:11.5px;color:var(--sub);flex-wrap:wrap}
+.mapnote{padding:8px 14px 10px;border-top:1px solid var(--line);font-size:11.5px;line-height:1.4;color:var(--sub)}
 .sw{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
 
 .panel{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;position:sticky;top:12px;max-height:calc(100vh - 24px);overflow-y:auto}
@@ -393,6 +394,7 @@ footer .in{max-width:1240px;margin:0 auto;padding:14px 24px;font-size:11px;color
       <span id="heatLegend" hidden><span class="heatgrad"></span><span data-i18n="heatLeg">warm = money grows fast by 2036 · cool = slow</span></span>
       <span id="metroLegend"><span class="mline mline-r"></span><span class="mline mline-g"></span><span class="mline mline-p"></span><span data-i18n="metroLeg">solid = running · dashed = planned (solidifies in the time machine)</span></span>
     </div>
+    <div class="mapnote" data-i18n="mapDisclaimer">Circles mark approximate investment areas, not property boundaries or exact borders</div>
   </div>
 
   <div class="panel" id="panel" role="dialog" aria-modal="false" aria-labelledby="panelTitle" tabindex="-1">
@@ -443,6 +445,7 @@ en:{
  clickzone:'Click a zone on the map', fAll:'All', fHot:'High-conviction', fEst:'Established', fFr:'Frontier',
  lEst:'Established / income',
  legend:'Circle size = conviction · badge = top-10 rank · arrows = off-map zones (clickable)',
+ mapDisclaimer:'Circles mark approximate investment areas, not property boundaries or exact borders',
  emptyT:'Select a rayon or zone',
  emptyB:'Click any circle on the map — or an edge arrow for Sumgayit, Bilgah, Mardakan and Alat — to see the concrete investments coming by 2036, the price story, and how to position.',
  trayT:'Your shortlist — side by side',
@@ -552,6 +555,7 @@ tr:{
  clickzone:'Haritada bir bölgeye tıklayın', fAll:'Tümü', fHot:'Güçlü adaylar', fEst:'Oturmuş', fFr:'Yeni yükselenler',
  lEst:'Oturmuş / kira getirisi',
  legend:'Daire boyutu = güven düzeyi · rozet = ilk 10 sırası · oklar = harita dışı bölgeler (tıklanabilir)',
+ mapDisclaimer:'Daireler yaklaşık yatırım bölgelerini gösterir, mülk sınırlarını değil',
  emptyT:'Bir rayon veya bölge seçin',
  emptyB:'Haritadaki herhangi bir daireye — veya Sumgayıt, Bilgəh, Mərdəkan ve Ələt için kenar oklarına — tıklayın; 2036\u2019ya kadar gelecek somut yatırımları, fiyat hikâyesini ve nasıl konumlanacağınızı görün.',
  trayT:'Kısa listeniz — yan yana karşılaştırma',
