@@ -97,6 +97,9 @@ h1,h2,h3,.serif{font-family:Georgia,'Times New Roman',serif}
 
 .starbtn{margin-left:auto;font-size:12px;border:1px solid var(--line);background:transparent;border-radius:6px;padding:5px 11px;cursor:pointer;color:var(--sub)}
 .starbtn.on{background:var(--gold);border-color:var(--gold);color:#fff}
+.panel-actions{display:flex;align-items:center;gap:6px;margin-left:auto}
+.linkbtn{font-size:12px;border:1px solid var(--line);background:transparent;border-radius:6px;padding:5px 9px;cursor:pointer;color:var(--sub);white-space:nowrap}
+.linkbtn:hover,.linkbtn:focus-visible{border-color:var(--navy);color:var(--navy)}
 #tray{max-width:1240px;margin:0 auto 40px;padding:0 24px;display:none}
 #tray .traycard{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 20px}
 #tray h3{font-size:16px;margin-bottom:10px}
@@ -428,6 +431,7 @@ footer .in{max-width:1240px;margin:0 auto;padding:14px 24px;font-size:11px;color
 <script>
 /* ================= i18n ================= */
 let LANG = 'en';
+let DEEP_LINK_SYNC_ENABLED=false, DEEP_LINK_APPLYING=false;
 const UI = {
 en:{
  kicker:'Investment Memorandum · Interactive Atlas',
@@ -448,7 +452,7 @@ en:{
  secRisk:'Principal risk', secAct:'How to position',
  mApp:'Scenario appreciation to 2036', mVol:'Volatility / execution risk',
  bDone:'delivered / underway', bFund:'funded / committed', bPlan:'planned',
- star:'☆ Shortlist', starred:'★ Shortlisted', rank:'Top-10 rank #',
+ star:'☆ Shortlist', starred:'★ Shortlisted', copyLink:'🔗 Copy link', linkCopied:'✓ Link copied', rank:'Top-10 rank #',
  thZone:'Zone', thTier:'Tier', thEntry:'Entry today', thScen:'2036 scenario', thYld:'Yield', thRisk:'Risk', remove:'remove ✕',
  to:'to ',
  tier:{hot:'High-conviction', est:'Established / income', fr:'Frontier'},
@@ -557,7 +561,7 @@ tr:{
  secRisk:'En büyük risk', secAct:'Peki ne yapmalı?',
  mApp:'Beklenen değer artışı (2036\u2019ya kadar)', mVol:'Risk: işler ters gidebilir mi?',
  bDone:'tamamlandı / sürüyor', bFund:'finanse edildi / taahhütlü', bPlan:'planlanıyor',
- star:'☆ Kısa listeye ekle', starred:'★ Kısa listede', rank:'İlk 10 sırası #',
+ star:'☆ Kısa listeye ekle', starred:'★ Kısa listede', copyLink:'🔗 Linki kopyala', linkCopied:'✓ Link kopyalandı', rank:'İlk 10 sırası #',
  thZone:'Bölge', thTier:'Kademe', thEntry:'Bugünkü giriş', thScen:'2036 senaryosu', thYld:'Getiri', thRisk:'Risk', remove:'kaldır ✕',
  to:'',
  tier:{hot:'Güçlü aday', est:'Oturmuş / kira getirisi', fr:'Yeni yükselen'},
@@ -1266,6 +1270,7 @@ function toggleMetro(){
   document.getElementById('metroBtn').setAttribute('aria-pressed', String(METROON));
   document.getElementById('metroLegend').hidden = !METROON;
   lsSet('metro',{v:METROON});
+  syncDeepLink();
 }
 buildMetro();
 if(lsGet('metro').v === false) toggleMetro();
@@ -1327,6 +1332,7 @@ function toggleHeat(){
   document.getElementById('heatBtn').setAttribute('aria-pressed', String(HEAT));
   document.getElementById('heatLegend').hidden = !HEAT;
   lsSet('heat',{v:HEAT});
+  syncDeepLink();
 }
 buildHeat();
 if(lsGet('heat').v === true) toggleHeat();
@@ -1443,7 +1449,10 @@ function select(id, opts){
     <span class="tier-tag t-${z.t}">${u.tier[z.t]}${z.rank?` · ${u.rank}${z.rank}`:''}${sub?' · '+sub:''}</span>
     <div style="display:flex;align-items:center;gap:10px">
       <h2>${z.n}</h2>
-      <button class="starbtn ${shortlist.has(z.id)?'on':''}" onclick="toggleStar('${z.id}')">${shortlist.has(z.id)?u.starred:u.star}</button>
+      <div class="panel-actions">
+        <button class="linkbtn" onclick="copyDeepLink(this)">${u.copyLink}</button>
+        <button class="starbtn ${shortlist.has(z.id)?'on':''}" onclick="toggleStar('${z.id}')">${shortlist.has(z.id)?u.starred:u.star}</button>
+      </div>
     </div>
   </div>
   <div class="pricebar">
@@ -1482,6 +1491,7 @@ function select(id, opts){
     document.getElementById('backdrop').classList.add('show');
     setTimeout(focusPanel,0);
   }
+  syncDeepLink();
 }
 function msTick(id,i,val){ const ms=lsGet('ms'); ms[id+'_'+i]=val; lsSet('ms',ms); select(id); }
 function ddTick(id,i,elm){ const dd=lsGet('dd'); dd[id+'_'+i]=elm.checked; lsSet('dd',dd); elm.parentElement.classList.toggle('on',elm.checked); }
@@ -1646,6 +1656,7 @@ function setYear(y, animate){
   });
   if(typeof styleMetro==='function') styleMetro(TMYEAR);
   tmStory();
+  syncDeepLink();
 }
 function tmStory(){
   const u = UI[LANG];
@@ -1848,7 +1859,84 @@ function setLang(l){
   if(active) select(active); else document.getElementById('panel').innerHTML =
     `<div class="emptystate"><div class="big">${u.emptyT}</div><span>${u.emptyB}</span></div>`;
   renderTray();
+  syncDeepLink();
 }
-</script>
+function deepLinkHash(){
+  const parts=[];
+  if(active) parts.push('z='+encodeURIComponent(active));
+  parts.push('y='+TMYEAR,'lang='+LANG,'heat='+(HEAT?1:0),'metro='+(METROON?1:0));
+  if(TOURING) parts.push('tour=1');
+  return '#'+parts.join('&');
+}
+function deepLinkUrl(){
+  return location.href.split('#')[0] + deepLinkHash();
+}
+function syncDeepLink(){
+  if(!DEEP_LINK_SYNC_ENABLED || DEEP_LINK_APPLYING) return;
+  try{ history.replaceState(null,'',deepLinkHash()); }catch(e){}
+}
+function parseDeepLink(){
+  const state={zone:null,year:null,lang:null,heat:null,metro:null,tour:false};
+  try{
+    const raw=location.hash.startsWith('#') ? location.hash.slice(1) : '';
+    const params=new URLSearchParams(raw);
+    const zone=params.get('z');
+    if(zone && Z.some(q=>q.id===zone)) state.zone=zone;
+    const year=params.get('y');
+    if(/^\d{4}$/.test(year||'')){
+      const n=Number(year);
+      if(n>=2026 && n<=2036) state.year=n;
+    }
+    const lang=params.get('lang');
+    if(lang==='en'||lang==='tr') state.lang=lang;
+    const heat=params.get('heat');
+    if(heat==='0'||heat==='1') state.heat=heat==='1';
+    const metro=params.get('metro');
+    if(metro==='0'||metro==='1') state.metro=metro==='1';
+    state.tour=params.get('tour')==='1';
+  }catch(e){}
+  return state;
+}
+function copyDeepLink(btn){
+  syncDeepLink();
+  const link=deepLinkUrl();
+  const copied=()=>{
+    if(!btn||!btn.isConnected) return;
+    btn.textContent=UI[LANG].linkCopied;
+    setTimeout(()=>{ if(btn.isConnected) btn.textContent=UI[LANG].copyLink; },1400);
+  };
+  const fallback=()=>{
+    try{
+      const area=document.createElement('textarea');
+      area.value=link; area.setAttribute('readonly','');
+      area.style.position='fixed'; area.style.opacity='0';
+      document.body.appendChild(area); area.select();
+      document.execCommand('copy'); area.remove(); copied();
+    }catch(e){}
+  };
+  copied();
+  try{
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      const result=navigator.clipboard.writeText(link);
+      if(result && typeof result.catch==='function') result.catch(fallback);
+    }else fallback();
+  }catch(e){ fallback(); }
+}
+function applyDeepLink(){
+  const state=parseDeepLink();
+  DEEP_LINK_APPLYING=true;
+  try{
+    if(state.lang) setLang(state.lang);
+    if(state.year!==null) setYear(state.year,false);
+    if(state.heat!==null && state.heat!==HEAT) toggleHeat();
+    if(state.metro!==null && state.metro!==METROON) toggleMetro();
+    if(state.zone) select(state.zone,{spot:true});
+  }catch(e){}
+  DEEP_LINK_APPLYING=false;
+  DEEP_LINK_SYNC_ENABLED=true;
+  if(state.tour){ try{ startTour(); }catch(e){} }
+  if(location.hash) syncDeepLink();
+}
+applyDeepLink();</script>
 </body>
 </html>
