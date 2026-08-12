@@ -1503,7 +1503,7 @@ function select(id, opts){
   panel.innerHTML = `<div class="grab"></div><button class="closebtn" onclick="closePanel()" aria-label="Close">✕</button>` + html;
   panel.setAttribute('aria-modal',String(window.innerWidth<=960));
   panel.scrollTop = 0;
-  if(window.innerWidth<=960){
+  if(window.innerWidth<=960 && !(opts&&opts.keepClosed)){
     panel.classList.add('open');
     document.getElementById('backdrop').classList.add('show');
     setTimeout(focusPanel,0);
@@ -1862,6 +1862,8 @@ applyView(false);
 
 /* ================= language switch ================= */
 function setLang(l){
+  const panel = document.getElementById('panel');
+  const panelWasOpen = window.innerWidth>960 || panel.classList.contains('open');
   LANG = l;
   document.documentElement.lang = l;
   document.getElementById('lang-en').classList.toggle('on', l==='en');
@@ -1873,7 +1875,7 @@ function setLang(l){
   document.getElementById('d-out').innerHTML='';
   renderProfiles(); calcRun(); tmTitles(); tmStory();
   if(!TOURING) document.getElementById('tourBtn').textContent = u.tourBtn;
-  if(active) select(active); else document.getElementById('panel').innerHTML =
+  if(active) select(active,{keepClosed:!panelWasOpen}); else document.getElementById('panel').innerHTML =
     `<div class="emptystate"><div class="big">${u.emptyT}</div><span>${u.emptyB}</span></div>`;
   renderTray();
   syncDeepLink();
