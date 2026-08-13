@@ -13,3 +13,19 @@ The vector source is Geofabrik's Shortbread extract of OpenStreetMap data. Map d
 3. The site will be available at `https://qarait.github.io/Baku-2036/`.
 
 Keep the PMTiles archive below GitHub's ordinary 100 MiB repository file limit. Git LFS is not served by GitHub Pages.
+## Human release checklist
+
+Before promoting `preview` to `main`, confirm these six things on a phone:
+
+- [ ] Map tiles render.
+- [ ] Pinch and drag work on a real iPhone.
+- [ ] EN and TR both read correctly.
+- [ ] A deep link opens the right zone, year, and language.
+- [ ] The one-minute tour reaches its end.
+- [ ] The browser console has no errors.
+
+## Local checks
+
+- `npm test` runs the ten Playwright smoke tests.
+- `https://qarait.github.io/Baku-2036/preview/` is the review URL for the `preview` branch.
+- The live root is published from `main` only after the preview has been checked on a phone.

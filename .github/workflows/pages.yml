@@ -1,0 +1,67 @@
+name: Pages deploy
+
+on:
+  push:
+    branches: [main, preview]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  smoke:
+    name: Gate deployment with Playwright
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run browser smoke tests
+        run: npm test
+
+  deploy:
+    name: Publish Pages artifact
+    needs: smoke
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Check out current branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Build preview artifact
+        if: github.ref_name == 'preview'
+        run: |
+          mkdir -p dist/preview
+          git archive origin/main | tar -x -C dist
+          rsync -a --exclude='.git' --exclude='dist' --exclude='node_modules' --exclude='test-results' --exclude='playwright-report' ./ dist/preview/
+      - name: Build live artifact
+        if: github.ref_name == 'main'
+        run: |
+          mkdir dist
+          rsync -a --exclude='.git' --exclude='dist' --exclude='node_modules' --exclude='test-results' --exclude='playwright-report' ./ dist/
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+      - name: Deploy Pages artifact
+        id: deployment
+        uses: actions/deploy-pages@v4
