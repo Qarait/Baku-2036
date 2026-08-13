@@ -44,24 +44,7 @@
       clear: 'Se\u00e7imi temizle', loading: 'Harita verileri y\u00fckleniyor\u2026', ready: 'Co\u011frafyay\u0131 tan\u0131mlamak i\u00e7in bir yere t\u0131klay\u0131n', error: 'Harita verileri y\u00fcklenemedi', searchEmpty: 'Yerel gazetteer e\u015fle\u015fme bulamad\u0131.'
     }
   };
-  const zones = [
-    ['whitecity', 'White City / Khatai', 'White City / Hatai', 'hot', [49.877, 40.383], 15],
-    ['yasamal', 'Yasamal (New Yasamal)', 'Yasamal (Yeni Yasamal)', 'hot', [49.815, 40.389], 13],
-    ['narimanov', 'Narimanov', 'Nərimanov', 'hot', [49.870, 40.404], 13],
-    ['sabail', 'Sabail / centre', 'Səbail / merkez', 'established', [49.835, 40.360], 11],
-    ['khojasan', 'Khojasan / Purple Line', 'Xocəsən / Mor Hat', 'frontier', [49.762, 40.416], 11],
-    ['khirdalan', 'Khyrdalan–Masazir–Saray', 'Xırdalan–Masazır–Saray', 'frontier', [49.755, 40.455], 11],
-    ['sumgayit', 'Sumgayit seafront', 'Sumqayıt sahili', 'frontier', [49.668, 40.589], 14],
-    ['novkhani', 'Novkhani', 'Novxanı', 'frontier', [49.785, 40.520], 9],
-    ['bilgah', 'Bilgah / Sea Breeze', 'Bilgəh / Sea Breeze', 'hot', [50.033, 40.560], 16],
-    ['mardakan', 'Mardakan–Shuvalan–Buzovna', 'Mərdəkan–Şüvəlan–Buzovna', 'hot', [50.130, 40.505], 16],
-    ['airport', 'Airport zone', 'Havalimanı bölgesi', 'frontier', [49.940, 40.470], 12],
-    ['mohammadi', 'Mohammadi', 'Məhəmmədli', 'frontier', [49.845, 40.495], 12],
-    ['hovsan', 'Hovsan–Zikh–Turkan', 'Hövsan–Zığ–Türkan', 'frontier', [50.055, 40.374], 12],
-    ['zikh', 'Zikh', 'Zığ', 'frontier', [49.978, 40.353], 9],
-    ['lokbatan', 'Lokbatan', 'Lökbatan', 'frontier', [49.730, 40.325], 9],
-    ['alat', 'Alat / port & free zone', 'Alat / liman ve serbest bölge', 'frontier', [49.406, 39.945], 11]
-  ].map(([id, nameEn, nameTr, tier, coords, radius]) => ({ id, nameEn, nameTr, tier, coords, radius }));
+  const zones = [];
   function hydrateZones(atlasZones) {
     if (!Array.isArray(atlasZones) || atlasZones.length !== 16) return;
     zones.length = 0;

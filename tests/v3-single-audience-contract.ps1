@@ -2,7 +2,7 @@ $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
 function Assert-True([bool]$condition, [string]$message) { if (-not $condition) { throw "FAIL: $message" } }
 function Read-Text([string]$relativePath) { $path = Join-Path $root $relativePath; Assert-True (Test-Path -LiteralPath $path) "missing $relativePath"; return [System.IO.File]::ReadAllText($path) }
-$html = Read-Text 'index.html'; $script = Read-Text 'v3.js'; $zonesText = Read-Text 'data/zones.json'; $archive = Read-Text 'v1/index.html'
+$html = Read-Text 'index.html'; $script = Read-Text 'v3.js'; $v2Script = Read-Text 'v2/v2.js'; $zonesText = Read-Text 'data/zones.json'; $archive = Read-Text 'v1/index.html'
 Assert-True ($html -match 'href="v3\.css"') 'root must load v3.css'
 Assert-True ($html -match 'src="v3\.js') 'root must load v3.js'
 Assert-True ($script -match 'data/zones\.json') 'v3.js must load canonical root zone data'
@@ -15,6 +15,8 @@ Assert-True ($html -match 'District borders') 'root must expose the plain distri
 Assert-True ($html -match 'Investment spots') 'root must expose the plain investment label'
 Assert-True ($html -match 'Where prices rise fastest') 'root must expose the plain heat label'
 Assert-True ($html -match 'How sure is this\?') 'root must expose the plain evidence label'
+Assert-True (($html + $script) -match 'Tap a circle to see what.s coming') 'root empty state must explain the primary circle interaction'
+Assert-True (($html + $script) -match 'tap anywhere to find out where you are') 'root empty state must explain free-map identification'
 Assert-True (($html + $script) -match 'That.s the sea') 'root must expose the sea label'
 Assert-True (($html + $script) -match 'Nearest metro \(straight line') 'root must expose the straight-line metro wording'
 Assert-True ($script -match '\u0130l\u00e7e s\u0131n\u0131rlar\u0131') 'v3.js must contain Turkish district wording'
@@ -22,6 +24,7 @@ Assert-True ($script -match 'Yat\u0131r\u0131m noktalar\u0131') 'v3.js must cont
 Assert-True ($archive -match 'Archived original') 'v1 must have an archive note'
 Assert-True ($zonesText -match '"whitecity"' -and $zonesText -match '"lokbatan"') 'canonical zones file must contain representative zones'
 Assert-True (-not ($script -match "\['whitecity'.*\['yasamal'")) 'v3.js must not contain the old hardcoded zone list'
+Assert-True (-not ($v2Script -match 'const zones\s*=\s*\[\s*\[')) 'v2.js must not contain a duplicate zone seed list'
 Assert-True (-not ($html -match '(?i)BAKU\s*2036\s*/\s*V[12]|data-first investment map')) 'root must not expose a versioned technical heading'
 $hashBlock = [regex]::Match($script, 'function updateHash\(\)\s*\{(?s).*?\n  \}').Value
 Assert-True ($hashBlock -match 'state\.hashZone') 'hash serialization must preserve the requested zone before selection'
