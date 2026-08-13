@@ -17,7 +17,7 @@
       year: 'Map year',
       skip: 'Skip map',
       rayons: 'Rayons', areas: 'Areas', metro: 'Metro', heat: 'Heat',
-      rayonBoundary: 'Rayon boundary', approxArea: 'Approximate investment area', metroLegend: 'Metro: solid built / dashed planned',
+      rayonBoundary: 'Rayon boundary', approxArea: 'Approximate investment area', metroLegend: 'Metro: solid built / dashed planned', evidenceLegend: 'Evidence status', builtLegend: 'Operating / built', contractedLegend: 'Under construction / contracted', programmedLegend: 'Official programme', privateLegend: 'Private developer plan',
       kicker: 'MAP IDENTIFICATION',
       emptyTitle: 'Click anywhere on the map',
       emptyIntro: 'The map will tell you which administrative rayon you are in, the nearest investment area, and the distance to metro, central Baku and the airport.',
@@ -34,7 +34,7 @@
       year: 'Harita y\u0131l\u0131',
       skip: 'Haritay\u0131 ge\u00e7',
       rayons: 'Rayonlar', areas: 'B\u00f6lgeler', metro: 'Metro', heat: 'Is\u0131',
-      rayonBoundary: 'Rayon s\u0131n\u0131r\u0131', approxArea: 'Yakla\u015f\u0131k yat\u0131r\u0131m b\u00f6lgesi', metroLegend: 'Metro: d\u00fcz mevcut / kesikli planlanan',
+      rayonBoundary: 'Rayon s\u0131n\u0131r\u0131', approxArea: 'Yakla\u015f\u0131k yat\u0131r\u0131m b\u00f6lgesi', metroLegend: 'Metro: d\u00fcz mevcut / kesikli planlanan', evidenceLegend: 'Kan\u0131t durumu', builtLegend: '\u0130\u015fletmede / mevcut', contractedLegend: '\u0130n\u015faatta / s\u00f6zle\u015fmeli', programmedLegend: 'Resm\u00ee program', privateLegend: '\u00d6zel geli\u015ftirici plan\u0131',
       kicker: 'HAR\u0130TA TANIMLAMA',
       emptyTitle: 'Haritada herhangi bir yere t\u0131klay\u0131n',
       emptyIntro: 'Harita bulundu\u011funuz idari rayonu, en yak\u0131n yat\u0131r\u0131m b\u00f6lgesini ve metroya, Bak\u00fc merkezine ve havaliman\u0131na mesafeyi g\u00f6sterir.',
@@ -692,6 +692,7 @@
     document.documentElement.lang = lang === 'tr' ? 'tr' : 'en';
     $('appTitle').textContent = u.title; $('appSubtitle').textContent = u.subtitle; $('placeSearch').placeholder = u.search; $('searchLabel').textContent = u.searchLabel; $('yearLabel').textContent = u.year; $('skipMap').textContent = u.skip;
     $('rayonLegend').textContent = u.rayonBoundary; $('areaLegend').textContent = u.approxArea; $('metroLegend').textContent = u.metroLegend;
+    $('evidenceLegend').textContent = u.evidenceLegend; $('builtLegend').textContent = u.builtLegend; $('contractedLegend').textContent = u.contractedLegend; $('programmedLegend').textContent = u.programmedLegend; $('privateLegend').textContent = u.privateLegend;
     $('clearSelection').textContent = u.clear; $('langEn').classList.toggle('active', lang === 'en'); $('langTr').classList.toggle('active', lang === 'tr');
     document.querySelector('[data-layer="admin"]').textContent = u.rayons; document.querySelector('[data-layer="investments"]').textContent = u.areas; document.querySelector('[data-layer="metro"]').textContent = u.metro; document.querySelector('[data-layer="heat"]').textContent = u.heat;
     document.querySelectorAll('[data-layer]').forEach(button => {

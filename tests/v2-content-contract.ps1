@@ -69,3 +69,7 @@ foreach ($zone in @($zones)) {
 foreach ($token in @('evidenceLegend', 'builtLegend', 'contractedLegend', 'programmedLegend', 'privateLegend')) {
   if ($html -notlike ('*id="' + $token + '"*') -and $js -notmatch "\b$token\b") { throw "Missing evidence legend token: $token" }
 }
+
+foreach ($token in @('evidenceLegend', 'builtLegend', 'contractedLegend', 'programmedLegend', 'privateLegend')) {
+  if ($js -notmatch ('\$\(' + [regex]::Escape("'" + $token + "'") + '\)\.textContent')) { throw "Language switch does not update evidence legend token: $token" }
+}
