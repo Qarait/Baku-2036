@@ -49,6 +49,8 @@
       {id:'street-polygons',type:'fill',source:'basemap','source-layer':'street_polygons',paint:{'fill-color':['match',['get','kind'],['motorway','trunk'],'#c9a98d',['primary','secondary'],'#d5c5ae','#ddd8cc'],'fill-opacity':.9}},
       {id:'streets',type:'line',source:'basemap','source-layer':'streets',minzoom:13,paint:{'line-color':['match',['get','kind'],['motorway','trunk'],'#a96f52',['primary','secondary'],'#b68d62','#b8b8b1'],'line-width':['interpolate',['linear'],['zoom'],13,.7,14,2.4],'line-opacity':.9}},
       {id:'buildings',type:'fill',source:'basemap','source-layer':'buildings',minzoom:13,paint:{'fill-color':'#d4cfc4','fill-outline-color':'#bbb4aa','fill-opacity':['interpolate',['linear'],['zoom'],13,.22,14,.7]}},
+      {id:'building-extrusions',type:'fill-extrusion',source:'basemap','source-layer':'buildings',minzoom:12,layout:{visibility:'none'},paint:{'fill-extrusion-color':['interpolate',['linear'],['coalesce',['get','levels'],1],1,'#d9d2c5',8,'#a7a59f',18,'#777b80'],'fill-extrusion-height':['coalesce',['get','height'],['*',['coalesce',['get','levels'],2],3.2],6],'fill-extrusion-base':['coalesce',['get','min_height'],0],'fill-extrusion-opacity':.78,'fill-extrusion-vertical-gradient':true}},
+
       {id:'place-labels',type:'symbol',source:'basemap','source-layer':'place_labels',layout:{'text-field':['coalesce',['get','name_en'],['get','name']],'text-font':['noto_sans_regular'],'text-size':['interpolate',['linear'],['zoom'],8,10,12,15]},paint:{'text-color':'#4d5659','text-halo-color':'#f5f3ec','text-halo-width':1.5}},
       {id:'street-labels',type:'symbol',source:'basemap','source-layer':'street_labels',minzoom:10,layout:{'symbol-placement':'line','text-field':['coalesce',['get','name_en'],['get','name']],'text-font':['noto_sans_regular'],'text-size':10},paint:{'text-color':'#697176','text-halo-color':'#f4f2ec','text-halo-width':1}},
       {id:'metro-halo',type:'line',source:'metro',paint:{'line-color':'#fffdf8','line-width':6,'line-opacity':['case',['get','built'],.8,.35]}},
@@ -134,6 +136,23 @@
     if(map.getLayer('heat')) map.setLayoutProperty('heat','visibility',api.heat?'visible':'none');
     ['metro-halo','metro-lines','metro-stations'].forEach(id=>{ if(map.getLayer(id)) map.setLayoutProperty(id,'visibility',api.metroOn?'visible':'none'); });
   }
+  function set3DView(){
+    if(!ready) return;
+    const duration=api.reduced?0:700;
+    map.easeTo({pitch:48,bearing:-18,duration,essential:true});
+    if(map.getLayer('building-extrusions')) map.setLayoutProperty('building-extrusions','visibility','visible');
+  }
+  function set2DView(){
+    if(!ready) return;
+    const duration=api.reduced?0:500;
+    map.easeTo({pitch:0,bearing:0,duration,essential:true});
+    if(map.getLayer('building-extrusions')) map.setLayoutProperty('building-extrusions','visibility','none');
+  }
+  function setMapView(is3d){
+    if(is3d) set3DView(); else set2DView();
+  }
+  window.setMapView=setMapView;
+
   function focusZone(id,animate){
     if(!ready) return;
     const z=api.zones.find(q=>q.id===id); if(!z) return;
@@ -198,7 +217,7 @@
         map.on('mouseenter','zone-body',()=>{map.getCanvas().style.cursor='pointer';});
         map.on('mouseleave','zone-body',()=>{map.getCanvas().style.cursor='';});
         ready=true; stage.classList.add('maplibre-ready'); map.getCanvas().setAttribute('aria-label','Zoomable Baku and Absheron vector map'); map.getCanvas().setAttribute('tabindex','0');
-        installStyle(); installHooks(); addZoneMarkers(); updateSources(); map.resize(); mapZoomStatus();
+        installStyle(); installHooks(); addZoneMarkers(); updateSources(); setMapView(api.view3d); map.resize(); mapZoomStatus();
         if(api.active)focusZone(api.active,false);
       });
       map.on('error',e=>{if(e&&e.error)console.warn('MapLibre map error',e.error);});

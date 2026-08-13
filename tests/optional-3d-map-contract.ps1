@@ -10,7 +10,7 @@ function Assert-Contains([string]$Text, [string]$Needle, [string]$Message) {
 
 Assert-Contains $html 'id="view3dBtn"' '3D map toggle is missing.'
 Assert-Contains $html 'VIEW3D' '3D state variable is missing.'
-Assert-Contains $html 'view=3d' '3D deep-link serialization is missing.'
+Assert-Contains $html "'view='+(VIEW3D?'3d':'2d')" '3D deep-link serialization is missing.'
 Assert-Contains $html 'view3d' '3D state/deep-link hook is missing.'
 Assert-Contains $html '3B görünüm' 'Turkish 3D label is missing.'
 Assert-Contains $controller "type:'fill-extrusion'" 'Building extrusion layer is missing.'

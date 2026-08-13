@@ -46,7 +46,7 @@ h1,h2,h3,.serif{font-family:Georgia,'Times New Roman',serif}
 .mapcard .bar .ttl{font-size:13px;font-weight:600;margin-right:auto}
 .chip{font-size:12px;padding:5px 12px;border-radius:99px;border:1px solid var(--line);background:transparent;cursor:pointer;color:var(--sub)}
 .chip.on{color:#fff;border-color:transparent}
-.chip.on.f-all{background:var(--navy)} .chip.on.f-hot{background:var(--hot)} .chip.on.f-est{background:var(--est)} .chip.on.f-fr{background:var(--fr)}
+.chip.on.f-all{background:var(--navy)} .chip.on.f-hot{background:var(--hot)} .chip.on.f-est{background:var(--est)} .chip.on.f-fr{background:var(--fr)} .chip.on.viewchip{background:var(--navy)}
 #stage{position:relative;width:100%}
 #maplibreMap{display:none;width:100%;aspect-ratio:756 / 600;min-height:360px;background:#dce7e8;position:relative}
 #maplibreMap .maplibregl-canvas{outline:none}
@@ -361,6 +361,7 @@ footer .in{max-width:1240px;margin:0 auto;padding:14px 24px;font-size:11px;color
       <button class="chip f-est" data-f="est" data-i18n="fEst">Established</button>
       <button class="chip f-fr" data-f="fr" data-i18n="fFr">Frontier</button>
       <button class="chip heatchip" id="heatBtn" aria-pressed="false" onclick="toggleHeat()" data-i18n="heatBtn">💰 Value heat</button>
+      <button class="chip viewchip" id="view3dBtn" aria-pressed="false" onclick="toggle3D()" data-i18n="view3dBtn">3D view</button>
       <button class="chip metrochip on" id="metroBtn" aria-pressed="true" onclick="toggleMetro()" data-i18n="metroBtn">🚇 Metro lines</button>
     </div>
     <div id="stage" tabindex="0" role="region" aria-label="Interactive investment map">
@@ -446,6 +447,7 @@ window.dispatchEvent(new Event('baku-maplibre-ready'));
 </script><script>
 /* ================= i18n ================= */
 let LANG = 'en';
+let VIEW3D = false;
 let DEEP_LINK_SYNC_ENABLED=false, DEEP_LINK_APPLYING=false;
 const UI = {
 en:{
@@ -512,7 +514,7 @@ en:{
  tourBtn:'▶ Take the tour (1 min)', tourExit:'tap anywhere to exit', tourStop:'Stop',
  heatBtn:'💰 Value heat', heatLeg:'warm = money grows fast by 2036 · cool = slow',
  metroBtn:'🚇 Metro lines', metroLeg:'solid = running · dashed = planned (solidifies in the time machine)',
- zoomHint:'scroll or pinch to zoom · drag to move',
+ view3dBtn:'3D view', view2dBtn:'2D view', zoomHint:'scroll or pinch to zoom · drag to move',
  proofK:'It already happened', proof:{
   mohammadi:'2024–25: the Beyukshor–Pirshagi road was built — and this village repriced more than anywhere in the district. Not theory. It happened.',
   whitecity:'2010s → today: oil-blackened land was cleaned and rebuilt into one of Baku\u2019s priciest addresses. The same playbook is now running again — this time on the metro.',
@@ -622,7 +624,7 @@ tr:{
  tourBtn:'▶ Turu başlat (1 dk)', tourExit:'çıkmak için herhangi bir yere dokunun', tourStop:'Durak',
  heatBtn:'💰 Değer ısısı', heatLeg:'sıcak = para 2036\u2019ya kadar hızlı büyür · soğuk = yavaş',
  metroBtn:'🚇 Metro hatları', metroLeg:'düz çizgi = çalışıyor · kesik çizgi = planlanan (zaman makinesinde düzleşir)',
- zoomHint:'yakınlaştırmak için kaydırın veya parmakla açın · gezmek için sürükleyin',
+ view3dBtn:'3B görünüm', view2dBtn:'2B görünüm', zoomHint:'yakınlaştırmak için kaydırın veya parmakla açın · gezmek için sürükleyin',
  proofK:'Zaten oldu', proof:{
   mohammadi:'2024–25: Böyükşor–Pirşağı yolu yapıldı — ve bu köy, ilçede her yerden çok pahalandı. Teori değil. Yaşandı.',
   whitecity:'2010\u2019lardan bugüne: petrol karası arazi temizlendi, yeniden yapıldı ve Bakü\u2019nün en pahalı adreslerinden biri oldu. Aynı oyun şimdi yeniden oynanıyor — bu kez metroyla.',
@@ -1292,6 +1294,20 @@ function toggleMetro(){
 buildMetro();
 if(lsGet('metro').v === false) toggleMetro();
 
+
+function update3DButton(){
+  const btn=document.getElementById('view3dBtn'); if(!btn)return;
+  btn.textContent=UI[LANG][VIEW3D?'view2dBtn':'view3dBtn'];
+  btn.classList.toggle('on',VIEW3D);
+  btn.setAttribute('aria-pressed',String(VIEW3D));
+}
+function toggle3D(){
+  VIEW3D=!VIEW3D;
+  update3DButton();
+  if(typeof window.setMapView==='function') window.setMapView(VIEW3D);
+  syncDeepLink();
+}
+
 /* ================= proof badges ================= */
 let proofTimer=null;
 function showProof(id, px, py){
@@ -1871,6 +1887,7 @@ function setLang(l){
   const u = UI[l];
   document.querySelectorAll('[data-i18n]').forEach(e=>{ const k=e.dataset.i18n; if(u[k]!==undefined) e.textContent=u[k]; });
   document.querySelectorAll('[data-i18n-html]').forEach(e=>{ const k=e.dataset.i18nHtml; if(u[k]!==undefined) e.innerHTML=u[k]; });
+  update3DButton();
   document.getElementById('sc-note').textContent = SC.cur==='weak' ? u.scNoteWeak : '';
   document.getElementById('d-out').innerHTML='';
   renderProfiles(); calcRun(); tmTitles(); tmStory();
@@ -1883,7 +1900,7 @@ function setLang(l){
 function deepLinkHash(){
   const parts=[];
   if(active) parts.push('z='+encodeURIComponent(active));
-  parts.push('y='+TMYEAR,'lang='+LANG,'heat='+(HEAT?1:0),'metro='+(METROON?1:0));
+  parts.push('y='+TMYEAR,'lang='+LANG,'heat='+(HEAT?1:0),'metro='+(METROON?1:0),'view='+(VIEW3D?'3d':'2d'));
   if(TOURING) parts.push('tour=1');
   return '#'+parts.join('&');
 }
@@ -1895,7 +1912,7 @@ function syncDeepLink(){
   try{ history.replaceState(null,'',deepLinkHash()); }catch(e){}
 }
 function parseDeepLink(){
-  const state={zone:null,year:null,lang:null,heat:null,metro:null,tour:false};
+  const state={zone:null,year:null,lang:null,heat:null,metro:null,view3d:null,tour:false};
   try{
     const raw=location.hash.startsWith('#') ? location.hash.slice(1) : '';
     const params=new URLSearchParams(raw);
@@ -1912,6 +1929,8 @@ function parseDeepLink(){
     if(heat==='0'||heat==='1') state.heat=heat==='1';
     const metro=params.get('metro');
     if(metro==='0'||metro==='1') state.metro=metro==='1';
+    const view=params.get('view');
+    if(view==='3d'||view==='2d') state.view3d=view==='3d';
     state.tour=params.get('tour')==='1';
   }catch(e){}
   return state;
@@ -1949,6 +1968,7 @@ function applyDeepLink(){
     if(state.year!==null) setYear(state.year,false);
     if(state.heat!==null && state.heat!==HEAT) toggleHeat();
     if(state.metro!==null && state.metro!==METROON) toggleMetro();
+    if(state.view3d!==null && state.view3d!==VIEW3D) toggle3D();
     if(state.zone) select(state.zone,{spot:true});
   }catch(e){}
   DEEP_LINK_APPLYING=false;
@@ -1959,7 +1979,7 @@ function applyDeepLink(){
 window.BakuAtlas={
   get zones(){return Z;}, get metro(){return METRO;}, get events(){return EVENTS;}, get reasons(){return REASONS;},
   get active(){return active;}, get filter(){return filter;}, get profile(){return PROFILE;}, get budget(){return BUDGET;},
-  get lang(){return LANG;}, get year(){return TMYEAR;}, get heat(){return HEAT;}, get metroOn(){return METROON;},
+  get lang(){return LANG;}, get year(){return TMYEAR;}, get heat(){return HEAT;}, get metroOn(){return METROON;}, get view3d(){return VIEW3D;},
   get mint(){return MINT;}, get profiles(){return PROFILES;}, get proofIds(){return PROOF_IDS;}, get tour(){return TOUR;},
   get reduced(){return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;},
   growth:z=>adjGrowth(z), heatHue:g=>heatHue(g),
