@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Baku 2036 v2 — data-first investment map</title>
+  <meta name="description" content="Baku and Absheron investment geography with rayon boundaries, metro geography, local search and distance context.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../vendor/maplibre-gl.css">
+  <link rel="stylesheet" href="v2.css">
+  <script src="../vendor/pmtiles.js"></script>
+  <script type="module">
+    import * as maplibregl from '../vendor/maplibre-gl.mjs';
+    window.__V2MapLibre = maplibregl;
+    window.dispatchEvent(new Event('v2-maplibre-ready'));
+  </script>
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <div class="brand">
+        <span class="eyebrow">BAKU 2036 / V2</span>
+        <h1 id="appTitle">Investment geography</h1>
+        <p id="appSubtitle">A data-first map of Baku and the Absheron peninsula</p>
+      </div>
+      <div class="top-actions">
+        <label class="search-box" for="placeSearch">
+          <span class="search-icon" aria-hidden="true">⌕</span>
+          <span class="sr-only" id="searchLabel">Search Baku and Absheron places</span>
+          <input id="placeSearch" type="search" autocomplete="off" spellcheck="false" placeholder="Search a place…">
+        </label>
+        <div id="searchResults" class="search-results" role="listbox" aria-label="Search results" hidden></div>
+        <div class="year-control">
+          <label for="yearSelect" id="yearLabel">Map year</label>
+          <select id="yearSelect" aria-labelledby="yearLabel">
+            <option value="2026">2026</option>
+            <option value="2030">2030</option>
+            <option value="2036">2036</option>
+          </select>
+        </div>
+        <div class="language-switch" role="group" aria-label="Language">
+          <button type="button" id="langEn" class="lang-button active" data-lang="en">EN</button>
+          <button type="button" id="langTr" class="lang-button" data-lang="tr">TR</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="map-shell">
+      <a class="skip-map" href="#v2Panel" id="skipMap">Skip map</a>
+      <div id="v2Map" aria-label="Interactive Baku and Absheron map"></div>
+
+      <div class="map-toolbar" aria-label="Map controls">
+        <button type="button" class="map-button" data-action="zoom-in" aria-label="Zoom in">+</button>
+        <button type="button" class="map-button" data-action="zoom-out" aria-label="Zoom out">−</button>
+        <button type="button" class="map-button" data-action="reset" aria-label="Show all Baku and Absheron">⌂</button>
+        <span class="toolbar-rule" aria-hidden="true"></span>
+        <button type="button" class="map-button layer-button active" data-layer="admin" aria-pressed="true">Rayons</button>
+        <button type="button" class="map-button layer-button active" data-layer="investments" aria-pressed="true">Areas</button>
+        <button type="button" class="map-button layer-button active" data-layer="metro" aria-pressed="true">Metro</button>
+        <button type="button" class="map-button layer-button" data-layer="heat" aria-pressed="false">Heat</button>
+      </div>
+
+      <div class="map-legend" id="mapLegend">
+        <span><i class="legend-swatch rayon-swatch"></i><span id="rayonLegend">Rayon boundary</span></span>
+        <span><i class="legend-swatch area-swatch"></i><span id="areaLegend">Approximate investment area</span></span>
+        <span><i class="legend-swatch metro-swatch"></i><span id="metroLegend">Metro: solid built / dashed planned</span></span>
+      </div>
+
+      <aside id="v2Panel" class="info-panel" aria-labelledby="panelTitle" tabindex="-1">
+        <div class="panel-kicker" id="panelKicker">MAP IDENTIFICATION</div>
+        <h2 id="panelTitle">Click anywhere on the map</h2>
+        <p id="panelIntro">The map will tell you which administrative rayon you are in, the nearest investment area, and the distance to metro, central Baku and the airport.</p>
+        <div class="panel-grid" id="panelGrid" hidden>
+          <div class="metric"><span id="rayonMetricLabel">Administrative rayon</span><strong id="rayonMetric">—</strong></div>
+          <div class="metric"><span id="zoneMetricLabel">Investment context</span><strong id="zoneMetric">—</strong></div>
+          <div class="metric"><span id="stationMetricLabel">Nearest metro</span><strong id="stationMetric">—</strong></div>
+          <div class="metric"><span id="centreMetricLabel">Central Baku</span><strong id="centreMetric">—</strong></div>
+          <div class="metric"><span id="airportMetricLabel">Airport</span><strong id="airportMetric">—</strong></div>
+          <div class="metric"><span id="coordinateMetricLabel">Coordinates</span><strong id="coordinateMetric">—</strong></div>
+        </div>
+        <p class="panel-note" id="panelNote">Rayons are administrative geography. Investment areas are analytical approximations, not property boundaries.</p>
+        <button type="button" id="clearSelection" class="text-button" hidden>Clear selection</button>
+      </aside>
+
+      <div class="map-status" id="mapStatus" role="status" aria-live="polite">Loading map data…</div>
+      <div class="attribution-note" id="attributionNote">Basemap © its data publishers · administrative polygons: official Azerbaijan open data · places and built metro: OpenStreetMap</div>
+    </main>
+  </div>
+  <script src="v2.js"></script>
+</body>
+</html>
