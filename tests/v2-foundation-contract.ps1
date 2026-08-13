@@ -32,12 +32,16 @@ $js = Get-Content -LiteralPath $script -Raw
   'distanceKm',
   'distanceRing',
   'admin-fill',
+  'admin-labels',
+  'adminLabelFeatures',
   'investment-zones',
   'metro-lines',
   'searchPlaces'
 ) | ForEach-Object {
   if ($js -notlike "*$_*") { throw "v2/v2.js missing required contract: $_" }
 }
+
+if ($js -match "id: 'admin-label'.*source: 'admin'") { throw 'Administrative labels must use one representative point per district, not polygon components' }
 
 if ($js -notlike '*pmtiles://../assets/baku-absheron.pmtiles*') { throw 'v2/v2.js must point to the existing Absheron PMTiles asset' }
 $adminJson = Get-Content -LiteralPath $admin -Raw | ConvertFrom-Json

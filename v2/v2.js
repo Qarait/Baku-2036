@@ -227,6 +227,30 @@
     }));
   }
 
+  function ringArea(ring) {
+    let area = 0;
+    for (let i = 0; i < ring.length - 1; i += 1) area += (ring[i][0] * ring[i + 1][1]) - (ring[i + 1][0] * ring[i][1]);
+    return Math.abs(area) / 2;
+  }
+
+  function ringCentroid(ring) {
+    let area = 0; let x = 0; let y = 0;
+    for (let i = 0; i < ring.length - 1; i += 1) {
+      const cross = (ring[i][0] * ring[i + 1][1]) - (ring[i + 1][0] * ring[i][1]);
+      area += cross; x += (ring[i][0] + ring[i + 1][0]) * cross; y += (ring[i][1] + ring[i + 1][1]) * cross;
+    }
+    if (!area) return ring[0];
+    return [x / (3 * area), y / (3 * area)];
+  }
+
+  function adminLabelFeatures(admin) {
+    const features = (admin?.features || []).map(feature => {
+      const polygons = feature.geometry?.type === 'MultiPolygon' ? feature.geometry.coordinates : [feature.geometry?.coordinates];
+      const outer = polygons.filter(polygon => Array.isArray(polygon?.[0]) && polygon[0].length > 2).sort((a, b) => ringArea(b[0]) - ringArea(a[0]))[0]?.[0];
+      return outer ? pointFeature(ringCentroid(outer), { ...feature.properties }) : null;
+    }).filter(Boolean);
+    return featureCollection(features);
+  }
   function updateSource(id, data) {
     const source = state.map && state.map.getSource(id);
     if (source) source.setData(data);
@@ -258,6 +282,7 @@
       sources: {
         basemap: { type: 'vector', url: PMTILES_URL },
         admin: { type: 'geojson', data: data.admin },
+        'admin-labels': { type: 'geojson', data: adminLabelFeatures(data.admin) },
         'investment-zones': { type: 'geojson', data: featureCollection(investmentFeatures()) },
         heat: { type: 'geojson', data: featureCollection(heatFeatures()) },
         'metro-lines': { type: 'geojson', data: featureCollection(metroLineFeatures()) },
@@ -275,7 +300,7 @@
         { id: 'buildings', type: 'fill', source: 'basemap', 'source-layer': 'buildings', minzoom: 12, paint: { 'fill-color': '#d2cec4', 'fill-outline-color': '#bcb6ac', 'fill-opacity': ['interpolate', ['linear'], ['zoom'], 12, .12, 14, .65] } },
         { id: 'admin-fill', type: 'fill', source: 'admin', paint: { 'fill-color': ['case', ['==', ['get', 'scope'], 'context'], '#b5c6c8', '#c2d8d6'], 'fill-opacity': .12 } },
         { id: 'admin-line', type: 'line', source: 'admin', paint: { 'line-color': ['case', ['==', ['get', 'scope'], 'context'], '#799397', '#356a70'], 'line-width': ['interpolate', ['linear'], ['zoom'], 8, .8, 11, 1.7, 14, 2.4], 'line-opacity': .82, 'line-dasharray': [2, 1.4] } },
-        { id: 'admin-label', type: 'symbol', source: 'admin', layout: { 'text-field': ['get', 'nameEn'], 'text-font': ['noto_sans_bold'], 'text-size': ['interpolate', ['linear'], ['zoom'], 8, 9, 11, 13], 'text-allow-overlap': false }, paint: { 'text-color': '#34565e', 'text-halo-color': '#f8f6ef', 'text-halo-width': 1.6 } },
+        { id: 'admin-label', type: 'symbol', source: 'admin-labels', layout: { 'text-field': ['get', 'nameEn'], 'text-font': ['noto_sans_bold'], 'text-size': ['interpolate', ['linear'], ['zoom'], 8, 9, 11, 13], 'text-allow-overlap': false }, paint: { 'text-color': '#34565e', 'text-halo-color': '#f8f6ef', 'text-halo-width': 1.6 } },
         { id: 'metro-halo', type: 'line', source: 'metro-lines', paint: { 'line-color': '#fffdf8', 'line-width': 6, 'line-opacity': ['case', ['get', 'built'], .87, .42] } },
         { id: 'metro-lines', type: 'line', source: 'metro-lines', paint: { 'line-color': ['get', 'color'], 'line-width': ['case', ['get', 'built'], 3, 2.3], 'line-opacity': ['case', ['get', 'built'], 1, .65], 'line-dasharray': ['case', ['get', 'built'], ['literal', [1, 0]], ['literal', [2, 2]]] } },
         { id: 'metro-stations', type: 'circle', source: 'metro-stations', paint: { 'circle-radius': ['case', ['get', 'built'], 4, 3.2], 'circle-color': ['get', 'color'], 'circle-stroke-color': '#fffdf8', 'circle-stroke-width': 1.2, 'circle-opacity': ['case', ['get', 'built'], 1, .62] } },
