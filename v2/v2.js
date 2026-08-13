@@ -114,6 +114,21 @@
     return '<div class="brief-section evidence-section"><div class="evidence-title-row"><h4>' + escapeHtml(labels.evidence || 'Evidence') + '</h4><span>' + escapeHtml(labels.evidenceHint || 'What is real, who says it, and what it may mean.') + '</span></div>' + cards + '</div>';
   }
 
+  function localPlaceStatusLabel(status) {
+    const labels = atlasCopy().labels || {};
+    return status === 'open' ? (labels.localOpen || 'Open') : (labels.localBuilding || 'Being built');
+  }
+
+  function renderLocalPlaces(zone) {
+    const labels = atlasCopy().labels || {};
+    const items = Array.isArray(zone.localPlaces) ? zone.localPlaces : [];
+    if (!items.length) return '';
+    const cards = items.map(item => '<article class="local-place-card local-place-' + escapeHtml(item.status) + '">' +
+      '<div class="local-place-head"><strong>' + escapeHtml(state.lang === 'tr' ? item.nameTr : item.nameEn) + '</strong><span>' + escapeHtml(localPlaceStatusLabel(item.status)) + '</span></div>' +
+      '<p>' + escapeHtml(state.lang === 'tr' ? item.tr : item.en) + '</p></article>').join('');
+    return '<div class="brief-section local-places-section"><h4>' + escapeHtml(labels.localPlaces || 'New places nearby') + '</h4><div class="local-place-list">' + cards + '</div></div>';
+  }
+
   function readLocalObject(key) {
     try { return JSON.parse(localStorage.getItem(key) || '{}'); } catch (error) { return {}; }
   }
@@ -380,6 +395,7 @@
       '<div class="brief-metric"><small>' + escapeHtml(labels.scenario || '2036 scenario') + '</small><strong>' + escapeHtml(detail.proj || 'Illustrative') + '</strong></div>' +
       '<div class="brief-metric"><small>' + escapeHtml(labels.yield || 'Rental yield') + '</small><strong>' + escapeHtml(detail.yield || '—') + '</strong></div></div>' +
       '<div class="brief-section"><h4>' + escapeHtml(labels.whatHappening || 'What is happening?') + '</h4><div class="brief-projects">' + projectHtml + '</div></div>' +
+      renderLocalPlaces(zone) +
       renderEvidence(zone) +
       '<div class="brief-section"><h4>' + escapeHtml(labels.whyMatters || 'Why this place matters') + '</h4><p>' + escapeHtml(detail.thesis || '') + '</p></div>' +
       '<div class="brief-section"><h4>' + escapeHtml(labels.riskQuestion || 'What could go wrong?') + '</h4><p>' + escapeHtml(detail.risk || zone.risk || '') + '</p></div>' +

@@ -2132,6 +2132,29 @@
         "claimTr": "Lokbatan yerel merkez olarak tanımlanıyor; planlanan demiryolu ve dış çevre yolu bağlantıları güneybatı koridorunu destekliyor.",
         "investmentMeaningTr": "Tez tek bir ani değer artışı değil, kademeli şehir taşması ve erişimdir."
       }
+    ],
+    "localPlaces": [
+      {
+        "nameEn": "ASAN xıdmət",
+        "nameTr": "ASAN xıdmət",
+        "status": "open",
+        "en": "ASAN xıdmət is now nearby. New public services make Lokbatan easier to live in, and local prices rise as demand grows.",
+        "tr": "ASAN xıdmət artık yakında. Yeni kamu hizmetleri Lökbatan'ı yaşam için daha kolay hale getirir; talep arttıkça yerel fiyatlar yükselir."
+      },
+      {
+        "nameEn": "McDonald's",
+        "nameTr": "McDonald's",
+        "status": "building",
+        "en": "A new McDonald's is being built nearby. New food places bring more activity and help local prices rise.",
+        "tr": "Yakında yeni bir McDonald's inşa ediliyor. Yeni yeme-içme yerleri hareketlilik getirir ve yerel fiyatları yükseltir."
+      },
+      {
+        "nameEn": "KFC",
+        "nameTr": "KFC",
+        "status": "building",
+        "en": "A new KFC is being built nearby. New food places bring more activity and help local prices rise.",
+        "tr": "Yakında yeni bir KFC inşa ediliyor. Yeni yeme-içme yerleri hareketlilik getirir ve yerel fiyatları yükseltir."
+      }
     ]
   },
   {
