@@ -34,14 +34,14 @@ test.afterEach(async ({ page }) => {
 });
 
 test('root loads a rendered map without browser errors', async ({ page }) => {
-  await page.goto('/?cache=e2e-root');
+  await page.goto('./?cache=e2e-root');
   await waitForMap(page);
   await expect(page).toHaveTitle(/understand property geography/);
   await expect(page.locator('#v2Map')).toHaveAttribute('aria-label', /Interactive Baku/);
 });
 
 test('one-minute tour runs through its stops and exits', async ({ page }) => {
-  await page.goto('/?cache=e2e-tour');
+  await page.goto('./?cache=e2e-tour');
   await waitForMap(page);
   await page.getByRole('button', { name: '▶ Show me (1 minute)' }).click();
   await expect(page.locator('#tourOverlay')).toBeVisible();
@@ -52,7 +52,7 @@ test('one-minute tour runs through its stops and exits', async ({ page }) => {
 });
 
 test('year control advances the selected map year', async ({ page }) => {
-  await page.goto('/?cache=e2e-year#z=whitecity&y=2026&lang=en');
+  await page.goto('./?cache=e2e-year#z=whitecity&y=2026&lang=en');
   await waitForMap(page);
   await page.locator('#yearSelect').selectOption('2030');
   await expect(page.locator('#yearSelect')).toHaveValue('2030');
@@ -61,7 +61,7 @@ test('year control advances the selected map year', async ({ page }) => {
 });
 
 test('zone selection shows JSON-backed content and proof cards', async ({ page }) => {
-  await page.goto('/?cache=e2e-zone#z=whitecity&y=2026&lang=en');
+  await page.goto('./?cache=e2e-zone#z=whitecity&y=2026&lang=en');
   await waitForMap(page);
   await expect(page.locator('#zoneBrief')).toBeVisible();
   await expect(page.locator('#zoneBrief')).toContainText('$2,500–4,000/m² new-build');
@@ -70,7 +70,7 @@ test('zone selection shows JSON-backed content and proof cards', async ({ page }
 });
 
 test('EN and TR switch visible map language', async ({ page }) => {
-  await page.goto('/?cache=e2e-language');
+  await page.goto('./?cache=e2e-language');
   await waitForMap(page);
   await engage(page);
   await page.locator('#langTr').click();
@@ -81,7 +81,7 @@ test('EN and TR switch visible map language', async ({ page }) => {
 });
 
 test('deal checker returns a verdict', async ({ page }) => {
-  await page.goto('/?cache=e2e-deal#z=whitecity&y=2026&lang=en');
+  await page.goto('./?cache=e2e-deal#z=whitecity&y=2026&lang=en');
   await waitForMap(page);
   await page.locator('#accordion-deal .accordion-summary').click();
   await page.locator('#dealPrice').fill('200000');
@@ -92,7 +92,7 @@ test('deal checker returns a verdict', async ({ page }) => {
 });
 
 test('deep link opens the correct zone, year, and language', async ({ page }) => {
-  await page.goto('/?cache=e2e-deep-link#z=whitecity&y=2030&lang=tr');
+  await page.goto('./?cache=e2e-deep-link#z=whitecity&y=2030&lang=tr');
   await waitForMap(page);
   await expect(page.locator('#panelTitle')).toHaveText('White City / Xətai');
   await expect(page.locator('#panelIntro')).toContainText('2030');
@@ -103,14 +103,14 @@ test('deep link opens the correct zone, year, and language', async ({ page }) =>
 
 test('all five runtime data files load as JSON', async ({ request }) => {
   for (const file of dataFiles) {
-    const response = await request.get(`/data/${file}`);
+    const response = await request.get(`./data/${file}`);
     expect(response.ok(), `${file} status ${response.status()}`).toBeTruthy();
     await expect(response.json(), `${file} must contain valid JSON`).resolves.toBeTruthy();
   }
 });
 
 test('click-to-identify returns a district and metro distance', async ({ page }) => {
-  await page.goto('/?cache=e2e-identify#z=whitecity&y=2026&lang=en');
+  await page.goto('./?cache=e2e-identify#z=whitecity&y=2026&lang=en');
   await waitForMap(page);
   const map = page.locator('#v2Map canvas');
   const box = await map.boundingBox();
@@ -121,7 +121,7 @@ test('click-to-identify returns a district and metro distance', async ({ page })
 
 test('360px toolbar stays on one row and collapses to Layers', async ({ page }) => {
   await page.setViewportSize({ width: 360, height: 800 });
-  await page.goto('/?cache=e2e-mobile');
+  await page.goto('./?cache=e2e-mobile');
   await waitForMap(page);
   await engage(page);
   await expect(page.locator('#layersToggle')).toBeVisible();
