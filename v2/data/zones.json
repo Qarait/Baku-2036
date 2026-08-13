@@ -1,0 +1,2029 @@
+[
+  {
+    "id": "whitecity",
+    "nameEn": "White City / Khatai",
+    "nameTr": "White City / Xətai",
+    "tier": "hot",
+    "rank": 1,
+    "coords": [
+      49.877,
+      40.383
+    ],
+    "radius": 15,
+    "en": {
+      "now": "$2,500–4,000/m² new-build",
+      "proj": "+140% scenario",
+      "yield": "5–7% gross",
+      "vol": "Medium",
+      "inv": [
+        [
+          "2026",
+          "Green Line stations Y14–Y17 go to tender; designs finalized",
+          "fund"
+        ],
+        [
+          "2026–29",
+          "White City residential & office phases continue; Boulevard extension eastward",
+          "fund"
+        ],
+        [
+          "~2030",
+          "Y14–Y17 open — direct metro link from White City to the center",
+          "plan"
+        ],
+        [
+          "2030s",
+          "Old Black City industrial remnants fully converted; district reaches masterplan density",
+          "plan"
+        ]
+      ],
+      "thesis": "The only zone stacking four value-raisers at once: funded metro, a brownfield-to-premium transformation (a stigma discount being recaptured in real time), waterfront, and Master Plan priority. Transit premiums historically form before stations open — the entry window is before ~2029.",
+      "risk": "Premium new-build supply is concentrated here; if delivery outruns absorption mid-decade, rents lag prices and yields compress before the metro bails values out.",
+      "act": "Buy completed or near-complete units within ~800m of the planned Y-station sites; prefer resale from early investors over off-plan premiums."
+    },
+    "tr": {
+      "now": "2.500–4.000 $/m² (yeni yapı)",
+      "proj": "%+140 senaryo",
+      "yield": "%5–7 brüt",
+      "vol": "Medium",
+      "inv": [
+        [
+          "2026",
+          "Yeşil Hat Y14–Y17 istasyonları ihaleye çıkıyor; projeler tamamlandı",
+          "fund"
+        ],
+        [
+          "2026–29",
+          "White City konut ve ofis etapları sürüyor; Bulvar doğuya doğru uzatılıyor",
+          "fund"
+        ],
+        [
+          "~2030",
+          "Y14–Y17 açılıyor — White City’den merkeze doğrudan metro bağlantısı",
+          "plan"
+        ],
+        [
+          "2030’lar",
+          "Eski Kara Şehir sanayi kalıntıları tamamen dönüştürülüyor; bölge master plan yoğunluğuna ulaşıyor",
+          "plan"
+        ]
+      ],
+      "thesis": "Burası eskiden \"Kara Şehir\"di — fabrika ve petrol kiri. Devlet temizledi, şimdi lüks konut yükseliyor ve metro buraya geliyor (4 yeni istasyon). Böyle yerler metro açılmadan ÖNCE pahalanır; fırsat penceresi 2029’dan önce kapanır.",
+      "risk": "Burada herkes lüks bina dikiyor. Bir ara daire sayısı alıcıyı aşabilir; o dönemde kiralar fiyatlara yetişemez. Metro açılınca toparlar ama birkaç yıl sabır gerekebilir.",
+      "act": "Planlanan metro istasyonlarına yürüme mesafesinde (~800 m), bitmiş ya da bitmek üzere daire alın. Maketten almak yerine erken giren yatırımcıdan ikinci el almak çoğu zaman daha hesaplı."
+    },
+    "entry": "$2,500–4,000/m² new-build",
+    "inv": [
+      [
+        "2026",
+        "Green Line stations Y14–Y17 go to tender; designs finalized",
+        "fund"
+      ],
+      [
+        "2026–29",
+        "White City residential & office phases continue; Boulevard extension eastward",
+        "fund"
+      ],
+      [
+        "~2030",
+        "Y14–Y17 open — direct metro link from White City to the center",
+        "plan"
+      ],
+      [
+        "2030s",
+        "Old Black City industrial remnants fully converted; district reaches masterplan density",
+        "plan"
+      ]
+    ],
+    "risk": "Premium new-build supply is concentrated here; if delivery outruns absorption mid-decade, rents lag prices and yields compress before the metro bails values out.",
+    "act": "Buy completed or near-complete units within ~800m of the planned Y-station sites; prefer resale from early investors over off-plan premiums.",
+    "dd": {
+      "en": [
+        "Ask the seller for the çıxarış (title deed) and check it at the state registry / ASAN — not just on paper shown to you.",
+        "Confirm which rayon (district) the parcel is officially in — services and rules differ.",
+        "Check the exact zoning: can you build / rebuild / rent it out legally?",
+        "Visit at different times of day — noise, smells, traffic, neighbours.",
+        "Get an insurance quote before you commit — if insurers hesitate, ask why.",
+        "Compare with at least 3 similar listings before agreeing a price."
+      ],
+      "tr": [
+        "Satıcıdan çıxarış (tapu) isteyin ve devlet sicilinde / ASAN’da doğrulayın — size gösterilen kâğıtla yetinmeyin.",
+        "Parselin resmî olarak hangi rayonda olduğunu teyit edin — hizmetler ve kurallar farklıdır.",
+        "İmar durumunu netleştirin: yasal olarak inşa / yeniden inşa / kiraya verme hakkınız var mı?",
+        "Günün farklı saatlerinde ziyaret edin — gürültü, koku, trafik, komşular.",
+        "Karar vermeden önce sigorta teklifi alın — sigortacı tereddüt ederse nedenini sorun.",
+        "Fiyatta anlaşmadan önce en az 3 benzer ilanla karşılaştırın."
+      ]
+    },
+    "med": [
+      2500,
+      4000
+    ],
+    "mint": 120000,
+    "kind": "apt",
+    "reasons": [
+      {
+        "ll": [
+          49.885,
+          40.379
+        ],
+        "en": "metro 2030",
+        "tr": "metro 2030"
+      },
+      {
+        "ll": [
+          49.892,
+          40.363
+        ],
+        "en": "seafront",
+        "tr": "deniz kıyısı"
+      },
+      {
+        "ll": [
+          49.84,
+          40.371
+        ],
+        "en": "5 min to center",
+        "tr": "merkeze 5 dk"
+      }
+    ]
+  },
+  {
+    "id": "yasamal",
+    "nameEn": "Yasamal (New Yasamal)",
+    "nameTr": "Yasamal",
+    "tier": "hot",
+    "rank": 5,
+    "coords": [
+      49.815,
+      40.389
+    ],
+    "radius": 13,
+    "en": {
+      "now": "$1,500–2,500/m²",
+      "proj": "+130% scenario",
+      "yield": "6–8% gross",
+      "vol": "Medium",
+      "inv": [
+        [
+          "2026",
+          "Purple Line B-4 station completion works in the corridor",
+          "fund"
+        ],
+        [
+          "2026–30",
+          "Demolish-and-densify cycle at peak: old micro-district stock replaced by towers",
+          "done"
+        ],
+        [
+          "2027–32",
+          "Office pipeline positions New Yasamal as the future business district",
+          "plan"
+        ],
+        [
+          "2030s",
+          "Growth moderates as the district matures into an established business address",
+          "plan"
+        ]
+      ],
+      "thesis": "The designated future business district, still entered at roughly half of Sabail prices, with the city’s strongest redevelopment churn converting land scarcity directly into per-m² appreciation.",
+      "risk": "Redevelopment compensation disputes and construction disruption are constant; buildings not selected for renewal can stagnate next to those that boom.",
+      "act": "Target post-2015 buildings near the B-4/8 Noyabr corridor, or ground-floor commercial on widened arterials serving the office pipeline."
+    },
+    "tr": {
+      "now": "1.500–2.500 $/m²",
+      "proj": "%+130 senaryo",
+      "yield": "%6–8 brüt",
+      "vol": "Medium",
+      "inv": [
+        [
+          "2026",
+          "Mor Hat B-4 istasyonu tamamlama çalışmaları koridorda sürüyor",
+          "fund"
+        ],
+        [
+          "2026–30",
+          "Yık-yoğunlaştır döngüsü zirvede: eski mikrorayon stoğu kulelerle değişiyor",
+          "done"
+        ],
+        [
+          "2027–32",
+          "Ofis projeleri Yeni Yasamal’ı geleceğin iş bölgesi olarak konumluyor",
+          "plan"
+        ],
+        [
+          "2030’lar",
+          "Bölge yerleşik bir iş adresine dönüştükçe büyüme yavaşlıyor",
+          "plan"
+        ]
+      ],
+      "thesis": "Şehrin yeni iş merkezi burada kuruluyor ve fiyatlar hâlâ merkezin (Sabail) yaklaşık yarısı. Eski binalar yıkılıp yerine yenileri dikiliyor — bu döngü fiyatları sürekli yukarı itiyor.",
+      "risk": "Sürekli inşaat demek gürültü ve belirsizlik demek. Sizin bina yenileme listesine girmezse, yan parsel değerlenirken sizinki yerinde sayabilir.",
+      "act": "B-4 / 8 Noyabr metro çevresinde 2015 sonrası yapılmış binalara bakın. Ya da genişletilen ana caddelerde dükkan (zemin kat) alın — ofisler geldikçe dükkan kirası artar."
+    },
+    "entry": "$1,500–2,500/m²",
+    "inv": [
+      [
+        "2026",
+        "Purple Line B-4 station completion works in the corridor",
+        "fund"
+      ],
+      [
+        "2026–30",
+        "Demolish-and-densify cycle at peak: old micro-district stock replaced by towers",
+        "done"
+      ],
+      [
+        "2027–32",
+        "Office pipeline positions New Yasamal as the future business district",
+        "plan"
+      ],
+      [
+        "2030s",
+        "Growth moderates as the district matures into an established business address",
+        "plan"
+      ]
+    ],
+    "risk": "Redevelopment compensation disputes and construction disruption are constant; buildings not selected for renewal can stagnate next to those that boom.",
+    "act": "Target post-2015 buildings near the B-4/8 Noyabr corridor, or ground-floor commercial on widened arterials serving the office pipeline.",
+    "dd": {
+      "en": [
+        "Ask the seller for the çıxarış (title deed) and check it at the state registry / ASAN — not just on paper shown to you.",
+        "Confirm which rayon (district) the parcel is officially in — services and rules differ.",
+        "Check the exact zoning: can you build / rebuild / rent it out legally?",
+        "Visit at different times of day — noise, smells, traffic, neighbours.",
+        "Get an insurance quote before you commit — if insurers hesitate, ask why.",
+        "Compare with at least 3 similar listings before agreeing a price."
+      ],
+      "tr": [
+        "Satıcıdan çıxarış (tapu) isteyin ve devlet sicilinde / ASAN’da doğrulayın — size gösterilen kâğıtla yetinmeyin.",
+        "Parselin resmî olarak hangi rayonda olduğunu teyit edin — hizmetler ve kurallar farklıdır.",
+        "İmar durumunu netleştirin: yasal olarak inşa / yeniden inşa / kiraya verme hakkınız var mı?",
+        "Günün farklı saatlerinde ziyaret edin — gürültü, koku, trafik, komşular.",
+        "Karar vermeden önce sigorta teklifi alın — sigortacı tereddüt ederse nedenini sorun.",
+        "Fiyatta anlaşmadan önce en az 3 benzer ilanla karşılaştırın."
+      ]
+    },
+    "med": [
+      1500,
+      2500
+    ],
+    "mint": 70000,
+    "kind": "apt",
+    "reasons": [
+      {
+        "ll": [
+          49.807,
+          40.397
+        ],
+        "en": "metro 2026",
+        "tr": "metro 2026"
+      },
+      {
+        "ll": [
+          49.838,
+          40.372
+        ],
+        "en": "center next door",
+        "tr": "merkez bitişik"
+      }
+    ]
+  },
+  {
+    "id": "narimanov",
+    "nameEn": "Narimanov",
+    "nameTr": "Nərimanov",
+    "tier": "hot",
+    "rank": 6,
+    "coords": [
+      49.87,
+      40.404
+    ],
+    "radius": 13,
+    "en": {
+      "now": "~$3,200/m² (5,525 AZN)",
+      "proj": "+125% scenario",
+      "yield": "6–8% gross",
+      "vol": "Medium",
+      "inv": [
+        [
+          "2025",
+          "Fastest riser in the city: +20% YoY commercial prices",
+          "done"
+        ],
+        [
+          "2026–28",
+          "Metro line-separation works around 28 May / Ganjlik improve Red/Green service",
+          "fund"
+        ],
+        [
+          "2026–31",
+          "Center-adjacent renewal of Soviet-era stock continues at pace",
+          "done"
+        ],
+        [
+          "2030s",
+          "Convergence toward established-center growth rates",
+          "plan"
+        ]
+      ],
+      "thesis": "The strongest first-half-of-decade compounder: center adjacency, deep rental demand, and active renewal. Commercial property here led the entire city in 2025.",
+      "risk": "Momentum names mean revert; by ~2030 most of the redevelopment premium is likely captured, so late entries buy the mature district at frontier expectations.",
+      "act": "Buy soon and reassess around 2030; commercial units on renewal streets outperform residential here."
+    },
+    "tr": {
+      "now": "~3.200 $/m² (5.525 AZN)",
+      "proj": "%+125 senaryo",
+      "yield": "%6–8 brüt",
+      "vol": "Medium",
+      "inv": [
+        [
+          "2025",
+          "Şehrin en hızlı yükseleni: ticari fiyatlarda yıllık %+20",
+          "done"
+        ],
+        [
+          "2026–28",
+          "28 May / Gənclik çevresindeki hat ayrıştırma çalışmaları Kırmızı/Yeşil hat servisini iyileştiriyor",
+          "fund"
+        ],
+        [
+          "2026–31",
+          "Merkeze komşu Sovyet dönemi stoğunun yenilenmesi hız kesmeden sürüyor",
+          "done"
+        ],
+        [
+          "2030’lar",
+          "Yerleşik merkez büyüme oranlarına yakınsama",
+          "plan"
+        ]
+      ],
+      "thesis": "2025’te şehirde en hızlı pahalanan bölge buydu (%20). Merkeze bitişik, kiracı bulmak çok kolay, eski binalar hızla yenileniyor. Önümüzdeki 4–5 yılın en güçlü bölgelerinden.",
+      "risk": "Hızlı çıkan bir gün yavaşlar. 2030 civarında bu yükselişin büyük kısmı bitmiş olabilir; geç girenin eline büyüme değil, sadece pahalı bir daire kalır.",
+      "act": "Alacaksanız erken alın, 2030 civarında durumu yeniden değerlendirin. Burada dükkan, daireden daha çok kazandırır."
+    },
+    "entry": "~$3,200/m² (5,525 AZN)",
+    "inv": [
+      [
+        "2025",
+        "Fastest riser in the city: +20% YoY commercial prices",
+        "done"
+      ],
+      [
+        "2026–28",
+        "Metro line-separation works around 28 May / Ganjlik improve Red/Green service",
+        "fund"
+      ],
+      [
+        "2026–31",
+        "Center-adjacent renewal of Soviet-era stock continues at pace",
+        "done"
+      ],
+      [
+        "2030s",
+        "Convergence toward established-center growth rates",
+        "plan"
+      ]
+    ],
+    "risk": "Momentum names mean revert; by ~2030 most of the redevelopment premium is likely captured, so late entries buy the mature district at frontier expectations.",
+    "act": "Buy soon and reassess around 2030; commercial units on renewal streets outperform residential here.",
+    "dd": {
+      "en": [
+        "Ask the seller for the çıxarış (title deed) and check it at the state registry / ASAN — not just on paper shown to you.",
+        "Confirm which rayon (district) the parcel is officially in — services and rules differ.",
+        "Check the exact zoning: can you build / rebuild / rent it out legally?",
+        "Visit at different times of day — noise, smells, traffic, neighbours.",
+        "Get an insurance quote before you commit — if insurers hesitate, ask why.",
+        "Compare with at least 3 similar listings before agreeing a price."
+      ],
+      "tr": [
+        "Satıcıdan çıxarış (tapu) isteyin ve devlet sicilinde / ASAN’da doğrulayın — size gösterilen kâğıtla yetinmeyin.",
+        "Parselin resmî olarak hangi rayonda olduğunu teyit edin — hizmetler ve kurallar farklıdır.",
+        "İmar durumunu netleştirin: yasal olarak inşa / yeniden inşa / kiraya verme hakkınız var mı?",
+        "Günün farklı saatlerinde ziyaret edin — gürültü, koku, trafik, komşular.",
+        "Karar vermeden önce sigorta teklifi alın — sigortacı tereddüt ederse nedenini sorun.",
+        "Fiyatta anlaşmadan önce en az 3 benzer ilanla karşılaştırın."
+      ]
+    },
+    "med": [
+      2600,
+      3800
+    ],
+    "mint": 90000,
+    "kind": "apt",
+    "reasons": [
+      {
+        "ll": [
+          49.852,
+          40.386
+        ],
+        "en": "better metro 2027",
+        "tr": "metro iyileşiyor 2027"
+      },
+      {
+        "ll": [
+          49.841,
+          40.373
+        ],
+        "en": "center adjacent",
+        "tr": "merkeze komşu"
+      }
+    ]
+  },
+  {
+    "id": "sabail",
+    "nameEn": "Sabail (center)",
+    "nameTr": "Səbail",
+    "tier": "est",
+    "rank": null,
+    "coords": [
+      49.835,
+      40.36
+    ],
+    "radius": 11,
+    "en": {
+      "now": "~$4,700/m² (8,012 AZN) — city ceiling",
+      "proj": "+80% scenario",
+      "yield": "6–9% gross",
+      "vol": "Low",
+      "inv": [
+        [
+          "ongoing",
+          "Boulevard and heritage-zone upkeep; strict height and conservation controls",
+          "done"
+        ],
+        [
+          "2026–36",
+          "Essentially no land supply: value defended by absolute scarcity",
+          "done"
+        ]
+      ],
+      "thesis": "Prime, priced-in, slow — the portfolio’s bond. Total return is dominated by rental yield on tourist, corporate and diplomatic demand, not capital growth.",
+      "risk": "Opportunity cost: capital parked here forgoes the redevelopment corridors’ upside; heritage rules limit what an owner can change.",
+      "act": "Hold for income. Short-let-suitable units near the Boulevard maximize the yield that is this district’s real return."
+    },
+    "tr": {
+      "now": "~4.700 $/m² (8.012 AZN) — şehir tavanı",
+      "proj": "%+80 senaryo",
+      "yield": "%6–9 brüt",
+      "vol": "Low",
+      "inv": [
+        [
+          "sürekli",
+          "Bulvar ve koruma bölgesi bakımı; katı yükseklik ve koruma denetimleri",
+          "done"
+        ],
+        [
+          "2026–36",
+          "Neredeyse hiç arsa arzı yok: değer mutlak kıtlıkla korunuyor",
+          "done"
+        ]
+      ],
+      "thesis": "Şehrin en pahalı, en sağlam yeri. Ama iyi haberlerin hepsi çoktan fiyata girmiş — büyük değer artışı beklemeyin. Buranın kazancı kiradır: turist, şirket, diplomat derken kiracı hiç eksilmez.",
+      "risk": "Paranızı buraya bağlarsanız hızlı büyüyen bölgelerin kazancını kaçırırsınız. Ayrıca tarihi bölge kuralları yüzünden binada her istediğinizi yapamazsınız.",
+      "act": "Kira için tutun. Bulvara yakın, kısa dönem (günlük/haftalık) kiralamaya uygun daireler en iyisi."
+    },
+    "entry": "~$4,700/m² (8,012 AZN) — city ceiling",
+    "inv": [
+      [
+        "ongoing",
+        "Boulevard and heritage-zone upkeep; strict height and conservation controls",
+        "done"
+      ],
+      [
+        "2026–36",
+        "Essentially no land supply: value defended by absolute scarcity",
+        "done"
+      ]
+    ],
+    "risk": "Opportunity cost: capital parked here forgoes the redevelopment corridors’ upside; heritage rules limit what an owner can change.",
+    "act": "Hold for income. Short-let-suitable units near the Boulevard maximize the yield that is this district’s real return.",
+    "dd": {
+      "en": [
+        "Ask the seller for the çıxarış (title deed) and check it at the state registry / ASAN — not just on paper shown to you.",
+        "Confirm which rayon (district) the parcel is officially in — services and rules differ.",
+        "Check the exact zoning: can you build / rebuild / rent it out legally?",
+        "Visit at different times of day — noise, smells, traffic, neighbours.",
+        "Get an insurance quote before you commit — if insurers hesitate, ask why.",
+        "Compare with at least 3 similar listings before agreeing a price."
+      ],
+      "tr": [
+        "Satıcıdan çıxarış (tapu) isteyin ve devlet sicilinde / ASAN’da doğrulayın — size gösterilen kâğıtla yetinmeyin.",
+        "Parselin resmî olarak hangi rayonda olduğunu teyit edin — hizmetler ve kurallar farklıdır.",
+        "İmar durumunu netleştirin: yasal olarak inşa / yeniden inşa / kiraya verme hakkınız var mı?",
+        "Günün farklı saatlerinde ziyaret edin — gürültü, koku, trafik, komşular.",
+        "Karar vermeden önce sigorta teklifi alın — sigortacı tereddüt ederse nedenini sorun.",
+        "Fiyatta anlaşmadan önce en az 3 benzer ilanla karşılaştırın."
+      ]
+    },
+    "med": [
+      3500,
+      5000
+    ],
+    "mint": 150000,
+    "kind": "apt",
+    "reasons": [
+      {
+        "ll": [
+          49.847,
+          40.356
+        ],
+        "en": "the Boulevard",
+        "tr": "Bulvar"
+      },
+      {
+        "ll": [
+          49.828,
+          40.372
+        ],
+        "en": "tourists & offices",
+        "tr": "turist ve ofisler"
+      }
+    ]
+  },
+  {
+    "id": "khojasan",
+    "nameEn": "Khojasan / Purple Line",
+    "nameTr": "Xocəsən",
+    "tier": "fr",
+    "rank": 9,
+    "coords": [
+      49.762,
+      40.416
+    ],
+    "radius": 11,
+    "en": {
+      "now": "~$1,100/m²",
+      "proj": "+110% scenario",
+      "yield": "7–9% gross",
+      "vol": "Medium-high",
+      "inv": [
+        [
+          "2025–26",
+          "Khojasan depot & terminus works complete on the Purple Line",
+          "fund"
+        ],
+        [
+          "2026–29",
+          "Residential infill accelerates around running stations",
+          "plan"
+        ],
+        [
+          "2030s",
+          "Full Purple Line buildout deepens the western commuter shed",
+          "plan"
+        ]
+      ],
+      "thesis": "The cheapest entry on any corridor where funded rail is already running — the premium doesn’t depend on a promise, only on infill catching up to infrastructure that exists.",
+      "risk": "Western Baku’s industrial fringe character fades slowly; quality of nearby stock varies street by street.",
+      "act": "Small apartments within a 10-minute walk of the terminus; rent to commuters while the infill premium builds."
+    },
+    "tr": {
+      "now": "~1.100 $/m²",
+      "proj": "%+110 senaryo",
+      "yield": "%7–9 brüt",
+      "vol": "Medium-high",
+      "inv": [
+        [
+          "2025–26",
+          "Mor Hat’ta Xocəsən deposu ve son durak çalışmaları tamamlanıyor",
+          "fund"
+        ],
+        [
+          "2026–29",
+          "Çalışan istasyonların çevresinde konut dolgusu hızlanıyor",
+          "plan"
+        ],
+        [
+          "2030’lar",
+          "Mor Hat’ın tam kapasiteye ulaşması batı banliyö havzasını derinleştiriyor",
+          "plan"
+        ]
+      ],
+      "thesis": "Metro burada ÇALIŞIYOR — vaat değil, gerçek. Buna rağmen fiyatlar hâlâ çok ucuz (~1.100 $/m²). Çevre doldukça bu fark kapanacak; siz farka değil, zamana yatırım yapıyorsunuz.",
+      "risk": "Bölge eski sanayi çeperi; bir sokak güzel, öbürü bakımsız olabilir. Almadan önce sokağı mutlaka yürüyün.",
+      "act": "Son durağa 10 dakika yürüme mesafesinde küçük daire alın; değer artarken işe gidip gelenlere kiraya verin."
+    },
+    "entry": "~$1,100/m²",
+    "inv": [
+      [
+        "2025–26",
+        "Khojasan depot & terminus works complete on the Purple Line",
+        "fund"
+      ],
+      [
+        "2026–29",
+        "Residential infill accelerates around running stations",
+        "plan"
+      ],
+      [
+        "2030s",
+        "Full Purple Line buildout deepens the western commuter shed",
+        "plan"
+      ]
+    ],
+    "risk": "Western Baku’s industrial fringe character fades slowly; quality of nearby stock varies street by street.",
+    "act": "Small apartments within a 10-minute walk of the terminus; rent to commuters while the infill premium builds.",
+    "dd": {
+      "en": [
+        "Ask the seller for the çıxarış (title deed) and check it at the state registry / ASAN — not just on paper shown to you.",
+        "Confirm which rayon (district) the parcel is officially in — services and rules differ.",
+        "Check the exact zoning: can you build / rebuild / rent it out legally?",
+        "Visit at different times of day — noise, smells, traffic, neighbours.",
+        "Get an insurance quote before you commit — if insurers hesitate, ask why.",
+        "Compare with at least 3 similar listings before agreeing a price."
+      ],
+      "tr": [
+        "Satıcıdan çıxarış (tapu) isteyin ve devlet sicilinde / ASAN’da doğrulayın — size gösterilen kâğıtla yetinmeyin.",
+        "Parselin resmî olarak hangi rayonda olduğunu teyit edin — hizmetler ve kurallar farklıdır.",
+        "İmar durumunu netleştirin: yasal olarak inşa / yeniden inşa / kiraya verme hakkınız var mı?",
+        "Günün farklı saatlerinde ziyaret edin — gürültü, koku, trafik, komşular.",
+        "Karar vermeden önce sigorta teklifi alın — sigortacı tereddüt ederse nedenini sorun.",
+        "Fiyatta anlaşmadan önce en az 3 benzer ilanla karşılaştırın."
+      ]
+    },
+    "med": [
+      900,
+      1400
+    ],
+    "mint": 40000,
+    "kind": "apt",
+    "reasons": [
+      {
+        "ll": [
+          49.756,
+          40.421
+        ],
+        "en": "metro running ✓",
+        "tr": "metro çalışıyor ✓"
+      },
+      {
+        "ll": [
+          49.795,
+          40.4
+        ],
+        "en": "20 min to city",
+        "tr": "şehre 20 dk"
+      }
+    ]
+  },
+  {
+    "id": "khirdalan",
+    "nameEn": "Khirdalan–Masazir–Saray",
+    "nameTr": "Xırdalan–Masazır–Saray",
+    "tier": "fr",
+    "rank": 10,
+    "coords": [
+      49.755,
+      40.455
+    ],
+    "radius": 11,
+    "en": {
+      "now": "$400–700/m² new-build",
+      "proj": "+130% land / towers lag",
+      "yield": "8–10% gross",
+      "vol": "High",
+      "inv": [
+        [
+          "2026–29",
+          "New Baku–Sumgayit main road under the Master Plan reprices interchange land",
+          "fund"
+        ],
+        [
+          "2026–33",
+          "Mass-housing pipeline: the peninsula’s overflow valve for priced-out buyers",
+          "done"
+        ],
+        [
+          "2030s",
+          "Commuter-rail improvements on the NW axis",
+          "plan"
+        ]
+      ],
+      "thesis": "Reliable corridor growth with one discipline: buy dirt, not concrete. Junction-adjacent land roughly doubles or better; generic towers face the peninsula’s worst oversupply risk.",
+      "risk": "Developer oversupply can stall apartment prices for years mid-decade; documentation quality on older plots varies.",
+      "act": "Titled (çıxarışlı) land within ~1km of confirmed interchanges on the new road alignment. Avoid off-plan flats."
+    },
+    "tr": {
+      "now": "400–700 $/m² (yeni yapı)",
+      "proj": "arsa %+130 / kuleler geride",
+      "yield": "%8–10 brüt",
+      "vol": "High",
+      "inv": [
+        [
+          "2026–29",
+          "Master Plan kapsamındaki yeni Bakü–Sumgayıt ana yolu, kavşak arazilerini yeniden fiyatlıyor",
+          "fund"
+        ],
+        [
+          "2026–33",
+          "Toplu konut hattı: fiyat dışı kalan alıcılar için yarımadanın taşma vanası",
+          "done"
+        ],
+        [
+          "2030’lar",
+          "KB ekseninde banliyö demiryolu iyileştirmeleri",
+          "plan"
+        ]
+      ],
+      "thesis": "Bakü’ye ev alamayan buraya taşınıyor — talep garanti. Ama tek bir kural var: bina değil, ARSA alın. Yeni Bakü–Sumgayıt yolunun kavşaklarına yakın arsalar en az ikiye katlar; sıradan daireler ise bolluktan değer kaybedebilir.",
+      "risk": "Müteahhitler durmadan blok dikiyor; bir noktada daire alıcıdan çok olur ve fiyatlar yıllarca yerinde sayar. Eski arsalarda tapu sorunları da çıkabiliyor.",
+      "act": "Yeni yolun kesinleşmiş kavşaklarına 1 km mesafede, tapulu (çıxarışlı) arsa. Maketten daire almayın."
+    },
+    "entry": "$400–700/m² new-build",
+    "inv": [
+      [
+        "2026–29",
+        "New Baku–Sumgayit main road under the Master Plan reprices interchange land",
+        "fund"
+      ],
+      [
+        "2026–33",
+        "Mass-housing pipeline: the peninsula’s overflow valve for priced-out buyers",
+        "done"
+      ],
+      [
+        "2030s",
+        "Commuter-rail improvements on the NW axis",
+        "plan"
+      ]
+    ],
+    "risk": "Developer oversupply can stall apartment prices for years mid-decade; documentation quality on older plots varies.",
+    "act": "Titled (çıxarışlı) land within ~1km of confirmed interchanges on the new road alignment. Avoid off-plan flats.",
+    "dd": {
+      "en": [
+        "Ask the seller for the çıxarış (title deed) and check it at the state registry / ASAN — not just on paper shown to you.",
+        "Confirm which rayon (district) the parcel is officially in — services and rules differ.",
+        "Check the exact zoning: can you build / rebuild / rent it out legally?",
+        "Visit at different times of day — noise, smells, traffic, neighbours.",
+        "Get an insurance quote before you commit — if insurers hesitate, ask why.",
+        "Compare with at least 3 similar listings before agreeing a price.",
+        "Buying off-plan? Don’t. Buy land near a confirmed interchange, or a finished flat."
+      ],
+      "tr": [
+        "Satıcıdan çıxarış (tapu) isteyin ve devlet sicilinde / ASAN’da doğrulayın — size gösterilen kâğıtla yetinmeyin.",
+        "Parselin resmî olarak hangi rayonda olduğunu teyit edin — hizmetler ve kurallar farklıdır.",
+        "İmar durumunu netleştirin: yasal olarak inşa / yeniden inşa / kiraya verme hakkınız var mı?",
+        "Günün farklı saatlerinde ziyaret edin — gürültü, koku, trafik, komşular.",
+        "Karar vermeden önce sigorta teklifi alın — sigortacı tereddüt ederse nedenini sorun.",
+        "Fiyatta anlaşmadan önce en az 3 benzer ilanla karşılaştırın.",
+        "Maketten mi? Almayın. Teyitli kavşak yakınında arsa ya da bitmiş daire alın."
+      ]
+    },
+    "med": [
+      400,
+      700
+    ],
+    "mint": 18000,
+    "kind": "apt",
+    "reasons": [
+      {
+        "ll": [
+          49.72,
+          40.5
+        ],
+        "en": "new road 2028",
+        "tr": "yeni yol 2028"
+      },
+      {
+        "ll": [
+          49.79,
+          40.425
+        ],
+        "en": "Baku overflow",
+        "tr": "Bakü taşması"
+      }
+    ]
+  },
+  {
+    "id": "sumgayit",
+    "nameEn": "Sumgayit seafront",
+    "nameTr": "Sumqayıt sahili",
+    "tier": "fr",
+    "rank": 3,
+    "coords": [
+      49.668,
+      40.589
+    ],
+    "radius": 14,
+    "en": {
+      "now": "$410–650/m² ($530–650 at Sahil Park)",
+      "proj": "+140% scenario",
+      "yield": "8–10% gross",
+      "vol": "Medium",
+      "inv": [
+        [
+          "2026–30",
+          "Baku–Sumgayit rail-doubling and highway works compress the commute",
+          "fund"
+        ],
+        [
+          "2026–33",
+          "Chemical-industrial park expansion and tech-park employment growth",
+          "done"
+        ],
+        [
+          "2028–36",
+          "Seafront (Sahil Park) upgrades consolidate the local premium strip",
+          "plan"
+        ]
+      ],
+      "thesis": "The only frontier zone where jobs, rail, and a forming premium all exist today. Functions increasingly as Baku’s satellite city, compressing the commute discount through the decade.",
+      "risk": "Industrial-legacy pollution perception caps the ceiling on some micro-locations; check the parcel’s specific environmental history.",
+      "act": "Seafront-strip apartments or land within 1km of the rail corridor stations; the premium concentrates on the water."
+    },
+    "tr": {
+      "now": "410–650 $/m² (Sahil Park’ta 530–650 $)",
+      "proj": "%+140 senaryo",
+      "yield": "%8–10 brüt",
+      "vol": "Medium",
+      "inv": [
+        [
+          "2026–30",
+          "Bakü–Sumgayıt demiryolunun çiftlenmesi ve karayolu çalışmaları yolculuğu kısaltıyor",
+          "fund"
+        ],
+        [
+          "2026–33",
+          "Kimya sanayi parkı genişlemesi ve teknopark istihdam artışı",
+          "done"
+        ],
+        [
+          "2028–36",
+          "Sahil şeridi (Sahil Park) iyileştirmeleri yerel prim kuşağını pekiştiriyor",
+          "plan"
+        ]
+      ],
+      "thesis": "İş var (fabrikalar, teknopark), tren geliyor (hat çiftleniyor), deniz kenarı da var — bu üçü başka hiçbir ucuz bölgede bir arada yok. Sumgayıt giderek Bakü’nün yatak şehri oluyor; yol kısaldıkça fiyat farkı kapanacak.",
+      "risk": "Şehrin eski sanayi ünü bazı sokaklarda fiyatı hep baskılar. Alacağınız parselin çevre geçmişini özellikle sorun.",
+      "act": "Sahil şeridinde (Sahil Park) daire ya da tren istasyonlarına 1 km mesafede arsa. Değer en çok deniz kenarında artıyor."
+    },
+    "entry": "$410–650/m² ($530–650 at Sahil Park)",
+    "inv": [
+      [
+        "2026–30",
+        "Baku–Sumgayit rail-doubling and highway works compress the commute",
+        "fund"
+      ],
+      [
+        "2026–33",
+        "Chemical-industrial park expansion and tech-park employment growth",
+        "done"
+      ],
+      [
+        "2028–36",
+        "Seafront (Sahil Park) upgrades consolidate the local premium strip",
+        "plan"
+      ]
+    ],
+    "risk": "Industrial-legacy pollution perception caps the ceiling on some micro-locations; check the parcel’s specific environmental history.",
+    "act": "Seafront-strip apartments or land within 1km of the rail corridor stations; the premium concentrates on the water.",
+    "dd": {
+      "en": [
+        "Ask the seller for the çıxarış (title deed) and check it at the state registry / ASAN — not just on paper shown to you.",
+        "Confirm which rayon (district) the parcel is officially in — services and rules differ.",
+        "Check the exact zoning: can you build / rebuild / rent it out legally?",
+        "Visit at different times of day — noise, smells, traffic, neighbours.",
+        "Get an insurance quote before you commit — if insurers hesitate, ask why.",
+        "Compare with at least 3 similar listings before agreeing a price."
+      ],
+      "tr": [
+        "Satıcıdan çıxarış (tapu) isteyin ve devlet sicilinde / ASAN’da doğrulayın — size gösterilen kâğıtla yetinmeyin.",
+        "Parselin resmî olarak hangi rayonda olduğunu teyit edin — hizmetler ve kurallar farklıdır.",
+        "İmar durumunu netleştirin: yasal olarak inşa / yeniden inşa / kiraya verme hakkınız var mı?",
+        "Günün farklı saatlerinde ziyaret edin — gürültü, koku, trafik, komşular.",
+        "Karar vermeden önce sigorta teklifi alın — sigortacı tereddüt ederse nedenini sorun.",
+        "Fiyatta anlaşmadan önce en az 3 benzer ilanla karşılaştırın."
+      ]
+    },
+    "med": [
+      410,
+      650
+    ],
+    "mint": 22000,
+    "kind": "apt",
+    "reasons": [
+      {
+        "ll": [
+          49.716,
+          40.535
+        ],
+        "en": "rail doubled 2029",
+        "tr": "demiryolu 2029"
+      },
+      {
+        "ll": [
+          49.72,
+          40.5
+        ],
+        "en": "new road 2028",
+        "tr": "yeni yol 2028"
+      }
+    ]
+  },
+  {
+    "id": "novkhani",
+    "nameEn": "Novkhani",
+    "nameTr": "Novxanı",
+    "tier": "fr",
+    "rank": null,
+    "coords": [
+      49.785,
+      40.52
+    ],
+    "radius": 9,
+    "en": {
+      "now": "~$800–1,200 near water",
+      "proj": "+100% scenario",
+      "yield": "seasonal",
+      "vol": "Medium",
+      "inv": [
+        [
+          "2026–32",
+          "North-coast leisure belt forms to the east (Sea Breeze gravity)",
+          "done"
+        ],
+        [
+          "2027–33",
+          "Coastal road upgrades on the NW shore",
+          "plan"
+        ]
+      ],
+      "thesis": "A consolidated weekend-home market fed by Baku wealth; waterfront and near-water plots capture nearly all the appreciation.",
+      "risk": "Inland houses track little better than inflation; liquidity is seasonal and thin.",
+      "act": "Only near-water titled plots; think second-home buyer exit, not commuter exit."
+    },
+    "tr": {
+      "now": "su kenarında ~800–1.200 $",
+      "proj": "%+100 senaryo",
+      "yield": "mevsimsel",
+      "vol": "Medium",
+      "inv": [
+        [
+          "2026–32",
+          "Kuzey sahili tatil kuşağı doğuda şekilleniyor (Sea Breeze çekimi)",
+          "done"
+        ],
+        [
+          "2027–33",
+          "KB kıyısında sahil yolu iyileştirmeleri",
+          "plan"
+        ]
+      ],
+      "thesis": "Bakülülerin hafta sonu evi pazarı. Değer artışının neredeyse hepsi suya yakın arsalarda; içerideki evler pek kazandırmaz.",
+      "risk": "İç kesimde ev, enflasyondan ancak biraz iyi gider. Satmak isteyince alıcı bulmak da mevsime bağlı — yazın kolay, kışın zor.",
+      "act": "Sadece suya yakın, tapulu arsa. Yarın size alıcı olacak kişi bir yazlıkçı — ona göre seçin."
+    },
+    "entry": "~$800–1,200 near water",
+    "inv": [
+      [
+        "2026–32",
+        "North-coast leisure belt forms to the east (Sea Breeze gravity)",
+        "done"
+      ],
+      [
+        "2027–33",
+        "Coastal road upgrades on the NW shore",
+        "plan"
+      ]
+    ],
+    "risk": "Inland houses track little better than inflation; liquidity is seasonal and thin.",
+    "act": "Only near-water titled plots; think second-home buyer exit, not commuter exit.",
+    "dd": {
+      "en": [
+        "Ask the seller for the çıxarış (title deed) and check it at the state registry / ASAN — not just on paper shown to you.",
+        "Confirm which rayon (district) the parcel is officially in — services and rules differ.",
+        "Check the exact zoning: can you build / rebuild / rent it out legally?",
+        "Visit at different times of day — noise, smells, traffic, neighbours.",
+        "Get an insurance quote before you commit — if insurers hesitate, ask why.",
+        "Compare with at least 3 similar listings before agreeing a price."
+      ],
+      "tr": [
+        "Satıcıdan çıxarış (tapu) isteyin ve devlet sicilinde / ASAN’da doğrulayın — size gösterilen kâğıtla yetinmeyin.",
+        "Parselin resmî olarak hangi rayonda olduğunu teyit edin — hizmetler ve kurallar farklıdır.",
+        "İmar durumunu netleştirin: yasal olarak inşa / yeniden inşa / kiraya verme hakkınız var mı?",
+        "Günün farklı saatlerinde ziyaret edin — gürültü, koku, trafik, komşular.",
+        "Karar vermeden önce sigorta teklifi alın — sigortacı tereddüt ederse nedenini sorun.",
+        "Fiyatta anlaşmadan önce en az 3 benzer ilanla karşılaştırın."
+      ]
+    },
+    "med": [
+      800,
+      1200
+    ],
+    "mint": 35000,
+    "kind": "land",
+    "reasons": [
+      {
+        "ll": [
+          49.77,
+          40.545
+        ],
+        "en": "beach plots",
+        "tr": "plaj arsaları"
+      },
+      {
+        "ll": [
+          49.8,
+          40.47
+        ],
+        "en": "Baku weekenders",
+        "tr": "Bakülü yazlıkçı"
+      }
+    ]
+  },
+  {
+    "id": "bilgah",
+    "nameEn": "Bilgah / Sea Breeze",
+    "nameTr": "Bilgəh / Sea Breeze",
+    "tier": "hot",
+    "rank": 2,
+    "coords": [
+      50.033,
+      40.56
+    ],
+    "radius": 16,
+    "en": {
+      "now": "~$1,000–1,800 near shore",
+      "proj": "+150% scenario",
+      "yield": "5–8% (resort lets)",
+      "vol": "High (oil-linked)",
+      "inv": [
+        [
+          "2026–30",
+          "Sea Breeze masterplan expansion: residential phases, hotels, marina, schooling",
+          "fund"
+        ],
+        [
+          "2027–33",
+          "Coastal road and utility upgrades along the northern shore",
+          "plan"
+        ],
+        [
+          "2030s",
+          "Belt consolidates into the peninsula’s premium leisure address",
+          "plan"
+        ]
+      ],
+      "thesis": "A branded international price anchor dropped on a locally-priced shore. Village-by-village repricing outward from the resort makes this plausibly the peninsula’s second price pole by 2036.",
+      "risk": "The most oil-cycle-sensitive zone on the map — leisure wealth demand evaporates first in a downturn. Long-run Caspian sea-level decline is the structural wildcard.",
+      "act": "Land or villas in villages adjacent to (not inside) the resort perimeter — you buy the spillover, not the brand markup."
+    },
+    "tr": {
+      "now": "kıyıya yakın ~1.000–1.800 $",
+      "proj": "%+150 senaryo",
+      "yield": "%5–8 (tatil kiralama)",
+      "vol": "High (oil-linked)",
+      "inv": [
+        [
+          "2026–30",
+          "Sea Breeze master plan genişlemesi: konut etapları, oteller, marina, okullar",
+          "fund"
+        ],
+        [
+          "2027–33",
+          "Kuzey kıyısı boyunca sahil yolu ve altyapı iyileştirmeleri",
+          "plan"
+        ],
+        [
+          "2030’lar",
+          "Kuşak, yarımadanın premium tatil adresi olarak pekişiyor",
+          "plan"
+        ]
+      ],
+      "thesis": "Sea Breeze burada dev bir tatil şehri kuruyor ve çevre köylerin fiyatını tek tek yukarı çekiyor. 2036’ya kadar burası Bakü merkezden sonra yarımadanın en pahalı ikinci yeri olabilir.",
+      "risk": "Buranın parası keyif parası — petrol kötü giderse insanların ilk vazgeçtiği şey yazlık olur. Bir de Hazar’ın suyu yavaş yavaş çekiliyor; plaja güvenen yerler için uzun vadeli bir soru işareti.",
+      "act": "Sea Breeze’in İÇİNDEN değil, hemen YANINDAKİ köylerden arsa ya da villa alın. Marka parasını ödemeden komşuluk kazancını alırsınız."
+    },
+    "entry": "~$1,000–1,800 near shore",
+    "inv": [
+      [
+        "2026–30",
+        "Sea Breeze masterplan expansion: residential phases, hotels, marina, schooling",
+        "fund"
+      ],
+      [
+        "2027–33",
+        "Coastal road and utility upgrades along the northern shore",
+        "plan"
+      ],
+      [
+        "2030s",
+        "Belt consolidates into the peninsula’s premium leisure address",
+        "plan"
+      ]
+    ],
+    "risk": "The most oil-cycle-sensitive zone on the map — leisure wealth demand evaporates first in a downturn. Long-run Caspian sea-level decline is the structural wildcard.",
+    "act": "Land or villas in villages adjacent to (not inside) the resort perimeter — you buy the spillover, not the brand markup.",
+    "dd": {
+      "en": [
+        "Ask the seller for the çıxarış (title deed) and check it at the state registry / ASAN — not just on paper shown to you.",
+        "Confirm which rayon (district) the parcel is officially in — services and rules differ.",
+        "Check the exact zoning: can you build / rebuild / rent it out legally?",
+        "Visit at different times of day — noise, smells, traffic, neighbours.",
+        "Get an insurance quote before you commit — if insurers hesitate, ask why.",
+        "Compare with at least 3 similar listings before agreeing a price.",
+        "Confirm the plot is outside the resort’s masterplan boundary unless you want their fees and rules."
+      ],
+      "tr": [
+        "Satıcıdan çıxarış (tapu) isteyin ve devlet sicilinde / ASAN’da doğrulayın — size gösterilen kâğıtla yetinmeyin.",
+        "Parselin resmî olarak hangi rayonda olduğunu teyit edin — hizmetler ve kurallar farklıdır.",
+        "İmar durumunu netleştirin: yasal olarak inşa / yeniden inşa / kiraya verme hakkınız var mı?",
+        "Günün farklı saatlerinde ziyaret edin — gürültü, koku, trafik, komşular.",
+        "Karar vermeden önce sigorta teklifi alın — sigortacı tereddüt ederse nedenini sorun.",
+        "Fiyatta anlaşmadan önce en az 3 benzer ilanla karşılaştırın.",
+        "Kompleksin ücret ve kurallarını istemiyorsanız parselin master plan sınırının dışında olduğunu teyit edin."
+      ]
+    },
+    "med": [
+      1000,
+      1800
+    ],
+    "mint": 60000,
+    "kind": "land",
+    "reasons": [
+      {
+        "px": [
+          560,
+          58
+        ],
+        "en": "Sea Breeze anchor",
+        "tr": "Sea Breeze çıpası"
+      },
+      {
+        "px": [
+          560,
+          80
+        ],
+        "en": "premium shore",
+        "tr": "prestijli kıyı"
+      }
+    ]
+  },
+  {
+    "id": "mardakan",
+    "nameEn": "Mardakan–Shuvalan–Buzovna",
+    "nameTr": "Mərdəkan–Şuvalan–Buzovna",
+    "tier": "hot",
+    "rank": 4,
+    "coords": [
+      50.13,
+      40.505
+    ],
+    "radius": 16,
+    "en": {
+      "now": "~$800–1,400; villa land varies",
+      "proj": "+125% scenario (land-led)",
+      "yield": "5–7%",
+      "vol": "Medium",
+      "inv": [
+        [
+          "2026–31",
+          "Master Plan sub-centre designation: roads, utilities, services buildout",
+          "fund"
+        ],
+        [
+          "2027–34",
+          "Rail expansion toward 54 stations serves the NE; airport-city adjacency",
+          "plan"
+        ],
+        [
+          "2030s",
+          "Circular metro line (if on schedule) makes it a true urban node",
+          "plan"
+        ]
+      ],
+      "thesis": "The best risk-adjusted corridor outside the city: sub-centre status, airport adjacency, dacha prestige, and the one asset peninsula supply cannot reproduce — villa land.",
+      "risk": "The circular line is the plan’s least-funded element; slippage to the 2040s flattens the back half of the story.",
+      "act": "Titled villa land on established lanes; land outperforms apartments here for the whole decade."
+    },
+    "tr": {
+      "now": "~800–1.400 $; villa arsası değişken",
+      "proj": "%+125 senaryo (arsa öncülüğünde)",
+      "yield": "%5–7",
+      "vol": "Medium",
+      "inv": [
+        [
+          "2026–31",
+          "Master Plan alt merkez statüsü: yol, altyapı ve hizmet yatırımları",
+          "fund"
+        ],
+        [
+          "2027–34",
+          "54 istasyona doğru demiryolu genişlemesi KD’ye hizmet ediyor; havalimanı kenti komşuluğu",
+          "plan"
+        ],
+        [
+          "2030’lar",
+          "Çevre metro hattı (takvim tutarsa) burayı gerçek bir kent düğümüne çeviriyor",
+          "plan"
+        ]
+      ],
+      "thesis": "Devlet burayı resmî \"alt merkez\" ilan etti: yol, su, hizmet — hepsi geliyor. Havalimanına yakın, eskiden beri itibarlı yazlık bölgesi. En önemlisi: villa arsası çoğaltılamaz — kimse yeni arsa üretemez, o yüzden en sağlam değerlenen şey arsadır.",
+      "risk": "Buraya söz verilen çevre metro hattı, planın parası en belirsiz kısmı. 2040’lara sarkarsa kazancın ikinci yarısı zayıflar.",
+      "act": "Oturmuş sokaklarda tapulu villa arsası alın. Burada 10 yıl boyunca arsa, daireyi geçer."
+    },
+    "entry": "~$800–1,400; villa land varies",
+    "inv": [
+      [
+        "2026–31",
+        "Master Plan sub-centre designation: roads, utilities, services buildout",
+        "fund"
+      ],
+      [
+        "2027–34",
+        "Rail expansion toward 54 stations serves the NE; airport-city adjacency",
+        "plan"
+      ],
+      [
+        "2030s",
+        "Circular metro line (if on schedule) makes it a true urban node",
+        "plan"
+      ]
+    ],
+    "risk": "The circular line is the plan’s least-funded element; slippage to the 2040s flattens the back half of the story.",
+    "act": "Titled villa land on established lanes; land outperforms apartments here for the whole decade.",
+    "dd": {
+      "en": [
+        "Ask the seller for the çıxarış (title deed) and check it at the state registry / ASAN — not just on paper shown to you.",
+        "Confirm which rayon (district) the parcel is officially in — services and rules differ.",
+        "Check the exact zoning: can you build / rebuild / rent it out legally?",
+        "Visit at different times of day — noise, smells, traffic, neighbours.",
+        "Get an insurance quote before you commit — if insurers hesitate, ask why.",
+        "Compare with at least 3 similar listings before agreeing a price."
+      ],
+      "tr": [
+        "Satıcıdan çıxarış (tapu) isteyin ve devlet sicilinde / ASAN’da doğrulayın — size gösterilen kâğıtla yetinmeyin.",
+        "Parselin resmî olarak hangi rayonda olduğunu teyit edin — hizmetler ve kurallar farklıdır.",
+        "İmar durumunu netleştirin: yasal olarak inşa / yeniden inşa / kiraya verme hakkınız var mı?",
+        "Günün farklı saatlerinde ziyaret edin — gürültü, koku, trafik, komşular.",
+        "Karar vermeden önce sigorta teklifi alın — sigortacı tereddüt ederse nedenini sorun.",
+        "Fiyatta anlaşmadan önce en az 3 benzer ilanla karşılaştırın."
+      ]
+    },
+    "med": [
+      800,
+      1400
+    ],
+    "mint": 45000,
+    "kind": "land",
+    "reasons": [
+      {
+        "px": [
+          688,
+          110
+        ],
+        "en": "sub-centre plan",
+        "tr": "alt merkez planı"
+      },
+      {
+        "px": [
+          688,
+          132
+        ],
+        "en": "airport next door",
+        "tr": "havalimanı bitişik"
+      }
+    ]
+  },
+  {
+    "id": "airport",
+    "nameEn": "Airport zone — Zabrat·Balakhany·Sabunchu",
+    "nameTr": "Hava limanı kəməri",
+    "tier": "fr",
+    "rank": 7,
+    "coords": [
+      49.94,
+      40.47
+    ],
+    "radius": 12,
+    "en": {
+      "now": "$400–600/m²",
+      "proj": "+120% if remediated",
+      "yield": "7–9%",
+      "vol": "Very high",
+      "inv": [
+        [
+          "2024–25",
+          "Beyukshor–Pirshagi highway delivered — Mohammadi repriced sharply (the proof case)",
+          "done"
+        ],
+        [
+          "2026–31",
+          "Sabunchu \"airport city\" concept: logistics, hospitality, services around GYD",
+          "plan"
+        ],
+        [
+          "2026–36",
+          "Oil-field remediation around Balakhany — the decisive variable",
+          "plan"
+        ]
+      ],
+      "thesis": "The dark horse: an HBU rewrite of semi-industrial land replaying White City’s stigma-reversal playbook. Remediated parcels jump discontinuously; the Mohammadi episode showed how violently this zone reprices off one road.",
+      "risk": "Remediation is slow and uneven; unremediated land stays discounted indefinitely. Monitor cleanup certificates, not listings.",
+      "act": "Elevated, titled parcels away from lake margins and known contamination; verify cadastral rayon (parcels here straddle boundaries)."
+    },
+    "tr": {
+      "now": "400–600 $/m²",
+      "proj": "ıslah edilirse %+120",
+      "yield": "%7–9",
+      "vol": "Very high",
+      "inv": [
+        [
+          "2024–25",
+          "Böyükşor–Pirşağı yolu tamamlandı — Məhəmmədli sert biçimde yeniden fiyatlandı (kanıt vakası)",
+          "done"
+        ],
+        [
+          "2026–31",
+          "Sabunçu \"havalimanı kenti\" konsepti: GYD çevresinde lojistik, konaklama, hizmetler",
+          "plan"
+        ],
+        [
+          "2026–36",
+          "Balaxanı çevresinde petrol sahası ıslahı — belirleyici değişken",
+          "plan"
+        ]
+      ],
+      "thesis": "Sürpriz aday. Havalimanının çevresi \"havalimanı şehri\" olacak ve eski petrol arazileri temizlendikçe değer sıçrıyor — White City’de olan burada tekrar edebilir. Kanıt mı? Yandaki Məhəmmədli köyü: tek bir yol yapıldı, fiyatlar fırladı.",
+      "risk": "Temizlik (ıslah) yavaş ve düzensiz gidiyor. Temizlenmeyen arsa yıllarca ucuz kalır. İlanlara değil, resmî temizlik belgelerine bakın.",
+      "act": "Yüksek yerde, göl kenarından ve bilinen kirli alanlardan uzak, tapulu arsa. Arsanın resmen hangi rayonda kayıtlı olduğunu mutlaka doğrulatın."
+    },
+    "entry": "$400–600/m²",
+    "inv": [
+      [
+        "2024–25",
+        "Beyukshor–Pirshagi highway delivered — Mohammadi repriced sharply (the proof case)",
+        "done"
+      ],
+      [
+        "2026–31",
+        "Sabunchu \"airport city\" concept: logistics, hospitality, services around GYD",
+        "plan"
+      ],
+      [
+        "2026–36",
+        "Oil-field remediation around Balakhany — the decisive variable",
+        "plan"
+      ]
+    ],
+    "risk": "Remediation is slow and uneven; unremediated land stays discounted indefinitely. Monitor cleanup certificates, not listings.",
+    "act": "Elevated, titled parcels away from lake margins and known contamination; verify cadastral rayon (parcels here straddle boundaries).",
+    "dd": {
+      "en": [
+        "Ask the seller for the çıxarış (title deed) and check it at the state registry / ASAN — not just on paper shown to you.",
+        "Confirm which rayon (district) the parcel is officially in — services and rules differ.",
+        "Check the exact zoning: can you build / rebuild / rent it out legally?",
+        "Visit at different times of day — noise, smells, traffic, neighbours.",
+        "Get an insurance quote before you commit — if insurers hesitate, ask why.",
+        "Compare with at least 3 similar listings before agreeing a price.",
+        "Ask for the parcel’s environmental/remediation status in writing before pricing it."
+      ],
+      "tr": [
+        "Satıcıdan çıxarış (tapu) isteyin ve devlet sicilinde / ASAN’da doğrulayın — size gösterilen kâğıtla yetinmeyin.",
+        "Parselin resmî olarak hangi rayonda olduğunu teyit edin — hizmetler ve kurallar farklıdır.",
+        "İmar durumunu netleştirin: yasal olarak inşa / yeniden inşa / kiraya verme hakkınız var mı?",
+        "Günün farklı saatlerinde ziyaret edin — gürültü, koku, trafik, komşular.",
+        "Karar vermeden önce sigorta teklifi alın — sigortacı tereddüt ederse nedenini sorun.",
+        "Fiyatta anlaşmadan önce en az 3 benzer ilanla karşılaştırın.",
+        "Fiyat konuşmadan önce parselin çevresel/ıslah durumunu yazılı olarak isteyin."
+      ]
+    },
+    "med": [
+      400,
+      600
+    ],
+    "mint": 12000,
+    "kind": "land",
+    "reasons": [
+      {
+        "ll": [
+          50.01,
+          40.455
+        ],
+        "en": "airport jobs",
+        "tr": "havalimanı işleri"
+      },
+      {
+        "ll": [
+          49.852,
+          40.47
+        ],
+        "en": "road effect proven ✓",
+        "tr": "yol etkisi kanıtlı ✓"
+      }
+    ]
+  },
+  {
+    "id": "mohammadi",
+    "nameEn": "Mohammadi (Məhəmmədli)",
+    "nameTr": "Məhəmmədli",
+    "tier": "fr",
+    "rank": 7,
+    "coords": [
+      49.845,
+      40.495
+    ],
+    "radius": 12,
+    "en": {
+      "now": "~$20–25/m² peripheral land; houses 55–77k AZN",
+      "proj": "2–3× land scenario",
+      "yield": "n/a (land)",
+      "vol": "Very high",
+      "inv": [
+        [
+          "2024–25",
+          "Beyukshor–Pirshagi highway completed past the settlement — sharpest repricing in the district, spillover to Balakhany, Zabrat, Digah",
+          "done"
+        ],
+        [
+          "2026–31",
+          "Airport-city development in adjacent Sabunchu builds the eastern jobs anchor",
+          "plan"
+        ],
+        [
+          "2027–34",
+          "Position on the city–north-coast expansion axis matures it into inner commuter belt",
+          "plan"
+        ]
+      ],
+      "thesis": "The live natural experiment: one completed road already repriced it, and two more catalysts (airport city, north-coast axis) are still ahead at a $20–25/m² entry. Village-to-commuter-belt transitions are where the largest percentage gains live.",
+      "risk": "Rule one is documentation: much local land carries municipal-only papers. Beyukshor Lake pollution discounts the southern margins; broker froth inflates asking prices; the settlement straddles Absheron/Sabunchu rayon lines.",
+      "act": "Full-çıxarış land only, elevated northern side, within ~1km of the highway or Kurdakhani road, bought from the owner with registry verification. Patient 5–10 year hold."
+    },
+    "tr": {
+      "now": "çeper arsa ~20–25 $/m²; evler 55–77 bin AZN",
+      "proj": "arsada 2–3× senaryo",
+      "yield": "— (arsa)",
+      "vol": "Very high",
+      "inv": [
+        [
+          "2024–25",
+          "Böyükşor–Pirşağı yolu yerleşimin yanından tamamlandı — ilçedeki en sert yeniden fiyatlama; Balaxanı, Zabrat ve Digah’a taşma",
+          "done"
+        ],
+        [
+          "2026–31",
+          "Komşu Sabunçu’daki havalimanı kenti gelişimi doğu istihdam çıpasını kuruyor",
+          "plan"
+        ],
+        [
+          "2027–34",
+          "Şehir–kuzey kıyısı genişleme ekseni üzerindeki konumu, burayı iç banliyö kuşağına olgunlaştırıyor",
+          "plan"
+        ]
+      ],
+      "thesis": "Canlı kanıt: yeni yol yapıldı, fiyatlar hemen fırladı. Ve daha bitmedi — yanına havalimanı şehri geliyor, kuzey sahil yolunun da üstünde. Giriş hâlâ çok ucuz (arsa ~20–25 $/m²). Bir köy şehir kenarına dönüşürken en büyük kazançlar işte o arada yaşanır.",
+      "risk": "BİR NUMARALI KURAL: TAPU. Buradaki arazilerin çoğunda sadece belediye kâğıdı var — o kâğıt sizi korumaz. Göl (Böyükşor) tarafı kirli, uzak durun. Emlakçılar fiyat şişiriyor; pazarlıkta gerçek tapulu satışları ölçü alın. Köy iki rayonun sınırında — kaydın hangisinde olduğu önemli.",
+      "act": "Sadece tam tapulu (çıxarışlı) arsa. Köyün yüksek, kuzey tarafı. Yola 1 km’den yakın. Satıcıyla birlikte devlet sicilinde (ASAN) doğrulatın. 5–10 yıl bekleyebilecek parayla girin."
+    },
+    "entry": "~$20–25/m² peripheral land; houses 55–77k AZN",
+    "inv": [
+      [
+        "2024–25",
+        "Beyukshor–Pirshagi highway completed past the settlement — sharpest repricing in the district, spillover to Balakhany, Zabrat, Digah",
+        "done"
+      ],
+      [
+        "2026–31",
+        "Airport-city development in adjacent Sabunchu builds the eastern jobs anchor",
+        "plan"
+      ],
+      [
+        "2027–34",
+        "Position on the city–north-coast expansion axis matures it into inner commuter belt",
+        "plan"
+      ]
+    ],
+    "risk": "Rule one is documentation: much local land carries municipal-only papers. Beyukshor Lake pollution discounts the southern margins; broker froth inflates asking prices; the settlement straddles Absheron/Sabunchu rayon lines.",
+    "act": "Full-çıxarış land only, elevated northern side, within ~1km of the highway or Kurdakhani road, bought from the owner with registry verification. Patient 5–10 year hold.",
+    "dd": {
+      "en": [
+        "Ask the seller for the çıxarış (title deed) and check it at the state registry / ASAN — not just on paper shown to you.",
+        "Confirm which rayon (district) the parcel is officially in — services and rules differ.",
+        "Check the exact zoning: can you build / rebuild / rent it out legally?",
+        "Visit at different times of day — noise, smells, traffic, neighbours.",
+        "Get an insurance quote before you commit — if insurers hesitate, ask why.",
+        "Compare with at least 3 similar listings before agreeing a price.",
+        "Walk the plot: is it on the higher, northern side? Avoid low ground near Beyukshor Lake.",
+        "Check which rayon the parcel is registered in — Mohammadi straddles Absheron and Sabunchu."
+      ],
+      "tr": [
+        "Satıcıdan çıxarış (tapu) isteyin ve devlet sicilinde / ASAN’da doğrulayın — size gösterilen kâğıtla yetinmeyin.",
+        "Parselin resmî olarak hangi rayonda olduğunu teyit edin — hizmetler ve kurallar farklıdır.",
+        "İmar durumunu netleştirin: yasal olarak inşa / yeniden inşa / kiraya verme hakkınız var mı?",
+        "Günün farklı saatlerinde ziyaret edin — gürültü, koku, trafik, komşular.",
+        "Karar vermeden önce sigorta teklifi alın — sigortacı tereddüt ederse nedenini sorun.",
+        "Fiyatta anlaşmadan önce en az 3 benzer ilanla karşılaştırın.",
+        "Parseli yürüyün: yüksek, kuzey tarafta mı? Böyükşor Gölü yakınındaki alçak zeminden kaçının.",
+        "Parselin hangi rayonda kayıtlı olduğunu kontrol edin — Məhəmmədli, Abşeron ile Sabunçu arasında kalır."
+      ]
+    },
+    "med": [
+      15,
+      35
+    ],
+    "mint": 6000,
+    "kind": "land",
+    "reasons": [
+      {
+        "ll": [
+          49.852,
+          40.468
+        ],
+        "en": "new road ✓",
+        "tr": "yeni yol ✓"
+      },
+      {
+        "ll": [
+          49.96,
+          40.457
+        ],
+        "en": "airport city 2029",
+        "tr": "havalimanı şehri 2029"
+      },
+      {
+        "ll": [
+          49.795,
+          40.52
+        ],
+        "en": "beach axis",
+        "tr": "plaj ekseni"
+      }
+    ]
+  },
+  {
+    "id": "hovsan",
+    "nameEn": "Hovsan–Zikh–Turkan",
+    "nameTr": "Hövsan–Zığ–Türkan",
+    "tier": "fr",
+    "rank": 8,
+    "coords": [
+      50.055,
+      40.374
+    ],
+    "radius": 12,
+    "en": {
+      "now": "$500–800/m² — cheapest coast within 25km",
+      "proj": "+130% post-2030",
+      "yield": "7–9%",
+      "vol": "High",
+      "inv": [
+        [
+          "2026–30",
+          "Eastward shift of port/logistics functions brings employment",
+          "done"
+        ],
+        [
+          "2027–33",
+          "Sub-centre infrastructure: utilities and aeration-legacy cleanup",
+          "plan"
+        ],
+        [
+          "2030s",
+          "Circular-line station confirmation is the entry trigger",
+          "plan"
+        ]
+      ],
+      "thesis": "The sleeper: coastal land suppressed by fixable problems. When sub-centre infrastructure lands, the cheapest coast near the center reprices fast — potentially the early 2030s’ fastest riser.",
+      "risk": "Back-loaded by design: little happens before ~2030, and the thesis leans on infrastructure that can slip.",
+      "act": "Stage entries against milestones — buy when a station site or utility contract is confirmed, not before."
+    },
+    "tr": {
+      "now": "500–800 $/m² — 25 km içindeki en ucuz kıyı",
+      "proj": "2030 sonrası %+130",
+      "yield": "%7–9",
+      "vol": "High",
+      "inv": [
+        [
+          "2026–30",
+          "Liman/lojistik işlevlerinin doğuya kayması istihdam getiriyor",
+          "done"
+        ],
+        [
+          "2027–33",
+          "Alt merkez altyapısı: şebekeler ve arıtma mirasının temizliği",
+          "plan"
+        ],
+        [
+          "2030’lar",
+          "Çevre hattı istasyonunun teyidi giriş tetikleyicisidir",
+          "plan"
+        ]
+      ],
+      "thesis": "Uyuyan dev: merkeze 25 km içindeki EN UCUZ deniz kenarı. Neden ucuz? Altyapı eksik ve eski arıtma tesisi kötü ün bırakmış — ama ikisi de düzeltilebilir sorunlar. Devlet altyapıyı getirince fiyat hızla toparlar.",
+      "risk": "2030’a kadar burada pek bir şey olmayabilir. Sabırsız paranın yeri değil; planlar gecikirse bekleyiş uzar.",
+      "act": "Acele etmeyin: metro istasyonunun yeri ya da altyapı ihalesi resmen açıklandığında alın. Söylentiyle değil, imzayla girin."
+    },
+    "entry": "$500–800/m² — cheapest coast within 25km",
+    "inv": [
+      [
+        "2026–30",
+        "Eastward shift of port/logistics functions brings employment",
+        "done"
+      ],
+      [
+        "2027–33",
+        "Sub-centre infrastructure: utilities and aeration-legacy cleanup",
+        "plan"
+      ],
+      [
+        "2030s",
+        "Circular-line station confirmation is the entry trigger",
+        "plan"
+      ]
+    ],
+    "risk": "Back-loaded by design: little happens before ~2030, and the thesis leans on infrastructure that can slip.",
+    "act": "Stage entries against milestones — buy when a station site or utility contract is confirmed, not before.",
+    "dd": {
+      "en": [
+        "Ask the seller for the çıxarış (title deed) and check it at the state registry / ASAN — not just on paper shown to you.",
+        "Confirm which rayon (district) the parcel is officially in — services and rules differ.",
+        "Check the exact zoning: can you build / rebuild / rent it out legally?",
+        "Visit at different times of day — noise, smells, traffic, neighbours.",
+        "Get an insurance quote before you commit — if insurers hesitate, ask why.",
+        "Compare with at least 3 similar listings before agreeing a price."
+      ],
+      "tr": [
+        "Satıcıdan çıxarış (tapu) isteyin ve devlet sicilinde / ASAN’da doğrulayın — size gösterilen kâğıtla yetinmeyin.",
+        "Parselin resmî olarak hangi rayonda olduğunu teyit edin — hizmetler ve kurallar farklıdır.",
+        "İmar durumunu netleştirin: yasal olarak inşa / yeniden inşa / kiraya verme hakkınız var mı?",
+        "Günün farklı saatlerinde ziyaret edin — gürültü, koku, trafik, komşular.",
+        "Karar vermeden önce sigorta teklifi alın — sigortacı tereddüt ederse nedenini sorun.",
+        "Fiyatta anlaşmadan önce en az 3 benzer ilanla karşılaştırın."
+      ]
+    },
+    "med": [
+      500,
+      800
+    ],
+    "mint": 18000,
+    "kind": "apt",
+    "reasons": [
+      {
+        "ll": [
+          49.99,
+          40.36
+        ],
+        "en": "jobs moving east",
+        "tr": "işler doğuya kayıyor"
+      },
+      {
+        "ll": [
+          49.877,
+          40.383
+        ],
+        "en": "rising neighbour",
+        "tr": "yükselen komşu"
+      }
+    ]
+  },
+  {
+    "id": "zikh",
+    "nameEn": "Zikh (Zığ)",
+    "nameTr": "Zığ dəhləzi",
+    "tier": "fr",
+    "rank": 8,
+    "coords": [
+      49.978,
+      40.353
+    ],
+    "radius": 9,
+    "en": {
+      "now": "$500–700/m²",
+      "proj": "tracks Hovsan",
+      "yield": "7–9%",
+      "vol": "High",
+      "inv": [
+        [
+          "2026–30",
+          "Logistics migration from central Baku passes through the Zikh corridor",
+          "done"
+        ],
+        [
+          "2027–33",
+          "Sub-centre designation under the Master Plan",
+          "plan"
+        ]
+      ],
+      "thesis": "The near half of the east-coast bet — closest cheap coast to White City’s rising price pole.",
+      "risk": "Industrial adjacency persists longest here; micro-location matters more than in Hovsan.",
+      "act": "Parcels on the coastal side of the highway, away from active industrial lots."
+    },
+    "tr": {
+      "now": "500–700 $/m²",
+      "proj": "Hovsan’ı izler",
+      "yield": "%7–9",
+      "vol": "High",
+      "inv": [
+        [
+          "2026–30",
+          "Merkez Bakü’den lojistik göçü Zığ koridorundan geçiyor",
+          "done"
+        ],
+        [
+          "2027–33",
+          "Master Plan kapsamında alt merkez statüsü",
+          "plan"
+        ]
+      ],
+      "thesis": "Hovsan’ın küçük kardeşi — hızla pahalanan White City’ye en yakın ucuz kıyı burası.",
+      "risk": "Sanayi komşuluğu en uzun burada sürer; hangi sokakta olduğunuz her şeyi belirler.",
+      "act": "Otoyolun deniz tarafında, çalışan fabrika parsellerinden uzak arsa."
+    },
+    "entry": "$500–700/m²",
+    "inv": [
+      [
+        "2026–30",
+        "Logistics migration from central Baku passes through the Zikh corridor",
+        "done"
+      ],
+      [
+        "2027–33",
+        "Sub-centre designation under the Master Plan",
+        "plan"
+      ]
+    ],
+    "risk": "Industrial adjacency persists longest here; micro-location matters more than in Hovsan.",
+    "act": "Parcels on the coastal side of the highway, away from active industrial lots.",
+    "dd": {
+      "en": [
+        "Ask the seller for the çıxarış (title deed) and check it at the state registry / ASAN — not just on paper shown to you.",
+        "Confirm which rayon (district) the parcel is officially in — services and rules differ.",
+        "Check the exact zoning: can you build / rebuild / rent it out legally?",
+        "Visit at different times of day — noise, smells, traffic, neighbours.",
+        "Get an insurance quote before you commit — if insurers hesitate, ask why.",
+        "Compare with at least 3 similar listings before agreeing a price."
+      ],
+      "tr": [
+        "Satıcıdan çıxarış (tapu) isteyin ve devlet sicilinde / ASAN’da doğrulayın — size gösterilen kâğıtla yetinmeyin.",
+        "Parselin resmî olarak hangi rayonda olduğunu teyit edin — hizmetler ve kurallar farklıdır.",
+        "İmar durumunu netleştirin: yasal olarak inşa / yeniden inşa / kiraya verme hakkınız var mı?",
+        "Günün farklı saatlerinde ziyaret edin — gürültü, koku, trafik, komşular.",
+        "Karar vermeden önce sigorta teklifi alın — sigortacı tereddüt ederse nedenini sorun.",
+        "Fiyatta anlaşmadan önce en az 3 benzer ilanla karşılaştırın."
+      ]
+    },
+    "med": [
+      500,
+      700
+    ],
+    "mint": 16000,
+    "kind": "apt",
+    "reasons": [
+      {
+        "ll": [
+          49.877,
+          40.383
+        ],
+        "en": "White City next door",
+        "tr": "White City bitişik"
+      },
+      {
+        "ll": [
+          49.955,
+          40.358
+        ],
+        "en": "logistics corridor",
+        "tr": "lojistik koridoru"
+      }
+    ]
+  },
+  {
+    "id": "lokbatan",
+    "nameEn": "Lokbatan",
+    "nameTr": "Lökbatan",
+    "tier": "fr",
+    "rank": null,
+    "coords": [
+      49.73,
+      40.325
+    ],
+    "radius": 9,
+    "en": {
+      "now": "~$400/m²",
+      "proj": "+80% scenario",
+      "yield": "8–10%",
+      "vol": "Low-medium",
+      "inv": [
+        [
+          "2026–31",
+          "SW corridor road upgrades toward Alat",
+          "plan"
+        ],
+        [
+          "2026–36",
+          "Steady Baku spillover as the city grows southwest",
+          "done"
+        ]
+      ],
+      "thesis": "The frontier tier’s safest ticket: unspectacular, low-variance proximity spillover.",
+      "risk": "No headline catalyst of its own; returns depend on the city simply continuing to grow this way.",
+      "act": "Cheap yield plays for patient landlords; nothing exotic."
+    },
+    "tr": {
+      "now": "~400 $/m²",
+      "proj": "%+80 senaryo",
+      "yield": "%8–10",
+      "vol": "Low-medium",
+      "inv": [
+        [
+          "2026–31",
+          "Ələt yönünde GB koridoru yol iyileştirmeleri",
+          "plan"
+        ],
+        [
+          "2026–36",
+          "Şehir güneybatıya büyüdükçe istikrarlı Bakü taşması",
+          "done"
+        ]
+      ],
+      "thesis": "Heyecansız ama güvenli: şehir güneybatıya büyüdükçe burası kendiliğinden değerlenir. Sürprizi yok, hayal kırıklığı da.",
+      "risk": "Kendine ait büyük bir projesi yok; kazanç, şehrin bu yönde büyümeye devam etmesine bağlı.",
+      "act": "Sabırlı ev sahibi için ucuz kira dairesi. İşi basit tutun."
+    },
+    "entry": "~$400/m²",
+    "inv": [
+      [
+        "2026–31",
+        "SW corridor road upgrades toward Alat",
+        "plan"
+      ],
+      [
+        "2026–36",
+        "Steady Baku spillover as the city grows southwest",
+        "done"
+      ]
+    ],
+    "risk": "No headline catalyst of its own; returns depend on the city simply continuing to grow this way.",
+    "act": "Cheap yield plays for patient landlords; nothing exotic.",
+    "dd": {
+      "en": [
+        "Ask the seller for the çıxarış (title deed) and check it at the state registry / ASAN — not just on paper shown to you.",
+        "Confirm which rayon (district) the parcel is officially in — services and rules differ.",
+        "Check the exact zoning: can you build / rebuild / rent it out legally?",
+        "Visit at different times of day — noise, smells, traffic, neighbours.",
+        "Get an insurance quote before you commit — if insurers hesitate, ask why.",
+        "Compare with at least 3 similar listings before agreeing a price."
+      ],
+      "tr": [
+        "Satıcıdan çıxarış (tapu) isteyin ve devlet sicilinde / ASAN’da doğrulayın — size gösterilen kâğıtla yetinmeyin.",
+        "Parselin resmî olarak hangi rayonda olduğunu teyit edin — hizmetler ve kurallar farklıdır.",
+        "İmar durumunu netleştirin: yasal olarak inşa / yeniden inşa / kiraya verme hakkınız var mı?",
+        "Günün farklı saatlerinde ziyaret edin — gürültü, koku, trafik, komşular.",
+        "Karar vermeden önce sigorta teklifi alın — sigortacı tereddüt ederse nedenini sorun.",
+        "Fiyatta anlaşmadan önce en az 3 benzer ilanla karşılaştırın."
+      ]
+    },
+    "med": [
+      320,
+      480
+    ],
+    "mint": 14000,
+    "kind": "apt",
+    "reasons": [
+      {
+        "ll": [
+          49.795,
+          40.352
+        ],
+        "en": "city spillover",
+        "tr": "şehir taşması"
+      },
+      {
+        "ll": [
+          49.69,
+          40.285
+        ],
+        "en": "Alat road upgrades",
+        "tr": "Ələt yolu iyileşiyor"
+      }
+    ]
+  },
+  {
+    "id": "alat",
+    "nameEn": "Alat (port & free zone)",
+    "nameTr": "Ələt",
+    "tier": "fr",
+    "rank": null,
+    "coords": [
+      49.406,
+      39.945
+    ],
+    "radius": 11,
+    "en": {
+      "now": "~$300/m² and below",
+      "proj": "land-banking; housing lags",
+      "yield": "n/a",
+      "vol": "Very high",
+      "inv": [
+        [
+          "2026–31",
+          "Port of Baku at Alat capacity expansion; Middle Corridor volumes grow",
+          "fund"
+        ],
+        [
+          "2026–33",
+          "Alat Free Economic Zone tenant buildout — warehousing and processing first",
+          "done"
+        ],
+        [
+          "2032–36",
+          "Residential follows only once a resident workforce exists",
+          "plan"
+        ]
+      ],
+      "thesis": "A different asset class on a different clock: the trade-route land bank. Commercial/industrial land near the port appreciates years ahead of housing.",
+      "risk": "Binary on jobs materializing; most of the payoff may sit beyond 2036.",
+      "act": "Commercial/industrial-designation land near the port and FEZ gates. Do not buy apartments expecting housing-zone returns."
+    },
+    "tr": {
+      "now": "~300 $/m² ve altı",
+      "proj": "arsa bankacılığı; konut geride",
+      "yield": "—",
+      "vol": "Very high",
+      "inv": [
+        [
+          "2026–31",
+          "Ələt’teki Bakü Limanı kapasite genişlemesi; Orta Koridor hacimleri büyüyor",
+          "fund"
+        ],
+        [
+          "2026–33",
+          "Ələt Serbest Ekonomik Bölgesi kiracı yerleşimi — önce depolama ve işleme",
+          "done"
+        ],
+        [
+          "2032–36",
+          "Konut, ancak yerleşik bir işgücü oluştuğunda gelir",
+          "plan"
+        ]
+      ],
+      "thesis": "Bu bambaşka bir oyun: liman ve serbest bölge büyüyor ama insanlar henüz taşınmıyor. Önce depolar ve iş yerleri değerlenir; evler yıllar sonra gelir. Arsa alıp bekleme sabrı olana göre.",
+      "risk": "Her şey işlerin gerçekten buraya gelmesine bağlı. Kazancın çoğu 2036’dan SONRAYA bile kalabilir.",
+      "act": "Liman ve serbest bölge kapılarına yakın, ticari/sanayi imarlı arsa. Ev getirisi bekleyerek daire ALMAYIN."
+    },
+    "entry": "~$300/m² and below",
+    "inv": [
+      [
+        "2026–31",
+        "Port of Baku at Alat capacity expansion; Middle Corridor volumes grow",
+        "fund"
+      ],
+      [
+        "2026–33",
+        "Alat Free Economic Zone tenant buildout — warehousing and processing first",
+        "done"
+      ],
+      [
+        "2032–36",
+        "Residential follows only once a resident workforce exists",
+        "plan"
+      ]
+    ],
+    "risk": "Binary on jobs materializing; most of the payoff may sit beyond 2036.",
+    "act": "Commercial/industrial-designation land near the port and FEZ gates. Do not buy apartments expecting housing-zone returns.",
+    "dd": {
+      "en": [
+        "Ask the seller for the çıxarış (title deed) and check it at the state registry / ASAN — not just on paper shown to you.",
+        "Confirm which rayon (district) the parcel is officially in — services and rules differ.",
+        "Check the exact zoning: can you build / rebuild / rent it out legally?",
+        "Visit at different times of day — noise, smells, traffic, neighbours.",
+        "Get an insurance quote before you commit — if insurers hesitate, ask why.",
+        "Compare with at least 3 similar listings before agreeing a price."
+      ],
+      "tr": [
+        "Satıcıdan çıxarış (tapu) isteyin ve devlet sicilinde / ASAN’da doğrulayın — size gösterilen kâğıtla yetinmeyin.",
+        "Parselin resmî olarak hangi rayonda olduğunu teyit edin — hizmetler ve kurallar farklıdır.",
+        "İmar durumunu netleştirin: yasal olarak inşa / yeniden inşa / kiraya verme hakkınız var mı?",
+        "Günün farklı saatlerinde ziyaret edin — gürültü, koku, trafik, komşular.",
+        "Karar vermeden önce sigorta teklifi alın — sigortacı tereddüt ederse nedenini sorun.",
+        "Fiyatta anlaşmadan önce en az 3 benzer ilanla karşılaştırın."
+      ]
+    },
+    "med": [
+      150,
+      350
+    ],
+    "mint": 8000,
+    "kind": "land",
+    "reasons": [
+      {
+        "px": [
+          104,
+          505
+        ],
+        "en": "port & free zone",
+        "tr": "liman + serbest bölge"
+      },
+      {
+        "px": [
+          104,
+          527
+        ],
+        "en": "Middle Corridor trade",
+        "tr": "Orta Koridor ticareti"
+      }
+    ]
+  }
+]

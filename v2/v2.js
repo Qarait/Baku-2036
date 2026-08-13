@@ -63,10 +63,76 @@
     ['lokbatan', 'Lokbatan', 'Lökbatan', 'frontier', [49.730, 40.325], 9],
     ['alat', 'Alat / port & free zone', 'Alat / liman ve serbest bölge', 'frontier', [49.406, 39.945], 11]
   ].map(([id, nameEn, nameTr, tier, coords, radius]) => ({ id, nameEn, nameTr, tier, coords, radius }));
+  function hydrateZones(atlasZones) {
+    if (!Array.isArray(atlasZones) || atlasZones.length !== 16) return;
+    zones.length = 0;
+    atlasZones.forEach(zone => {
+      zones.push({
+        ...zone,
+        tier: zone.tier === 'est' ? 'established' : (zone.tier === 'fr' ? 'frontier' : zone.tier),
+        coords: Array.isArray(zone.coords) ? zone.coords : [0, 0],
+        radius: Number(zone.radius) || 10
+      });
+    });
+  }
+
+  function atlasCopy() {
+    return state.data?.content?.[state.lang] || { ui: copy[state.lang], labels: {} };
+  }
+
+  function zoneTierLabel(zone) {
+    const ui = atlasCopy().ui || {};
+    const key = zone.tier === 'hot' ? 'hot' : zone.tier === 'established' ? 'est' : 'fr';
+    return ui.tier?.[key] || (zone.tier === 'hot' ? 'High-conviction' : zone.tier === 'established' ? 'Established / income' : 'Frontier');
+  }
+
+  function statusLabel(status) {
+    const labels = atlasCopy().labels || {};
+    if (status === 'done') return labels.built || 'Built / underway';
+    if (status === 'fund') return labels.funded || 'Funded / committed';
+    if (status === 'plan') return labels.planned || 'Planned';
+    return labels.scenario || 'Scenario only';
+  }
+
+  function readLocalObject(key) {
+    try { return JSON.parse(localStorage.getItem(key) || '{}'); } catch (error) { return {}; }
+  }
+
+  function writeLocalObject(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch (error) {}
+  }
+
+  function loadLocalState() {
+    state.shortlist = readLocalObject('baku2036-v2-shortlist');
+    state.shortlistAmounts = readLocalObject('baku2036-v2-shortlist-amounts');
+  }
+
+  function toggleShortlist(zoneId) {
+    if (!zones.some(zone => zone.id === zoneId)) return;
+    if (state.shortlist[zoneId]) delete state.shortlist[zoneId];
+    else state.shortlist[zoneId] = true;
+    writeLocalObject('baku2036-v2-shortlist', state.shortlist);
+    renderZoneDrawer(zoneId);
+    renderAllContent();
+  }
+
+  function scenarioBaseGrowth(zone) {
+    const projection = zone?.en?.proj || '';
+    const match = String(projection).match(/(\d+)\s*%/);
+    return match ? Number(match[1]) : (String(projection).includes('2–3×') ? 150 : 120);
+  }
+
+  function scenarioGrowth(zone) {
+    const base = scenarioBaseGrowth(zone);
+    const oil = state.scenarios.oil === 'bad' ? .8 : state.scenarios.oil === 'good' ? 1.15 : 1;
+    const infra = state.scenarios.infra === 'late' ? .72 : 1;
+    return Math.round(base * oil * infra / 5) * 5;
+  }
+
 
   const state = {
     lang: 'en', year: 2026, admin: true, investments: true, metro: true, heat: false,
-    selected: null, data: null, map: null, ready: false
+    selected: null, data: null, map: null, ready: false, content: null, shortlist: {}, shortlistAmounts: {}, scenarios: { oil: 'norm', infra: 'on', cur: 'stable' }, openAccordion: null, timeTimer: null
   };
 
   const $ = id => document.getElementById(id);
@@ -253,7 +319,7 @@
     identifyLocation(fake, null);
     if (state.selected) state.selected.zone = { zone, distance: 0 };
     renderPanel();
-    if (announce) $('v2Panel').focus({ preventScroll: true });
+    if (announce) $('v2ZoneDrawer').focus({ preventScroll: true });
   }
 
   function updateSelectionGeometry() {
@@ -268,6 +334,48 @@
   }
 
   function formatDistance(value) { return value < 1 ? `${Math.round(value * 1000)} m` : `${value.toFixed(1)} km`; }
+
+  function renderZoneDrawer(zoneId) {
+    const host = $('zoneBrief');
+    const zone = zones.find(item => item.id === zoneId);
+    if (!host || !zone || !state.selected) {
+      if (host) { host.hidden = true; host.innerHTML = ''; }
+      return;
+    }
+    const language = state.lang;
+    const detail = zone[language] || zone.en;
+    const labels = atlasCopy().labels || {};
+    const checklist = zone.dd?.[language] || [];
+    const projects = Array.isArray(detail.inv) ? detail.inv : [];
+    const projectHtml = projects.map(project => '<div class="brief-project" data-status="' + escapeHtml(project[2] || 'plan') + '"><time>' + escapeHtml(project[0]) + '</time><span><strong>' + escapeHtml(statusLabel(project[2])) + '</strong><br>' + escapeHtml(project[1]) + '</span></div>').join('');
+    const checklistHtml = checklist.map((item, index) => {
+      const key = 'baku2036-v2-checklist-' + zone.id + '-' + index;
+      const checked = readLocalObject(key).done === true;
+      return '<label class="zone-check"><input type="checkbox" data-check-key="' + escapeHtml(key) + '"' + (checked ? ' checked' : '') + '><span>' + escapeHtml(item) + '</span></label>';
+    }).join('');
+    const starred = Boolean(state.shortlist[zone.id]);
+    host.innerHTML =
+      '<div class="brief-head"><h3>' + escapeHtml(state.lang === 'tr' ? zone.nameTr : zone.nameEn) + '</h3><span class="brief-tier">' + escapeHtml(zoneTierLabel(zone)) + '</span></div>' +
+      '<div class="brief-metrics"><div class="brief-metric"><small>' + escapeHtml(labels.entry || 'Entry today') + '</small><strong>' + escapeHtml(detail.now || '—') + '</strong></div>' +
+      '<div class="brief-metric"><small>' + escapeHtml(labels.scenario || '2036 scenario') + '</small><strong>' + escapeHtml(detail.proj || 'Illustrative') + '</strong></div>' +
+      '<div class="brief-metric"><small>' + escapeHtml(labels.yield || 'Rental yield') + '</small><strong>' + escapeHtml(detail.yield || '—') + '</strong></div></div>' +
+      '<div class="brief-section"><h4>' + escapeHtml(labels.whatHappening || 'What is happening?') + '</h4><div class="brief-projects">' + projectHtml + '</div></div>' +
+      '<div class="brief-section"><h4>' + escapeHtml(labels.whyMatters || 'Why this place matters') + '</h4><p>' + escapeHtml(detail.thesis || '') + '</p></div>' +
+      '<div class="brief-section"><h4>' + escapeHtml(labels.riskQuestion || 'What could go wrong?') + '</h4><p>' + escapeHtml(detail.risk || zone.risk || '') + '</p></div>' +
+      '<div class="brief-section"><h4>' + escapeHtml(labels.nextStep || 'A sensible next step') + '</h4><p>' + escapeHtml(detail.act || zone.act || '') + '</p></div>' +
+      '<div class="brief-section"><h4>' + escapeHtml(labels.checklist || 'Before you buy here') + '</h4><div class="brief-checklist">' + checklistHtml + '</div></div>' +
+      '<div class="drawer-actions"><button type="button" class="drawer-action' + (starred ? ' starred' : '') + '" data-zone-star="' + escapeHtml(zone.id) + '">' + escapeHtml(starred ? (labels.remove || 'Remove from shortlist') : (labels.add || 'Add to shortlist')) + '</button>' +
+      '<button type="button" class="drawer-action" data-open-tool="accordion-deal">' + escapeHtml(labels.check || 'Check a real listing') + '</button></div>';
+    host.hidden = false;
+    host.querySelector('[data-zone-star]')?.addEventListener('click', event => toggleShortlist(event.currentTarget.dataset.zoneStar));
+    host.querySelector('[data-open-tool]')?.addEventListener('click', event => {
+      setAccordion(event.currentTarget.dataset.openTool);
+      document.getElementById(event.currentTarget.dataset.openTool)?.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
+    });
+    host.querySelectorAll('[data-check-key]').forEach(input => input.addEventListener('change', event => {
+      writeLocalObject(event.currentTarget.dataset.checkKey, { done: event.currentTarget.checked });
+    }));
+  }
 
   function renderPanel() {
     const u = tr();
@@ -284,25 +392,26 @@
       $('panelIntro').textContent = u.emptyIntro;
       $('panelGrid').hidden = true;
       $('clearSelection').hidden = true;
+      renderZoneDrawer(null);
       return;
     }
     const selected = state.selected;
     const adminName = selected.admin ? (state.lang === 'tr' ? (selected.admin.nameAz || selected.admin.nameEn) : selected.admin.nameEn) : u.noRayon;
     const zoneName = selected.zone?.zone ? (state.lang === 'tr' ? selected.zone.zone.nameTr : selected.zone.zone.nameEn) : u.noZone;
     const station = selected.station?.station;
-    const stationName = station ? `${state.lang === 'tr' ? station.nameTr : station.nameEn} · ${formatDistance(selected.station.distance)}` : u.noMetro;
+    const stationName = station ? (state.lang === 'tr' ? station.nameTr : station.nameEn) + ' · ' + formatDistance(selected.station.distance) : u.noMetro;
     $('panelTitle').textContent = zoneName;
-    $('panelIntro').textContent = `${adminName} · ${state.lang === 'tr' ? 'harita yılı' : 'map year'} ${state.year}`;
+    $('panelIntro').textContent = adminName + ' · ' + (state.lang === 'tr' ? 'harita yılı' : 'map year') + ' ' + state.year;
     $('rayonMetric').textContent = adminName;
-    $('zoneMetric').textContent = selected.zone ? `${zoneName} · ${formatDistance(selected.zone.distance)}` : u.noZone;
+    $('zoneMetric').textContent = selected.zone ? zoneName + ' · ' + formatDistance(selected.zone.distance) : u.noZone;
     $('stationMetric').textContent = stationName;
     $('centreMetric').textContent = formatDistance(distanceKm(selected.coords, CENTRE));
     $('airportMetric').textContent = formatDistance(distanceKm(selected.coords, AIRPORT));
-    $('coordinateMetric').textContent = `${selected.coords[1].toFixed(4)}, ${selected.coords[0].toFixed(4)}`;
+    $('coordinateMetric').textContent = selected.coords[1].toFixed(4) + ', ' + selected.coords[0].toFixed(4);
     $('panelGrid').hidden = false;
     $('clearSelection').hidden = false;
+    renderZoneDrawer(selected.zone?.zone?.id);
   }
-
   function searchPlaces(query) {
     const needle = String(query || '').trim().toLocaleLowerCase();
     if (!needle) return [];
@@ -338,9 +447,200 @@
     $('searchResults').hidden = true;
     state.map.flyTo({ center: place.coords, zoom: Math.max(12, state.map.getZoom()), duration: reducedMotion ? 0 : 700, essential: true });
     identifyLocation({ lng: place.coords[0], lat: place.coords[1] }, null);
-    $('v2Panel').focus({ preventScroll: true });
+    $('v2ZoneDrawer').focus({ preventScroll: true });
   }
 
+  function accordionShell(id, section, body) {
+    return '<button type="button" class="accordion-summary" aria-expanded="false" aria-controls="' + id + '-body">' +
+      '<span><strong class="accordion-title">' + escapeHtml(section.title) + '</strong><span class="accordion-description">' + escapeHtml(section.description) + '</span></span>' +
+      '<span class="accordion-chevron" aria-hidden="true">⌄</span></button>' +
+      '<div id="' + id + '-body" class="accordion-body">' + body + '</div>';
+  }
+
+  function renderHowTo() {
+    const how = atlasCopy().howTo;
+    if (!$('v2HowTo') || !how) return;
+    $('v2HowTo').innerHTML = '<h2 id="howToTitle">' + escapeHtml(how.title) + '</h2><div><p>' + escapeHtml(how.intro) + '</p><div class="howto-steps">' +
+      (how.steps || []).map((step, index) => '<div class="howto-step"><b>' + (index + 1) + '</b><span>' + escapeHtml(step) + '</span></div>').join('') + '</div></div>';
+  }
+
+  function renderTimeMachine() {
+    const content = atlasCopy();
+    const ui = content.ui || {};
+    const story = ui.tmY?.[String(state.year)] || '';
+    return '<div class="tool-grid"><div class="tool-card"><h3>' + escapeHtml(ui.tmTitle || 'Time machine') + '</h3><p>' + escapeHtml(content.sections.time.whatThisMeans) + '</p><div class="year-track"><output id="timeYearOutput">' + state.year + '</output><input id="timeYear" type="range" min="2026" max="2036" step="1" value="' + state.year + '" aria-label="Timeline year"></div><div class="tool-actions"><button type="button" class="primary-action" id="timePlay">' + escapeHtml(content.labels.play || 'Play the decade') + '</button></div></div><div class="year-story" id="timeStory"><strong>' + state.year + '</strong>' + escapeHtml(story) + '</div></div>';
+  }
+
+  function renderScenarios() {
+    const content = atlasCopy();
+    const ui = content.ui || {};
+    const current = state.scenarios;
+    return '<div class="tool-grid"><div class="tool-card"><h3>' + escapeHtml(content.sections.scenarios.title) + '</h3><p>' + escapeHtml(content.sections.scenarios.whatThisMeans) + '</p>' +
+      '<label>' + escapeHtml(ui.scOil || 'Oil money') + '<select id="scenarioOil"><option value="norm"' + (current.oil === 'norm' ? ' selected' : '') + '>' + escapeHtml(ui.scNorm || 'Normal') + '</option><option value="bad"' + (current.oil === 'bad' ? ' selected' : '') + '>' + escapeHtml(ui.scBad || 'Bad years') + '</option><option value="good"' + (current.oil === 'good' ? ' selected' : '') + '>' + escapeHtml(ui.scGood || 'Boom years') + '</option></select></label>' +
+      '<label>' + escapeHtml(ui.scInfra || 'Metro & roads') + '<select id="scenarioInfra"><option value="on"' + (current.infra === 'on' ? ' selected' : '') + '>' + escapeHtml(ui.scOn || 'Built on time') + '</option><option value="late"' + (current.infra === 'late' ? ' selected' : '') + '>' + escapeHtml(ui.scLate || 'Years late') + '</option></select></label>' +
+      '<label>' + escapeHtml(ui.scCur || 'Manat') + '<select id="scenarioCurrency"><option value="stable"' + (current.cur === 'stable' ? ' selected' : '') + '>' + escapeHtml(ui.scStable || 'Stays stable') + '</option><option value="weak"' + (current.cur === 'weak' ? ' selected' : '') + '>' + escapeHtml(ui.scWeak || 'Loses value') + '</option></select></label></div>' +
+      '<div class="tool-card"><h3>' + escapeHtml(content.labels.sensitivity || 'Sensitivity, not a forecast') + '</h3><p id="scenarioOutput">' + escapeHtml(state.selected?.zone?.zone ? ((state.lang === 'tr' ? state.selected.zone.zone.nameTr : state.selected.zone.zone.nameEn) + ': ' + scenarioGrowth(state.selected.zone.zone) + '% illustrative growth sensitivity') : content.labels.noData) + '</p><div class="tool-note">' + escapeHtml(ui.scNoteWeak || content.labels.noAdvice) + '</div></div></div>';
+  }
+
+  function plannerBuyingText(zone, budget) {
+    if (budget < Number(zone.mint || 0)) return 'Below rough entry point (' + formatMoney(zone.mint) + ')';
+    const range = zone.med || [500, 1000];
+    const mid = (Number(range[0]) + Number(range[1])) / 2;
+    if (zone.kind === 'land') return 'Roughly ' + (budget / (mid * 100)).toFixed(1) + ' sot';
+    return 'About ' + Math.max(1, Math.round(budget / mid)) + ' m² at the rough midpoint';
+  }
+
+  function formatMoney(value) {
+    return '$' + Math.round(Number(value) || 0).toLocaleString(state.lang === 'tr' ? 'tr-TR' : 'en-US');
+  }
+
+  function plannerListHtml(budget) {
+    return zones.slice().sort((a, b) => Number(a.mint || 0) - Number(b.mint || 0)).map(zone => '<div class="zone-result"><strong>' + escapeHtml(state.lang === 'tr' ? zone.nameTr : zone.nameEn) + '</strong><small>' + escapeHtml(plannerBuyingText(zone, budget)) + '</small></div>').join('');
+  }
+
+  function renderPlanner() {
+    const content = atlasCopy();
+    const ui = content.ui || {};
+    const budget = Number(state.plannerBudget || 50000);
+    const profiles = content.profiles || {};
+    const profileLabels = { safe: ui.pr1T || 'Safer and easier to rent', patient: ui.pr2T || 'Patient land buyer', summer: ui.pr3T || 'Summer and investment', rent: ui.pr4T || 'Monthly rental income' };
+    return '<div class="tool-grid"><div class="tool-card"><h3>' + escapeHtml(ui.planT || content.sections.planner.title) + '</h3><p>' + escapeHtml(ui.planL || content.sections.planner.description) + '</p><label>' + escapeHtml(content.labels.budget || 'My budget (USD)') + '<output id="budgetOutput">' + formatMoney(budget) + '</output><input id="budgetRange" type="range" min="5000" max="200000" step="5000" value="' + budget + '" aria-label="' + escapeHtml(content.labels.budget || 'My budget') + '"></label><label>Buyer profile<select id="profileSelect"><option value="">No profile</option>' + Object.keys(profiles).map(key => '<option value="' + key + '"' + (state.profile === key ? ' selected' : '') + '>' + escapeHtml(profileLabels[key]) + '</option>').join('') + '</select></label><p class="tool-note">' + escapeHtml(ui.budNote || content.sections.planner.whatThisMeans) + '</p></div><div class="tool-card"><h3>What this budget reaches</h3><div id="plannerResults" class="zone-result-list">' + plannerListHtml(budget) + '</div></div></div>';
+  }
+
+  function renderDealChecker() {
+    const content = atlasCopy();
+    const ui = content.ui || {};
+    const selectedId = state.selected?.zone?.zone?.id || zones[0]?.id;
+    return '<div class="tool-grid"><div class="tool-card"><h3>' + escapeHtml(ui.dealT || content.sections.deal.title) + '</h3><p>' + escapeHtml(ui.dealSub || content.sections.deal.description) + '</p><label>' + escapeHtml(ui.dZone || 'Area') + '<select id="dealZone">' + zones.map(zone => '<option value="' + zone.id + '"' + (zone.id === selectedId ? ' selected' : '') + '>' + escapeHtml(state.lang === 'tr' ? zone.nameTr : zone.nameEn) + '</option>').join('') + '</select></label><label>' + escapeHtml(content.labels.price || ui.dPrice || 'Asking price (USD)') + '<input id="dealPrice" type="number" min="0" inputmode="decimal" placeholder="e.g. 85000"></label><label>' + escapeHtml(content.labels.size || ui.dArea || 'Size (m²)') + '<input id="dealArea" type="number" min="1" inputmode="decimal" placeholder="e.g. 70"></label><div class="tool-actions"><button type="button" class="primary-action" id="dealCheck">' + escapeHtml(content.labels.check || ui.dGo || 'Check it') + '</button></div><div id="dealResult" class="tool-result" aria-live="polite"></div></div><div class="tool-card"><h3>How to read it</h3><p>' + escapeHtml(content.sections.deal.whatThisMeans) + '</p><div class="tool-note">' + escapeHtml(ui.dCaveat || content.labels.noAdvice) + '</div></div></div>';
+  }
+
+  function checkDeal() {
+    const output = $('dealResult');
+    const zone = zones.find(item => item.id === $('dealZone')?.value);
+    const price = Number($('dealPrice')?.value);
+    const area = Number($('dealArea')?.value);
+    const ui = atlasCopy().ui || {};
+    if (!output || !zone || !price || !area || price <= 0 || area <= 0) {
+      if (output) output.innerHTML = '<p class="inline-warning">' + escapeHtml(ui.dNeed || 'Please fill in the price and the size.') + '</p>';
+      return;
+    }
+    const perM2 = price / area;
+    const range = zone.med || [500, 1000];
+    let verdict = ui.dFair || 'That is a fair price for this area.';
+    if (perM2 < range[0]) verdict = ui.dGood || 'That is below the usual range for this area.';
+    if (perM2 > range[1]) verdict = ui.dHigh || 'That looks expensive for this area.';
+    const growth = scenarioGrowth(zone);
+    output.innerHTML = '<div class="year-story"><strong>' + escapeHtml(formatMoney(perM2) + ' / m²') + '</strong>' + escapeHtml(verdict) + '<br><small>' + escapeHtml((ui.dGrow || 'If the area grows as expected, this could be worth about') + ' ' + formatMoney(price * (1 + growth / 100)) + ' ' + (ui.dBy || 'by 2036.') + ' ' + (ui.dCaveat || 'Rough guide only.')) + '</small></div>';
+  }
+
+  function renderShortlist() {
+    const article = $('accordion-shortlist');
+    if (!article) return;
+    const content = atlasCopy();
+    const ids = Object.keys(state.shortlist).filter(id => zones.some(zone => zone.id === id));
+    if (!ids.length) {
+      article.dataset.shortlistBody = '<div class="shortlist-empty">' + escapeHtml(content.labels.noData || 'Star a place on the map and it will appear here.') + '</div>';
+      return;
+    }
+    const total = ids.reduce((sum, id) => sum + (Number(state.shortlistAmounts[id]) || 0), 0);
+    const rows = ids.map(id => {
+      const zone = zones.find(item => item.id === id);
+      const detail = zone[state.lang] || zone.en;
+      return '<div class="shortlist-row"><strong>' + escapeHtml(state.lang === 'tr' ? zone.nameTr : zone.nameEn) + '</strong><span>' + escapeHtml(detail.now || '—') + '</span><span>' + escapeHtml(detail.yield || '—') + '</span><label><span class="sr-only">Amount</span><input type="number" min="0" placeholder="Amount" data-shortlist-amount="' + zone.id + '" value="' + (Number(state.shortlistAmounts[id]) || '') + '"></label></div>';
+    }).join('');
+    article.dataset.shortlistBody = '<div class="tool-card"><p>' + escapeHtml(content.labels.saved || 'Saved on this device') + ' · Total: ' + escapeHtml(formatMoney(total)) + '</p><div class="shortlist-table">' + rows + '</div><div class="tool-note">' + escapeHtml(content.labels.noAdvice || 'Not financial advice') + '</div></div>';
+  }
+
+  function renderSources() {
+    const content = atlasCopy();
+    return '<div class="source-list"><p><strong>Geography:</strong> ' + escapeHtml('Baku and Absheron rayon polygons, local PMTiles basemap, and the offline place gazetteer in v2/data/.') + '</p><p><strong>Projects:</strong> ' + escapeHtml('Built, funded, planned, and scenario-only labels are kept separate in the shared zone briefs. Planned lines and sensitivities must be verified before any purchase.') + '</p><p><strong>How to read the circles:</strong> ' + escapeHtml(content.sections.sources.whatThisMeans) + '</p><div class="disclaimer-box">' + escapeHtml(content.disclaimer) + '</div></div>';
+  }
+
+  function setAccordion(sectionId) {
+    const target = sectionId ? document.getElementById(sectionId) : null;
+    document.querySelectorAll('.v2-accordion').forEach(article => {
+      const open = Boolean(target && article === target && !article.classList.contains('open'));
+      article.classList.toggle('open', open);
+      const button = article.querySelector('.accordion-summary');
+      if (button) button.setAttribute('aria-expanded', String(open));
+    });
+    state.openAccordion = target && target.classList.contains('open') ? sectionId : null;
+  }
+
+  function updatePlannerResults() {
+    const budget = Number(state.plannerBudget || 50000);
+    if ($('budgetOutput')) $('budgetOutput').textContent = formatMoney(budget);
+    if ($('plannerResults')) $('plannerResults').innerHTML = plannerListHtml(budget);
+  }
+
+  function setBudget(value) {
+    const budget = Math.max(5000, Math.min(200000, Number(value) || 50000));
+    state.plannerBudget = budget;
+    updatePlannerResults();
+  }
+
+  function setScenario(key, value) {
+    if (!['oil', 'infra', 'cur'].includes(key)) return;
+    state.scenarios[key] = value;
+    renderAllContent();
+    renderPanel();
+  }
+
+  function toggleTimeMachine() {
+    const button = $('timePlay');
+    if (state.timeTimer) {
+      clearInterval(state.timeTimer);
+      state.timeTimer = null;
+      if (button) button.textContent = atlasCopy().labels.play || 'Play the decade';
+      return;
+    }
+    if (button) button.textContent = atlasCopy().labels.pause || 'Pause';
+    state.timeTimer = setInterval(() => {
+      const next = state.year >= 2036 ? 2026 : state.year + 1;
+      setYear(next);
+      if (next === 2026 && state.timeTimer) { clearInterval(state.timeTimer); state.timeTimer = null; }
+    }, reducedMotion ? 1100 : 760);
+  }
+
+  function wireContent() {
+    document.querySelectorAll('.accordion-summary').forEach(button => button.addEventListener('click', () => setAccordion(button.closest('.v2-accordion').id)));
+    $('timeYear')?.addEventListener('input', event => setYear(event.target.value));
+    $('timePlay')?.addEventListener('click', toggleTimeMachine);
+    $('scenarioOil')?.addEventListener('change', event => setScenario('oil', event.target.value));
+    $('scenarioInfra')?.addEventListener('change', event => setScenario('infra', event.target.value));
+    $('scenarioCurrency')?.addEventListener('change', event => setScenario('cur', event.target.value));
+    $('budgetRange')?.addEventListener('input', event => setBudget(event.target.value));
+    $('profileSelect')?.addEventListener('change', event => { state.profile = event.target.value || null; updatePlannerResults(); });
+    $('dealCheck')?.addEventListener('click', checkDeal);
+    document.querySelectorAll('[data-shortlist-amount]').forEach(input => input.addEventListener('change', event => {
+      state.shortlistAmounts[event.currentTarget.dataset.shortlistAmount] = Number(event.currentTarget.value) || 0;
+      writeLocalObject('baku2036-v2-shortlist-amounts', state.shortlistAmounts);
+      renderShortlist();
+      renderAllContent();
+    }));
+  }
+
+  function renderAllContent() {
+    renderHowTo();
+    const content = atlasCopy();
+    const sections = content.sections;
+    const articles = [
+      ['accordion-time', sections.time, renderTimeMachine()],
+      ['accordion-scenarios', sections.scenarios, renderScenarios()],
+      ['accordion-planner', sections.planner, renderPlanner()],
+      ['accordion-deal', sections.deal, renderDealChecker()],
+      ['accordion-shortlist', sections.shortlist, ''],
+      ['accordion-sources', sections.sources, renderSources()]
+    ];
+    renderShortlist();
+    articles[4][2] = $('accordion-shortlist')?.dataset.shortlistBody || '<div class="shortlist-empty">' + escapeHtml(content.labels.noData || 'Star a place on the map and it will appear here.') + '</div>';
+    articles.forEach(item => {
+      const article = $(item[0]);
+      if (article) article.innerHTML = accordionShell(item[0], item[1], item[2]);
+    });
+    wireContent();
+    if (state.openAccordion) setAccordion(state.openAccordion);
+  }
   function updateHash() {
     const params = new URLSearchParams();
     if (state.selected?.zone?.zone?.id) params.set('z', state.selected.zone.zone.id);
@@ -352,7 +652,7 @@
     const raw = location.hash.replace(/^#/, '');
     const params = new URLSearchParams(raw);
     if (params.get('lang') === 'tr' || params.get('lang') === 'en') state.lang = params.get('lang');
-    const year = Number(params.get('y')); if ([2026, 2030, 2036].includes(year)) state.year = year;
+    const year = Number(params.get('y')); if (Number.isInteger(year) && year >= 2026 && year <= 2036) state.year = year;
     if (params.get('heat') === '1' || params.get('heat') === '0') state.heat = params.get('heat') === '1';
     if (params.get('metro') === '1' || params.get('metro') === '0') state.metro = params.get('metro') === '1';
     const zoneId = params.get('z'); if (zoneId && zones.some(z => z.id === zoneId)) state.hashZone = zoneId;
@@ -368,12 +668,17 @@
     $('clearSelection').textContent = u.clear; $('langEn').classList.toggle('active', lang === 'en'); $('langTr').classList.toggle('active', lang === 'tr');
     document.querySelector('[data-layer="admin"]').textContent = u.rayons; document.querySelector('[data-layer="investments"]').textContent = u.areas; document.querySelector('[data-layer="metro"]').textContent = u.metro; document.querySelector('[data-layer="heat"]').textContent = u.heat;
     if (state.ready) { updateLayers(); renderPanel(); }
+    if (state.data) renderAllContent();
     updateHash();
   }
 
   function setYear(year) {
-    const value = Number(year); if (![2026, 2030, 2036].includes(value)) return;
-    state.year = value; $('yearSelect').value = String(value); updateLayers(); renderPanel(); updateHash();
+    const value = Number(year); if (!Number.isInteger(value) || value < 2026 || value > 2036) return;
+    state.year = value; $('yearSelect').value = String(value); updateLayers(); renderPanel();
+    if ($('timeYear')) $('timeYear').value = String(value);
+    if ($('timeYearOutput')) $('timeYearOutput').textContent = String(value);
+    if ($('timeStory')) $('timeStory').innerHTML = '<strong>' + value + '</strong>' + escapeHtml(atlasCopy().ui?.tmY?.[String(value)] || '');
+    updateHash();
   }
 
   function toggleLayer(layer) {
@@ -416,14 +721,18 @@
   }
 
   async function loadData() {
-    const [admin, metro, places] = await Promise.all(['data/admin-absheron.geojson', 'data/metro.json', 'data/places.json'].map(path => fetch(path).then(response => { if (!response.ok) throw new Error(path); return response.json(); })));
-    state.data = { admin, metro, places }; return state.data;
+    const [admin, metro, places, zonesData, content] = await Promise.all(['data/admin-absheron.geojson', 'data/metro.json', 'data/places.json', 'data/zones.json', 'data/content.json'].map(path => fetch(path).then(response => { if (!response.ok) throw new Error(path); return response.json(); })));
+    state.data = { admin, metro, places, zones: zonesData, content };
+    hydrateZones(zonesData);
+    return state.data;
   }
 
   async function boot() {
     readHash(); installControls(); setLanguage(state.lang); $('mapStatus').textContent = tr().loading;
     try {
       const data = await loadData();
+      loadLocalState();
+      renderAllContent();
       const maplibregl = window.__V2MapLibre;
       if (maplibregl) installMap(maplibregl, data); else window.addEventListener('v2-maplibre-ready', () => installMap(window.__V2MapLibre, data), { once: true });
     } catch (error) { console.error(error); $('mapStatus').textContent = tr().error; $('mapStatus').classList.add('error'); }

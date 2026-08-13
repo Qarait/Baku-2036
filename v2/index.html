@@ -34,7 +34,15 @@
           <label for="yearSelect" id="yearLabel">Map year</label>
           <select id="yearSelect" aria-labelledby="yearLabel">
             <option value="2026">2026</option>
+            <option value="2027">2027</option>
+            <option value="2028">2028</option>
+            <option value="2029">2029</option>
             <option value="2030">2030</option>
+            <option value="2031">2031</option>
+            <option value="2032">2032</option>
+            <option value="2033">2033</option>
+            <option value="2034">2034</option>
+            <option value="2035">2035</option>
             <option value="2036">2036</option>
           </select>
         </div>
@@ -46,7 +54,7 @@
     </header>
 
     <main class="map-shell">
-      <a class="skip-map" href="#v2Panel" id="skipMap">Skip map</a>
+      <a class="skip-map" href="#v2ZoneDrawer" id="skipMap">Skip map</a>
       <div id="v2Map" aria-label="Interactive Baku and Absheron map"></div>
 
       <div class="map-toolbar" aria-label="Map controls">
@@ -66,7 +74,7 @@
         <span><i class="legend-swatch metro-swatch"></i><span id="metroLegend">Metro: solid built / dashed planned</span></span>
       </div>
 
-      <aside id="v2Panel" class="info-panel" aria-labelledby="panelTitle" tabindex="-1">
+      <aside id="v2ZoneDrawer" class="info-panel" aria-labelledby="panelTitle" tabindex="-1">
         <div class="panel-kicker" id="panelKicker">MAP IDENTIFICATION</div>
         <h2 id="panelTitle">Click anywhere on the map</h2>
         <p id="panelIntro">The map will tell you which administrative rayon you are in, the nearest investment area, and the distance to metro, central Baku and the airport.</p>
@@ -79,12 +87,23 @@
           <div class="metric"><span id="coordinateMetricLabel">Coordinates</span><strong id="coordinateMetric">—</strong></div>
         </div>
         <p class="panel-note" id="panelNote">Rayons are administrative geography. Investment areas are analytical approximations, not property boundaries.</p>
+        <div id="zoneBrief" class="zone-brief" hidden></div>
         <button type="button" id="clearSelection" class="text-button" hidden>Clear selection</button>
       </aside>
 
       <div class="map-status" id="mapStatus" role="status" aria-live="polite">Loading map data…</div>
       <div class="attribution-note" id="attributionNote">Basemap © its data publishers · administrative polygons: official Azerbaijan open data · places and built metro: OpenStreetMap</div>
     </main>
+
+    <section id="v2HowTo" class="v2-howto" aria-labelledby="howToTitle"></section>
+    <section id="v2Content" class="v2-content" aria-label="Baku 2036 tools">
+      <article id="accordion-time" class="v2-accordion"></article>
+      <article id="accordion-scenarios" class="v2-accordion"></article>
+      <article id="accordion-planner" class="v2-accordion"></article>
+      <article id="accordion-deal" class="v2-accordion"></article>
+      <article id="accordion-shortlist" class="v2-accordion"></article>
+      <article id="accordion-sources" class="v2-accordion"></article>
+    </section>
   </div>
   <script src="v2.js"></script>
 </body>
