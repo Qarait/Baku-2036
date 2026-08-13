@@ -1,4 +1,4 @@
-(function () {
+﻿(function () {
   'use strict';
 
   const BBOX = [[49.25, 39.88], [50.38, 40.72]];
@@ -47,20 +47,20 @@
   const zones = [
     ['whitecity', 'White City / Khatai', 'White City / Hatai', 'hot', [49.877, 40.383], 15],
     ['yasamal', 'Yasamal (New Yasamal)', 'Yasamal (Yeni Yasamal)', 'hot', [49.815, 40.389], 13],
-    ['narimanov', 'Narimanov', 'Nərimanov', 'hot', [49.870, 40.404], 13],
-    ['sabail', 'Sabail / centre', 'Səbail / merkez', 'established', [49.835, 40.360], 11],
-    ['khojasan', 'Khojasan / Purple Line', 'Xocəsən / Mor Hat', 'frontier', [49.762, 40.416], 11],
-    ['khirdalan', 'Khyrdalan–Masazir–Saray', 'Xırdalan–Masazır–Saray', 'frontier', [49.755, 40.455], 11],
-    ['sumgayit', 'Sumgayit seafront', 'Sumqayıt sahili', 'frontier', [49.668, 40.589], 14],
-    ['novkhani', 'Novkhani', 'Novxanı', 'frontier', [49.785, 40.520], 9],
-    ['bilgah', 'Bilgah / Sea Breeze', 'Bilgəh / Sea Breeze', 'hot', [50.033, 40.560], 16],
-    ['mardakan', 'Mardakan–Shuvalan–Buzovna', 'Mərdəkan–Şüvəlan–Buzovna', 'hot', [50.130, 40.505], 16],
-    ['airport', 'Airport zone', 'Havalimanı bölgesi', 'frontier', [49.940, 40.470], 12],
-    ['mohammadi', 'Mohammadi', 'Məhəmmədli', 'frontier', [49.845, 40.495], 12],
-    ['hovsan', 'Hovsan–Zikh–Turkan', 'Hövsan–Zığ–Türkan', 'frontier', [50.055, 40.374], 12],
-    ['zikh', 'Zikh', 'Zığ', 'frontier', [49.978, 40.353], 9],
-    ['lokbatan', 'Lokbatan', 'Lökbatan', 'frontier', [49.730, 40.325], 9],
-    ['alat', 'Alat / port & free zone', 'Alat / liman ve serbest bölge', 'frontier', [49.406, 39.945], 11]
+    ['narimanov', 'Narimanov', 'NÉ™rimanov', 'hot', [49.870, 40.404], 13],
+    ['sabail', 'Sabail / centre', 'SÉ™bail / merkez', 'established', [49.835, 40.360], 11],
+    ['khojasan', 'Khojasan / Purple Line', 'XocÉ™sÉ™n / Mor Hat', 'frontier', [49.762, 40.416], 11],
+    ['khirdalan', 'Khyrdalanâ€“Masazirâ€“Saray', 'XÄ±rdalanâ€“MasazÄ±râ€“Saray', 'frontier', [49.755, 40.455], 11],
+    ['sumgayit', 'Sumgayit seafront', 'SumqayÄ±t sahili', 'frontier', [49.668, 40.589], 14],
+    ['novkhani', 'Novkhani', 'NovxanÄ±', 'frontier', [49.785, 40.520], 9],
+    ['bilgah', 'Bilgah / Sea Breeze', 'BilgÉ™h / Sea Breeze', 'hot', [50.033, 40.560], 16],
+    ['mardakan', 'Mardakanâ€“Shuvalanâ€“Buzovna', 'MÉ™rdÉ™kanâ€“ÅžÃ¼vÉ™lanâ€“Buzovna', 'hot', [50.130, 40.505], 16],
+    ['airport', 'Airport zone', 'HavalimanÄ± bÃ¶lgesi', 'frontier', [49.940, 40.470], 12],
+    ['mohammadi', 'Mohammadi', 'MÉ™hÉ™mmÉ™dli', 'frontier', [49.845, 40.495], 12],
+    ['hovsan', 'Hovsanâ€“Zikhâ€“Turkan', 'HÃ¶vsanâ€“ZÄ±ÄŸâ€“TÃ¼rkan', 'frontier', [50.055, 40.374], 12],
+    ['zikh', 'Zikh', 'ZÄ±ÄŸ', 'frontier', [49.978, 40.353], 9],
+    ['lokbatan', 'Lokbatan', 'LÃ¶kbatan', 'frontier', [49.730, 40.325], 9],
+    ['alat', 'Alat / port & free zone', 'Alat / liman ve serbest bÃ¶lge', 'frontier', [49.406, 39.945], 11]
   ].map(([id, nameEn, nameTr, tier, coords, radius]) => ({ id, nameEn, nameTr, tier, coords, radius }));
   function hydrateZones(atlasZones) {
     if (!Array.isArray(atlasZones) || atlasZones.length !== 16) return;
@@ -376,9 +376,9 @@
     const starred = Boolean(state.shortlist[zone.id]);
     host.innerHTML =
       '<div class="brief-head"><h3>' + escapeHtml(state.lang === 'tr' ? zone.nameTr : zone.nameEn) + '</h3><span class="brief-tier">' + escapeHtml(zoneTierLabel(zone)) + '</span></div>' +
-      '<div class="brief-metrics"><div class="brief-metric"><small>' + escapeHtml(labels.entry || 'Entry today') + '</small><strong>' + escapeHtml(detail.now || '—') + '</strong></div>' +
+      '<div class="brief-metrics"><div class="brief-metric"><small>' + escapeHtml(labels.entry || 'Entry today') + '</small><strong>' + escapeHtml(detail.now || 'â€”') + '</strong></div>' +
       '<div class="brief-metric"><small>' + escapeHtml(labels.scenario || '2036 scenario') + '</small><strong>' + escapeHtml(detail.proj || 'Illustrative') + '</strong></div>' +
-      '<div class="brief-metric"><small>' + escapeHtml(labels.yield || 'Rental yield') + '</small><strong>' + escapeHtml(detail.yield || '—') + '</strong></div></div>' +
+      '<div class="brief-metric"><small>' + escapeHtml(labels.yield || 'Rental yield') + '</small><strong>' + escapeHtml(detail.yield || 'â€”') + '</strong></div></div>' +
       '<div class="brief-section"><h4>' + escapeHtml(labels.whatHappening || 'What is happening?') + '</h4><div class="brief-projects">' + projectHtml + '</div></div>' +
       renderEvidence(zone) +
       '<div class="brief-section"><h4>' + escapeHtml(labels.whyMatters || 'Why this place matters') + '</h4><p>' + escapeHtml(detail.thesis || '') + '</p></div>' +
@@ -420,11 +420,11 @@
     const adminName = selected.admin ? (state.lang === 'tr' ? (selected.admin.nameAz || selected.admin.nameEn) : selected.admin.nameEn) : u.noRayon;
     const zoneName = selected.zone?.zone ? (state.lang === 'tr' ? selected.zone.zone.nameTr : selected.zone.zone.nameEn) : u.noZone;
     const station = selected.station?.station;
-    const stationName = station ? (state.lang === 'tr' ? station.nameTr : station.nameEn) + ' · ' + formatDistance(selected.station.distance) : u.noMetro;
+    const stationName = station ? (state.lang === 'tr' ? station.nameTr : station.nameEn) + ' Â· ' + formatDistance(selected.station.distance) : u.noMetro;
     $('panelTitle').textContent = zoneName;
-    $('panelIntro').textContent = adminName + ' · ' + (state.lang === 'tr' ? 'harita yılı' : 'map year') + ' ' + state.year;
+    $('panelIntro').textContent = adminName + ' Â· ' + (state.lang === 'tr' ? 'harita yÄ±lÄ±' : 'map year') + ' ' + state.year;
     $('rayonMetric').textContent = adminName;
-    $('zoneMetric').textContent = selected.zone ? zoneName + ' · ' + formatDistance(selected.zone.distance) : u.noZone;
+    $('zoneMetric').textContent = selected.zone ? zoneName + ' Â· ' + formatDistance(selected.zone.distance) : u.noZone;
     $('stationMetric').textContent = stationName;
     $('centreMetric').textContent = formatDistance(distanceKm(selected.coords, CENTRE));
     $('airportMetric').textContent = formatDistance(distanceKm(selected.coords, AIRPORT));
@@ -474,7 +474,7 @@
   function accordionShell(id, section, body) {
     return '<button type="button" class="accordion-summary" aria-expanded="false" aria-controls="' + id + '-body">' +
       '<span><strong class="accordion-title">' + escapeHtml(section.title) + '</strong><span class="accordion-description">' + escapeHtml(section.description) + '</span></span>' +
-      '<span class="accordion-chevron" aria-hidden="true">⌄</span></button>' +
+      '<span class="accordion-chevron" aria-hidden="true">âŒ„</span></button>' +
       '<div id="' + id + '-body" class="accordion-body">' + body + '</div>';
   }
 
@@ -508,7 +508,7 @@
     const range = zone.med || [500, 1000];
     const mid = (Number(range[0]) + Number(range[1])) / 2;
     if (zone.kind === 'land') return 'Roughly ' + (budget / (mid * 100)).toFixed(1) + ' sot';
-    return 'About ' + Math.max(1, Math.round(budget / mid)) + ' m² at the rough midpoint';
+    return 'About ' + Math.max(1, Math.round(budget / mid)) + ' mÂ² at the rough midpoint';
   }
 
   function formatMoney(value) {
@@ -532,7 +532,7 @@
     const content = atlasCopy();
     const ui = content.ui || {};
     const selectedId = state.selected?.zone?.zone?.id || zones[0]?.id;
-    return '<div class="tool-grid"><div class="tool-card"><h3>' + escapeHtml(ui.dealT || content.sections.deal.title) + '</h3><p>' + escapeHtml(ui.dealSub || content.sections.deal.description) + '</p><label>' + escapeHtml(ui.dZone || 'Area') + '<select id="dealZone">' + zones.map(zone => '<option value="' + zone.id + '"' + (zone.id === selectedId ? ' selected' : '') + '>' + escapeHtml(state.lang === 'tr' ? zone.nameTr : zone.nameEn) + '</option>').join('') + '</select></label><label>' + escapeHtml(content.labels.price || ui.dPrice || 'Asking price (USD)') + '<input id="dealPrice" type="number" min="0" inputmode="decimal" placeholder="e.g. 85000"></label><label>' + escapeHtml(content.labels.size || ui.dArea || 'Size (m²)') + '<input id="dealArea" type="number" min="1" inputmode="decimal" placeholder="e.g. 70"></label><div class="tool-actions"><button type="button" class="primary-action" id="dealCheck">' + escapeHtml(content.labels.check || ui.dGo || 'Check it') + '</button></div><div id="dealResult" class="tool-result" aria-live="polite"></div></div><div class="tool-card"><h3>How to read it</h3><p>' + escapeHtml(content.sections.deal.whatThisMeans) + '</p><div class="tool-note">' + escapeHtml(ui.dCaveat || content.labels.noAdvice) + '</div></div></div>';
+    return '<div class="tool-grid"><div class="tool-card"><h3>' + escapeHtml(ui.dealT || content.sections.deal.title) + '</h3><p>' + escapeHtml(ui.dealSub || content.sections.deal.description) + '</p><label>' + escapeHtml(ui.dZone || 'Area') + '<select id="dealZone">' + zones.map(zone => '<option value="' + zone.id + '"' + (zone.id === selectedId ? ' selected' : '') + '>' + escapeHtml(state.lang === 'tr' ? zone.nameTr : zone.nameEn) + '</option>').join('') + '</select></label><label>' + escapeHtml(content.labels.price || ui.dPrice || 'Asking price (USD)') + '<input id="dealPrice" type="number" min="0" inputmode="decimal" placeholder="e.g. 85000"></label><label>' + escapeHtml(content.labels.size || ui.dArea || 'Size (mÂ²)') + '<input id="dealArea" type="number" min="1" inputmode="decimal" placeholder="e.g. 70"></label><div class="tool-actions"><button type="button" class="primary-action" id="dealCheck">' + escapeHtml(content.labels.check || ui.dGo || 'Check it') + '</button></div><div id="dealResult" class="tool-result" aria-live="polite"></div></div><div class="tool-card"><h3>How to read it</h3><p>' + escapeHtml(content.sections.deal.whatThisMeans) + '</p><div class="tool-note">' + escapeHtml(ui.dCaveat || content.labels.noAdvice) + '</div></div></div>';
   }
 
   function checkDeal() {
@@ -551,7 +551,7 @@
     if (perM2 < range[0]) verdict = ui.dGood || 'That is below the usual range for this area.';
     if (perM2 > range[1]) verdict = ui.dHigh || 'That looks expensive for this area.';
     const growth = scenarioGrowth(zone);
-    output.innerHTML = '<div class="year-story"><strong>' + escapeHtml(formatMoney(perM2) + ' / m²') + '</strong>' + escapeHtml(verdict) + '<br><small>' + escapeHtml((ui.dGrow || 'If the area grows as expected, this could be worth about') + ' ' + formatMoney(price * (1 + growth / 100)) + ' ' + (ui.dBy || 'by 2036.') + ' ' + (ui.dCaveat || 'Rough guide only.')) + '</small></div>';
+    output.innerHTML = '<div class="year-story"><strong>' + escapeHtml(formatMoney(perM2) + ' / mÂ²') + '</strong>' + escapeHtml(verdict) + '<br><small>' + escapeHtml((ui.dGrow || 'If the area grows as expected, this could be worth about') + ' ' + formatMoney(price * (1 + growth / 100)) + ' ' + (ui.dBy || 'by 2036.') + ' ' + (ui.dCaveat || 'Rough guide only.')) + '</small></div>';
   }
 
   function renderShortlist() {
@@ -567,9 +567,9 @@
     const rows = ids.map(id => {
       const zone = zones.find(item => item.id === id);
       const detail = zone[state.lang] || zone.en;
-      return '<div class="shortlist-row"><strong>' + escapeHtml(state.lang === 'tr' ? zone.nameTr : zone.nameEn) + '</strong><span>' + escapeHtml(detail.now || '—') + '</span><span>' + escapeHtml(detail.yield || '—') + '</span><label><span class="sr-only">Amount</span><input type="number" min="0" placeholder="Amount" data-shortlist-amount="' + zone.id + '" value="' + (Number(state.shortlistAmounts[id]) || '') + '"></label></div>';
+      return '<div class="shortlist-row"><strong>' + escapeHtml(state.lang === 'tr' ? zone.nameTr : zone.nameEn) + '</strong><span>' + escapeHtml(detail.now || 'â€”') + '</span><span>' + escapeHtml(detail.yield || 'â€”') + '</span><label><span class="sr-only">Amount</span><input type="number" min="0" placeholder="Amount" data-shortlist-amount="' + zone.id + '" value="' + (Number(state.shortlistAmounts[id]) || '') + '"></label></div>';
     }).join('');
-    article.dataset.shortlistBody = '<div class="tool-card"><p>' + escapeHtml(content.labels.saved || 'Saved on this device') + ' · Total: ' + escapeHtml(formatMoney(total)) + '</p><div class="shortlist-table">' + rows + '</div><div class="tool-note">' + escapeHtml(content.labels.noAdvice || 'Not financial advice') + '</div></div>';
+    article.dataset.shortlistBody = '<div class="tool-card"><p>' + escapeHtml(content.labels.saved || 'Saved on this device') + ' Â· Total: ' + escapeHtml(formatMoney(total)) + '</p><div class="shortlist-table">' + rows + '</div><div class="tool-note">' + escapeHtml(content.labels.noAdvice || 'Not financial advice') + '</div></div>';
   }
 
   function evidenceLegend() {
@@ -758,7 +758,7 @@
   }
 
   async function loadData() {
-    const [admin, metro, places, zonesData, content] = await Promise.all(['data/admin-absheron.geojson', 'data/metro.json', 'data/places.json', 'data/zones.json', 'data/content.json'].map(path => fetch(path).then(response => { if (!response.ok) throw new Error(path); return response.json(); })));
+    const [admin, metro, places, zonesData, content] = await Promise.all(['data/admin-absheron.geojson', 'data/metro.json', 'data/places.json', 'data/zones.json?rev=f83205e', 'data/content.json?rev=f83205e'].map(path => fetch(path).then(response => { if (!response.ok) throw new Error(path); return response.json(); })));
     state.data = { admin, metro, places, zones: zonesData, content };
     hydrateZones(zonesData);
     return state.data;
