@@ -555,10 +555,10 @@
     return '<div class="source-list"><p><strong>Geography:</strong> ' + escapeHtml('Baku and Absheron rayon polygons, local PMTiles basemap, and the offline place gazetteer in v2/data/.') + '</p><p><strong>Projects:</strong> ' + escapeHtml('Built, funded, planned, and scenario-only labels are kept separate in the shared zone briefs. Planned lines and sensitivities must be verified before any purchase.') + '</p><p><strong>How to read the circles:</strong> ' + escapeHtml(content.sections.sources.whatThisMeans) + '</p><div class="disclaimer-box">' + escapeHtml(content.disclaimer) + '</div></div>';
   }
 
-  function setAccordion(sectionId) {
+  function setAccordion(sectionId, forceOpen = false) {
     const target = sectionId ? document.getElementById(sectionId) : null;
     document.querySelectorAll('.v2-accordion').forEach(article => {
-      const open = Boolean(target && article === target && !article.classList.contains('open'));
+      const open = Boolean(target && article === target && (forceOpen || !article.classList.contains('open')));
       article.classList.toggle('open', open);
       const button = article.querySelector('.accordion-summary');
       if (button) button.setAttribute('aria-expanded', String(open));
@@ -639,7 +639,7 @@
       if (article) article.innerHTML = accordionShell(item[0], item[1], item[2]);
     });
     wireContent();
-    if (preserveAccordion) setAccordion(preserveAccordion);
+    if (preserveAccordion) setAccordion(preserveAccordion, true);
   }
   function updateHash() {
     const params = new URLSearchParams();
