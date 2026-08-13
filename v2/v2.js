@@ -620,6 +620,7 @@
   }
 
   function renderAllContent() {
+    const preserveAccordion = state.openAccordion || document.querySelector('.v2-accordion.open')?.id || null;
     renderHowTo();
     const content = atlasCopy();
     const sections = content.sections;
@@ -638,7 +639,7 @@
       if (article) article.innerHTML = accordionShell(item[0], item[1], item[2]);
     });
     wireContent();
-    if (state.openAccordion) setAccordion(state.openAccordion);
+    if (preserveAccordion) setAccordion(preserveAccordion);
   }
   function updateHash() {
     const params = new URLSearchParams();
