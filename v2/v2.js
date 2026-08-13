@@ -716,7 +716,7 @@
   }
   function updateHash() {
     const params = new URLSearchParams();
-    if (state.selected?.zone?.zone?.id) params.set('z', state.selected.zone.zone.id);
+    if (state.selected?.zone?.zone?.id) params.set('z', state.selected.zone.zone.id); else if (state.hashZone) params.set('z', state.hashZone);
     params.set('y', String(state.year)); params.set('lang', state.lang); params.set('heat', state.heat ? '1' : '0'); params.set('metro', state.metro ? '1' : '0');
     history.replaceState(null, '', `${location.pathname}${location.search}#${params.toString()}`);
   }
@@ -728,7 +728,7 @@
     const year = Number(params.get('y')); if (Number.isInteger(year) && year >= 2026 && year <= 2036) state.year = year;
     if (params.get('heat') === '1' || params.get('heat') === '0') state.heat = params.get('heat') === '1';
     if (params.get('metro') === '1' || params.get('metro') === '0') state.metro = params.get('metro') === '1';
-    const zoneId = params.get('z'); if (zoneId && zones.some(z => z.id === zoneId)) state.hashZone = zoneId;
+    const zoneId = params.get('z'); if (zoneId) state.hashZone = zoneId;
   }
 
   function setLanguage(lang) {
@@ -803,6 +803,7 @@
     const [admin, metro, places, zonesData, content] = await Promise.all(['../data/admin-absheron.geojson', '../data/metro.json', '../data/places.json', '../data/zones.json?rev=b35a571', '../data/content.json?rev=b35a571'].map(path => fetch(path).then(response => { if (!response.ok) throw new Error(path); return response.json(); })));
     state.data = { admin, metro, places, zones: zonesData, content };
     hydrateZones(zonesData);
+    if (state.hashZone && !zones.some(zone => zone.id === state.hashZone)) { state.hashZone = null; updateHash(); }
     return state.data;
   }
 

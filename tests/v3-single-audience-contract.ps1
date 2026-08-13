@@ -23,4 +23,6 @@ Assert-True ($archive -match 'Archived original') 'v1 must have an archive note'
 Assert-True ($zonesText -match '"whitecity"' -and $zonesText -match '"lokbatan"') 'canonical zones file must contain representative zones'
 Assert-True (-not ($script -match "\['whitecity'.*\['yasamal'")) 'v3.js must not contain the old hardcoded zone list'
 Assert-True (-not ($html -match '(?i)BAKU\s*2036\s*/\s*V[12]|data-first investment map')) 'root must not expose a versioned technical heading'
+$hashBlock = [regex]::Match($script, 'function updateHash\(\)\s*\{(?s).*?\n  \}').Value
+Assert-True ($hashBlock -match 'state\.hashZone') 'hash serialization must preserve the requested zone before selection'
 Write-Output 'PASS: v3 single-audience contract'
