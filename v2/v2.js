@@ -49,10 +49,14 @@
     if (!Array.isArray(atlasZones) || atlasZones.length !== 16) return;
     zones.length = 0;
     atlasZones.forEach(zone => {
+      const coords = Array.isArray(zone.coords) && zone.coords.length === 2 && zone.coords.every(value => Number.isFinite(Number(value)))
+        ? [Number(zone.coords[0]), Number(zone.coords[1])]
+        : null;
+      if (!coords) return;
       zones.push({
         ...zone,
         tier: zone.tier === 'est' ? 'established' : (zone.tier === 'fr' ? 'frontier' : zone.tier),
-        coords: Array.isArray(zone.coords) ? zone.coords : [0, 0],
+        coords,
         radius: Number(zone.radius) || 10
       });
     });
