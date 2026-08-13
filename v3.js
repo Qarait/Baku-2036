@@ -4,64 +4,48 @@
   const BBOX = [[49.25, 39.88], [50.38, 40.72]];
   const CENTRE = [49.841, 40.373];
   const AIRPORT = [50.046, 40.467];
-  const PMTILES_URL = 'pmtiles://../assets/baku-absheron.pmtiles';
+  const PMTILES_URL = 'pmtiles://assets/baku-absheron.pmtiles';
   const COLORS = { hot: '#bd5b2d', frontier: '#137b66', established: '#2e6b9e' };
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const copy = {
     en: {
-      title: 'Investment geography',
-      subtitle: 'A data-first map of Baku and the Absheron peninsula',
+      title: 'Understand Baku property',
+      subtitle: 'See where prices may rise, what is changing, and how sure we are.',
       search: 'Search a place\u2026',
-      searchLabel: 'Search Baku and Absheron places',
-      year: 'Map year',
+      searchLabel: 'Search Baku and Absheron places', showMe: '\u25b6 Show me (1 minute)',
+      year: 'Drag to see the future',
       skip: 'Skip map',
-      rayons: 'Rayons', areas: 'Areas', metro: 'Metro', heat: 'Heat',
-      rayonBoundary: 'Rayon boundary', approxArea: 'Approximate investment area', metroLegend: 'Metro: solid built / dashed planned', evidenceLegend: 'Evidence status', builtLegend: 'Operating / built', contractedLegend: 'Under construction / contracted', programmedLegend: 'Official programme', privateLegend: 'Private developer plan',
+      rayons: 'District borders', areas: 'Investment spots', metro: 'Metro', heat: 'Where prices rise fastest',
+      rayonBoundary: 'District borders', approxArea: 'Investment spots', metroLegend: 'Metro: solid built / dashed planned', evidenceLegend: 'How sure is this?', builtLegend: 'Already built', contractedLegend: 'Being built now', programmedLegend: 'Government plan', privateLegend: 'Company promise',
       kicker: 'MAP IDENTIFICATION',
       emptyTitle: 'Click anywhere on the map',
-      emptyIntro: 'The map will tell you which administrative rayon you are in, the nearest investment area, and the distance to metro, central Baku and the airport.',
-      administrative: 'Administrative rayon', investment: 'Investment context', nearestMetro: 'Nearest metro · straight-line', centralBaku: 'Central Baku', airport: 'Airport', coordinates: 'Coordinates',
-      noRayon: 'Outside loaded polygons', noZone: 'No nearby area', noMetro: 'No station nearby',
-      rayonNote: 'Rayons are administrative geography. Investment areas are analytical approximations, not property boundaries.',
+      emptyIntro: 'Tap the map to see the district, nearest investment spot, nearby metro distance and more.',
+      administrative: 'District', investment: 'Investment spot', nearestMetro: 'Nearest metro (straight line — walking is a bit longer)', centralBaku: 'Central Baku', airport: 'Airport', coordinates: 'Coordinates',
+      noRayon: 'That’s the sea', noZone: 'No nearby spot', noMetro: 'No station nearby',
+      rayonNote: 'District borders show official administrative geography. Investment spots are approximate, not property boundaries.',
       clear: 'Clear selection', loading: 'Loading map data\u2026', ready: 'Click a location to identify its geography', error: 'Map data could not be loaded', searchEmpty: 'No local place matched that search.'
     },
     tr: {
-      title: 'Yat\u0131r\u0131m co\u011frafyas\u0131',
-      subtitle: 'Bak\u00fc ve Ab\u015feron yar\u0131madas\u0131 i\u00e7in veri odakl\u0131 harita',
+      title: 'Bakü gayrimenkulünü anlayın',
+      subtitle: 'Fiyatların nerede artabileceğini, neyin değiştiğini ve ne kadar emin olduğumuzu görün.',
       search: 'Bir yer aray\u0131n\u2026',
-      searchLabel: 'Bak\u00fc ve Ab\u015feron yerlerini aray\u0131n',
-      year: 'Harita y\u0131l\u0131',
+      searchLabel: 'Bak\u00fc ve Ab\u015feron yerlerini aray\u0131n', showMe: '\u25b6 Göster (1 dakika)',
+      year: 'Geleceği görmek için sürükleyin',
       skip: 'Haritay\u0131 ge\u00e7',
-      rayons: 'Rayonlar', areas: 'B\u00f6lgeler', metro: 'Metro', heat: 'Is\u0131',
-      rayonBoundary: 'Rayon s\u0131n\u0131r\u0131', approxArea: 'Yakla\u015f\u0131k yat\u0131r\u0131m b\u00f6lgesi', metroLegend: 'Metro: d\u00fcz mevcut / kesikli planlanan', evidenceLegend: 'Kan\u0131t durumu', builtLegend: '\u0130\u015fletmede / mevcut', contractedLegend: '\u0130n\u015faatta / s\u00f6zle\u015fmeli', programmedLegend: 'Resm\u00ee program', privateLegend: '\u00d6zel geli\u015ftirici plan\u0131',
+      rayons: 'İlçe sınırları', areas: 'Yatırım noktaları', metro: 'Metro', heat: 'Fiyatların en hızlı arttığı yerler',
+      rayonBoundary: 'İlçe sınırları', approxArea: 'Yatırım noktaları', metroLegend: 'Metro: çalışan / planlanan hatlar', evidenceLegend: 'Ne kadar emin olabiliriz?', builtLegend: 'Zaten yapıldı', contractedLegend: 'Şimdi yapılıyor', programmedLegend: 'Devlet planı', privateLegend: 'Şirket sözü',
       kicker: 'HAR\u0130TA TANIMLAMA',
       emptyTitle: 'Haritada herhangi bir yere t\u0131klay\u0131n',
-      emptyIntro: 'Harita bulundu\u011funuz idari rayonu, en yak\u0131n yat\u0131r\u0131m b\u00f6lgesini ve metroya, Bak\u00fc merkezine ve havaliman\u0131na mesafeyi g\u00f6sterir.',
-      administrative: '\u0130dari rayon', investment: 'Yat\u0131r\u0131m ba\u011flam\u0131', nearestMetro: 'En \u0131k\u0131n metro · kuş uçuşu', centralBaku: 'Bak\u00fc merkezi', airport: 'Havaliman\u0131', coordinates: 'Koordinatlar',
-      noRayon: 'Y\u00fcklenmi\u015f poligonlar\u0131n d\u0131\u015f\u0131nda', noZone: 'Yak\u0131n yat\u0131r\u0131m b\u00f6lgesi yok', noMetro: 'Yak\u0131nda istasyon yok',
-      rayonNote: 'Rayonlar idari co\u011frafyad\u0131r. Yat\u0131r\u0131m b\u00f6lgeleri m\u00fclk s\u0131n\u0131r\u0131 de\u011fil, analitik yakla\u015f\u0131k alanlard\u0131r.',
+      emptyIntro: 'Haritaya dokunarak ilçeyi, en yakın yatırım noktasını, metroya kuş uçuşu mesafeyi ve daha fazlasını görün.',
+      administrative: 'İlçe', investment: 'Yatırım noktası', nearestMetro: 'En yakın metro (kuş uçuşu — yürüyüş biraz daha uzun)', centralBaku: 'Bakü merkezi', airport: 'Havalimanı', coordinates: 'Koordinatlar',
+      noRayon: 'Burası deniz', noZone: 'Yakında yatırım noktası yok', noMetro: 'Yakında istasyon yok',
+      rayonNote: 'İlçe sınırları resmi idari coğrafyayı gösterir. Yatırım noktaları yaklaşık alanlardır; mülk sınırı değildir.',
       clear: 'Se\u00e7imi temizle', loading: 'Harita verileri y\u00fckleniyor\u2026', ready: 'Co\u011frafyay\u0131 tan\u0131mlamak i\u00e7in bir yere t\u0131klay\u0131n', error: 'Harita verileri y\u00fcklenemedi', searchEmpty: 'Yerel gazetteer e\u015fle\u015fme bulamad\u0131.'
     }
   };
-  const zones = [
-    ['whitecity', 'White City / Khatai', 'White City / Hatai', 'hot', [49.877, 40.383], 15],
-    ['yasamal', 'Yasamal (New Yasamal)', 'Yasamal (Yeni Yasamal)', 'hot', [49.815, 40.389], 13],
-    ['narimanov', 'Narimanov', 'Nərimanov', 'hot', [49.870, 40.404], 13],
-    ['sabail', 'Sabail / centre', 'Səbail / merkez', 'established', [49.835, 40.360], 11],
-    ['khojasan', 'Khojasan / Purple Line', 'Xocəsən / Mor Hat', 'frontier', [49.762, 40.416], 11],
-    ['khirdalan', 'Khyrdalan–Masazir–Saray', 'Xırdalan–Masazır–Saray', 'frontier', [49.755, 40.455], 11],
-    ['sumgayit', 'Sumgayit seafront', 'Sumqayıt sahili', 'frontier', [49.668, 40.589], 14],
-    ['novkhani', 'Novkhani', 'Novxanı', 'frontier', [49.785, 40.520], 9],
-    ['bilgah', 'Bilgah / Sea Breeze', 'Bilgəh / Sea Breeze', 'hot', [50.033, 40.560], 16],
-    ['mardakan', 'Mardakan–Shuvalan–Buzovna', 'Mərdəkan–Şüvəlan–Buzovna', 'hot', [50.130, 40.505], 16],
-    ['airport', 'Airport zone', 'Havalimanı bölgesi', 'frontier', [49.940, 40.470], 12],
-    ['mohammadi', 'Mohammadi', 'Məhəmmədli', 'frontier', [49.845, 40.495], 12],
-    ['hovsan', 'Hovsan–Zikh–Turkan', 'Hövsan–Zığ–Türkan', 'frontier', [50.055, 40.374], 12],
-    ['zikh', 'Zikh', 'Zığ', 'frontier', [49.978, 40.353], 9],
-    ['lokbatan', 'Lokbatan', 'Lökbatan', 'frontier', [49.730, 40.325], 9],
-    ['alat', 'Alat / port & free zone', 'Alat / liman ve serbest bölge', 'frontier', [49.406, 39.945], 11]
-  ].map(([id, nameEn, nameTr, tier, coords, radius]) => ({ id, nameEn, nameTr, tier, coords, radius }));
+  const zones = [];
+
   function hydrateZones(atlasZones) {
     if (!Array.isArray(atlasZones) || atlasZones.length !== 16) return;
     zones.length = 0;
@@ -95,8 +79,8 @@
 
   function evidenceStatusLabel(status) {
     const labels = atlasCopy().labels || {};
-    const fallback = { operational: 'Operating / built', contracted: 'Under construction / contracted', programmed: 'Official programme', 'private-plan': 'Private developer plan', concept: 'Long-range concept' };
-    return labels[status] || fallback[status] || status;
+    const fallback = state.lang === 'tr' ? { operational: 'Zaten yapıldı', contracted: 'Şimdi yapılıyor', programmed: 'Devlet planı', 'private-plan': 'Şirket sözü', concept: 'Uzun vadeli fikir' } : { operational: 'Already built', contracted: 'Being built now', programmed: 'Government plan', 'private-plan': 'Company promise', concept: 'Long-range idea' };
+    return fallback[status] || labels[status] || status;
   }
 
   function renderEvidence(zone) {
@@ -111,7 +95,7 @@
       '<p class="evidence-meaning"><strong>' + escapeHtml(labels.investmentMeaning || 'What it may mean for property') + '</strong> ' + escapeHtml(localizedMeaning(item)) + '</p>' +
       '<div class="evidence-meta"><span>' + escapeHtml(item.source) + '</span><span>' + escapeHtml((labels.checked || 'Checked') + ' ' + item.checkedAt) + '</span><a href="' + escapeHtml(safeUrl(item)) + '" target="_blank" rel="noopener">' + escapeHtml(labels.readSource || 'Read source') + '</a></div>' +
       '</article>').join('');
-    return '<div class="brief-section evidence-section"><div class="evidence-title-row"><h4>' + escapeHtml(labels.evidence || 'Evidence') + '</h4><span>' + escapeHtml(labels.evidenceHint || 'What is real, who says it, and what it may mean.') + '</span></div>' + cards + '</div>';
+    return '<div class="brief-section evidence-section"><div class="evidence-title-row"><h4>' + escapeHtml(tr().evidenceLegend || 'How sure is this?') + '</h4><span>' + escapeHtml(labels.evidenceHint || 'What is real, who says it, and what it may mean.') + '</span></div>' + cards + '</div>';
   }
 
   function localPlaceStatusLabel(status) {
@@ -167,7 +151,7 @@
 
   const state = {
     lang: 'en', year: 2026, admin: true, investments: true, metro: true, heat: false,
-    selected: null, data: null, map: null, ready: false, content: null, shortlist: {}, shortlistAmounts: {}, scenarios: { oil: 'norm', infra: 'on', cur: 'stable' }, openAccordion: null, timeTimer: null
+    selected: null, data: null, map: null, ready: false, content: null, shortlist: {}, shortlistAmounts: {}, scenarios: { oil: 'norm', infra: 'on', cur: 'stable' }, openAccordion: null, timeTimer: null, engaged: false, tourIndex: 0, tourStops: ['whitecity', 'mohammadi', 'bilgah', 'sumgayit', 'hovsan']
   };
 
   const $ = id => document.getElementById(id);
@@ -279,8 +263,8 @@
   function createStyle(data) {
     return {
       version: 8,
-      name: 'Baku 2036 v2 data-first',
-      glyphs: '../assets/glyphs/{fontstack}/{range}.pbf',
+      name: 'Baku 2036 audience map',
+      glyphs: 'assets/glyphs/{fontstack}/{range}.pbf',
       sources: {
         basemap: { type: 'vector', url: PMTILES_URL },
         admin: { type: 'geojson', data: data.admin },
@@ -410,6 +394,7 @@
     const language = state.lang;
     const detail = zone[language] || zone.en;
     const labels = atlasCopy().labels || {};
+    const ui = atlasCopy().ui || {};
     const checklist = zone.dd?.[language] || [];
     const projects = Array.isArray(detail.inv) ? detail.inv : [];
     const projectHtml = projects.map(project => '<div class="brief-project" data-status="' + escapeHtml(project[2] || 'plan') + '"><time>' + escapeHtml(project[0]) + '</time><span><strong>' + escapeHtml(statusLabel(project[2])) + '</strong><br>' + escapeHtml(project[1]) + '</span></div>').join('');
@@ -421,9 +406,9 @@
     const starred = Boolean(state.shortlist[zone.id]);
     host.innerHTML =
       '<div class="brief-head"><h3>' + escapeHtml(state.lang === 'tr' ? zone.nameTr : zone.nameEn) + '</h3><span class="brief-tier">' + escapeHtml(zoneTierLabel(zone)) + '</span></div>' +
-      '<div class="brief-metrics"><div class="brief-metric"><small>' + escapeHtml(labels.entry || 'Entry today') + '</small><strong>' + escapeHtml(detail.now || '—') + '</strong></div>' +
-      '<div class="brief-metric"><small>' + escapeHtml(labels.scenario || '2036 scenario') + '</small><strong>' + escapeHtml(detail.proj || 'Illustrative') + '</strong></div>' +
-      '<div class="brief-metric"><small>' + escapeHtml(labels.yield || 'Rental yield') + '</small><strong>' + escapeHtml(detail.yield || '—') + '</strong></div></div>' +
+      '<div class="brief-metrics"><div class="brief-metric"><small>' + escapeHtml(ui.entry || (state.lang === 'tr' ? 'Bug?nk? giri?' : 'Entry today')) + '</small><strong>' + escapeHtml(detail.now || '—') + '</strong></div>' +
+      '<div class="brief-metric"><small>' + escapeHtml(ui.scen || (state.lang === 'tr' ? '2036 senaryosu' : '2036 scenario')) + '</small><strong>' + escapeHtml(detail.proj || 'Illustrative') + '</strong></div>' +
+      '<div class="brief-metric"><small>' + escapeHtml(state.lang === 'tr' ? 'Kira getirisi' : 'Rental yield') + '</small><strong>' + escapeHtml(detail.yield || '—') + '</strong></div></div>' +
       '<div class="brief-section"><h4>' + escapeHtml(labels.whatHappening || 'What is happening?') + '</h4><div class="brief-projects">' + projectHtml + '</div></div>' +
       renderLocalPlaces(zone) +
       renderEvidence(zone) +
@@ -468,7 +453,7 @@
     const station = selected.station?.station;
     const stationName = station ? (state.lang === 'tr' ? station.nameTr : station.nameEn) + ' · ' + formatDistance(selected.station.distance) : u.noMetro;
     $('panelTitle').textContent = zoneName;
-    $('panelIntro').textContent = adminName + ' · ' + (state.lang === 'tr' ? 'harita yılı' : 'map year') + ' ' + state.year;
+    $('panelIntro').textContent = adminName + ' · ' + state.year;
     $('rayonMetric').textContent = adminName;
     $('zoneMetric').textContent = selected.zone ? zoneName + ' · ' + formatDistance(selected.zone.distance) : u.noZone;
     $('stationMetric').textContent = stationName;
@@ -620,12 +605,12 @@
 
   function evidenceLegend() {
     const labels = atlasCopy().labels || {};
-    return '<div class="evidence-legend"><strong>' + escapeHtml(labels.evidenceLegend || 'Evidence status') + '</strong><span><i class="legend-line operational"></i>' + escapeHtml(labels.builtLegend || 'Operating / built') + '</span><span><i class="legend-line contracted"></i>' + escapeHtml(labels.contractedLegend || 'Under construction / contracted') + '</span><span><i class="legend-line programmed"></i>' + escapeHtml(labels.programmedLegend || 'Official programme') + '</span><span><i class="legend-line private-plan"></i>' + escapeHtml(labels.privateLegend || 'Private developer plan') + '</span></div>';
+    return '<div class="evidence-legend"><strong>' + escapeHtml(tr().evidenceLegend || 'How sure is this?') + '</strong><span><i class="legend-line operational"></i>' + escapeHtml(tr().builtLegend || 'Already built') + '</span><span><i class="legend-line contracted"></i>' + escapeHtml(tr().contractedLegend || 'Being built now') + '</span><span><i class="legend-line programmed"></i>' + escapeHtml(tr().programmedLegend || 'Government plan') + '</span><span><i class="legend-line private-plan"></i>' + escapeHtml(tr().privateLegend || 'Company promise') + '</span></div>';
   }
 
   function renderSources() {
     const content = atlasCopy();
-    return '<div class="source-list">' + evidenceLegend() + '<p><strong>Geography:</strong> ' + escapeHtml('Baku and Absheron rayon polygons, local PMTiles basemap, and the offline place gazetteer in shared data/.') + '</p><p><strong>Projects:</strong> ' + escapeHtml('Built, funded, planned, and scenario-only labels are kept separate in the shared zone briefs. Planned lines and sensitivities must be verified before any purchase.') + '</p><p><strong>How to read the circles:</strong> ' + escapeHtml(content.sections.sources.whatThisMeans) + '</p><div class="disclaimer-box">' + escapeHtml(content.disclaimer) + '</div></div>';
+    return '<div class="source-list">' + evidenceLegend() + '<p><strong>Geography:</strong> ' + escapeHtml('Baku and Absheron rayon polygons, local PMTiles basemap, and the offline place gazetteer in data/.') + '</p><p><strong>Projects:</strong> ' + escapeHtml('Built, funded, planned, and scenario-only labels are kept separate in the shared zone briefs. Planned lines and sensitivities must be verified before any purchase.') + '</p><p><strong>How to read the circles:</strong> ' + escapeHtml(content.sections.sources.whatThisMeans) + '</p><div class="disclaimer-box">' + escapeHtml(content.disclaimer) + '</div></div>';
   }
 
   function setAccordion(sectionId, forceOpen = false) {
@@ -736,7 +721,7 @@
     state.lang = lang;
     const u = tr();
     document.documentElement.lang = lang === 'tr' ? 'tr' : 'en';
-    $('appTitle').textContent = u.title; $('appSubtitle').textContent = u.subtitle; $('placeSearch').placeholder = u.search; $('searchLabel').textContent = u.searchLabel; $('yearLabel').textContent = u.year; $('skipMap').textContent = u.skip;
+    $('appTitle').textContent = u.title; $('appSubtitle').textContent = u.subtitle; $('showMe').textContent = u.showMe || (state.lang === 'tr' ? '\u25b6 Göster (1 dakika)' : '\u25b6 Show me (1 minute)'); $('placeSearch').placeholder = u.search; $('searchLabel').textContent = u.searchLabel; $('yearLabel').textContent = u.year; $('skipMap').textContent = u.skip;
     $('rayonLegend').textContent = u.rayonBoundary; $('areaLegend').textContent = u.approxArea; $('metroLegend').textContent = u.metroLegend;
     $('evidenceLegend').textContent = u.evidenceLegend; $('builtLegend').textContent = u.builtLegend; $('contractedLegend').textContent = u.contractedLegend; $('programmedLegend').textContent = u.programmedLegend; $('privateLegend').textContent = u.privateLegend;
     $('clearSelection').textContent = u.clear; $('langEn').classList.toggle('active', lang === 'en'); $('langTr').classList.toggle('active', lang === 'tr');
@@ -767,10 +752,51 @@
     updateLayers(); updateHash();
   }
 
+
+  function setEngaged(value = true) {
+    state.engaged = Boolean(value);
+    document.body.classList.toggle('engaged', state.engaged);
+    document.querySelectorAll('.quiet-controls').forEach(element => element.classList.toggle('is-visible', state.engaged));
+    if (state.engaged && $('layerMenu')) $('layerMenu').hidden = false;
+  }
+
+  function toggleLayerMenu(force) {
+    setEngaged(true);
+    const button = $('layersToggle'); const menu = $('layerMenu');
+    if (!button || !menu) return;
+    const open = typeof force === 'boolean' ? force : !menu.classList.contains('open');
+    menu.classList.toggle('open', open); button.setAttribute('aria-expanded', String(open));
+  }
+
+  function renderTourStop() {
+    const ui = atlasCopy().ui || {}; const stopId = state.tourStops[state.tourIndex];
+    const zone = zones.find(item => item.id === stopId); if (zone) selectZone(stopId, false);
+    const overlay = $('tourOverlay'); if (!overlay) return;
+    const name = zone ? (state.lang === 'tr' ? zone.nameTr : zone.nameEn) : '';
+    const story = ui.tour?.[stopId] || '';
+    const last = state.tourIndex >= state.tourStops.length - 1;
+    overlay.innerHTML = '<div class="tour-card"><div class="tour-kicker">' + escapeHtml(ui.tourStop || 'Stop') + ' ' + (state.tourIndex + 1) + ' / ' + state.tourStops.length + '</div><h2>' + escapeHtml(name) + '</h2><p>' + escapeHtml(story) + '</p><button type="button" class="primary-action" data-tour-next>' + escapeHtml(last ? (ui.tourEnd || 'Explore the map') : 'Next') + '</button><button type="button" class="tour-close" data-tour-close>' + escapeHtml(ui.tourExit || 'Close tour') + '</button></div>';
+    overlay.querySelector('[data-tour-next]')?.addEventListener('click', () => { if (last) finishTour(); else { state.tourIndex += 1; renderTourStop(); } });
+    overlay.querySelector('[data-tour-close]')?.addEventListener('click', finishTour);
+  }
+
+  function startTour() {
+    if (!state.data) return;
+    setEngaged(true); state.tourIndex = 0;
+    let overlay = $('tourOverlay');
+    if (!overlay) { overlay = document.createElement('div'); overlay.id = 'tourOverlay'; overlay.className = 'tour-overlay'; overlay.setAttribute('role', 'dialog'); overlay.setAttribute('aria-modal', 'true'); document.body.appendChild(overlay); }
+    renderTourStop();
+  }
+
+  function finishTour() { $('tourOverlay')?.remove(); if (state.map) state.map.resize(); }
+
   function installControls() {
-    $('langEn').addEventListener('click', () => setLanguage('en')); $('langTr').addEventListener('click', () => setLanguage('tr'));
-    $('yearSelect').addEventListener('change', event => setYear(event.target.value));
-    $('placeSearch').addEventListener('input', event => renderSearchResults(event.target.value));
+    $('showMe')?.addEventListener('click', startTour); $('layersToggle')?.addEventListener('click', () => toggleLayerMenu());
+    document.addEventListener('keydown', event => { if (event.key === 'Escape') { toggleLayerMenu(false); finishTour(); } });
+    document.querySelectorAll('.quiet-controls').forEach(element => element.addEventListener('focusin', () => setEngaged(true)));
+    $('langEn').addEventListener('click', () => { setEngaged(true); setLanguage('en'); }); $('langTr').addEventListener('click', () => { setEngaged(true); setLanguage('tr'); });
+    $('yearSelect').addEventListener('focus', () => setEngaged(true)); $('yearSelect').addEventListener('change', event => { setEngaged(true); setYear(event.target.value); });
+    $('placeSearch').addEventListener('focus', () => setEngaged(true)); $('placeSearch').addEventListener('input', event => renderSearchResults(event.target.value));
     $('placeSearch').addEventListener('keydown', event => { if (event.key === 'Escape') { $('searchResults').hidden = true; event.target.blur(); } if (event.key === 'Enter') { const first = searchPlaces(event.target.value)[0]; if (first) choosePlace(first); } });
     $('clearSelection').addEventListener('click', () => { state.selected = null; state.hashZone = null; renderPanel(); updateSelectionGeometry(); updateHash(); });
     document.querySelectorAll('[data-action]').forEach(button => button.addEventListener('click', () => {
@@ -800,7 +826,7 @@
   }
 
   async function loadData() {
-    const [admin, metro, places, zonesData, content] = await Promise.all(['../data/admin-absheron.geojson', '../data/metro.json', '../data/places.json', '../data/zones.json?rev=b35a571', '../data/content.json?rev=b35a571'].map(path => fetch(path).then(response => { if (!response.ok) throw new Error(path); return response.json(); })));
+    const [admin, metro, places, zonesData, content] = await Promise.all(['data/admin-absheron.geojson', 'data/metro.json', 'data/places.json', 'data/zones.json?rev=b35a571', 'data/content.json?rev=b35a571'].map(path => fetch(path).then(response => { if (!response.ok) throw new Error(path); return response.json(); })));
     state.data = { admin, metro, places, zones: zonesData, content };
     hydrateZones(zonesData);
     return state.data;
@@ -812,8 +838,8 @@
       const data = await loadData();
       loadLocalState();
       renderAllContent();
-      const maplibregl = window.__V2MapLibre;
-      if (maplibregl) installMap(maplibregl, data); else window.addEventListener('v2-maplibre-ready', () => installMap(window.__V2MapLibre, data), { once: true });
+      const maplibregl = window.__V3MapLibre;
+      if (maplibregl) installMap(maplibregl, data); else window.addEventListener('v3-maplibre-ready', () => installMap(window.__V3MapLibre, data), { once: true });
     } catch (error) { console.error(error); $('mapStatus').textContent = tr().error; $('mapStatus').classList.add('error'); }
   }
 
@@ -823,5 +849,7 @@
   window.searchPlaces = searchPlaces;
   window.setYear = setYear;
   window.setLang = setLanguage;
+  window.startTour = startTour;
+  window.toggleLayerMenu = toggleLayerMenu;
   boot();
 })();

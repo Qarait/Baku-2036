@@ -3,9 +3,9 @@ $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
 $entry = Join-Path $root 'v2\index.html'
 $script = Join-Path $root 'v2\v2.js'
-$admin = Join-Path $root 'v2\data\admin-absheron.geojson'
-$metro = Join-Path $root 'v2\data\metro.json'
-$places = Join-Path $root 'v2\data\places.json'
+$admin = Join-Path $root 'data\admin-absheron.geojson'
+$metro = Join-Path $root 'data\metro.json'
+$places = Join-Path $root 'data\places.json'
 
 if (!(Test-Path -LiteralPath $entry)) { throw 'v2/index.html is missing' }
 if (!(Test-Path -LiteralPath $script)) { throw 'v2/v2.js is missing' }
@@ -32,12 +32,20 @@ $js = Get-Content -LiteralPath $script -Raw
   'distanceKm',
   'distanceRing',
   'admin-fill',
+  'admin-water-mask',
+  'admin-ocean-mask',
+  'waterHit',
+  'admin-labels',
+  'adminLabelFeatures',
   'investment-zones',
   'metro-lines',
   'searchPlaces'
 ) | ForEach-Object {
   if ($js -notlike "*$_*") { throw "v2/v2.js missing required contract: $_" }
 }
+
+if ($js -match "id: 'admin-label'.*source: 'admin'") { throw 'Administrative labels must use one representative point per district, not polygon components' }
+if ($html -notlike '*Nearest metro · straight-line*' -and $js -notlike '*Nearest metro · straight-line*') { throw 'Nearest metro metric must explain that its distance is straight-line' }
 
 if ($js -notlike '*pmtiles://../assets/baku-absheron.pmtiles*') { throw 'v2/v2.js must point to the existing Absheron PMTiles asset' }
 $adminJson = Get-Content -LiteralPath $admin -Raw | ConvertFrom-Json

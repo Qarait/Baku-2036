@@ -3,8 +3,8 @@ $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
 $htmlPath = Join-Path $root 'v2/index.html'
 $jsPath = Join-Path $root 'v2/v2.js'
-$zonesPath = Join-Path $root 'v2/data/zones.json'
-$contentPath = Join-Path $root 'v2/data/content.json'
+$zonesPath = Join-Path $root 'data/zones.json'
+$contentPath = Join-Path $root 'data/content.json'
 
 $html = Get-Content -LiteralPath $htmlPath -Raw
 $js = Get-Content -LiteralPath $jsPath -Raw
@@ -24,8 +24,8 @@ $js = Get-Content -LiteralPath $jsPath -Raw
   if ($js -notmatch "\b$_\b") { throw "Missing v2 controller contract: $_" }
 }
 
-if (-not (Test-Path -LiteralPath $zonesPath)) { throw 'Missing v2/data/zones.json' }
-if (-not (Test-Path -LiteralPath $contentPath)) { throw 'Missing v2/data/content.json' }
+if (-not (Test-Path -LiteralPath $zonesPath)) { throw 'Missing data/zones.json' }
+if (-not (Test-Path -LiteralPath $contentPath)) { throw 'Missing data/content.json' }
 
 $zones = Get-Content -LiteralPath $zonesPath -Raw | ConvertFrom-Json
 if (@($zones).Count -ne 16) { throw "Expected exactly 16 zones, found $(@($zones).Count)" }

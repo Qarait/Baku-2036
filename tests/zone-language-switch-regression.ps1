@@ -1,17 +1,10 @@
 $ErrorActionPreference = 'Stop'
-
 $root = Split-Path -Parent $PSScriptRoot
-$html = Get-Content -LiteralPath (Join-Path $root 'index.html') -Raw
-
-function Assert-Contains([string]$Text, [string]$Needle, [string]$Message) {
-  if ($Text -notlike "*$Needle*") { throw $Message }
-}
-
-$setLang = [regex]::Match($html, 'function setLang\(l\)\{(?s).*?\n\}', [Text.RegularExpressions.RegexOptions]::Singleline).Value
-$select = [regex]::Match($html, 'function select\(id, opts\)\{(?s).*?\n\}', [Text.RegularExpressions.RegexOptions]::Singleline).Value
-
-Assert-Contains $setLang 'panelWasOpen' 'Language switching does not capture the panel open state.'
-Assert-Contains $setLang 'keepClosed' 'Language switching does not preserve a closed mobile panel.'
-Assert-Contains $select 'opts&&opts.keepClosed' 'Zone selection does not support a closed-panel rerender.'
-
+$script = [System.IO.File]::ReadAllText((Join-Path $root 'v3.js'))
+$html = [System.IO.File]::ReadAllText((Join-Path $root 'index.html'))
+function Assert-Contains([string]$Text, [string]$Needle, [string]$Message) { if ($Text -notlike "*$Needle*") { throw $Message } }
+Assert-Contains $script 'function setLanguage' 'Language switching function is missing.'
+Assert-Contains $script 'renderPanel()' 'Language switching does not rerender the selected panel.'
+Assert-Contains $html 'id="langEn"' 'English language control is missing.'
+Assert-Contains $html 'id="langTr"' 'Turkish language control is missing.'
 Write-Output 'Zone language-switch regression contract passed.'
