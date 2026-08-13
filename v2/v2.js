@@ -770,7 +770,7 @@
   }
 
   async function loadData() {
-    const [admin, metro, places, zonesData, content] = await Promise.all(['data/admin-absheron.geojson', 'data/metro.json', 'data/places.json', 'data/zones.json?rev=f83205e', 'data/content.json?rev=f83205e'].map(path => fetch(path).then(response => { if (!response.ok) throw new Error(path); return response.json(); })));
+    const [admin, metro, places, zonesData, content] = await Promise.all(['data/admin-absheron.geojson', 'data/metro.json', 'data/places.json', 'data/zones.json?rev=b35a571', 'data/content.json?rev=b35a571'].map(path => fetch(path).then(response => { if (!response.ok) throw new Error(path); return response.json(); })));
     state.data = { admin, metro, places, zones: zonesData, content };
     hydrateZones(zonesData);
     return state.data;
