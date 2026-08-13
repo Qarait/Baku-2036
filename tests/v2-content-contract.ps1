@@ -53,6 +53,18 @@ foreach ($token in @('entry', 'proj', 'yield', 'thesis', 'risk', 'act', 'inv', '
   if ($js -notmatch "\b$token\b") { throw "Missing zone renderer token: $token" }
 }
 
+$lokbatan = @($zones | Where-Object { $_.id -eq 'lokbatan' })[0]
+if ($null -eq $lokbatan -or @($lokbatan.localPlaces).Count -ne 3) { throw 'Lokbatan needs exactly three local places' }
+foreach ($place in @($lokbatan.localPlaces)) {
+  foreach ($field in @('nameEn', 'nameTr', 'status', 'en', 'tr')) {
+    if ($null -eq $place.$field -or [string]::IsNullOrWhiteSpace([string]$place.$field)) { throw "Lokbatan local place is missing $field" }
+  }
+  if ($place.status -notin @('open', 'building')) { throw "Lokbatan local place has invalid status $($place.status)" }
+  if ($place.en -notmatch 'local prices rise') { throw "Lokbatan local place copy must state the price-rise effect: $($place.nameEn)" }
+}
+if ($js -notmatch '\blocalPlaces\b') { throw 'Missing local places renderer contract' }
+if ($js -match 'Field-reported|Unverified|Supports local convenience|price effect is not separately measured') { throw 'Local places copy contains disallowed complexity' }
+
 Write-Output 'v2 content contract: PASS'
 
 foreach ($zone in @($zones)) {

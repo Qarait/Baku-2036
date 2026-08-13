@@ -89,7 +89,10 @@
       "builtLegend": "Operating / built",
       "contractedLegend": "Under construction / contracted",
       "programmedLegend": "Official programme",
-      "privateLegend": "Private developer plan"
+      "privateLegend": "Private developer plan",
+      "localPlaces": "New places nearby",
+      "localOpen": "Open",
+      "localBuilding": "Being built"
     },
     "disclaimer": "Growth figures are illustrative scenario midpoints synthesized from public data — not forecasts and not financial advice. Verify title (çıxarış), cadastral rayon, and zoning at the state registry before any purchase. Base map © its respective publisher, used for personal analysis. Analysis: Claude + Aurelius, August 2026.",
     "ui": {
@@ -499,7 +502,10 @@
       "builtLegend": "İşletmede / mevcut",
       "contractedLegend": "İnşaatta / sözleşmeli",
       "programmedLegend": "Resmî program",
-      "privateLegend": "Özel geliştirici planı"
+      "privateLegend": "Özel geliştirici planı",
+      "localPlaces": "Yakında yeni yerler",
+      "localOpen": "Açık",
+      "localBuilding": "İnşaat sürüyor"
     },
     "disclaimer": "Büyüme rakamları kamuya açık verilerden sentezlenmiş örnek senaryo orta noktalarıdır — tahmin veya yatırım tavsiyesi değildir. Satın almadan önce tapu (çıxarış), kadastro rayonu ve imar durumunu devlet sicilinde doğrulayın. Altlık harita © ilgili yayıncısına aittir, kişisel analiz için kullanılmıştır. Analiz: Claude + Aurelius, Ağustos 2026.",
     "ui": {
