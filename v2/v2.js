@@ -667,6 +667,11 @@
     $('rayonLegend').textContent = u.rayonBoundary; $('areaLegend').textContent = u.approxArea; $('metroLegend').textContent = u.metroLegend;
     $('clearSelection').textContent = u.clear; $('langEn').classList.toggle('active', lang === 'en'); $('langTr').classList.toggle('active', lang === 'tr');
     document.querySelector('[data-layer="admin"]').textContent = u.rayons; document.querySelector('[data-layer="investments"]').textContent = u.areas; document.querySelector('[data-layer="metro"]').textContent = u.metro; document.querySelector('[data-layer="heat"]').textContent = u.heat;
+    document.querySelectorAll('[data-layer]').forEach(button => {
+      const active = Boolean(state[button.dataset.layer]);
+      button.classList.toggle('active', active);
+      button.setAttribute('aria-pressed', String(active));
+    });
     if (state.ready) { updateLayers(); renderPanel(); }
     if (state.data) renderAllContent();
     updateHash();
