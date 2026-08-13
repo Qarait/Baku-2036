@@ -103,25 +103,6 @@
     const labels = atlasCopy().labels || {};
     const items = Array.isArray(zone.evidence) ? zone.evidence : [];
     const safeUrl = item => /^https?:\/\//i.test(String(item.url || '')) ? item.url : '#';
-    const cards = items.map(item => '<article class="evidence-card evidence-' + escapeHtml(item.status) + '">' +
-      '<div class="evidence-card-head"><span class="evidence-status">' + escapeHtml(evidenceStatusLabel(item.status)) + '</span><span class="evidence-confidence">' + escapeHtml((labels.confidence || 'Confidence') + ': ' + (labels[item.confidence] || item.confidence)) + '</span></div>' +
-      '<p class="evidence-claim">' + escapeHtml(item.claim) + '</p>' +
-      '<p class="evidence-meaning"><strong>' + escapeHtml(labels.investmentMeaning || 'What it may mean for property') + '</strong> ' + escapeHtml(item.investmentMeaning) + '</p>' +
-      '<div class="evidence-meta"><span>' + escapeHtml(item.source) + '</span><span>' + escapeHtml((labels.checked || 'Checked') + ' ' + item.checkedAt) + '</span><a href="' + escapeHtml(safeUrl(item)) + '" target="_blank" rel="noopener">' + escapeHtml(labels.readSource || 'Read source') + '</a></div>' +
-      '</article>').join('');
-    return '<div class="brief-section evidence-section"><div class="evidence-title-row"><h4>' + escapeHtml(labels.evidence || 'Evidence') + '</h4><span>' + escapeHtml(labels.evidenceHint || 'What is real, who says it, and what it may mean.') + '</span></div>' + cards + '</div>';
-  }
-
-  function evidenceStatusLabel(status) {
-    const labels = atlasCopy().labels || {};
-    const fallback = { operational: 'Operating / built', contracted: 'Under construction / contracted', programmed: 'Official programme', 'private-plan': 'Private developer plan', concept: 'Long-range concept' };
-    return labels[status] || fallback[status] || status;
-  }
-
-  function renderEvidence(zone) {
-    const labels = atlasCopy().labels || {};
-    const items = Array.isArray(zone.evidence) ? zone.evidence : [];
-    const safeUrl = item => /^https?:\/\//i.test(String(item.url || '')) ? item.url : '#';
     const localized = item => state.lang === 'tr' ? (item.claimTr || item.claim) : item.claim;
     const localizedMeaning = item => state.lang === 'tr' ? (item.investmentMeaningTr || item.investmentMeaning) : item.investmentMeaning;
     const cards = items.map(item => '<article class="evidence-card evidence-' + escapeHtml(item.status) + '">' +
@@ -399,7 +380,6 @@
       '<div class="brief-metric"><small>' + escapeHtml(labels.scenario || '2036 scenario') + '</small><strong>' + escapeHtml(detail.proj || 'Illustrative') + '</strong></div>' +
       '<div class="brief-metric"><small>' + escapeHtml(labels.yield || 'Rental yield') + '</small><strong>' + escapeHtml(detail.yield || '—') + '</strong></div></div>' +
       '<div class="brief-section"><h4>' + escapeHtml(labels.whatHappening || 'What is happening?') + '</h4><div class="brief-projects">' + projectHtml + '</div></div>' +
-      renderEvidence(zone) +
       renderEvidence(zone) +
       '<div class="brief-section"><h4>' + escapeHtml(labels.whyMatters || 'Why this place matters') + '</h4><p>' + escapeHtml(detail.thesis || '') + '</p></div>' +
       '<div class="brief-section"><h4>' + escapeHtml(labels.riskQuestion || 'What could go wrong?') + '</h4><p>' + escapeHtml(detail.risk || zone.risk || '') + '</p></div>' +
