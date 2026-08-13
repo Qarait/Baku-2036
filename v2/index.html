@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Baku 2036 v2 — data-first investment map</title>
+  <title>Baku 2036 v2 â€” data-first investment map</title>
   <meta name="description" content="Baku and Absheron investment geography with rayon boundaries, metro geography, local search and distance context.">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="../vendor/maplibre-gl.css">
@@ -25,9 +25,9 @@
       </div>
       <div class="top-actions">
         <label class="search-box" for="placeSearch">
-          <span class="search-icon" aria-hidden="true">⌕</span>
+          <span class="search-icon" aria-hidden="true">âŒ•</span>
           <span class="sr-only" id="searchLabel">Search Baku and Absheron places</span>
-          <input id="placeSearch" type="search" autocomplete="off" spellcheck="false" placeholder="Search a place…">
+          <input id="placeSearch" type="search" autocomplete="off" spellcheck="false" placeholder="Search a placeâ€¦">
         </label>
         <div id="searchResults" class="search-results" role="listbox" aria-label="Search results" hidden></div>
         <div class="year-control">
@@ -59,8 +59,8 @@
 
       <div class="map-toolbar" aria-label="Map controls">
         <button type="button" class="map-button" data-action="zoom-in" aria-label="Zoom in">+</button>
-        <button type="button" class="map-button" data-action="zoom-out" aria-label="Zoom out">−</button>
-        <button type="button" class="map-button" data-action="reset" aria-label="Show all Baku and Absheron">⌂</button>
+        <button type="button" class="map-button" data-action="zoom-out" aria-label="Zoom out">âˆ’</button>
+        <button type="button" class="map-button" data-action="reset" aria-label="Show all Baku and Absheron">âŒ‚</button>
         <span class="toolbar-rule" aria-hidden="true"></span>
         <button type="button" class="map-button layer-button active" data-layer="admin" aria-pressed="true">Rayons</button>
         <button type="button" class="map-button layer-button active" data-layer="investments" aria-pressed="true">Areas</button>
@@ -72,6 +72,11 @@
         <span><i class="legend-swatch rayon-swatch"></i><span id="rayonLegend">Rayon boundary</span></span>
         <span><i class="legend-swatch area-swatch"></i><span id="areaLegend">Approximate investment area</span></span>
         <span><i class="legend-swatch metro-swatch"></i><span id="metroLegend">Metro: solid built / dashed planned</span></span>
+        <span class="legend-heading" id="evidenceLegend">Evidence status</span>
+        <span><i class="legend-swatch status-operational"></i><span id="builtLegend">Operating / built</span></span>
+        <span><i class="legend-swatch status-contracted"></i><span id="contractedLegend">Under construction / contracted</span></span>
+        <span><i class="legend-swatch status-programmed"></i><span id="programmedLegend">Official programme</span></span>
+        <span><i class="legend-swatch status-private"></i><span id="privateLegend">Private developer plan</span></span>
       </div>
 
       <aside id="v2ZoneDrawer" class="info-panel" aria-labelledby="panelTitle" tabindex="-1">
@@ -79,20 +84,20 @@
         <h2 id="panelTitle">Click anywhere on the map</h2>
         <p id="panelIntro">The map will tell you which administrative rayon you are in, the nearest investment area, and the distance to metro, central Baku and the airport.</p>
         <div class="panel-grid" id="panelGrid" hidden>
-          <div class="metric"><span id="rayonMetricLabel">Administrative rayon</span><strong id="rayonMetric">—</strong></div>
-          <div class="metric"><span id="zoneMetricLabel">Investment context</span><strong id="zoneMetric">—</strong></div>
-          <div class="metric"><span id="stationMetricLabel">Nearest metro</span><strong id="stationMetric">—</strong></div>
-          <div class="metric"><span id="centreMetricLabel">Central Baku</span><strong id="centreMetric">—</strong></div>
-          <div class="metric"><span id="airportMetricLabel">Airport</span><strong id="airportMetric">—</strong></div>
-          <div class="metric"><span id="coordinateMetricLabel">Coordinates</span><strong id="coordinateMetric">—</strong></div>
+          <div class="metric"><span id="rayonMetricLabel">Administrative rayon</span><strong id="rayonMetric">â€”</strong></div>
+          <div class="metric"><span id="zoneMetricLabel">Investment context</span><strong id="zoneMetric">â€”</strong></div>
+          <div class="metric"><span id="stationMetricLabel">Nearest metro</span><strong id="stationMetric">â€”</strong></div>
+          <div class="metric"><span id="centreMetricLabel">Central Baku</span><strong id="centreMetric">â€”</strong></div>
+          <div class="metric"><span id="airportMetricLabel">Airport</span><strong id="airportMetric">â€”</strong></div>
+          <div class="metric"><span id="coordinateMetricLabel">Coordinates</span><strong id="coordinateMetric">â€”</strong></div>
         </div>
         <p class="panel-note" id="panelNote">Rayons are administrative geography. Investment areas are analytical approximations, not property boundaries.</p>
         <div id="zoneBrief" class="zone-brief" hidden></div>
         <button type="button" id="clearSelection" class="text-button" hidden>Clear selection</button>
       </aside>
 
-      <div class="map-status" id="mapStatus" role="status" aria-live="polite">Loading map data…</div>
-      <div class="attribution-note" id="attributionNote">Basemap © its data publishers · administrative polygons: official Azerbaijan open data · places and built metro: OpenStreetMap</div>
+      <div class="map-status" id="mapStatus" role="status" aria-live="polite">Loading map dataâ€¦</div>
+      <div class="attribution-note" id="attributionNote">Basemap Â© its data publishers Â· administrative polygons: official Azerbaijan open data Â· places and built metro: OpenStreetMap</div>
     </main>
 
     <section id="v2HowTo" class="v2-howto" aria-labelledby="howToTitle"></section>

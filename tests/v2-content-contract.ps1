@@ -33,7 +33,7 @@ $ids = @($zones | ForEach-Object { $_.id })
 if (@($ids | Sort-Object -Unique).Count -ne 16) { throw 'Zone ids must be unique' }
 
 foreach ($zone in $zones) {
-  foreach ($field in @('id', 'nameEn', 'nameTr', 'en', 'tr', 'dd', 'risk', 'act', 'inv')) {
+  foreach ($field in @('id', 'nameEn', 'nameTr', 'en', 'tr', 'dd', 'risk', 'act', 'inv', 'evidence')) {
     if ($null -eq $zone.$field) { throw "Zone $($zone.id) is missing $field" }
   }
 }
@@ -54,3 +54,18 @@ foreach ($token in @('entry', 'proj', 'yield', 'thesis', 'risk', 'act', 'inv', '
 }
 
 Write-Output 'v2 content contract: PASS'
+
+foreach ($zone in @($zones)) {
+  if (@($zone.evidence).Count -lt 1) { throw "Zone $($zone.id) needs at least one evidence item" }
+  foreach ($item in @($zone.evidence)) {
+    foreach ($field in @('status', 'source', 'sourceDate', 'checkedAt', 'confidence', 'claim', 'claimTr', 'investmentMeaning', 'investmentMeaningTr', 'url')) {
+      if ($null -eq $item.$field -or [string]::IsNullOrWhiteSpace([string]$item.$field)) { throw "Zone $($zone.id) evidence is missing $field" }
+    }
+    if ($item.status -notin @('operational', 'contracted', 'programmed', 'private-plan', 'concept')) { throw "Zone $($zone.id) has invalid evidence status $($item.status)" }
+    if ($item.confidence -notin @('high', 'medium', 'low')) { throw "Zone $($zone.id) has invalid evidence confidence $($item.confidence)" }
+  }
+}
+
+foreach ($token in @('evidenceLegend', 'builtLegend', 'contractedLegend', 'programmedLegend', 'privateLegend')) {
+  if ($html -notlike ('*id="' + $token + '"*') -and $js -notmatch "\b$token\b") { throw "Missing evidence legend token: $token" }
+}

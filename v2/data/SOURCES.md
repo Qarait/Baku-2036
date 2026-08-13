@@ -7,3 +7,5 @@
 - The basemap is the existing local Absheron PMTiles asset. Its publisher attribution remains visible in the v2 interface.
 
 OpenStreetMap data is © OpenStreetMap contributors and is used under the [ODbL](https://www.openstreetmap.org/copyright).
+
+- Zone evidence entries were checked on 2026-08-13 against the supplied official planning, transport, railway, market, industrial, and developer sources. Statuses distinguish operational, contracted, programmed, private-plan, and concept claims; investment meaning remains analytical.

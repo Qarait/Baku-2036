@@ -93,6 +93,46 @@
     return labels.scenario || 'Scenario only';
   }
 
+  function evidenceStatusLabel(status) {
+    const labels = atlasCopy().labels || {};
+    const fallback = { operational: 'Operating / built', contracted: 'Under construction / contracted', programmed: 'Official programme', 'private-plan': 'Private developer plan', concept: 'Long-range concept' };
+    return labels[status] || fallback[status] || status;
+  }
+
+  function renderEvidence(zone) {
+    const labels = atlasCopy().labels || {};
+    const items = Array.isArray(zone.evidence) ? zone.evidence : [];
+    const safeUrl = item => /^https?:\/\//i.test(String(item.url || '')) ? item.url : '#';
+    const cards = items.map(item => '<article class="evidence-card evidence-' + escapeHtml(item.status) + '">' +
+      '<div class="evidence-card-head"><span class="evidence-status">' + escapeHtml(evidenceStatusLabel(item.status)) + '</span><span class="evidence-confidence">' + escapeHtml((labels.confidence || 'Confidence') + ': ' + (labels[item.confidence] || item.confidence)) + '</span></div>' +
+      '<p class="evidence-claim">' + escapeHtml(item.claim) + '</p>' +
+      '<p class="evidence-meaning"><strong>' + escapeHtml(labels.investmentMeaning || 'What it may mean for property') + '</strong> ' + escapeHtml(item.investmentMeaning) + '</p>' +
+      '<div class="evidence-meta"><span>' + escapeHtml(item.source) + '</span><span>' + escapeHtml((labels.checked || 'Checked') + ' ' + item.checkedAt) + '</span><a href="' + escapeHtml(safeUrl(item)) + '" target="_blank" rel="noopener">' + escapeHtml(labels.readSource || 'Read source') + '</a></div>' +
+      '</article>').join('');
+    return '<div class="brief-section evidence-section"><div class="evidence-title-row"><h4>' + escapeHtml(labels.evidence || 'Evidence') + '</h4><span>' + escapeHtml(labels.evidenceHint || 'What is real, who says it, and what it may mean.') + '</span></div>' + cards + '</div>';
+  }
+
+  function evidenceStatusLabel(status) {
+    const labels = atlasCopy().labels || {};
+    const fallback = { operational: 'Operating / built', contracted: 'Under construction / contracted', programmed: 'Official programme', 'private-plan': 'Private developer plan', concept: 'Long-range concept' };
+    return labels[status] || fallback[status] || status;
+  }
+
+  function renderEvidence(zone) {
+    const labels = atlasCopy().labels || {};
+    const items = Array.isArray(zone.evidence) ? zone.evidence : [];
+    const safeUrl = item => /^https?:\/\//i.test(String(item.url || '')) ? item.url : '#';
+    const localized = item => state.lang === 'tr' ? (item.claimTr || item.claim) : item.claim;
+    const localizedMeaning = item => state.lang === 'tr' ? (item.investmentMeaningTr || item.investmentMeaning) : item.investmentMeaning;
+    const cards = items.map(item => '<article class="evidence-card evidence-' + escapeHtml(item.status) + '">' +
+      '<div class="evidence-card-head"><span class="evidence-status">' + escapeHtml(evidenceStatusLabel(item.status)) + '</span><span class="evidence-confidence">' + escapeHtml((labels.confidence || 'Confidence') + ': ' + (labels[item.confidence] || item.confidence)) + '</span></div>' +
+      '<p class="evidence-claim">' + escapeHtml(localized(item)) + '</p>' +
+      '<p class="evidence-meaning"><strong>' + escapeHtml(labels.investmentMeaning || 'What it may mean for property') + '</strong> ' + escapeHtml(localizedMeaning(item)) + '</p>' +
+      '<div class="evidence-meta"><span>' + escapeHtml(item.source) + '</span><span>' + escapeHtml((labels.checked || 'Checked') + ' ' + item.checkedAt) + '</span><a href="' + escapeHtml(safeUrl(item)) + '" target="_blank" rel="noopener">' + escapeHtml(labels.readSource || 'Read source') + '</a></div>' +
+      '</article>').join('');
+    return '<div class="brief-section evidence-section"><div class="evidence-title-row"><h4>' + escapeHtml(labels.evidence || 'Evidence') + '</h4><span>' + escapeHtml(labels.evidenceHint || 'What is real, who says it, and what it may mean.') + '</span></div>' + cards + '</div>';
+  }
+
   function readLocalObject(key) {
     try { return JSON.parse(localStorage.getItem(key) || '{}'); } catch (error) { return {}; }
   }
@@ -359,6 +399,8 @@
       '<div class="brief-metric"><small>' + escapeHtml(labels.scenario || '2036 scenario') + '</small><strong>' + escapeHtml(detail.proj || 'Illustrative') + '</strong></div>' +
       '<div class="brief-metric"><small>' + escapeHtml(labels.yield || 'Rental yield') + '</small><strong>' + escapeHtml(detail.yield || '—') + '</strong></div></div>' +
       '<div class="brief-section"><h4>' + escapeHtml(labels.whatHappening || 'What is happening?') + '</h4><div class="brief-projects">' + projectHtml + '</div></div>' +
+      renderEvidence(zone) +
+      renderEvidence(zone) +
       '<div class="brief-section"><h4>' + escapeHtml(labels.whyMatters || 'Why this place matters') + '</h4><p>' + escapeHtml(detail.thesis || '') + '</p></div>' +
       '<div class="brief-section"><h4>' + escapeHtml(labels.riskQuestion || 'What could go wrong?') + '</h4><p>' + escapeHtml(detail.risk || zone.risk || '') + '</p></div>' +
       '<div class="brief-section"><h4>' + escapeHtml(labels.nextStep || 'A sensible next step') + '</h4><p>' + escapeHtml(detail.act || zone.act || '') + '</p></div>' +
@@ -550,9 +592,19 @@
     article.dataset.shortlistBody = '<div class="tool-card"><p>' + escapeHtml(content.labels.saved || 'Saved on this device') + ' · Total: ' + escapeHtml(formatMoney(total)) + '</p><div class="shortlist-table">' + rows + '</div><div class="tool-note">' + escapeHtml(content.labels.noAdvice || 'Not financial advice') + '</div></div>';
   }
 
+  function evidenceLegend() {
+    const labels = atlasCopy().labels || {};
+    return '<div class="evidence-legend"><strong>' + escapeHtml(labels.evidenceLegend || 'Evidence status') + '</strong><span><i class="legend-line operational"></i>' + escapeHtml(labels.builtLegend || 'Operating / built') + '</span><span><i class="legend-line contracted"></i>' + escapeHtml(labels.contractedLegend || 'Under construction / contracted') + '</span><span><i class="legend-line programmed"></i>' + escapeHtml(labels.programmedLegend || 'Official programme') + '</span><span><i class="legend-line private-plan"></i>' + escapeHtml(labels.privateLegend || 'Private developer plan') + '</span></div>';
+  }
+
+  function evidenceLegend() {
+    const labels = atlasCopy().labels || {};
+    return '<div class="evidence-legend"><strong>' + escapeHtml(labels.evidenceLegend || 'Evidence status') + '</strong><span><i class="legend-line operational"></i>' + escapeHtml(labels.builtLegend || 'Operating / built') + '</span><span><i class="legend-line contracted"></i>' + escapeHtml(labels.contractedLegend || 'Under construction / contracted') + '</span><span><i class="legend-line programmed"></i>' + escapeHtml(labels.programmedLegend || 'Official programme') + '</span><span><i class="legend-line private-plan"></i>' + escapeHtml(labels.privateLegend || 'Private developer plan') + '</span></div>';
+  }
+
   function renderSources() {
     const content = atlasCopy();
-    return '<div class="source-list"><p><strong>Geography:</strong> ' + escapeHtml('Baku and Absheron rayon polygons, local PMTiles basemap, and the offline place gazetteer in v2/data/.') + '</p><p><strong>Projects:</strong> ' + escapeHtml('Built, funded, planned, and scenario-only labels are kept separate in the shared zone briefs. Planned lines and sensitivities must be verified before any purchase.') + '</p><p><strong>How to read the circles:</strong> ' + escapeHtml(content.sections.sources.whatThisMeans) + '</p><div class="disclaimer-box">' + escapeHtml(content.disclaimer) + '</div></div>';
+    return '<div class="source-list">' + evidenceLegend() + '<p><strong>Geography:</strong> ' + escapeHtml('Baku and Absheron rayon polygons, local PMTiles basemap, and the offline place gazetteer in v2/data/.') + '</p><p><strong>Projects:</strong> ' + escapeHtml('Built, funded, planned, and scenario-only labels are kept separate in the shared zone briefs. Planned lines and sensitivities must be verified before any purchase.') + '</p><p><strong>How to read the circles:</strong> ' + escapeHtml(content.sections.sources.whatThisMeans) + '</p><div class="disclaimer-box">' + escapeHtml(content.disclaimer) + '</div></div>';
   }
 
   function setAccordion(sectionId, forceOpen = false) {

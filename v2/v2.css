@@ -194,3 +194,53 @@ button { cursor: pointer; }
   .shortlist-row { grid-template-columns: 1fr 1fr; }
   .shortlist-row strong { grid-column: span 2; }
 }
+
+.evidence-section { padding: 10px; background: #f7f4e9; border: 1px solid rgba(183,131,39,.25); border-radius: 7px; }
+.evidence-title-row { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; margin-bottom: 7px; }
+.evidence-title-row h4 { margin: 0; }
+.evidence-title-row > span { color: var(--muted); font-size: 9px; line-height: 1.3; text-align: right; }
+.evidence-card { margin-top: 6px; padding: 8px; background: #fffdf7; border-left: 3px solid var(--gold); border-radius: 5px; }
+.evidence-card.evidence-operational { border-left-color: var(--green); }
+.evidence-card.evidence-contracted { border-left-color: var(--blue); }
+.evidence-card.evidence-programmed { border-left-color: var(--gold); }
+.evidence-card.evidence-private-plan { border-left-color: #8b5fbf; }
+.evidence-card-head, .evidence-meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 5px; color: var(--muted); font-size: 9px; line-height: 1.3; }
+.evidence-status { color: var(--navy); font-weight: 800; }
+.evidence-claim { margin: 5px 0 !important; color: var(--ink) !important; font-size: 10px !important; }
+.evidence-meaning { margin: 5px 0 !important; color: #5f4b1e !important; font-size: 10px !important; }
+.evidence-meta a { color: var(--blue); font-weight: 700; }
+.evidence-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 15px 0 2px; padding: 9px; background: #f0eee7; border-radius: 6px; color: var(--muted); font-size: 10px; }
+.evidence-legend strong { color: var(--navy); }
+.evidence-legend span { display: inline-flex; align-items: center; gap: 4px; }
+.legend-line { display: inline-block; width: 18px; height: 4px; border-radius: 4px; background: var(--gold); }
+.legend-line.operational, .status-operational { background: var(--green); }
+.legend-line.contracted, .status-contracted { background: var(--blue); }
+.legend-line.programmed, .status-programmed { background: var(--gold); }
+.legend-line.private-plan, .status-private { background: #8b5fbf; }
+.legend-heading { margin-top: 3px; color: var(--navy); font-weight: 800; }
+@media (max-width: 760px) { .evidence-title-row { display: block; } .evidence-title-row > span { display: block; margin-top: 3px; text-align: left; } .evidence-legend { display: grid; grid-template-columns: 1fr 1fr; } .evidence-legend strong { grid-column: span 2; } }
+
+.evidence-section { padding: 10px; background: #f7f4e9; border: 1px solid rgba(183,131,39,.25); border-radius: 7px; }
+.evidence-title-row { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; margin-bottom: 7px; }
+.evidence-title-row h4 { margin: 0; }
+.evidence-title-row > span { color: var(--muted); font-size: 9px; line-height: 1.3; text-align: right; }
+.evidence-card { margin-top: 6px; padding: 8px; background: #fffdf7; border-left: 3px solid var(--gold); border-radius: 5px; }
+.evidence-card.evidence-operational { border-left-color: var(--green); }
+.evidence-card.evidence-contracted { border-left-color: var(--blue); }
+.evidence-card.evidence-programmed { border-left-color: var(--gold); }
+.evidence-card.evidence-private-plan { border-left-color: #8b5fbf; }
+.evidence-card-head, .evidence-meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 5px; color: var(--muted); font-size: 9px; line-height: 1.3; }
+.evidence-status { color: var(--navy); font-weight: 800; }
+.evidence-claim { margin: 5px 0 !important; color: var(--ink) !important; font-size: 10px !important; }
+.evidence-meaning { margin: 5px 0 !important; color: #5f4b1e !important; font-size: 10px !important; }
+.evidence-meta a { color: var(--blue); font-weight: 700; }
+.evidence-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 15px 0 2px; padding: 9px; background: #f0eee7; border-radius: 6px; color: var(--muted); font-size: 10px; }
+.evidence-legend strong { color: var(--navy); }
+.evidence-legend span { display: inline-flex; align-items: center; gap: 4px; }
+.legend-line { display: inline-block; width: 18px; height: 4px; border-radius: 4px; background: var(--gold); }
+.legend-line.operational, .status-operational { background: var(--green); }
+.legend-line.contracted, .status-contracted { background: var(--blue); }
+.legend-line.programmed, .status-programmed { background: var(--gold); }
+.legend-line.private-plan, .status-private { background: #8b5fbf; }
+.legend-heading { margin-top: 3px; color: var(--navy); font-weight: 800; }
+@media (max-width: 760px) { .evidence-title-row { display: block; } .evidence-title-row > span { display: block; margin-top: 3px; text-align: left; } .evidence-legend { display: grid; grid-template-columns: 1fr 1fr; } .evidence-legend strong { grid-column: span 2; } }

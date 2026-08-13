@@ -18,7 +18,7 @@
       "inv": [
         [
           "2026",
-          "Green Line stations Y14–Y17 go to tender; designs finalized",
+          "Green Line stations Y14–Y17 are in the official expansion programme; design work is active and opening is targeted around 2030",
           "fund"
         ],
         [
@@ -76,7 +76,7 @@
     "inv": [
       [
         "2026",
-        "Green Line stations Y14–Y17 go to tender; designs finalized",
+        "Green Line stations Y14–Y17 are in the official expansion programme; design work is active and opening is targeted around 2030",
         "fund"
       ],
       [
@@ -145,6 +145,32 @@
         ],
         "en": "5 min to center",
         "tr": "merkeze 5 dk"
+      }
+    ],
+    "evidence": [
+      {
+        "status": "programmed",
+        "source": "Baku Metro / official development programme",
+        "sourceDate": "2025-01-01",
+        "checkedAt": "2026-08-13",
+        "confidence": "high",
+        "claim": "The official programme includes four Green Line stations, Y14–Y17, in the White City/Khatai corridor; design work is active and opening is targeted around 2030.",
+        "investmentMeaning": "This supports a real transport catalyst, but the property premium still depends on delivery and station access.",
+        "url": "https://metro.gov.az/az/page/xetlerimiz/konseptual-sxem",
+        "claimTr": "Resmî program White City/Xətai koridorunda dört Yeşil Hat istasyonu Y14–Y17 içeriyor; tasarım çalışmaları sürüyor ve açılış 2030 civarında hedefleniyor.",
+        "investmentMeaningTr": "Bu gerçek bir ulaşım katalizörünü destekler; ancak mülk priminin oluşması teslimata ve istasyona erişime bağlıdır."
+      },
+      {
+        "status": "operational",
+        "source": "AtkinsRéalis / Baku White City project",
+        "sourceDate": "2024-01-01",
+        "checkedAt": "2026-08-13",
+        "confidence": "high",
+        "claim": "White City is a large brownfield regeneration and waterfront-quarter programme, with a 220-hectare East Quarter planning scope.",
+        "investmentMeaning": "Regeneration can support demand, but new-build supply and delivery quality still matter.",
+        "url": "https://www.atkinsrealis.com/en/projects/baku-white-city",
+        "claimTr": "White City büyük bir eski sanayi dönüşümü ve sahil mahallesi programıdır; East Quarter planlama alanı 220 hektardır.",
+        "investmentMeaningTr": "Dönüşüm talebi destekleyebilir; ancak yeni konut arzı ve teslim kalitesi önemini korur."
       }
     ]
   },
@@ -287,6 +313,20 @@
         "en": "center next door",
         "tr": "merkez bitişik"
       }
+    ],
+    "evidence": [
+      {
+        "status": "contracted",
+        "source": "Baku Metro / station design contract",
+        "sourceDate": "2025-01-01",
+        "checkedAt": "2026-08-13",
+        "confidence": "high",
+        "claim": "Purple Line B-04 construction and design work are documented as active metro development.",
+        "investmentMeaning": "A real construction programme is stronger evidence than a map-only concept, but opening timing can still move.",
+        "url": "https://www.metro.gov.az/az/building/4480/yeni-metro-stansiyalarinin-tikintisi-ile-bagli-layihelendirilme-islerine-start-verilib",
+        "claimTr": "Mor Hat B-04 için inşaat ve tasarım çalışmalarının aktif olduğu belgelenmiştir.",
+        "investmentMeaningTr": "Gerçek inşaat programı yalnızca harita üzerindeki bir fikirden daha güçlü kanıttır; açılış tarihi yine değişebilir."
+      }
     ]
   },
   {
@@ -308,7 +348,7 @@
       "inv": [
         [
           "2025",
-          "Fastest riser in the city: +20% YoY commercial prices",
+          "Established high-demand area; use dated market benchmarks rather than an unsupported fastest-riser claim",
           "done"
         ],
         [
@@ -366,7 +406,7 @@
     "inv": [
       [
         "2025",
-        "Fastest riser in the city: +20% YoY commercial prices",
+        "Established high-demand area; use dated market benchmarks rather than an unsupported fastest-riser claim",
         "done"
       ],
       [
@@ -427,6 +467,20 @@
         ],
         "en": "center adjacent",
         "tr": "merkeze komşu"
+      }
+    ],
+    "evidence": [
+      {
+        "status": "operational",
+        "source": "Azerbaijan Chamber of Appraisers market report",
+        "sourceDate": "2026-05-01",
+        "checkedAt": "2026-08-13",
+        "confidence": "medium",
+        "claim": "This is an established central market area; the dated citywide benchmark is useful context, not proof of a zone-specific price lead.",
+        "investmentMeaning": "Established demand can make income and resale easier, while upside may be less dramatic than in an early-stage corridor.",
+        "url": "https://aqp.gov.az/bazar-tehlili/may-2026",
+        "claimTr": "Burası yerleşik bir merkezi piyasa bölgesidir; tarihli şehir geneli karşılaştırma yararlı bağlam sağlar, ancak bölgeye özel fiyat liderliğini kanıtlamaz.",
+        "investmentMeaningTr": "Yerleşik talep kira ve yeniden satış kolaylığı sağlayabilir; erken aşamadaki koridorlar kadar yüksek artış beklenmemelidir."
       }
     ]
   },
@@ -538,6 +592,20 @@
         ],
         "en": "tourists & offices",
         "tr": "turist ve ofisler"
+      }
+    ],
+    "evidence": [
+      {
+        "status": "operational",
+        "source": "Azerbaijan Chamber of Appraisers market report",
+        "sourceDate": "2026-05-01",
+        "checkedAt": "2026-08-13",
+        "confidence": "medium",
+        "claim": "The May 2026 report provides a dated Baku-wide market reference for apartments, commercial property, and detached houses.",
+        "investmentMeaning": "Central scarcity may support rents and liquidity; use local comparables before treating the benchmark as a Sabail price.",
+        "url": "https://aqp.gov.az/bazar-tehlili/may-2026",
+        "claimTr": "Mayıs 2026 raporu daire, ticari mülk ve müstakil evler için tarihli Baku geneli piyasa karşılaştırması sunuyor.",
+        "investmentMeaningTr": "Merkezdeki arz kıtlığı kira ve likiditeyi destekleyebilir; bu rakamı Sabail fiyatı saymadan önce yerel ilanlarla karşılaştırın."
       }
     ]
   },
@@ -664,6 +732,20 @@
         ],
         "en": "20 min to city",
         "tr": "şehre 20 dk"
+      }
+    ],
+    "evidence": [
+      {
+        "status": "contracted",
+        "source": "Baku Metro / station design contract",
+        "sourceDate": "2025-01-01",
+        "checkedAt": "2026-08-13",
+        "confidence": "high",
+        "claim": "The Khojasan depot and station are operating, while Purple Line B-04 remains under construction/design development.",
+        "investmentMeaning": "Existing access is tangible; the next uplift depends on the unfinished extension rather than a guaranteed 2025–26 completion.",
+        "url": "https://www.metro.gov.az/az/building/4480/yeni-metro-stansiyalarinin-tikintisi-ile-bagli-layihelendirilme-islerine-start-verilib",
+        "claimTr": "Khojasan deposu ve istasyonu çalışıyor; Mor Hat B-04 ise hâlâ inşaat ve tasarım geliştirme aşamasında.",
+        "investmentMeaningTr": "Mevcut erişim somuttur; sonraki değer artışı tamamlanmamış uzantıya bağlıdır."
       }
     ]
   },
@@ -793,6 +875,20 @@
         "en": "Baku overflow",
         "tr": "Bakü taşması"
       }
+    ],
+    "evidence": [
+      {
+        "status": "operational",
+        "source": "ADY / Absheron Circular Railway routes",
+        "sourceDate": "2026-01-01",
+        "checkedAt": "2026-08-13",
+        "confidence": "high",
+        "claim": "Khirdalan is on the existing Absheron Circular Railway network, while road and express-bus improvements address a heavily congested commuter corridor.",
+        "investmentMeaning": "Rail and road access can widen the renter pool, but congestion and agricultural-land documentation risk remain property-level checks.",
+        "url": "https://ticket.ady.az/en/stations-and-stops/routes",
+        "claimTr": "Khirdalan mevcut Abşeron Dairesel Demiryolu ağındadır; yol ve ekspres otobüs iyileştirmeleri yoğun banliyö koridorunu rahatlatmayı amaçlıyor.",
+        "investmentMeaningTr": "Demiryolu ve yol erişimi kiracı havuzunu genişletebilir; yoğunluk ve tarım arazisi belgeleri parsel bazında kontrol edilmelidir."
+      }
     ]
   },
   {
@@ -814,7 +910,7 @@
       "inv": [
         [
           "2026–30",
-          "Baku–Sumgayit rail-doubling and highway works compress the commute",
+          "Existing railway and road access support commuting; verify the timing of any further upgrades",
           "fund"
         ],
         [
@@ -862,7 +958,7 @@
     "inv": [
       [
         "2026–30",
-        "Baku–Sumgayit rail-doubling and highway works compress the commute",
+        "Existing railway and road access support commuting; verify the timing of any further upgrades",
         "fund"
       ],
       [
@@ -908,7 +1004,7 @@
           49.716,
           40.535
         ],
-        "en": "rail doubled 2029",
+        "en": "existing rail access",
         "tr": "demiryolu 2029"
       },
       {
@@ -918,6 +1014,20 @@
         ],
         "en": "new road 2028",
         "tr": "yeni yol 2028"
+      }
+    ],
+    "evidence": [
+      {
+        "status": "operational",
+        "source": "Sumqayit Industrial Park / official economic zones data",
+        "sourceDate": "2026-01-29",
+        "checkedAt": "2026-08-13",
+        "confidence": "high",
+        "claim": "The industrial park reports 39 resident companies, more than AZN 5.6bn invested, and more than 6,000 permanent jobs.",
+        "investmentMeaning": "The jobs base supports a real housing thesis beyond a cheap-seafront story; industrial adjacency and pollution history need checking.",
+        "url": "https://economiczones.gov.az/en/post/ssp-media-tour-29-01",
+        "claimTr": "Sanayi parkı 39 yerleşik şirket, 5,6 milyar AZN üzeri yatırım ve 6.000’den fazla kalıcı iş bildiriyor.",
+        "investmentMeaningTr": "Bu, ucuz sahil hikâyesinin ötesinde gerçek bir konut talebi temeli sağlar; sanayi komşuluğu ve kirlilik geçmişi kontrol edilmelidir."
       }
     ]
   },
@@ -1029,6 +1139,20 @@
         ],
         "en": "Baku weekenders",
         "tr": "Bakülü yazlıkçı"
+      }
+    ],
+    "evidence": [
+      {
+        "status": "operational",
+        "source": "ADY and official northern road programme",
+        "sourceDate": "2026-01-01",
+        "checkedAt": "2026-08-13",
+        "confidence": "high",
+        "claim": "Novkhani has existing railway access and sits within the northern-road improvement corridor linking Pirshagi, Novkhani, Khirdalan and M4.",
+        "investmentMeaning": "Access is a current advantage; any Sea Breeze spillover is an analytical inference, not a guaranteed price effect.",
+        "url": "https://ayna.gov.az/az/news/baki-ve-abseron-yarimadasinda-movcud-neqliyyat-problemlerinin-koklu-helli-ucun-muhum-addimlar-atilir-1060",
+        "claimTr": "Novkhani mevcut demiryolu erişimine sahip ve Pirshagi–Novkhani–Khirdalan–M4 kuzey yol iyileştirme koridorundadır.",
+        "investmentMeaningTr": "Erişim bugünün avantajıdır; Sea Breeze etkisi ise garanti değil, analitik bir çıkarımdır."
       }
     ]
   },
@@ -1158,6 +1282,32 @@
         "en": "premium shore",
         "tr": "prestijli kıyı"
       }
+    ],
+    "evidence": [
+      {
+        "status": "private-plan",
+        "source": "Sea Breeze / official government project briefing",
+        "sourceDate": "2025-07-01",
+        "checkedAt": "2026-08-13",
+        "confidence": "medium",
+        "claim": "Sea Breeze reports major completed development, investment, jobs, and resident growth; these figures are developer/government-reported.",
+        "investmentMeaning": "A real private anchor can attract demand, but reported targets are not independent market forecasts.",
+        "url": "https://president.az/en/articles/view/69296",
+        "claimTr": "Sea Breeze tamamlanan projeler, yatırım, iş ve nüfus artışı bildiriyor; bu rakamlar geliştirici/hükümet kaynaklıdır.",
+        "investmentMeaningTr": "Gerçek bir özel proje talep çekebilir; bildirilen hedefler bağımsız piyasa tahmini değildir."
+      },
+      {
+        "status": "programmed",
+        "source": "State transport programme",
+        "sourceDate": "2025-01-30",
+        "checkedAt": "2026-08-13",
+        "confidence": "medium",
+        "claim": "A Sea Breeze–Pirshagi tram connection is included in the 2027–2029 transport programme as planned infrastructure.",
+        "investmentMeaning": "Treat it as a useful access signal, not as funded-and-guaranteed construction.",
+        "url": "https://static.president.az/upload/Files/2025/01/30/43f94b6c04a0a641801825e9b02009f6_8145345.pdf",
+        "claimTr": "Sea Breeze–Pirshagi tramvay bağlantısı 2027–2029 ulaşım programında planlanan altyapı olarak yer alıyor.",
+        "investmentMeaningTr": "Bu yararlı bir erişim sinyalidir; finanse edilmiş ve kesinleşmiş inşaat olarak görülmemelidir."
+      }
     ]
   },
   {
@@ -1184,12 +1334,12 @@
         ],
         [
           "2027–34",
-          "Rail expansion toward 54 stations serves the NE; airport-city adjacency",
+          "Planned railway restoration and regional-centre direction improve the NE access case",
           "plan"
         ],
         [
           "2030s",
-          "Circular metro line (if on schedule) makes it a true urban node",
+          "Any circular-metro concept remains long-range; do not use it as a near-term commitment",
           "plan"
         ]
       ],
@@ -1232,12 +1382,12 @@
       ],
       [
         "2027–34",
-        "Rail expansion toward 54 stations serves the NE; airport-city adjacency",
+        "Planned railway restoration and regional-centre direction improve the NE access case",
         "plan"
       ],
       [
         "2030s",
-        "Circular metro line (if on schedule) makes it a true urban node",
+        "Any circular-metro concept remains long-range; do not use it as a near-term commitment",
         "plan"
       ]
     ],
@@ -1284,6 +1434,20 @@
         "en": "airport next door",
         "tr": "havalimanı bitişik"
       }
+    ],
+    "evidence": [
+      {
+        "status": "programmed",
+        "source": "Baku Master Plan 2040 and transport planning",
+        "sourceDate": "2025-01-01",
+        "checkedAt": "2026-08-13",
+        "confidence": "high",
+        "claim": "Mardakan is identified as a regional centre in the official polycentric plan, with planned railway restoration improving the outer corridor’s access case.",
+        "investmentMeaning": "Regional-centre direction and rail can support long-term demand, but this is not a near-term circular-metro commitment.",
+        "url": "https://arxkom.gov.az/en/bakinin-bas-plani?plan=coxmerkezli-seher-ve-demoqrafiya",
+        "claimTr": "Mardakan resmî çok merkezli planda bölgesel merkez olarak tanımlanıyor; planlanan demiryolu restorasyonu dış koridorun erişim tezini güçlendiriyor.",
+        "investmentMeaningTr": "Bölgesel merkez yönü ve demiryolu uzun vadeli talebi destekleyebilir; bu yakın vadeli dairesel metro taahhüdü değildir."
+      }
     ]
   },
   {
@@ -1310,7 +1474,7 @@
         ],
         [
           "2026–31",
-          "Sabunchu \"airport city\" concept: logistics, hospitality, services around GYD",
+          "Airport-adjacent logistics and services are a planning interpretation, not a committed “airport city” project",
           "plan"
         ],
         [
@@ -1358,7 +1522,7 @@
       ],
       [
         "2026–31",
-        "Sabunchu \"airport city\" concept: logistics, hospitality, services around GYD",
+        "Airport-adjacent logistics and services are a planning interpretation, not a committed “airport city” project",
         "plan"
       ],
       [
@@ -1412,6 +1576,20 @@
         "en": "road effect proven ✓",
         "tr": "yol etkisi kanıtlı ✓"
       }
+    ],
+    "evidence": [
+      {
+        "status": "operational",
+        "source": "ADY / existing Absheron railway and official road opening",
+        "sourceDate": "2024-11-01",
+        "checkedAt": "2026-08-13",
+        "confidence": "high",
+        "claim": "The Airport–Zabrat–Balakhany–Sabunchu corridor has existing railway and a proven northern road catalyst through the wider airport-side network.",
+        "investmentMeaning": "Current connections are more dependable than an “airport city” label; logistics and service upside remains location-specific.",
+        "url": "https://president.az/az/articles/view/67223",
+        "claimTr": "Havalimanı–Zabrat–Balakhany–Sabunchu koridorunda mevcut demiryolu ve kuzey yol ağı içinde kanıtlanmış bir yol katalizörü var.",
+        "investmentMeaningTr": "Mevcut bağlantılar “havalimanı şehri” etiketinden daha güvenilirdir; lojistik ve hizmet artışı konuma bağlıdır."
+      }
     ]
   },
   {
@@ -1433,7 +1611,7 @@
       "inv": [
         [
           "2024–25",
-          "Beyukshor–Pirshagi highway completed past the settlement — sharpest repricing in the district, spillover to Balakhany, Zabrat, Digah",
+          "Beyukshor–Pirshagi road completed; spillover to nearby settlements is an analytical interpretation",
           "done"
         ],
         [
@@ -1481,7 +1659,7 @@
     "inv": [
       [
         "2024–25",
-        "Beyukshor–Pirshagi highway completed past the settlement — sharpest repricing in the district, spillover to Balakhany, Zabrat, Digah",
+        "Beyukshor–Pirshagi road completed; spillover to nearby settlements is an analytical interpretation",
         "done"
       ],
       [
@@ -1550,6 +1728,20 @@
         "en": "beach axis",
         "tr": "plaj ekseni"
       }
+    ],
+    "evidence": [
+      {
+        "status": "operational",
+        "source": "Office of the President / Böyükşor–Pirshagi road opening",
+        "sourceDate": "2024-11-01",
+        "checkedAt": "2026-08-13",
+        "confidence": "high",
+        "claim": "The Böyükşor–Pirshagi road opened in November 2024 and runs through or near the northern settlements, including the Mohammadi area.",
+        "investmentMeaning": "The road catalyst is verified; any repricing or spillover is an investment interpretation, not a measured transaction result.",
+        "url": "https://president.az/az/articles/view/67223",
+        "claimTr": "Böyükşor–Pirshagi yolu Kasım 2024’te açıldı ve Mohammadi dâhil kuzey yerleşimlerinin içinden veya yakınından geçiyor.",
+        "investmentMeaningTr": "Yol katalizörü doğrulanmıştır; değer artışı veya çevreye taşma ölçülmüş işlem sonucu değil, yatırım yorumudur."
+      }
     ]
   },
   {
@@ -1581,7 +1773,7 @@
         ],
         [
           "2030s",
-          "Circular-line station confirmation is the entry trigger",
+          "Rail restoration or road-program confirmation is the practical entry trigger",
           "plan"
         ]
       ],
@@ -1629,7 +1821,7 @@
       ],
       [
         "2030s",
-        "Circular-line station confirmation is the entry trigger",
+        "Rail restoration or road-program confirmation is the practical entry trigger",
         "plan"
       ]
     ],
@@ -1676,6 +1868,20 @@
         "en": "rising neighbour",
         "tr": "yükselen komşu"
       }
+    ],
+    "evidence": [
+      {
+        "status": "programmed",
+        "source": "AYNA / state transport programme",
+        "sourceDate": "2026-01-01",
+        "checkedAt": "2026-08-13",
+        "confidence": "high",
+        "claim": "Yeni Surakhani–Hovsan railway restoration and related road/transport improvements are part of the public programme direction.",
+        "investmentMeaning": "Rail restoration is the practical access trigger; a circular metro should not be treated as the near-term base case.",
+        "url": "https://ayna.gov.az/az/news/baki-seherinde-ve-etraf-erazilerde-neqliyyat-infrastrukturunun-tekmillesdirilmesine-dair-2025-2030-cu-iller-ucun-dovlet-proqraminin-2025-ci-il-uzre-icrasina-hesr-olunan-dairevi-masa-1006",
+        "claimTr": "Yeni Surakhani–Hovsan demiryolu restorasyonu ve bağlantılı yol/ulaşım iyileştirmeleri kamu programının yönü içinde yer alıyor.",
+        "investmentMeaningTr": "Pratik erişim tetikleyicisi demiryolu restorasyonudur; dairesel metro yakın vadeli temel senaryo sayılmamalıdır."
+      }
     ]
   },
   {
@@ -1697,7 +1903,7 @@
       "inv": [
         [
           "2026–30",
-          "Logistics migration from central Baku passes through the Zikh corridor",
+          "East-coast logistics and connection improvements are a thesis, not a measured migration figure",
           "done"
         ],
         [
@@ -1735,7 +1941,7 @@
     "inv": [
       [
         "2026–30",
-        "Logistics migration from central Baku passes through the Zikh corridor",
+        "East-coast logistics and connection improvements are a thesis, not a measured migration figure",
         "done"
       ],
       [
@@ -1786,6 +1992,20 @@
         ],
         "en": "logistics corridor",
         "tr": "lojistik koridoru"
+      }
+    ],
+    "evidence": [
+      {
+        "status": "programmed",
+        "source": "Baku Master Plan 2040 and transport planning",
+        "sourceDate": "2025-01-01",
+        "checkedAt": "2026-08-13",
+        "confidence": "high",
+        "claim": "Zikh is included in the local-centre and east-corridor planning direction, with road and rail connections more relevant than a circular-metro promise.",
+        "investmentMeaning": "The location can benefit from better access and local services, but industrial adjacency makes micro-location decisive.",
+        "url": "https://arxkom.gov.az/en/bakinin-bas-plani/plans/neqliyyat-sebekesi",
+        "claimTr": "Zikh yerel merkez ve doğu koridoru planlama yönünde yer alıyor; dairesel metro vaadinden çok yol ve demiryolu bağlantıları önemlidir.",
+        "investmentMeaningTr": "Daha iyi erişim ve yerel hizmetlerden faydalanabilir; sanayi komşuluğu sokak seçimini belirler."
       }
     ]
   },
@@ -1897,6 +2117,20 @@
         ],
         "en": "Alat road upgrades",
         "tr": "Ələt yolu iyileşiyor"
+      }
+    ],
+    "evidence": [
+      {
+        "status": "programmed",
+        "source": "Baku Master Plan 2040 / transport network plan",
+        "sourceDate": "2025-01-01",
+        "checkedAt": "2026-08-13",
+        "confidence": "high",
+        "claim": "Lokbatan is identified as a local centre, with planned railway and outer-ring-road links supporting the southwest corridor.",
+        "investmentMeaning": "The thesis is gradual city spillover plus access, not a single guaranteed repricing event.",
+        "url": "https://arxkom.gov.az/en/bakinin-bas-plani?plan=coxmerkezli-seher-ve-demoqrafiya",
+        "claimTr": "Lokbatan yerel merkez olarak tanımlanıyor; planlanan demiryolu ve dış çevre yolu bağlantıları güneybatı koridorunu destekliyor.",
+        "investmentMeaningTr": "Tez tek bir ani değer artışı değil, kademeli şehir taşması ve erişimdir."
       }
     ]
   },
@@ -2023,6 +2257,32 @@
         ],
         "en": "Middle Corridor trade",
         "tr": "Orta Koridor ticareti"
+      }
+    ],
+    "evidence": [
+      {
+        "status": "operational",
+        "source": "Port of Baku",
+        "sourceDate": "2025-01-01",
+        "checkedAt": "2026-08-13",
+        "confidence": "high",
+        "claim": "The port handled 7.6 million tonnes in 2024, with current capacity around 15 million tonnes and 100,000 TEU.",
+        "investmentMeaning": "Industrial land and employment can appreciate before housing; this is a logistics thesis, not an immediate residential one.",
+        "url": "https://portofbaku.com/en/news/2442/muasir-baki-limani-tarixinde-ilk-defe-olaraq-illik-yukasirma-hecmi-76-milyon-tona-catib",
+        "claimTr": "Liman 2024’te 7,6 milyon ton yük işledi; mevcut kapasite yaklaşık 15 milyon ton ve 100.000 TEU’dur.",
+        "investmentMeaningTr": "Sanayi arazisi ve istihdam konuttan önce değer kazanabilir; bu hemen konut tezi değildir."
+      },
+      {
+        "status": "private-plan",
+        "source": "Alat Free Economic Zone",
+        "sourceDate": "2026-01-01",
+        "checkedAt": "2026-08-13",
+        "confidence": "high",
+        "claim": "AFEZ has a 719-hectare master-plan area and announced industrial projects including solar-panel manufacturing.",
+        "investmentMeaning": "Look for employment and industrial demand first; do not price apartments as if a mature housing market already exists.",
+        "url": "https://afez.az/",
+        "claimTr": "AFEZ 719 hektarlık ana plan alanına sahip ve güneş paneli üretimi gibi sanayi projeleri duyurdu.",
+        "investmentMeaningTr": "Önce istihdam ve sanayi talebine bakın; daireleri olgun bir konut piyasası varmış gibi fiyatlamayın."
       }
     ]
   }
