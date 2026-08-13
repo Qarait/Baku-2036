@@ -12,7 +12,7 @@
     en: {
       title: 'Investment geography',
       subtitle: 'A data-first map of Baku and the Absheron peninsula',
-      search: 'Search a place…',
+      search: 'Search a place\u2026',
       searchLabel: 'Search Baku and Absheron places',
       year: 'Map year',
       skip: 'Skip map',
@@ -24,27 +24,26 @@
       administrative: 'Administrative rayon', investment: 'Investment context', nearestMetro: 'Nearest metro', centralBaku: 'Central Baku', airport: 'Airport', coordinates: 'Coordinates',
       noRayon: 'Outside loaded polygons', noZone: 'No nearby area', noMetro: 'No station nearby',
       rayonNote: 'Rayons are administrative geography. Investment areas are analytical approximations, not property boundaries.',
-      clear: 'Clear selection', loading: 'Loading map data…', ready: 'Click a location to identify its geography', error: 'Map data could not be loaded', searchEmpty: 'No local place matched that search.'
+      clear: 'Clear selection', loading: 'Loading map data\u2026', ready: 'Click a location to identify its geography', error: 'Map data could not be loaded', searchEmpty: 'No local place matched that search.'
     },
     tr: {
-      title: 'Yatırım coğrafyası',
-      subtitle: 'Bakü ve Abşeron yarımadası için veri odaklı harita',
-      search: 'Bir yer arayın…',
-      searchLabel: 'Bakü ve Abşeron yerlerini arayın',
-      year: 'Harita yılı',
-      skip: 'Haritayı geç',
-      rayons: 'Rayonlar', areas: 'Bölgeler', metro: 'Metro', heat: 'Isı',
-      rayonBoundary: 'Rayon sınırı', approxArea: 'Yaklaşık yatırım bölgesi', metroLegend: 'Metro: düz mevcut / kesikli planlanan',
-      kicker: 'HARİTA TANIMLAMA',
-      emptyTitle: 'Haritada herhangi bir yere tıklayın',
-      emptyIntro: 'Harita bulunduğunuz idari rayonu, en yakın yatırım bölgesini ve metroya, Bakü merkezine ve havalimanına mesafeyi gösterir.',
-      administrative: 'İdari rayon', investment: 'Yatırım bağlamı', nearestMetro: 'En yakın metro', centralBaku: 'Bakü merkezi', airport: 'Havalimanı', coordinates: 'Koordinatlar',
-      noRayon: 'Yüklenen poligonların dışında', noZone: 'Yakın yatırım bölgesi yok', noMetro: 'Yakında istasyon yok',
-      rayonNote: 'Rayonlar idari coğrafyadır. Yatırım bölgeleri mülk sınırı değil, analitik yaklaşık alanlardır.',
-      clear: 'Seçimi temizle', loading: 'Harita verileri yükleniyor…', ready: 'Coğrafyayı tanımlamak için bir yere tıklayın', error: 'Harita verileri yüklenemedi', searchEmpty: 'Yerel gazetteer eşleşme bulamadı.'
+      title: 'Yat\u0131r\u0131m co\u011frafyas\u0131',
+      subtitle: 'Bak\u00fc ve Ab\u015feron yar\u0131madas\u0131 i\u00e7in veri odakl\u0131 harita',
+      search: 'Bir yer aray\u0131n\u2026',
+      searchLabel: 'Bak\u00fc ve Ab\u015feron yerlerini aray\u0131n',
+      year: 'Harita y\u0131l\u0131',
+      skip: 'Haritay\u0131 ge\u00e7',
+      rayons: 'Rayonlar', areas: 'B\u00f6lgeler', metro: 'Metro', heat: 'Is\u0131',
+      rayonBoundary: 'Rayon s\u0131n\u0131r\u0131', approxArea: 'Yakla\u015f\u0131k yat\u0131r\u0131m b\u00f6lgesi', metroLegend: 'Metro: d\u00fcz mevcut / kesikli planlanan',
+      kicker: 'HAR\u0130TA TANIMLAMA',
+      emptyTitle: 'Haritada herhangi bir yere t\u0131klay\u0131n',
+      emptyIntro: 'Harita bulundu\u011funuz idari rayonu, en yak\u0131n yat\u0131r\u0131m b\u00f6lgesini ve metroya, Bak\u00fc merkezine ve havaliman\u0131na mesafeyi g\u00f6sterir.',
+      administrative: '\u0130dari rayon', investment: 'Yat\u0131r\u0131m ba\u011flam\u0131', nearestMetro: 'En yak\u0131n metro', centralBaku: 'Bak\u00fc merkezi', airport: 'Havaliman\u0131', coordinates: 'Koordinatlar',
+      noRayon: 'Y\u00fcklenmi\u015f poligonlar\u0131n d\u0131\u015f\u0131nda', noZone: 'Yak\u0131n yat\u0131r\u0131m b\u00f6lgesi yok', noMetro: 'Yak\u0131nda istasyon yok',
+      rayonNote: 'Rayonlar idari co\u011frafyad\u0131r. Yat\u0131r\u0131m b\u00f6lgeleri m\u00fclk s\u0131n\u0131r\u0131 de\u011fil, analitik yakla\u015f\u0131k alanlard\u0131r.',
+      clear: 'Se\u00e7imi temizle', loading: 'Harita verileri y\u00fckleniyor\u2026', ready: 'Co\u011frafyay\u0131 tan\u0131mlamak i\u00e7in bir yere t\u0131klay\u0131n', error: 'Harita verileri y\u00fcklenemedi', searchEmpty: 'Yerel gazetteer e\u015fle\u015fme bulamad\u0131.'
     }
   };
-
   const zones = [
     ['whitecity', 'White City / Khatai', 'White City / Hatai', 'hot', [49.877, 40.383], 15],
     ['yasamal', 'Yasamal (New Yasamal)', 'Yasamal (Yeni Yasamal)', 'hot', [49.815, 40.389], 13],
@@ -119,7 +118,7 @@
   function scenarioBaseGrowth(zone) {
     const projection = zone?.en?.proj || '';
     const match = String(projection).match(/(\d+)\s*%/);
-    return match ? Number(match[1]) : (String(projection).includes('2–3×') ? 150 : 120);
+    return match ? Number(match[1]) : (String(projection).includes('2') && String(projection).includes('\u00d7') ? 150 : 120);
   }
 
   function scenarioGrowth(zone) {
