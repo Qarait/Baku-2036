@@ -21,7 +21,7 @@
       kicker: 'MAP IDENTIFICATION',
       emptyTitle: 'Click anywhere on the map',
       emptyIntro: 'The map will tell you which administrative rayon you are in, the nearest investment area, and the distance to metro, central Baku and the airport.',
-      administrative: 'Administrative rayon', investment: 'Investment context', nearestMetro: 'Nearest metro', centralBaku: 'Central Baku', airport: 'Airport', coordinates: 'Coordinates',
+      administrative: 'Administrative rayon', investment: 'Investment context', nearestMetro: 'Nearest metro · straight-line', centralBaku: 'Central Baku', airport: 'Airport', coordinates: 'Coordinates',
       noRayon: 'Outside loaded polygons', noZone: 'No nearby area', noMetro: 'No station nearby',
       rayonNote: 'Rayons are administrative geography. Investment areas are analytical approximations, not property boundaries.',
       clear: 'Clear selection', loading: 'Loading map data\u2026', ready: 'Click a location to identify its geography', error: 'Map data could not be loaded', searchEmpty: 'No local place matched that search.'
@@ -38,7 +38,7 @@
       kicker: 'HAR\u0130TA TANIMLAMA',
       emptyTitle: 'Haritada herhangi bir yere t\u0131klay\u0131n',
       emptyIntro: 'Harita bulundu\u011funuz idari rayonu, en yak\u0131n yat\u0131r\u0131m b\u00f6lgesini ve metroya, Bak\u00fc merkezine ve havaliman\u0131na mesafeyi g\u00f6sterir.',
-      administrative: '\u0130dari rayon', investment: 'Yat\u0131r\u0131m ba\u011flam\u0131', nearestMetro: 'En yak\u0131n metro', centralBaku: 'Bak\u00fc merkezi', airport: 'Havaliman\u0131', coordinates: 'Koordinatlar',
+      administrative: '\u0130dari rayon', investment: 'Yat\u0131r\u0131m ba\u011flam\u0131', nearestMetro: 'En \u0131k\u0131n metro · kuş uçuşu', centralBaku: 'Bak\u00fc merkezi', airport: 'Havaliman\u0131', coordinates: 'Koordinatlar',
       noRayon: 'Y\u00fcklenmi\u015f poligonlar\u0131n d\u0131\u015f\u0131nda', noZone: 'Yak\u0131n yat\u0131r\u0131m b\u00f6lgesi yok', noMetro: 'Yak\u0131nda istasyon yok',
       rayonNote: 'Rayonlar idari co\u011frafyad\u0131r. Yat\u0131r\u0131m b\u00f6lgeleri m\u00fclk s\u0131n\u0131r\u0131 de\u011fil, analitik yakla\u015f\u0131k alanlard\u0131r.',
       clear: 'Se\u00e7imi temizle', loading: 'Harita verileri y\u00fckleniyor\u2026', ready: 'Co\u011frafyay\u0131 tan\u0131mlamak i\u00e7in bir yere t\u0131klay\u0131n', error: 'Harita verileri y\u00fcklenemedi', searchEmpty: 'Yerel gazetteer e\u015fle\u015fme bulamad\u0131.'
@@ -261,6 +261,8 @@
     const visibility = (id, on) => { if (state.map.getLayer(id)) state.map.setLayoutProperty(id, 'visibility', on ? 'visible' : 'none'); };
     visibility('admin-fill', state.admin);
     visibility('admin-line', state.admin);
+    visibility('admin-water-mask', state.admin);
+    visibility('admin-ocean-mask', state.admin);
     visibility('admin-label', state.admin);
     visibility('investment-zones', state.investments);
     visibility('investment-labels', state.investments);
@@ -300,6 +302,8 @@
         { id: 'buildings', type: 'fill', source: 'basemap', 'source-layer': 'buildings', minzoom: 12, paint: { 'fill-color': '#d2cec4', 'fill-outline-color': '#bcb6ac', 'fill-opacity': ['interpolate', ['linear'], ['zoom'], 12, .12, 14, .65] } },
         { id: 'admin-fill', type: 'fill', source: 'admin', paint: { 'fill-color': ['case', ['==', ['get', 'scope'], 'context'], '#b5c6c8', '#c2d8d6'], 'fill-opacity': .12 } },
         { id: 'admin-line', type: 'line', source: 'admin', paint: { 'line-color': ['case', ['==', ['get', 'scope'], 'context'], '#799397', '#356a70'], 'line-width': ['interpolate', ['linear'], ['zoom'], 8, .8, 11, 1.7, 14, 2.4], 'line-opacity': .82, 'line-dasharray': [2, 1.4] } },
+        { id: 'admin-water-mask', type: 'fill', source: 'basemap', 'source-layer': 'water_polygons', paint: { 'fill-color': '#c4dfe5', 'fill-opacity': .95 } },
+        { id: 'admin-ocean-mask', type: 'fill', source: 'basemap', 'source-layer': 'ocean', paint: { 'fill-color': '#c4dfe5', 'fill-opacity': .85 } },
         { id: 'admin-label', type: 'symbol', source: 'admin-labels', layout: { 'text-field': ['get', 'nameEn'], 'text-font': ['noto_sans_bold'], 'text-size': ['interpolate', ['linear'], ['zoom'], 8, 9, 11, 13], 'text-allow-overlap': false }, paint: { 'text-color': '#34565e', 'text-halo-color': '#f8f6ef', 'text-halo-width': 1.6 } },
         { id: 'metro-halo', type: 'line', source: 'metro-lines', paint: { 'line-color': '#fffdf8', 'line-width': 6, 'line-opacity': ['case', ['get', 'built'], .87, .42] } },
         { id: 'metro-lines', type: 'line', source: 'metro-lines', paint: { 'line-color': ['get', 'color'], 'line-width': ['case', ['get', 'built'], 3, 2.3], 'line-opacity': ['case', ['get', 'built'], 1, .65], 'line-dasharray': ['case', ['get', 'built'], ['literal', [1, 0]], ['literal', [2, 2]]] } },
@@ -356,6 +360,7 @@
   function identifyLocation(lngLat, point) {
     if (!state.ready) return;
     const coords = [Number(lngLat.lng), Number(lngLat.lat)];
+    const waterHit = point ? state.map.queryRenderedFeatures(point, { layers: ['water', 'ocean'] }).length > 0 : false;
     const rendered = point ? state.map.queryRenderedFeatures(point, { layers: ['admin-fill', 'investment-zones', 'metro-stations'] }) : [];
     const adminFeature = rendered.find(f => f.layer.id === 'admin-fill');
     const zoneFeature = rendered.find(f => f.layer.id === 'investment-zones');
@@ -363,7 +368,7 @@
     const byId = id => zones.find(z => z.id === id);
     const nearbyZone = zoneFeature ? { zone: byId(zoneFeature.properties.id), distance: distanceKm(coords, byId(zoneFeature.properties.id).coords) } : nearestZone(coords);
     const station = stationFeature ? { station: state.data.metro.stations.find(s => s.id === stationFeature.properties.id), distance: 0 } : nearestStation(coords);
-    state.selected = { coords, admin: adminFeature?.properties || findAdministrativeProperties(coords), zone: nearbyZone, station };
+    state.selected = { coords, admin: adminFeature?.properties || (waterHit ? null : findAdministrativeProperties(coords)), waterHit, zone: nearbyZone, station };
     renderPanel();
     updateSelectionGeometry();
     updateHash();

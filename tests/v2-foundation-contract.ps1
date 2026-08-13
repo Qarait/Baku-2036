@@ -32,6 +32,9 @@ $js = Get-Content -LiteralPath $script -Raw
   'distanceKm',
   'distanceRing',
   'admin-fill',
+  'admin-water-mask',
+  'admin-ocean-mask',
+  'waterHit',
   'admin-labels',
   'adminLabelFeatures',
   'investment-zones',
@@ -42,6 +45,7 @@ $js = Get-Content -LiteralPath $script -Raw
 }
 
 if ($js -match "id: 'admin-label'.*source: 'admin'") { throw 'Administrative labels must use one representative point per district, not polygon components' }
+if ($html -notlike '*Nearest metro · straight-line*' -and $js -notlike '*Nearest metro · straight-line*') { throw 'Nearest metro metric must explain that its distance is straight-line' }
 
 if ($js -notlike '*pmtiles://../assets/baku-absheron.pmtiles*') { throw 'v2/v2.js must point to the existing Absheron PMTiles asset' }
 $adminJson = Get-Content -LiteralPath $admin -Raw | ConvertFrom-Json
