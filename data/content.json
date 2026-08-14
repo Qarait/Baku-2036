@@ -24,6 +24,22 @@
         "Check the risks and due-diligence list before acting."
       ]
     },
+    "simulation": {
+      "checkpoints": {
+        "2026": "Start here: this is the 2026 picture.",
+        "2028": "Early changes become visible around roads and nearby projects.",
+        "2030": "A major checkpoint: new connections and visible projects give more areas a reason to watch.",
+        "2033": "The story spreads: planned connections and activity reach farther across the map.",
+        "2036": "2036 scenario: Baku is more connected, but each change has a different level of certainty."
+      },
+      "controls": {
+        "pause": "Pause",
+        "resume": "Continue",
+        "skip": "Skip",
+        "finish": "Explore the map",
+        "progress": "City story year"
+      }
+    },
     "sections": {
       "time": {
         "yearSliderHint": "As you move forward, circles grow where this scenario sees more investment interest; that is not a guaranteed price rise.",
@@ -438,6 +454,22 @@
         "Neyin yapıldığını, finanse edildiğini ya da hâlâ plan olduğunu okuyun.",
         "İşlem yapmadan önce riskleri ve kontrol listesini inceleyin."
       ]
+    },
+    "simulation": {
+      "checkpoints": {
+        "2026": "Buradan başlayın: bu, 2026 yılının görünüşüdür.",
+        "2028": "Yollar ve yakındaki projeler çevresinde ilk değişiklikler görünür.",
+        "2030": "Büyük bir aşama: yeni bağlantılar ve görünür projeler daha fazla alanı izlemeye değer kılar.",
+        "2033": "Hikâye yayılır: planlanan bağlantılar ve hareketlilik haritanın daha uzağına ulaşır.",
+        "2036": "2036 senaryosu: Bakü daha çok bağlantıya sahip, ancak her değişikliğin kesinlik düzeyi farklı."
+      },
+      "controls": {
+        "pause": "Duraklat",
+        "resume": "Devam et",
+        "skip": "Atla",
+        "finish": "Haritayı keşfet",
+        "progress": "Şehir hikâyesi yılı"
+      }
     },
     "sections": {
       "time": {

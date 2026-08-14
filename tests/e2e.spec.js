@@ -160,6 +160,18 @@ test('all five runtime data files load as JSON', async ({ request }) => {
   }
 });
 
+test('city simulation content has five bilingual checkpoints and controls', async ({ request }) => {
+  const response = await request.get('./data/content.json');
+  const content = await response.json();
+  const years = ['2026', '2028', '2030', '2033', '2036'];
+  for (const language of ['en', 'tr']) {
+    expect(Object.keys(content[language].simulation.checkpoints)).toEqual(years);
+    for (const year of years) expect(content[language].simulation.checkpoints[year]).not.toBe('');
+    for (const key of ['pause', 'resume', 'skip', 'finish', 'progress']) {
+      expect(content[language].simulation.controls[key]).not.toBe('');
+    }
+  }
+});
 test('click-to-identify returns a district and metro distance', async ({ page }) => {
   await page.goto('./?cache=e2e-identify#z=whitecity&y=2026&lang=en');
   await waitForMap(page);
