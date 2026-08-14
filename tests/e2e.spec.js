@@ -62,6 +62,29 @@ test('year control advances the selected map year', async ({ page }) => {
   await expect(page.locator('#panelIntro')).toContainText('2030');
 });
 
+test('data freshness and year slider explanation are clear in both languages', async ({ page }) => {
+  await page.goto('./?cache=e2e-clarity#z=whitecity&y=2026&lang=en');
+  await waitForMap(page);
+  await expect(page.locator('#dataFreshness')).toContainText('Data checked');
+  await expect(page.locator('#dataFreshness')).toContainText('Scenario baseline');
+  await page.locator('#accordion-time .accordion-summary').click();
+  await expect(page.locator('.year-slider-hint')).toContainText('circles grow');
+  await engage(page);
+  await page.locator('#langTr').click();
+  await expect(page.locator('#dataFreshness')).toContainText('Veriler');
+  await expect(page.locator('.year-slider-hint')).toContainText('daireler');
+});
+
+test('clear JSON-load error message tells visitors to refresh', async ({ page }) => {
+  await page.route('**/data/zones.json?rev=b35a571', route => route.fulfill({ status: 503, body: 'temporary failure' }));
+  await page.goto('./?cache=e2e-data-error#lang=en');
+  await expect(page.locator('#mapStatus')).toHaveClass(/error/);
+  await expect(page.locator('#mapStatus')).toContainText('couldn’t load');
+  await expect(page.locator('#mapStatus')).toContainText('refresh');
+  await page.goto('./?cache=e2e-data-error-tr#lang=tr');
+  await expect(page.locator('#mapStatus')).toContainText('yenileyin');
+  page.__browserErrors = [];
+});
 test('zone selection shows JSON-backed content and proof cards', async ({ page }) => {
   await page.goto('./?cache=e2e-zone#z=whitecity&y=2026&lang=en');
   await waitForMap(page);

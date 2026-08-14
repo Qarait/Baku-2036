@@ -1,4 +1,19 @@
 {
+  "meta": {
+    "revision": "2026-08-14",
+    "checked": {
+      "en": {
+        "data": "August 2026",
+        "projectStatus": "August 2026",
+        "scenarioBaseline": "June 2025"
+      },
+      "tr": {
+        "data": "A\u011fustos 2026",
+        "projectStatus": "A\u011fustos 2026",
+        "scenarioBaseline": "Haziran 2025"
+      }
+    }
+  },
   "en": {
     "howTo": {
       "title": "How to use this map",
@@ -11,6 +26,7 @@
     },
     "sections": {
       "time": {
+        "yearSliderHint": "As you move forward, circles grow where this scenario sees more investment interest; that is not a guaranteed price rise.",
         "title": "Watch the decade: 2026?2036",
         "description": "Move through the years and see when projects are meant to arrive. This is a story tool, not a promise.",
         "whatThisMeans": "A growing circle shows the atlas sensitivity scenario getting larger; it is not a guaranteed price path."
@@ -424,6 +440,7 @@
     },
     "sections": {
       "time": {
+        "yearSliderHint": "\u0130lerledik\u00e7e, bu senaryoda yat\u0131r\u0131m ilgisinin artabilece\u011fi yerlerde daireler b\u00fcy\u00fcr; bu, fiyat art\u0131\u015f\u0131 garantisi de\u011fildir.",
         "title": "On yılı izleyin: 2026–2036",
         "description": "Yıllar arasında ilerleyin ve projelerin ne zaman gelmesinin beklendiğini görün. Bu bir hikâye aracıdır, vaat değildir.",
         "whatThisMeans": "Büyüyen daire, atlasın duyarlılık senaryosunda artışı gösterir; garanti edilmiş bir fiyat yolu değildir."

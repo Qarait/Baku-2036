@@ -15,6 +15,7 @@
       search: 'Search a place\u2026',
       searchLabel: 'Search Baku and Absheron places', showMe: '\u25b6 Show me (1 minute)',
       year: 'Drag to see the future',
+      dataChecked: 'Data checked', projectStatus: 'Project status checked', scenarioBaseline: 'Scenario baseline',
       skip: 'Skip map',
       rayons: 'District borders', areas: 'Investment spots', metro: 'Metro', heat: 'Where prices rise fastest',
       rayonBoundary: 'District borders', approxArea: 'Investment spots', metroLegend: 'Metro: solid built / dashed planned', evidenceLegend: 'How sure is this?', builtLegend: 'Already built', contractedLegend: 'Being built now', programmedLegend: 'Government plan', privateLegend: 'Company promise',
@@ -24,7 +25,7 @@
       administrative: 'District', investment: 'Investment spot', nearestMetro: 'Nearest metro (straight line — walking is a bit longer)', centralBaku: 'Central Baku', airport: 'Airport', coordinates: 'Coordinates',
       noRayon: 'That’s the sea', noZone: 'No nearby spot', noMetro: 'No station nearby',
       rayonNote: 'District borders show official administrative geography. Investment spots are approximate, not property boundaries.',
-      clear: 'Clear selection', loading: 'Loading map data\u2026', ready: 'Click a location to identify its geography', error: 'Map data could not be loaded', searchEmpty: 'No local place matched that search.'
+      clear: 'Clear selection', loading: 'Loading map data\u2026', ready: 'Click a location to identify its geography', error: 'We couldn\u2019t load the map data. Please refresh and try again.', searchEmpty: 'No local place matched that search.'
     },
     tr: {
       title: 'Bakü gayrimenkulünü anlayın',
@@ -32,6 +33,7 @@
       search: 'Bir yer aray\u0131n\u2026',
       searchLabel: 'Bak\u00fc ve Ab\u015feron yerlerini aray\u0131n', showMe: '\u25b6 Göster (1 dakika)',
       year: 'Geleceği görmek için sürükleyin',
+      dataChecked: 'Veriler kontrol edildi', projectStatus: 'Proje durumu kontrol edildi', scenarioBaseline: 'Senaryo ba\u015flang\u0131c\u0131',
       skip: 'Haritay\u0131 ge\u00e7',
       rayons: 'İlçe sınırları', areas: 'Yatırım noktaları', metro: 'Metro', heat: 'Fiyatların en hızlı arttığı yerler',
       rayonBoundary: 'İlçe sınırları', approxArea: 'Yatırım noktaları', metroLegend: 'Metro: çalışan / planlanan hatlar', evidenceLegend: 'Ne kadar emin olabiliriz?', builtLegend: 'Zaten yapıldı', contractedLegend: 'Şimdi yapılıyor', programmedLegend: 'Devlet planı', privateLegend: 'Şirket sözü',
@@ -41,7 +43,7 @@
       administrative: 'İlçe', investment: 'Yatırım noktası', nearestMetro: 'En yakın metro (kuş uçuşu — yürüyüş biraz daha uzun)', centralBaku: 'Bakü merkezi', airport: 'Havalimanı', coordinates: 'Koordinatlar',
       noRayon: 'Burası deniz', noZone: 'Yakında yatırım noktası yok', noMetro: 'Yakında istasyon yok',
       rayonNote: 'İlçe sınırları resmi idari coğrafyayı gösterir. Yatırım noktaları yaklaşık alanlardır; mülk sınırı değildir.',
-      clear: 'Se\u00e7imi temizle', loading: 'Harita verileri y\u00fckleniyor\u2026', ready: 'Co\u011frafyay\u0131 tan\u0131mlamak i\u00e7in bir yere t\u0131klay\u0131n', error: 'Harita verileri y\u00fcklenemedi', searchEmpty: 'Yerel gazetteer e\u015fle\u015fme bulamad\u0131.'
+      clear: 'Se\u00e7imi temizle', loading: 'Harita verileri y\u00fckleniyor\u2026', ready: 'Co\u011frafyay\u0131 tan\u0131mlamak i\u00e7in bir yere t\u0131klay\u0131n', error: 'Harita verilerini y\u00fckleyemedik. L\u00fctfen sayfay\u0131 yenileyin ve tekrar deneyin.', searchEmpty: 'Yerel gazetteer e\u015fle\u015fme bulamad\u0131.'
     }
   };
   const zones = [];
@@ -61,6 +63,17 @@
 
   function atlasCopy() {
     return state.data?.content?.[state.lang] || { ui: copy[state.lang], labels: {} };
+  }
+
+  function renderDataFreshness() {
+    const host = $('dataFreshness');
+    const meta = state.data?.content?.meta;
+    if (!host || !meta?.checked) return;
+    const dates = meta.checked[state.lang] || meta.checked.en;
+    const u = tr();
+    host.textContent = [u.dataChecked + ': ' + dates.data, u.projectStatus + ': ' + dates.projectStatus, u.scenarioBaseline + ': ' + dates.scenarioBaseline].join(' · ');
+    host.dataset.revision = meta.revision || '';
+    host.hidden = false;
   }
 
   function zoneTierLabel(zone) {
@@ -523,6 +536,18 @@
     return '<div class="tool-grid"><div class="tool-card"><h3>' + escapeHtml(ui.tmTitle || 'Time machine') + '</h3><p>' + escapeHtml(content.sections.time.whatThisMeans) + '</p><div class="year-track"><output id="timeYearOutput">' + state.year + '</output><input id="timeYear" type="range" min="2026" max="2036" step="1" value="' + state.year + '" aria-label="Timeline year"></div><div class="tool-actions"><button type="button" class="primary-action" id="timePlay">' + escapeHtml(content.labels.play || 'Play the decade') + '</button></div></div><div class="year-story" id="timeStory"><strong>' + state.year + '</strong>' + escapeHtml(story) + '</div></div>';
   }
 
+  function renderYearSliderHint() {
+    const input = $('timeYear');
+    const existing = input?.parentElement?.querySelector('.year-slider-hint');
+    if (!input || existing) return;
+    const text = atlasCopy().sections.time.yearSliderHint;
+    if (!text) return;
+    const hint = document.createElement('p');
+    hint.className = 'year-slider-hint';
+    hint.textContent = text;
+    input.parentElement.appendChild(hint);
+  }
+
   function renderScenarios() {
     const content = atlasCopy();
     const ui = content.ui || {};
@@ -696,6 +721,7 @@
       const article = $(item[0]);
       if (article) article.innerHTML = accordionShell(item[0], item[1], item[2]);
     });
+    renderYearSliderHint();
     wireContent();
     if (preserveAccordion) setAccordion(preserveAccordion, true);
   }
@@ -733,6 +759,7 @@
     });
     if (state.ready) { updateLayers(); renderPanel(); }
     if (state.data) renderAllContent();
+    renderDataFreshness();
     updateHash();
   }
 
@@ -837,6 +864,7 @@
     readHash(); installControls(); setLanguage(state.lang); $('mapStatus').textContent = tr().loading;
     try {
       const data = await loadData();
+      renderDataFreshness();
       loadLocalState();
       renderAllContent();
       const maplibregl = window.__V3MapLibre;
