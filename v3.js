@@ -215,16 +215,49 @@
     return Object.keys(atlasCopy().simulation?.checkpoints || {}).map(year => Number(year)).filter(Number.isInteger).sort((a, b) => a - b);
   }
 
+  function cityEventProperties(event, year) {
+    return {
+      year: event.y,
+      phase: event.y <= year ? 'active' : 'future',
+      label: state.lang === 'tr' ? event.tr : event.en,
+      labelEn: event.en,
+      labelTr: event.tr
+    };
+  }
+
   function cityEventFeatures(year) {
     return (atlasCopy().events || []).map(event => ({
       type: 'Feature',
       geometry: { type: 'Point', coordinates: event.ll },
-      properties: {
-        year: event.y,
-        phase: event.y <= year ? 'active' : 'future',
-        label: state.lang === 'tr' ? event.tr : event.en
-      }
+      properties: cityEventProperties(event, year)
     }));
+  }
+
+  function cityProjectEvidenceCounts() {
+    const snapshot = {
+      doneProjects: 0,
+      fundedProjects: 0,
+      plannedProjects: 0,
+      operationalEvidence: 0,
+      contractedEvidence: 0,
+      programmedEvidence: 0,
+      privatePlanEvidence: 0
+    };
+    for (const zone of state.data?.zones || []) {
+      for (const project of zone.inv || []) {
+        const status = project[2] || 'plan';
+        if (status === 'done') snapshot.doneProjects += 1;
+        else if (status === 'fund') snapshot.fundedProjects += 1;
+        else if (status === 'plan') snapshot.plannedProjects += 1;
+      }
+      for (const item of zone.evidence || []) {
+        if (item.status === 'operational') snapshot.operationalEvidence += 1;
+        else if (item.status === 'contracted') snapshot.contractedEvidence += 1;
+        else if (item.status === 'programmed') snapshot.programmedEvidence += 1;
+        else if (item.status === 'private-plan') snapshot.privatePlanEvidence += 1;
+      }
+    }
+    return snapshot;
   }
 
   function citySimulationSnapshot(year) {
@@ -239,11 +272,27 @@
       builtLines: lines.filter(line => year >= line.builtYear).length,
       plannedLines: lines.filter(line => year < line.builtYear).length,
       builtStations: stations.filter(station => year >= station.builtYear).length,
-      plannedStations: stations.filter(station => year < station.builtYear).length
+      plannedStations: stations.filter(station => year < station.builtYear).length,
+      ...cityProjectEvidenceCounts()
     };
   }
 
+  function nearestCityEvent(coords) {
+    let nearest = null;
+    for (const event of atlasCopy().events || []) {
+      const distance = distanceKm(coords, event.ll);
+      if (!nearest || distance < nearest.distance) nearest = { event, distance };
+    }
+    return nearest ? { distance: nearest.distance, ...cityEventProperties(nearest.event, state.year) } : null;
+  }
+
+  function selectedCityEventLabel(event) {
+    if (!event) return '';
+    return state.lang === 'tr' ? (event.labelTr || event.label) : (event.labelEn || event.label);
+  }
+
   function metroLineFeatures() {
+
     return (state.data?.metro.lines || []).map(line => lineFeature(line.coordinates, {
       id: line.id, line: line.line, color: line.color, built: state.year >= line.builtYear, status: line.status
     }));
@@ -390,18 +439,20 @@
     const feature = state.data.admin.features.find(candidate => pointInGeometry(point, candidate.geometry));
     return feature ? feature.properties : null;
   }
-  function identifyLocation(lngLat, point) {
+  function identifyLocation(lngLat, point, options = {}) {
     if (!state.ready) return;
     const coords = [Number(lngLat.lng), Number(lngLat.lat)];
     const waterHit = point ? state.map.queryRenderedFeatures(point, { layers: ['water', 'ocean'] }).length > 0 : false;
-    const rendered = point ? state.map.queryRenderedFeatures(point, { layers: ['admin-fill', 'investment-zones', 'metro-stations'] }) : [];
+    const rendered = point ? state.map.queryRenderedFeatures(point, { layers: ['admin-fill', 'investment-zones', 'metro-stations', 'city-events-active', 'city-events-future'] }) : [];
     const adminFeature = rendered.find(f => f.layer.id === 'admin-fill');
     const zoneFeature = rendered.find(f => f.layer.id === 'investment-zones');
     const stationFeature = rendered.find(f => f.layer.id === 'metro-stations');
+    const cityEventFeature = rendered.find(f => f.layer.id === 'city-events-active' || f.layer.id === 'city-events-future');
     const byId = id => zones.find(z => z.id === id);
     const nearbyZone = zoneFeature ? { zone: byId(zoneFeature.properties.id), distance: distanceKm(coords, byId(zoneFeature.properties.id).coords) } : nearestZone(coords);
     const station = stationFeature ? { station: state.data.metro.stations.find(s => s.id === stationFeature.properties.id), distance: 0 } : nearestStation(coords);
-    state.selected = { coords, admin: adminFeature?.properties || (waterHit ? null : findAdministrativeProperties(coords)), waterHit, zone: nearbyZone, station };
+    const event = cityEventFeature ? cityEventFeature.properties : (options.includeNearbyEvent ? nearestCityEvent(coords) : null);
+    state.selected = { coords, admin: adminFeature?.properties || (waterHit ? null : findAdministrativeProperties(coords)), waterHit, zone: nearbyZone, station, event };
     renderPanel();
     updateSelectionGeometry();
     updateHash();
@@ -505,7 +556,8 @@
     const station = selected.station?.station;
     const stationName = station ? (state.lang === 'tr' ? station.nameTr : station.nameEn) + ' · ' + formatDistance(selected.station.distance) : u.noMetro;
     $('panelTitle').textContent = zoneName;
-    $('panelIntro').textContent = adminName + ' · ' + state.year;
+    const eventLabel = selectedCityEventLabel(selected.event);
+    $('panelIntro').textContent = [adminName, state.year, eventLabel].filter(Boolean).join(' · ');
     $('rayonMetric').textContent = adminName;
     $('zoneMetric').textContent = selected.zone ? zoneName + ' · ' + formatDistance(selected.zone.distance) : u.noZone;
     $('stationMetric').textContent = stationName;
@@ -858,6 +910,24 @@
     return atlasCopy().simulation?.checkpoints?.[String(checkpointYear)] || '';
   }
 
+  function cityStoryProjectSummaryText(snapshot) {
+    const labels = atlasCopy().labels || {};
+    return (labels.whatHappening || 'What is happening?') + ': ' + [
+      snapshot.doneProjects + ' ' + statusLabel('done'),
+      snapshot.fundedProjects + ' ' + statusLabel('fund'),
+      snapshot.plannedProjects + ' ' + statusLabel('plan')
+    ].join(' · ');
+  }
+
+  function cityStoryEvidenceSummaryText(snapshot) {
+    return (tr().evidenceLegend || 'How sure is this?') + ': ' + [
+      snapshot.operationalEvidence + ' ' + evidenceStatusLabel('operational'),
+      snapshot.contractedEvidence + ' ' + evidenceStatusLabel('contracted'),
+      snapshot.programmedEvidence + ' ' + evidenceStatusLabel('programmed'),
+      snapshot.privatePlanEvidence + ' ' + evidenceStatusLabel('private-plan')
+    ].join(' · ');
+  }
+
   function renderCityStory() {
     const host = $('cityStoryHost');
     if (!host || !state.cityStory.active) return;
@@ -870,15 +940,25 @@
       " data-built-lines='" + snapshot.builtLines + "'" +
       " data-planned-lines='" + snapshot.plannedLines + "'" +
       " data-built-stations='" + snapshot.builtStations + "'" +
-      " data-planned-stations='" + snapshot.plannedStations + "'>" +
+      " data-planned-stations='" + snapshot.plannedStations + "'" +
+      " data-done-projects='" + snapshot.doneProjects + "'" +
+      " data-funded-projects='" + snapshot.fundedProjects + "'" +
+      " data-planned-projects='" + snapshot.plannedProjects + "'" +
+      " data-operational-evidence='" + snapshot.operationalEvidence + "'" +
+      " data-contracted-evidence='" + snapshot.contractedEvidence + "'" +
+      " data-programmed-evidence='" + snapshot.programmedEvidence + "'" +
+      " data-private-plan-evidence='" + snapshot.privatePlanEvidence + "'>" +
       "<div class='city-story-head'><span class='city-story-kicker'>" + escapeHtml(controls.progress || 'City story year') + "</span><strong class='city-story-year'>" + snapshot.year + "</strong></div>" +
       "<p id='cityStoryCaption'>" + escapeHtml(cityStoryCaption(snapshot.year)) + "</p>" +
+      "<p class='city-story-summary' id='cityStoryProjectSummary'>" + escapeHtml(cityStoryProjectSummaryText(snapshot)) + "</p>" +
+      "<p class='city-story-summary' id='cityStoryEvidenceSummary'>" + escapeHtml(cityStoryEvidenceSummaryText(snapshot)) + "</p>" +
       "<div class='tool-actions'><button type='button' class='secondary-action' id='cityStorySkip'>" + escapeHtml(controls.skip || 'Skip') + "</button></div>" +
       "</section>";
     $('cityStorySkip')?.addEventListener('click', skipCityStory);
   }
 
   function startCityStory() {
+
     const years = cityCheckpointYears();
     state.cityStory.active = years.length > 0;
     state.cityStory.index = 0;
@@ -951,7 +1031,7 @@
       state.ready = true; $('mapStatus').textContent = tr().ready; $('mapStatus').classList.remove('error'); $('yearSelect').value = String(state.year);
       updateLayers(); renderPanel();
       state.map.on('click', event => identifyLocation(event.lngLat, event.point));
-      ['investment-zones', 'metro-stations', 'admin-fill'].forEach(layer => { state.map.on('mouseenter', layer, () => { state.map.getCanvas().style.cursor = 'pointer'; }); state.map.on('mouseleave', layer, () => { state.map.getCanvas().style.cursor = ''; }); });
+      ['investment-zones', 'metro-stations', 'admin-fill', 'city-events-active', 'city-events-future'].forEach(layer => { state.map.on('mouseenter', layer, () => { state.map.getCanvas().style.cursor = 'pointer'; }); state.map.on('mouseleave', layer, () => { state.map.getCanvas().style.cursor = ''; }); });
       if (state.hashZone) selectZone(state.hashZone, false); else state.map.fitBounds(BBOX, { padding: 50, duration: 0 });
     });
     state.map.on('error', event => { if (event?.error) console.warn('Baku v2 map error', event.error); });

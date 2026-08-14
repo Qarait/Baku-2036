@@ -57,14 +57,46 @@ test('city snapshot changes with the selected year', async ({ page }) => {
   await page.goto('./?cache=e2e-city-snapshot#y=2026&lang=en');
   await waitForMap(page);
   await page.getByRole('button', { name: '▶ Show me (1 minute)' }).click();
-  await expect(page.locator('#cityStory')).toHaveAttribute('data-year', '2026');
-  const first = await page.locator('#cityStory').getAttribute('data-active-events');
+  const story = page.locator('#cityStory');
+  await expect(story).toHaveAttribute('data-year', '2026');
+  const firstActive = await story.getAttribute('data-active-events');
+  const firstFuture = await story.getAttribute('data-future-events');
+  const firstBuiltLines = await story.getAttribute('data-built-lines');
+  const firstPlannedLines = await story.getAttribute('data-planned-lines');
   await page.locator('#cityStorySkip').click();
   await page.locator('#cityStorySkip').click();
-  await expect(page.locator('#cityStory')).toHaveAttribute('data-year', '2030');
-  const later = await page.locator('#cityStory').getAttribute('data-active-events');
-  expect(later).not.toBe(first);
+  await expect(story).toHaveAttribute('data-year', '2030');
+  const laterActive = await story.getAttribute('data-active-events');
+  const laterFuture = await story.getAttribute('data-future-events');
+  const laterBuiltLines = await story.getAttribute('data-built-lines');
+  const laterPlannedLines = await story.getAttribute('data-planned-lines');
+  expect(laterActive).not.toBe(firstActive);
+  expect(laterFuture).not.toBe(firstFuture);
+  expect(laterBuiltLines).not.toBe(firstBuiltLines);
+  expect(laterPlannedLines).not.toBe(firstPlannedLines);
   await expect(page.locator('#cityStoryCaption')).not.toBeEmpty();
+});
+
+test('city event selection shows a localized event label in the panel', async ({ page }) => {
+  await page.goto('./?cache=e2e-city-event#y=2026&lang=en');
+  await waitForMap(page);
+  await page.evaluate(() => window.identifyLocation({ lng: 49.807, lat: 40.397 }, null, { includeNearbyEvent: true }));
+  await expect(page.locator('#panelIntro')).toContainText('opens');
+  await engage(page);
+  await page.locator('#langTr').click();
+  await expect(page.locator('#panelIntro')).toContainText('açılıyor');
+});
+
+test('city snapshot includes project and evidence status counts', async ({ page }) => {
+  await page.goto('./?cache=e2e-city-snapshot-status#y=2026&lang=en');
+  await waitForMap(page);
+  await page.getByRole('button', { name: '▶ Show me (1 minute)' }).click();
+  const story = page.locator('#cityStory');
+  await expect(story).toHaveAttribute('data-funded-projects', /[1-9]\d*/);
+  await expect(story).toHaveAttribute('data-planned-projects', /[1-9]\d*/);
+  await expect(story).toHaveAttribute('data-programmed-evidence', /[1-9]\d*/);
+  await expect(page.locator('#cityStoryProjectSummary')).toContainText('Planned');
+  await expect(page.locator('#cityStoryEvidenceSummary')).toContainText('Government plan');
 });
 test('year control advances the selected map year', async ({ page }) => {
   await page.goto('./?cache=e2e-year#z=whitecity&y=2026&lang=en');
@@ -238,4 +270,6 @@ test('mobile zone details use one page scroll and reach their final action', asy
   await expect(page.locator('#clearSelection')).toBeInViewport();
   await expect.poll(() => page.evaluate(() => window.scrollY > 0)).toBeTruthy();
 });
+
+
 
