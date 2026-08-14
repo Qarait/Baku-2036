@@ -92,6 +92,32 @@ test('zone selection shows JSON-backed content and proof cards', async ({ page }
   await expect(page.locator('#zoneBrief')).toContainText('$2,500–4,000/m² new-build');
   await expect(page.locator('#zoneBrief')).toContainText('+140% scenario');
   await expect(page.locator('#zoneBrief')).toContainText('How sure is this?');
+  await expect(page.locator('#zoneBrief')).toContainText('Where this comes from:');
+});
+
+test('zone details can be closed and reopened', async ({ page }) => {
+  await page.goto('./?cache=e2e-zone-close#z=whitecity&y=2026&lang=en');
+  await waitForMap(page);
+  await expect(page.locator('#closeDetails')).toBeVisible();
+  await expect(page.locator('#closeDetails')).toHaveText('Close details');
+  await page.locator('#closeDetails').click();
+  await expect(page.locator('#zoneBrief')).toBeHidden();
+  await expect(page.locator('#panelGrid')).toBeHidden();
+  await expect(page.locator('#closeDetails')).toBeHidden();
+  await expect(page.locator('#panelTitle')).toHaveText('Tap a circle to see what’s coming');
+  await page.goto('./?cache=e2e-zone-reopen#z=whitecity&y=2026&lang=en');
+  await waitForMap(page);
+  await expect(page.locator('#zoneBrief')).toBeVisible();
+  await expect(page.locator('#closeDetails')).toHaveText('Close details');
+});
+
+test('zone source insight switches to Turkish', async ({ page }) => {
+  await page.goto('./?cache=e2e-zone-insight#z=whitecity&y=2026&lang=en');
+  await waitForMap(page);
+  await engage(page);
+  await page.locator('#langTr').click();
+  await expect(page.locator('#zoneBrief')).toContainText('Bu rakamın kaynağı:');
+  await expect(page.locator('#zoneBrief')).toContainText('garanti değildir');
 });
 
 test('EN and TR switch visible map language', async ({ page }) => {

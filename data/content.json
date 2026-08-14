@@ -60,6 +60,7 @@
     "labels": {
       "open": "Open",
       "close": "Close",
+      "scenarioInsight": "Where this comes from: public plans, transport, nearby projects and market signals. This is a scenario, not a promise.",
       "learnMore": "What does this mean?",
       "built": "Built / underway",
       "funded": "Funded / committed",
@@ -474,6 +475,7 @@
     "labels": {
       "open": "Aç",
       "close": "Kapat",
+      "scenarioInsight": "Bu rakamın kaynağı: kamu planları, ulaşım, yakındaki projeler ve piyasa göstergeleri. Bu bir senaryodur, garanti değildir.",
       "learnMore": "Bu ne anlama geliyor?",
       "built": "Yapıldı / sürüyor",
       "funded": "Finanse edildi / taahhüt edildi",
