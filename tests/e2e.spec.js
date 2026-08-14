@@ -158,3 +158,32 @@ test('360px toolbar stays on one row and collapses to Layers', async ({ page }) 
   expect(layout.flexWrap).toBe('nowrap');
   expect(layout.scrollWidth).toBeLessThanOrEqual(layout.width + 1);
 });
+
+test('mobile zone details use one page scroll and reach their final action', async ({ page }) => {
+  await page.setViewportSize({ width: 360, height: 800 });
+  await page.goto('./?cache=e2e-mobile-scroll#z=whitecity&y=2026&lang=en');
+  await waitForMap(page);
+  await expect(page.locator('#zoneBrief')).toBeVisible();
+  const layout = await page.locator('#v2ZoneDrawer').evaluate(element => {
+    const drawer = element.getBoundingClientRect();
+    const stageElement = document.querySelector('.map-stage');
+    const stage = stageElement?.getBoundingClientRect();
+    const style = getComputedStyle(element);
+    return {
+      hasStage: Boolean(stageElement),
+      position: style.position,
+      overflowY: style.overflowY,
+      drawerTop: drawer.top,
+      stageBottom: stage?.bottom || 0,
+      documentHeight: document.documentElement.scrollHeight,
+      viewportHeight: window.innerHeight
+    };
+  });
+  expect(layout.hasStage).toBeTruthy();
+  expect(layout.position).toBe('relative');
+  expect(layout.overflowY).toBe('visible');
+  expect(layout.drawerTop).toBeGreaterThanOrEqual(layout.stageBottom);
+  await page.locator('#clearSelection').scrollIntoViewIfNeeded();
+  await expect(page.locator('#clearSelection')).toBeInViewport();
+  await expect.poll(() => page.evaluate(() => window.scrollY > 0)).toBeTruthy();
+});

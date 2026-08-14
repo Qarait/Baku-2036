@@ -54,32 +54,38 @@
     </header>
 
     <main class="map-shell">
-      <a class="skip-map" href="#v2ZoneDrawer" id="skipMap">Skip map</a>
-      <div id="v2Map" aria-label="Interactive Baku and Absheron map"></div>
+      <div class="map-stage">
+        <a class="skip-map" href="#v2ZoneDrawer" id="skipMap">Skip map</a>
+        <div id="v2Map" aria-label="Interactive Baku and Absheron map"></div>
 
-      <div class="map-toolbar quiet-controls" id="mapToolbar" aria-label="Map controls">
-        <button type="button" class="map-button" data-action="zoom-in" aria-label="Zoom in">+</button>
-        <button type="button" class="map-button" data-action="zoom-out" aria-label="Zoom out">−</button>
-        <button type="button" class="map-button" data-action="reset" aria-label="Show all Baku and Absheron">⌂</button>
-        <span class="toolbar-rule" aria-hidden="true"></span>
-        <button type="button" class="map-button layers-toggle" id="layersToggle" aria-expanded="false" aria-controls="layerMenu">Layers</button>
-        <div id="layerMenu" class="layer-menu" hidden>
-          <button type="button" class="map-button layer-button active" data-layer="admin" aria-pressed="true">District borders</button>
-          <button type="button" class="map-button layer-button active" data-layer="investments" aria-pressed="true">Investment spots</button>
-          <button type="button" class="map-button layer-button active" data-layer="metro" aria-pressed="true">Metro</button>
-          <button type="button" class="map-button layer-button" data-layer="heat" aria-pressed="false">Where prices rise fastest</button>
+        <div class="map-toolbar quiet-controls" id="mapToolbar" aria-label="Map controls">
+          <button type="button" class="map-button" data-action="zoom-in" aria-label="Zoom in">+</button>
+          <button type="button" class="map-button" data-action="zoom-out" aria-label="Zoom out">−</button>
+          <button type="button" class="map-button" data-action="reset" aria-label="Show all Baku and Absheron">⌂</button>
+          <span class="toolbar-rule" aria-hidden="true"></span>
+          <button type="button" class="map-button layers-toggle" id="layersToggle" aria-expanded="false" aria-controls="layerMenu">Layers</button>
+          <div id="layerMenu" class="layer-menu" hidden>
+            <button type="button" class="map-button layer-button active" data-layer="admin" aria-pressed="true">District borders</button>
+            <button type="button" class="map-button layer-button active" data-layer="investments" aria-pressed="true">Investment spots</button>
+            <button type="button" class="map-button layer-button active" data-layer="metro" aria-pressed="true">Metro</button>
+            <button type="button" class="map-button layer-button" data-layer="heat" aria-pressed="false">Where prices rise fastest</button>
+          </div>
         </div>
-      </div>
 
-      <div class="map-legend quiet-controls" id="mapLegend">
-        <span><i class="legend-swatch rayon-swatch"></i><span id="rayonLegend">District borders</span></span>
-        <span><i class="legend-swatch area-swatch"></i><span id="areaLegend">Investment spots</span></span>
-        <span><i class="legend-swatch metro-swatch"></i><span id="metroLegend">Metro: solid built / dashed planned</span></span>
-        <span class="legend-heading" id="evidenceLegend">How sure is this?</span>
-        <span><i class="legend-swatch status-operational"></i><span id="builtLegend">Already built</span></span>
-        <span><i class="legend-swatch status-contracted"></i><span id="contractedLegend">Being built now</span></span>
-        <span><i class="legend-swatch status-programmed"></i><span id="programmedLegend">Government plan</span></span>
-        <span><i class="legend-swatch status-private"></i><span id="privateLegend">Company promise</span></span>
+        <div class="map-legend quiet-controls" id="mapLegend">
+          <span><i class="legend-swatch rayon-swatch"></i><span id="rayonLegend">District borders</span></span>
+          <span><i class="legend-swatch area-swatch"></i><span id="areaLegend">Investment spots</span></span>
+          <span><i class="legend-swatch metro-swatch"></i><span id="metroLegend">Metro: solid built / dashed planned</span></span>
+          <span class="legend-heading" id="evidenceLegend">How sure is this?</span>
+          <span><i class="legend-swatch status-operational"></i><span id="builtLegend">Already built</span></span>
+          <span><i class="legend-swatch status-contracted"></i><span id="contractedLegend">Being built now</span></span>
+          <span><i class="legend-swatch status-programmed"></i><span id="programmedLegend">Government plan</span></span>
+          <span><i class="legend-swatch status-private"></i><span id="privateLegend">Company promise</span></span>
+        </div>
+
+        <div class="map-status" id="mapStatus" role="status" aria-live="polite">Loading map data…</div>
+        <div class="data-freshness" id="dataFreshness" hidden></div>
+        <div class="attribution-note" id="attributionNote">Basemap © its data publishers · administrative polygons: official Azerbaijan open data · places and built metro: OpenStreetMap</div>
       </div>
 
       <aside id="v2ZoneDrawer" class="info-panel" aria-labelledby="panelTitle" tabindex="-1">
@@ -98,10 +104,6 @@
         <div id="zoneBrief" class="zone-brief" hidden></div>
         <button type="button" id="clearSelection" class="text-button" hidden>Clear selection</button>
       </aside>
-
-      <div class="map-status" id="mapStatus" role="status" aria-live="polite">Loading map data…</div>
-      <div class="data-freshness" id="dataFreshness" hidden></div>
-      <div class="attribution-note" id="attributionNote">Basemap © its data publishers · administrative polygons: official Azerbaijan open data · places and built metro: OpenStreetMap</div>
     </main>
 
     <section id="v2HowTo" class="v2-howto" aria-labelledby="howToTitle"></section>
