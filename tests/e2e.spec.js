@@ -33,9 +33,11 @@ test.afterEach(async ({ page }) => {
   expect(page.__browserErrors, page.__browserErrors?.join('\n')).toEqual([]);
 });
 
-test('root loads a rendered map without browser errors', async ({ page }) => {
+test('root loads a rendered map and tour starts without browser errors', async ({ page }) => {
   await page.goto('./?cache=e2e-root');
   await waitForMap(page);
+  await page.getByRole('button', { name: '▶ Show me (1 minute)' }).click();
+  await expect(page.locator('#tourOverlay')).toBeVisible();
   await expect(page).toHaveTitle(/understand property geography/);
   await expect(page.locator('#v2Map')).toHaveAttribute('aria-label', /Interactive Baku/);
 });
