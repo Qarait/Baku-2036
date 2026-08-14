@@ -164,7 +164,7 @@
 
   const state = {
     lang: 'en', year: 2026, admin: true, investments: true, metro: true, heat: false,
-    selected: null, data: null, map: null, ready: false, content: null, shortlist: {}, shortlistAmounts: {}, scenarios: { oil: 'norm', infra: 'on', cur: 'stable' }, openAccordion: null, timeTimer: null, engaged: false, tourIndex: 0, tourStops: ['whitecity', 'mohammadi', 'bilgah', 'sumgayit', 'hovsan']
+    selected: null, data: null, map: null, ready: false, content: null, shortlist: {}, shortlistAmounts: {}, scenarios: { oil: 'norm', infra: 'on', cur: 'stable' }, openAccordion: null, timeTimer: null, engaged: false, cityStory: { active: false, index: 0 }, tourIndex: 0, tourStops: ['whitecity', 'mohammadi', 'bilgah', 'sumgayit', 'hovsan']
   };
 
   const $ = id => document.getElementById(id);
@@ -209,6 +209,38 @@
 
   function heatFeatures() {
     return zones.map((z, index) => pointFeature(z.coords, { id: z.id, radius: z.radius * 3.5, color: hslToHex(28 + index * 4, 77, 51) }));
+  }
+
+  function cityCheckpointYears() {
+    return Object.keys(atlasCopy().simulation?.checkpoints || {}).map(year => Number(year)).filter(Number.isInteger).sort((a, b) => a - b);
+  }
+
+  function cityEventFeatures(year) {
+    return (atlasCopy().events || []).map(event => ({
+      type: 'Feature',
+      geometry: { type: 'Point', coordinates: event.ll },
+      properties: {
+        year: event.y,
+        phase: event.y <= year ? 'active' : 'future',
+        label: state.lang === 'tr' ? event.tr : event.en
+      }
+    }));
+  }
+
+  function citySimulationSnapshot(year) {
+    const metro = state.data?.metro || { lines: [], stations: [] };
+    const lines = metro.lines || [];
+    const stations = metro.stations || [];
+    const events = cityEventFeatures(year);
+    return {
+      year,
+      activeEvents: events.filter(feature => feature.properties.phase === 'active').length,
+      futureEvents: events.filter(feature => feature.properties.phase === 'future').length,
+      builtLines: lines.filter(line => year >= line.builtYear).length,
+      plannedLines: lines.filter(line => year < line.builtYear).length,
+      builtStations: stations.filter(station => year >= station.builtYear).length,
+      plannedStations: stations.filter(station => year < station.builtYear).length
+    };
   }
 
   function metroLineFeatures() {
@@ -271,6 +303,7 @@
     updateSource('heat', featureCollection(heatFeatures()));
     updateSource('metro-lines', featureCollection(metroLineFeatures()));
     updateSource('metro-stations', featureCollection(metroStationFeatures()));
+    updateSource('city-events', featureCollection(cityEventFeatures(state.year)));
   }
 
   function createStyle(data) {
@@ -286,6 +319,7 @@
         heat: { type: 'geojson', data: featureCollection(heatFeatures()) },
         'metro-lines': { type: 'geojson', data: featureCollection(metroLineFeatures()) },
         'metro-stations': { type: 'geojson', data: featureCollection(metroStationFeatures()) },
+        'city-events': { type: 'geojson', data: featureCollection(cityEventFeatures(state.year)) },
         rings: { type: 'geojson', data: featureCollection([]) },
         'click-point': { type: 'geojson', data: featureCollection([]) }
       },
@@ -305,6 +339,8 @@
         { id: 'metro-halo', type: 'line', source: 'metro-lines', paint: { 'line-color': '#fffdf8', 'line-width': 6, 'line-opacity': ['case', ['get', 'built'], .87, .42] } },
         { id: 'metro-lines', type: 'line', source: 'metro-lines', paint: { 'line-color': ['get', 'color'], 'line-width': ['case', ['get', 'built'], 3, 2.3], 'line-opacity': ['case', ['get', 'built'], 1, .65], 'line-dasharray': ['case', ['get', 'built'], ['literal', [1, 0]], ['literal', [2, 2]]] } },
         { id: 'metro-stations', type: 'circle', source: 'metro-stations', paint: { 'circle-radius': ['case', ['get', 'built'], 4, 3.2], 'circle-color': ['get', 'color'], 'circle-stroke-color': '#fffdf8', 'circle-stroke-width': 1.2, 'circle-opacity': ['case', ['get', 'built'], 1, .62] } },
+        { id: 'city-events-future', type: 'circle', source: 'city-events', filter: ['==', ['get', 'phase'], 'future'], paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, 4.2, 12, 6.8], 'circle-color': COLORS.hot, 'circle-opacity': .1, 'circle-stroke-color': COLORS.hot, 'circle-stroke-width': 1.4, 'circle-stroke-opacity': .42 } },
+        { id: 'city-events-active', type: 'circle', source: 'city-events', filter: ['==', ['get', 'phase'], 'active'], paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, 4.6, 12, 7.2], 'circle-color': COLORS.hot, 'circle-opacity': .86, 'circle-stroke-color': '#fffdf8', 'circle-stroke-width': 1.2, 'circle-stroke-opacity': .95 } },
         { id: 'heat-layer', type: 'circle', source: 'heat', layout: { visibility: 'none' }, paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, ['*', ['get', 'radius'], .45], 11, ['get', 'radius'], 14, ['*', ['get', 'radius'], 1.25]], 'circle-color': ['get', 'color'], 'circle-opacity': .24, 'circle-blur': .82 } },
         { id: 'investment-zones', type: 'circle', source: 'investment-zones', paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, ['*', ['get', 'radius'], .55], 11, ['get', 'radius'], 14, ['*', ['get', 'radius'], 1.45]], 'circle-color': ['get', 'color'], 'circle-opacity': .48, 'circle-stroke-color': ['get', 'color'], 'circle-stroke-width': 1.5, 'circle-stroke-opacity': .9 } },
         { id: 'investment-labels', type: 'symbol', source: 'investment-zones', layout: { 'text-field': ['get', 'labelEn'], 'text-font': ['noto_sans_bold'], 'text-size': 10, 'text-anchor': 'top', 'text-offset': [0, 1.2], 'text-allow-overlap': false }, paint: { 'text-color': '#27333c', 'text-halo-color': '#fffdf8', 'text-halo-width': 2 } },
@@ -763,6 +799,7 @@
     });
     if (state.ready) { updateLayers(); renderPanel(); }
     if (state.data) renderAllContent();
+    if ($('tourOverlay')) renderTourStop();
     renderDataFreshness();
     updateHash();
   }
@@ -773,6 +810,11 @@
     if ($('timeYear')) $('timeYear').value = String(value);
     if ($('timeYearOutput')) $('timeYearOutput').textContent = String(value);
     if ($('timeStory')) $('timeStory').innerHTML = '<strong>' + value + '</strong>' + escapeHtml(atlasCopy().ui?.tmY?.[String(value)] || '');
+    if (state.cityStory.active) {
+      const checkpointIndex = cityStoryCheckpointIndex(value);
+      if (checkpointIndex >= 0) state.cityStory.index = checkpointIndex;
+      renderCityStory();
+    }
     updateHash();
   }
 
@@ -799,6 +841,62 @@
     menu.classList.toggle('open', open); button.setAttribute('aria-expanded', String(open));
   }
 
+  function cityStoryCheckpointIndex(year) {
+    const years = cityCheckpointYears();
+    if (!years.length) return -1;
+    let index = 0;
+    for (let i = 0; i < years.length; i += 1) {
+      if (years[i] <= year) index = i;
+    }
+    return index;
+  }
+
+  function cityStoryCaption(year) {
+    const years = cityCheckpointYears();
+    if (!years.length) return '';
+    const checkpointYear = years[Math.max(0, cityStoryCheckpointIndex(year))];
+    return atlasCopy().simulation?.checkpoints?.[String(checkpointYear)] || '';
+  }
+
+  function renderCityStory() {
+    const host = $('cityStoryHost');
+    if (!host || !state.cityStory.active) return;
+    const controls = atlasCopy().simulation?.controls || {};
+    const snapshot = citySimulationSnapshot(state.year);
+    host.innerHTML = "<section id='cityStory' class='city-story' role='region' aria-live='polite' aria-label='" + escapeHtml(controls.progress || 'City story year') + "'" +
+      " data-year='" + snapshot.year + "'" +
+      " data-active-events='" + snapshot.activeEvents + "'" +
+      " data-future-events='" + snapshot.futureEvents + "'" +
+      " data-built-lines='" + snapshot.builtLines + "'" +
+      " data-planned-lines='" + snapshot.plannedLines + "'" +
+      " data-built-stations='" + snapshot.builtStations + "'" +
+      " data-planned-stations='" + snapshot.plannedStations + "'>" +
+      "<div class='city-story-head'><span class='city-story-kicker'>" + escapeHtml(controls.progress || 'City story year') + "</span><strong class='city-story-year'>" + snapshot.year + "</strong></div>" +
+      "<p id='cityStoryCaption'>" + escapeHtml(cityStoryCaption(snapshot.year)) + "</p>" +
+      "<div class='tool-actions'><button type='button' class='secondary-action' id='cityStorySkip'>" + escapeHtml(controls.skip || 'Skip') + "</button></div>" +
+      "</section>";
+    $('cityStorySkip')?.addEventListener('click', skipCityStory);
+  }
+
+  function startCityStory() {
+    const years = cityCheckpointYears();
+    state.cityStory.active = years.length > 0;
+    state.cityStory.index = 0;
+    if (years.length) setYear(years[0]);
+  }
+
+  function skipCityStory() {
+    const years = cityCheckpointYears();
+    if (!years.length) return;
+    state.cityStory.index = Math.min(state.cityStory.index + 1, years.length - 1);
+    setYear(years[state.cityStory.index]);
+  }
+
+  function stopCityStory() {
+    state.cityStory.active = false;
+    state.cityStory.index = 0;
+  }
+
   function renderTourStop() {
     const ui = atlasCopy().ui || {}; const stopId = state.tourStops[state.tourIndex];
     const zone = zones.find(item => item.id === stopId); if (zone) selectZone(stopId, false);
@@ -806,7 +904,8 @@
     const name = zone ? (state.lang === 'tr' ? zone.nameTr : zone.nameEn) : '';
     const story = ui.tour?.[stopId] || '';
     const last = state.tourIndex >= state.tourStops.length - 1;
-    overlay.innerHTML = '<div class="tour-card"><div class="tour-kicker">' + escapeHtml(ui.tourStop || 'Stop') + ' ' + (state.tourIndex + 1) + ' / ' + state.tourStops.length + '</div><h2>' + escapeHtml(name) + '</h2><p>' + escapeHtml(story) + '</p><button type="button" class="primary-action" data-tour-next>' + escapeHtml(last ? (ui.tourEnd || 'Explore the map') : 'Next') + '</button><button type="button" class="tour-close" data-tour-close>' + escapeHtml(ui.tourExit || 'Close tour') + '</button></div>';
+    overlay.innerHTML = '<div class="tour-card"><div class="tour-kicker">' + escapeHtml(ui.tourStop || 'Stop') + ' ' + (state.tourIndex + 1) + ' / ' + state.tourStops.length + '</div><h2>' + escapeHtml(name) + '</h2><p>' + escapeHtml(story) + '</p><button type="button" class="primary-action" data-tour-next>' + escapeHtml(last ? (ui.tourEnd || 'Explore the map') : 'Next') + '</button><button type="button" class="tour-close" data-tour-close>' + escapeHtml(ui.tourExit || 'Close tour') + '</button><div id="cityStoryHost"></div></div>';
+    renderCityStory();
     overlay.querySelector('[data-tour-next]')?.addEventListener('click', () => { if (last) finishTour(); else { state.tourIndex += 1; renderTourStop(); } });
     overlay.querySelector('[data-tour-close]')?.addEventListener('click', finishTour);
   }
@@ -816,10 +915,11 @@
     setEngaged(true); state.tourIndex = 0;
     let overlay = $('tourOverlay');
     if (!overlay) { overlay = document.createElement('div'); overlay.id = 'tourOverlay'; overlay.className = 'tour-overlay'; overlay.setAttribute('role', 'dialog'); overlay.setAttribute('aria-modal', 'true'); document.body.appendChild(overlay); }
+    startCityStory();
     renderTourStop();
   }
 
-  function finishTour() { $('tourOverlay')?.remove(); if (state.map) state.map.resize(); }
+  function finishTour() { stopCityStory(); $('tourOverlay')?.remove(); if (state.map) state.map.resize(); }
 
   function installControls() {
     $('showMe')?.addEventListener('click', startTour); $('layersToggle')?.addEventListener('click', () => toggleLayerMenu());

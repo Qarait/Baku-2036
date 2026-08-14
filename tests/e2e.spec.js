@@ -53,6 +53,19 @@ test('one-minute tour runs through its stops and exits', async ({ page }) => {
   await expect(page.locator('#tourOverlay')).toHaveCount(0);
 });
 
+test('city snapshot changes with the selected year', async ({ page }) => {
+  await page.goto('./?cache=e2e-city-snapshot#y=2026&lang=en');
+  await waitForMap(page);
+  await page.getByRole('button', { name: '▶ Show me (1 minute)' }).click();
+  await expect(page.locator('#cityStory')).toHaveAttribute('data-year', '2026');
+  const first = await page.locator('#cityStory').getAttribute('data-active-events');
+  await page.locator('#cityStorySkip').click();
+  await page.locator('#cityStorySkip').click();
+  await expect(page.locator('#cityStory')).toHaveAttribute('data-year', '2030');
+  const later = await page.locator('#cityStory').getAttribute('data-active-events');
+  expect(later).not.toBe(first);
+  await expect(page.locator('#cityStoryCaption')).not.toBeEmpty();
+});
 test('year control advances the selected map year', async ({ page }) => {
   await page.goto('./?cache=e2e-year#z=whitecity&y=2026&lang=en');
   await waitForMap(page);
@@ -225,3 +238,4 @@ test('mobile zone details use one page scroll and reach their final action', asy
   await expect(page.locator('#clearSelection')).toBeInViewport();
   await expect.poll(() => page.evaluate(() => window.scrollY > 0)).toBeTruthy();
 });
+

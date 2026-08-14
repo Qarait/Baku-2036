@@ -268,6 +268,11 @@ button { cursor: pointer; }
 body.engaged .quiet-controls, .quiet-controls.is-visible { opacity: 1; pointer-events: auto; }
 .layers-toggle { display: none; }
 .layer-menu { display: flex; align-items: center; gap: 5px; }
+.city-story { margin-top: 14px; padding: 13px; border: 1px solid rgba(183,131,39,.24); border-radius: 9px; background: #fffdf7; }
+.city-story-head { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.city-story-kicker { color: var(--gold); font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.city-story-year { color: var(--navy); font-size: 20px; }
+.city-story p { margin: 8px 0 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
 .tour-overlay { position: fixed; z-index: 20; inset: 0; display: grid; place-items: center; padding: 20px; background: rgba(23,38,56,.46); }
 .tour-card { width: min(420px, 100%); padding: 22px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); box-shadow: 0 18px 50px rgba(23,38,56,.28); }
 .tour-kicker { color: var(--gold); font-size: 10px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
