@@ -79,6 +79,38 @@ test('city story can pause, continue, skip, and finish', async ({ page }) => {
   await expect(page.locator('#yearSelect')).toHaveValue('2028');
 });
 
+test('dragging the year updates the city story caption and map snapshot', async ({ page }) => {
+  await page.goto('./?cache=e2e-city-manual#y=2026&lang=en');
+  await waitForMap(page);
+  await page.getByRole('button', { name: '▶ Show me (1 minute)' }).click();
+  await page.locator('#yearSelect').selectOption('2033');
+  await expect(page.locator('#cityStory')).toHaveAttribute('data-year', '2033');
+  await expect(page.locator('#cityStoryCaption')).toContainText('story spreads');
+});
+
+test('city story controls and caption switch to Turkish', async ({ page }) => {
+  await page.goto('./?cache=e2e-city-tr#y=2026&lang=en');
+  await waitForMap(page);
+  await page.getByRole('button', { name: '▶ Show me (1 minute)' }).click();
+  await page.locator('#langTr').click();
+  await expect(page.locator('#cityStoryPause')).toHaveText('Duraklat');
+  await expect(page.locator('#cityStoryCaption')).toContainText('Buradan başlayın');
+});
+
+test('city simulation data failure is visible and retryable', async ({ page }) => {
+  let failContent = true;
+  await page.route('**/data/content.json*', route => failContent ? route.fulfill({ status: 503, body: 'temporary failure' }) : route.continue());
+  await page.goto('./?cache=e2e-city-error#lang=en');
+  await expect(page.locator('#mapStatus')).toHaveClass(/error/);
+  await expect(page.locator('#mapStatus')).toContainText('couldn’t load');
+  await expect(page.locator('#mapStatus')).toContainText('refresh');
+  await expect(page.locator('#retryData')).toBeVisible();
+  failContent = false;
+  await page.locator('#retryData').click();
+  await expect(page.locator('#mapStatus')).toContainText('Click a location', { timeout: 30000 });
+  page.__browserErrors = [];
+});
+
 test('city snapshot changes with the selected year', async ({ page }) => {
   await page.goto('./?cache=e2e-city-snapshot#y=2026&lang=en');
   await waitForMap(page);

@@ -25,7 +25,7 @@
       administrative: 'District', investment: 'Investment spot', nearestMetro: 'Nearest metro (straight line — walking is a bit longer)', centralBaku: 'Central Baku', airport: 'Airport', coordinates: 'Coordinates',
       noRayon: 'That’s the sea', noZone: 'No nearby spot', noMetro: 'No station nearby',
       rayonNote: 'District borders show official administrative geography. Investment spots are approximate, not property boundaries.',
-      clear: 'Clear selection', closeDetails: 'Close details', loading: 'Loading map data\u2026', ready: 'Click a location to identify its geography', error: 'We couldn\u2019t load the map data. Please refresh and try again.', searchEmpty: 'No local place matched that search.'
+      clear: 'Clear selection', closeDetails: 'Close details', loading: 'Loading map data\u2026', ready: 'Click a location to identify its geography', error: 'We couldn\u2019t load the map data. Please refresh and try again.', retry: 'Retry', searchEmpty: 'No local place matched that search.'
     },
     tr: {
       title: 'Bakü gayrimenkulünü anlayın',
@@ -43,7 +43,7 @@
       administrative: 'İlçe', investment: 'Yatırım noktası', nearestMetro: 'En yakın metro (kuş uçuşu — yürüyüş biraz daha uzun)', centralBaku: 'Bakü merkezi', airport: 'Havalimanı', coordinates: 'Koordinatlar',
       noRayon: 'Burası deniz', noZone: 'Yakında yatırım noktası yok', noMetro: 'Yakında istasyon yok',
       rayonNote: 'İlçe sınırları resmi idari coğrafyayı gösterir. Yatırım noktaları yaklaşık alanlardır; mülk sınırı değildir.',
-      clear: 'Se\u00e7imi temizle', closeDetails: 'Detayları kapat', loading: 'Harita verileri y\u00fckleniyor\u2026', ready: 'Co\u011frafyay\u0131 tan\u0131mlamak i\u00e7in bir yere t\u0131klay\u0131n', error: 'Harita verilerini y\u00fckleyemedik. L\u00fctfen sayfay\u0131 yenileyin ve tekrar deneyin.', searchEmpty: 'Yerel gazetteer e\u015fle\u015fme bulamad\u0131.'
+      clear: 'Se\u00e7imi temizle', closeDetails: 'Detayları kapat', loading: 'Harita verileri y\u00fckleniyor\u2026', ready: 'Co\u011frafyay\u0131 tan\u0131mlamak i\u00e7in bir yere t\u0131klay\u0131n', error: 'Harita verilerini y\u00fckleyemedik. L\u00fctfen sayfay\u0131 yenileyin ve tekrar deneyin.', retry: 'Yeniden deneyin', searchEmpty: 'Yerel gazetteer e\u015fle\u015fme bulamad\u0131.'
     }
   };
   const zones = [];
@@ -164,11 +164,25 @@
 
   const state = {
     lang: 'en', year: 2026, admin: true, investments: true, metro: true, heat: false,
-    selected: null, data: null, map: null, ready: false, content: null, shortlist: {}, shortlistAmounts: {}, scenarios: { oil: 'norm', infra: 'on', cur: 'stable' }, openAccordion: null, timeTimer: null, engaged: false, cityStory: { active: false, paused: false, index: 0, timer: null }, tourIndex: 0, tourStops: ['whitecity', 'mohammadi', 'bilgah', 'sumgayit', 'hovsan']
+    selected: null, data: null, map: null, ready: false, content: null, controlsInstalled: false, shortlist: {}, shortlistAmounts: {}, scenarios: { oil: 'norm', infra: 'on', cur: 'stable' }, openAccordion: null, timeTimer: null, engaged: false, cityStory: { active: false, paused: false, index: 0, timer: null }, tourIndex: 0, tourStops: ['whitecity', 'mohammadi', 'bilgah', 'sumgayit', 'hovsan']
   };
 
   const $ = id => document.getElementById(id);
   const tr = () => copy[state.lang];
+  function setMapStatus(kind, message) {
+    const host = $('mapStatus');
+    if (!host) return;
+    host.classList.toggle('error', kind === 'error');
+    host.dataset.status = kind;
+    host.textContent = message;
+    if (kind === 'error') {
+      const retry = document.createElement('button');
+      retry.id = 'retryData'; retry.type = 'button'; retry.className = 'retry-data';
+      retry.textContent = tr().retry || (state.lang === 'tr' ? 'Yeniden deneyin' : 'Retry');
+      retry.addEventListener('click', boot);
+      host.append(' ', retry);
+    }
+  }
   const featureCollection = features => ({ type: 'FeatureCollection', features });
   const pointFeature = (coords, properties) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: coords }, properties: properties || {} });
   const lineFeature = (coords, properties) => ({ type: 'Feature', geometry: { type: 'LineString', coordinates: coords }, properties: properties || {} });
@@ -843,7 +857,6 @@
 
   function setLanguage(lang) {
     if (!copy[lang]) return;
-    if (state.cityStory.active) pauseCityStory();
     state.lang = lang;
     const u = tr();
     document.documentElement.lang = lang === 'tr' ? 'tr' : 'en';
@@ -1066,7 +1079,7 @@
     $('showMe')?.addEventListener('click', startCityStory); $('layersToggle')?.addEventListener('click', () => toggleLayerMenu());
     document.addEventListener('keydown', event => { if (event.key === 'Escape') { toggleLayerMenu(false); finishCityStory(); finishTour(); } });
     document.querySelectorAll('.quiet-controls').forEach(element => element.addEventListener('focusin', () => setEngaged(true)));
-    $('langEn').addEventListener('click', () => { setEngaged(true); pauseCityStory(); setLanguage('en'); }); $('langTr').addEventListener('click', () => { setEngaged(true); pauseCityStory(); setLanguage('tr'); });
+    $('langEn').addEventListener('click', () => { setEngaged(true); setLanguage('en'); }); $('langTr').addEventListener('click', () => { setEngaged(true); setLanguage('tr'); });
     $('yearSelect').addEventListener('focus', () => setEngaged(true)); $('yearSelect').addEventListener('change', event => { setEngaged(true); pauseCityStory(); setYear(event.target.value); });
     $('placeSearch').addEventListener('focus', () => setEngaged(true)); $('placeSearch').addEventListener('input', event => { pauseCityStory(); renderSearchResults(event.target.value); });
     $('placeSearch').addEventListener('keydown', event => { if (event.key === 'Escape') { $('searchResults').hidden = true; event.target.blur(); } if (event.key === 'Enter') { const first = searchPlaces(event.target.value)[0]; if (first) choosePlace(first); } });
@@ -1089,7 +1102,7 @@
     state.map = new maplibregl.Map({ container: 'v2Map', style: createStyle(data), center: [49.86, 40.42], zoom: 9.6, minZoom: 8, maxZoom: 15.4, dragRotate: false, pitchWithRotate: false, attributionControl: { compact: true } });
     state.map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-right');
     state.map.on('load', () => {
-      state.ready = true; $('mapStatus').textContent = tr().ready; $('mapStatus').classList.remove('error'); $('yearSelect').value = String(state.year);
+      state.ready = true; setMapStatus('ready', tr().ready); $('yearSelect').value = String(state.year);
       updateLayers(); renderPanel();
       state.map.on('click', event => identifyLocation(event.lngLat, event.point));
       ['investment-zones', 'metro-stations', 'admin-fill', 'city-events-active', 'city-events-future'].forEach(layer => { state.map.on('mouseenter', layer, () => { state.map.getCanvas().style.cursor = 'pointer'; }); state.map.on('mouseleave', layer, () => { state.map.getCanvas().style.cursor = ''; }); });
@@ -1107,7 +1120,9 @@
   }
 
   async function boot() {
-    readHash(); installControls(); setLanguage(state.lang); $('mapStatus').textContent = tr().loading;
+    readHash();
+    if (!state.controlsInstalled) { installControls(); state.controlsInstalled = true; }
+    setLanguage(state.lang); setMapStatus('loading', tr().loading);
     try {
       const data = await loadData();
       renderDataFreshness();
@@ -1115,7 +1130,7 @@
       renderAllContent();
       const maplibregl = window.__V3MapLibre;
       if (maplibregl) installMap(maplibregl, data); else window.addEventListener('v3-maplibre-ready', () => installMap(window.__V3MapLibre, data), { once: true });
-    } catch (error) { console.error(error); $('mapStatus').textContent = tr().error; $('mapStatus').classList.add('error'); }
+    } catch (error) { console.error(error); finishCityStory(); setMapStatus('error', tr().error); }
   }
 
   window.distanceKm = distanceKm;
