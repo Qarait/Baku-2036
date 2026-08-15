@@ -1011,9 +1011,9 @@
     const years = cityCheckpointYears();
     state.cityStory.active = years.length > 0;
     state.cityStory.paused = false;
-    state.cityStory.index = 0;
+    state.cityStory.index = Math.max(0, cityStoryCheckpointIndex(state.year));
     if (years.length) {
-      setYear(years[0]);
+      setYear(years[state.cityStory.index]);
       renderCityStory();
       scheduleCityStoryTimer();
     }

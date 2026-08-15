@@ -111,6 +111,16 @@ test('city simulation data failure is visible and retryable', async ({ page }) =
   page.__browserErrors = [];
 });
 
+test('deep-linked zone remains selectable after the city story finishes', async ({ page }) => {
+  await page.goto('./?cache=e2e-city-regression#z=whitecity&y=2030&lang=tr');
+  await waitForMap(page);
+  await page.getByRole('button', { name: '▶ Göster (1 dakika)' }).click();
+  await page.locator('#cityStoryFinish').click();
+  await expect(page.locator('#panelTitle')).toHaveText('White City / Xətai');
+  await expect(page.locator('#yearSelect')).toHaveValue('2030');
+  await expect(page.locator('#rayonLegend')).toHaveText('İlçe sınırları');
+});
+
 test('city snapshot changes with the selected year', async ({ page }) => {
   await page.goto('./?cache=e2e-city-snapshot#y=2026&lang=en');
   await waitForMap(page);
