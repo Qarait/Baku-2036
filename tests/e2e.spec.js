@@ -37,7 +37,7 @@ test('root loads a rendered map and tour starts without browser errors', async (
   await page.goto('./?cache=e2e-root');
   await waitForMap(page);
   await page.getByRole('button', { name: '▶ Show me (1 minute)' }).click();
-  await expect(page.locator('#tourOverlay')).toBeVisible();
+  await expect(page.locator('#cityStory')).toBeVisible();
   await expect(page).toHaveTitle(/understand property geography/);
   await expect(page.locator('#v2Map')).toHaveAttribute('aria-label', /Interactive Baku/);
 });
@@ -45,12 +45,38 @@ test('root loads a rendered map and tour starts without browser errors', async (
 test('one-minute tour runs through its stops and exits', async ({ page }) => {
   await page.goto('./?cache=e2e-tour');
   await waitForMap(page);
-  await page.getByRole('button', { name: '▶ Show me (1 minute)' }).click();
+  await page.locator('#accordion-time .accordion-summary').click();
+  await expect(page.locator('#zoneTourStart')).toBeVisible();
+  await page.locator('#zoneTourStart').click();
   await expect(page.locator('#tourOverlay')).toBeVisible();
   for (let stop = 0; stop < 5; stop += 1) {
     await page.locator('#tourOverlay [data-tour-next]').click();
   }
   await expect(page.locator('#tourOverlay')).toHaveCount(0);
+});
+
+test('Show me starts the Baku-wide city story', async ({ page }) => {
+  await page.goto('./?cache=e2e-city-story');
+  await waitForMap(page);
+  await page.getByRole('button', { name: '▶ Show me (1 minute)' }).click();
+  await expect(page.locator('#cityStory')).toBeVisible();
+  await expect(page.locator('#cityStory')).toHaveAttribute('data-year', '2026');
+  await expect(page.locator('#cityStoryCaption')).toContainText('Start here');
+});
+
+test('city story can pause, continue, skip, and finish', async ({ page }) => {
+  await page.goto('./?cache=e2e-city-controls');
+  await waitForMap(page);
+  await page.getByRole('button', { name: '▶ Show me (1 minute)' }).click();
+  await page.locator('#cityStoryPause').click();
+  await expect(page.locator('#cityStoryPause')).toHaveText('Continue');
+  await page.locator('#cityStoryPause').click();
+  await expect(page.locator('#cityStoryPause')).toHaveText('Pause');
+  await page.locator('#cityStorySkip').click();
+  await expect(page.locator('#cityStory')).toHaveAttribute('data-year', '2028');
+  await page.locator('#cityStoryFinish').click();
+  await expect(page.locator('#cityStory')).toHaveCount(0);
+  await expect(page.locator('#yearSelect')).toHaveValue('2028');
 });
 
 test('city snapshot changes with the selected year', async ({ page }) => {
@@ -270,6 +296,3 @@ test('mobile zone details use one page scroll and reach their final action', asy
   await expect(page.locator('#clearSelection')).toBeInViewport();
   await expect.poll(() => page.evaluate(() => window.scrollY > 0)).toBeTruthy();
 });
-
-
-

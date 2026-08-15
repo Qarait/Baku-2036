@@ -268,11 +268,14 @@ button { cursor: pointer; }
 body.engaged .quiet-controls, .quiet-controls.is-visible { opacity: 1; pointer-events: auto; }
 .layers-toggle { display: none; }
 .layer-menu { display: flex; align-items: center; gap: 5px; }
-.city-story { margin-top: 14px; padding: 13px; border: 1px solid rgba(183,131,39,.24); border-radius: 9px; background: #fffdf7; }
+.city-story-host { position: absolute; z-index: 8; right: 16px; bottom: max(16px, env(safe-area-inset-bottom, 0px)); left: 16px; display: flex; justify-content: center; pointer-events: none; }
+.city-story { width: min(520px, calc(100vw - 32px)); margin: 0; padding: 13px; border: 1px solid rgba(183,131,39,.24); border-radius: 9px; background: #fffdf7; box-shadow: 0 8px 24px rgba(23,38,56,.18); pointer-events: auto; }
 .city-story-head { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
 .city-story-kicker { color: var(--gold); font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
 .city-story-year { color: var(--navy); font-size: 20px; }
 .city-story p { margin: 8px 0 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
+.city-story-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.city-story-actions button { flex: 1 1 auto; min-width: 0; }
 .tour-overlay { position: fixed; z-index: 20; inset: 0; display: grid; place-items: center; padding: 20px; background: rgba(23,38,56,.46); }
 .tour-card { width: min(420px, 100%); padding: 22px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); box-shadow: 0 18px 50px rgba(23,38,56,.28); }
 .tour-kicker { color: var(--gold); font-size: 10px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
@@ -286,6 +289,8 @@ body.engaged .quiet-controls, .quiet-controls.is-visible { opacity: 1; pointer-e
   .map-toolbar { flex-wrap: nowrap; gap: 5px; overflow: visible; }
   .map-toolbar .toolbar-rule, .map-toolbar .layer-button { display: none; }
   .layers-toggle { display: inline-flex; min-width: 64px; }
+  .city-story-host { right: 10px; bottom: max(10px, env(safe-area-inset-bottom, 0px)); left: 10px; }
+  .city-story { width: 100%; }
   .layer-menu { position: absolute; right: 8px; top: 45px; z-index: 7; display: none; width: min(260px, calc(100vw - 24px)); padding: 8px; flex-direction: column; align-items: stretch; border: 1px solid var(--line); border-radius: 9px; background: var(--paper); box-shadow: 0 10px 28px rgba(23,38,56,.2); }
   .layer-menu.open { display: flex; }
   .layer-menu .layer-button { display: inline-flex; justify-content: flex-start; min-height: 40px; }

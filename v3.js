@@ -164,7 +164,7 @@
 
   const state = {
     lang: 'en', year: 2026, admin: true, investments: true, metro: true, heat: false,
-    selected: null, data: null, map: null, ready: false, content: null, shortlist: {}, shortlistAmounts: {}, scenarios: { oil: 'norm', infra: 'on', cur: 'stable' }, openAccordion: null, timeTimer: null, engaged: false, cityStory: { active: false, index: 0 }, tourIndex: 0, tourStops: ['whitecity', 'mohammadi', 'bilgah', 'sumgayit', 'hovsan']
+    selected: null, data: null, map: null, ready: false, content: null, shortlist: {}, shortlistAmounts: {}, scenarios: { oil: 'norm', infra: 'on', cur: 'stable' }, openAccordion: null, timeTimer: null, engaged: false, cityStory: { active: false, paused: false, index: 0, timer: null }, tourIndex: 0, tourStops: ['whitecity', 'mohammadi', 'bilgah', 'sumgayit', 'hovsan']
   };
 
   const $ = id => document.getElementById(id);
@@ -211,8 +211,12 @@
     return zones.map((z, index) => pointFeature(z.coords, { id: z.id, radius: z.radius * 3.5, color: hslToHex(28 + index * 4, 77, 51) }));
   }
 
+  const CITY_STORY_YEARS = [2026, 2028, 2030, 2033, 2036];
+  const CITY_STORY_INTERVAL_MS = 12000;
+
   function cityCheckpointYears() {
-    return Object.keys(atlasCopy().simulation?.checkpoints || {}).map(year => Number(year)).filter(Number.isInteger).sort((a, b) => a - b);
+    const checkpoints = atlasCopy().simulation?.checkpoints || {};
+    return CITY_STORY_YEARS.filter(year => checkpoints[String(year)]);
   }
 
   function cityEventProperties(event, year) {
@@ -441,6 +445,7 @@
   }
   function identifyLocation(lngLat, point, options = {}) {
     if (!state.ready) return;
+    pauseCityStory();
     const coords = [Number(lngLat.lng), Number(lngLat.lat)];
     const waterHit = point ? state.map.queryRenderedFeatures(point, { layers: ['water', 'ocean'] }).length > 0 : false;
     const rendered = point ? state.map.queryRenderedFeatures(point, { layers: ['admin-fill', 'investment-zones', 'metro-stations', 'city-events-active', 'city-events-future'] }) : [];
@@ -461,6 +466,7 @@
   function selectZone(id, announce = true) {
     const zone = zones.find(z => z.id === id);
     if (!zone || !state.ready) return;
+    pauseCityStory();
     if (!state.map.getLayoutProperty('investment-zones', 'visibility') || state.map.getLayoutProperty('investment-zones', 'visibility') !== 'none') {
       state.map.flyTo({ center: zone.coords, zoom: Math.max(11, state.map.getZoom()), duration: reducedMotion ? 0 : 700, essential: true });
     }
@@ -625,7 +631,7 @@
     const content = atlasCopy();
     const ui = content.ui || {};
     const story = ui.tmY?.[String(state.year)] || '';
-    return '<div class="tool-grid"><div class="tool-card"><h3>' + escapeHtml(ui.tmTitle || 'Time machine') + '</h3><p>' + escapeHtml(content.sections.time.whatThisMeans) + '</p><div class="year-track"><output id="timeYearOutput">' + state.year + '</output><input id="timeYear" type="range" min="2026" max="2036" step="1" value="' + state.year + '" aria-label="Timeline year"></div><div class="tool-actions"><button type="button" class="primary-action" id="timePlay">' + escapeHtml(content.labels.play || 'Play the decade') + '</button></div></div><div class="year-story" id="timeStory"><strong>' + state.year + '</strong>' + escapeHtml(story) + '</div></div>';
+    return '<div class="tool-grid"><div class="tool-card"><h3>' + escapeHtml(ui.tmTitle || 'Time machine') + '</h3><p>' + escapeHtml(content.sections.time.whatThisMeans) + '</p><div class="year-track"><output id="timeYearOutput">' + state.year + '</output><input id="timeYear" type="range" min="2026" max="2036" step="1" value="' + state.year + '" aria-label="Timeline year"></div><div class="tool-actions"><button type="button" class="primary-action" id="timePlay">' + escapeHtml(content.labels.play || 'Play the decade') + '</button><button type="button" class="secondary-action" id="zoneTourStart">' + escapeHtml(ui.tourBtn || '') + '</button></div></div><div class="year-story" id="timeStory"><strong>' + state.year + '</strong>' + escapeHtml(story) + '</div></div>';
   }
 
   function renderYearSliderHint() {
@@ -778,8 +784,9 @@
 
   function wireContent() {
     document.querySelectorAll('.accordion-summary').forEach(button => button.addEventListener('click', () => setAccordion(button.closest('.v2-accordion').id)));
-    $('timeYear')?.addEventListener('input', event => setYear(event.target.value));
+    $('timeYear')?.addEventListener('input', event => { pauseCityStory(); setYear(event.target.value); });
     $('timePlay')?.addEventListener('click', toggleTimeMachine);
+    $('zoneTourStart')?.addEventListener('click', startTour);
     $('scenarioOil')?.addEventListener('change', event => setScenario('oil', event.target.value));
     $('scenarioInfra')?.addEventListener('change', event => setScenario('infra', event.target.value));
     $('scenarioCurrency')?.addEventListener('change', event => setScenario('cur', event.target.value));
@@ -836,6 +843,7 @@
 
   function setLanguage(lang) {
     if (!copy[lang]) return;
+    if (state.cityStory.active) pauseCityStory();
     state.lang = lang;
     const u = tr();
     document.documentElement.lang = lang === 'tr' ? 'tr' : 'en';
@@ -851,6 +859,7 @@
     });
     if (state.ready) { updateLayers(); renderPanel(); }
     if (state.data) renderAllContent();
+    if (state.cityStory.active) renderCityStory();
     if ($('tourOverlay')) renderTourStop();
     renderDataFreshness();
     updateHash();
@@ -930,7 +939,11 @@
 
   function renderCityStory() {
     const host = $('cityStoryHost');
-    if (!host || !state.cityStory.active) return;
+    if (!host) return;
+    if (!state.cityStory.active) {
+      host.innerHTML = '';
+      return;
+    }
     const controls = atlasCopy().simulation?.controls || {};
     const snapshot = citySimulationSnapshot(state.year);
     host.innerHTML = "<section id='cityStory' class='city-story' role='region' aria-live='polite' aria-label='" + escapeHtml(controls.progress || 'City story year') + "'" +
@@ -952,29 +965,79 @@
       "<p id='cityStoryCaption'>" + escapeHtml(cityStoryCaption(snapshot.year)) + "</p>" +
       "<p class='city-story-summary' id='cityStoryProjectSummary'>" + escapeHtml(cityStoryProjectSummaryText(snapshot)) + "</p>" +
       "<p class='city-story-summary' id='cityStoryEvidenceSummary'>" + escapeHtml(cityStoryEvidenceSummaryText(snapshot)) + "</p>" +
-      "<div class='tool-actions'><button type='button' class='secondary-action' id='cityStorySkip'>" + escapeHtml(controls.skip || 'Skip') + "</button></div>" +
+      "<div class='city-story-actions'><button type='button' class='secondary-action' id='cityStoryPause' aria-pressed='" + String(!state.cityStory.paused) + "'>" + escapeHtml((state.cityStory.paused ? controls.resume : controls.pause) || '') + "</button><button type='button' class='secondary-action' id='cityStorySkip'>" + escapeHtml(controls.skip || '') + "</button><button type='button' class='primary-action' id='cityStoryFinish'>" + escapeHtml(controls.finish || '') + "</button></div>" +
       "</section>";
+    $('cityStoryPause')?.addEventListener('click', () => state.cityStory.paused ? resumeCityStory() : pauseCityStory());
     $('cityStorySkip')?.addEventListener('click', skipCityStory);
+    $('cityStoryFinish')?.addEventListener('click', finishCityStory);
+  }
+
+  function clearCityStoryTimer() {
+    if (state.cityStory.timer) {
+      clearTimeout(state.cityStory.timer);
+      state.cityStory.timer = null;
+    }
+  }
+
+  function scheduleCityStoryTimer() {
+    clearCityStoryTimer();
+    if (!state.cityStory.active || state.cityStory.paused) return;
+    const years = cityCheckpointYears();
+    if (state.cityStory.index >= years.length - 1) return;
+    state.cityStory.timer = setTimeout(() => {
+      state.cityStory.timer = null;
+      skipCityStory();
+    }, CITY_STORY_INTERVAL_MS);
   }
 
   function startCityStory() {
-
+    if (!state.data) return;
+    finishTour();
+    finishCityStory();
+    setEngaged(true);
     const years = cityCheckpointYears();
     state.cityStory.active = years.length > 0;
+    state.cityStory.paused = false;
     state.cityStory.index = 0;
-    if (years.length) setYear(years[0]);
+    if (years.length) {
+      setYear(years[0]);
+      renderCityStory();
+      scheduleCityStoryTimer();
+    }
+  }
+
+  function pauseCityStory() {
+    if (!state.cityStory.active) return;
+    clearCityStoryTimer();
+    state.cityStory.paused = true;
+    renderCityStory();
+  }
+
+  function resumeCityStory() {
+    if (!state.cityStory.active) return;
+    state.cityStory.paused = false;
+    scheduleCityStoryTimer();
+    renderCityStory();
   }
 
   function skipCityStory() {
     const years = cityCheckpointYears();
     if (!years.length) return;
+    clearCityStoryTimer();
     state.cityStory.index = Math.min(state.cityStory.index + 1, years.length - 1);
     setYear(years[state.cityStory.index]);
+    state.cityStory.paused = state.cityStory.index >= years.length - 1;
+    renderCityStory();
+    scheduleCityStoryTimer();
   }
 
-  function stopCityStory() {
+  function finishCityStory() {
+    clearCityStoryTimer();
     state.cityStory.active = false;
+    state.cityStory.paused = false;
     state.cityStory.index = 0;
+    renderCityStory();
+    if (state.map) state.map.resize();
   }
 
   function renderTourStop() {
@@ -984,32 +1047,30 @@
     const name = zone ? (state.lang === 'tr' ? zone.nameTr : zone.nameEn) : '';
     const story = ui.tour?.[stopId] || '';
     const last = state.tourIndex >= state.tourStops.length - 1;
-    overlay.innerHTML = '<div class="tour-card"><div class="tour-kicker">' + escapeHtml(ui.tourStop || 'Stop') + ' ' + (state.tourIndex + 1) + ' / ' + state.tourStops.length + '</div><h2>' + escapeHtml(name) + '</h2><p>' + escapeHtml(story) + '</p><button type="button" class="primary-action" data-tour-next>' + escapeHtml(last ? (ui.tourEnd || 'Explore the map') : 'Next') + '</button><button type="button" class="tour-close" data-tour-close>' + escapeHtml(ui.tourExit || 'Close tour') + '</button><div id="cityStoryHost"></div></div>';
-    renderCityStory();
+    overlay.innerHTML = '<div class="tour-card"><div class="tour-kicker">' + escapeHtml(ui.tourStop || 'Stop') + ' ' + (state.tourIndex + 1) + ' / ' + state.tourStops.length + '</div><h2>' + escapeHtml(name) + '</h2><p>' + escapeHtml(story) + '</p><button type="button" class="primary-action" data-tour-next>' + escapeHtml(last ? (ui.tourEnd || 'Explore the map') : 'Next') + '</button><button type="button" class="tour-close" data-tour-close>' + escapeHtml(ui.tourExit || 'Close tour') + '</button></div>';
     overlay.querySelector('[data-tour-next]')?.addEventListener('click', () => { if (last) finishTour(); else { state.tourIndex += 1; renderTourStop(); } });
     overlay.querySelector('[data-tour-close]')?.addEventListener('click', finishTour);
   }
 
   function startTour() {
     if (!state.data) return;
-    setEngaged(true); state.tourIndex = 0;
+    finishCityStory(); setEngaged(true); state.tourIndex = 0;
     let overlay = $('tourOverlay');
     if (!overlay) { overlay = document.createElement('div'); overlay.id = 'tourOverlay'; overlay.className = 'tour-overlay'; overlay.setAttribute('role', 'dialog'); overlay.setAttribute('aria-modal', 'true'); document.body.appendChild(overlay); }
-    startCityStory();
     renderTourStop();
   }
 
-  function finishTour() { stopCityStory(); $('tourOverlay')?.remove(); if (state.map) state.map.resize(); }
+  function finishTour() { $('tourOverlay')?.remove(); if (state.map) state.map.resize(); }
 
   function installControls() {
-    $('showMe')?.addEventListener('click', startTour); $('layersToggle')?.addEventListener('click', () => toggleLayerMenu());
-    document.addEventListener('keydown', event => { if (event.key === 'Escape') { toggleLayerMenu(false); finishTour(); } });
+    $('showMe')?.addEventListener('click', startCityStory); $('layersToggle')?.addEventListener('click', () => toggleLayerMenu());
+    document.addEventListener('keydown', event => { if (event.key === 'Escape') { toggleLayerMenu(false); finishCityStory(); finishTour(); } });
     document.querySelectorAll('.quiet-controls').forEach(element => element.addEventListener('focusin', () => setEngaged(true)));
-    $('langEn').addEventListener('click', () => { setEngaged(true); setLanguage('en'); }); $('langTr').addEventListener('click', () => { setEngaged(true); setLanguage('tr'); });
-    $('yearSelect').addEventListener('focus', () => setEngaged(true)); $('yearSelect').addEventListener('change', event => { setEngaged(true); setYear(event.target.value); });
-    $('placeSearch').addEventListener('focus', () => setEngaged(true)); $('placeSearch').addEventListener('input', event => renderSearchResults(event.target.value));
+    $('langEn').addEventListener('click', () => { setEngaged(true); pauseCityStory(); setLanguage('en'); }); $('langTr').addEventListener('click', () => { setEngaged(true); pauseCityStory(); setLanguage('tr'); });
+    $('yearSelect').addEventListener('focus', () => setEngaged(true)); $('yearSelect').addEventListener('change', event => { setEngaged(true); pauseCityStory(); setYear(event.target.value); });
+    $('placeSearch').addEventListener('focus', () => setEngaged(true)); $('placeSearch').addEventListener('input', event => { pauseCityStory(); renderSearchResults(event.target.value); });
     $('placeSearch').addEventListener('keydown', event => { if (event.key === 'Escape') { $('searchResults').hidden = true; event.target.blur(); } if (event.key === 'Enter') { const first = searchPlaces(event.target.value)[0]; if (first) choosePlace(first); } });
-    const clearSelection = () => { state.selected = null; state.hashZone = null; renderPanel(); updateSelectionGeometry(); updateHash(); $('v2ZoneDrawer').focus({ preventScroll: true }); };
+    const clearSelection = () => { pauseCityStory(); state.selected = null; state.hashZone = null; renderPanel(); updateSelectionGeometry(); updateHash(); $('v2ZoneDrawer').focus({ preventScroll: true }); };
     $('clearSelection').addEventListener('click', clearSelection); $('closeDetails').addEventListener('click', clearSelection);
     document.querySelectorAll('[data-action]').forEach(button => button.addEventListener('click', () => {
       if (!state.map) return;
