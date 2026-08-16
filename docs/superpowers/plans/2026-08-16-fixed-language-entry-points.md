@@ -238,14 +238,14 @@ Run:
 git diff --check
 ```
 
-- [ ] **Step 4: Commit the implementation**
+- [x] **Step 4: Commit the implementation**
 
 ```powershell
 git add .github/workflows/pages.yml scripts/serve-static.js scripts/build-language-entrypoints.js v3.js v3.css en/index.html tr/index.html tests/e2e.spec.js tests/webkit.spec.js tests/fixed-language-entrypoints-contract.ps1 docs/superpowers/plans/2026-08-16-fixed-language-entry-points.md
 git commit -m "Add fixed language entry points"
 ```
 
-- [ ] **Step 5: Push only the preview branch and monitor deployment**
+- [x] **Step 5: Push only the preview branch and monitor deployment**
 
 ```powershell
 git push origin HEAD:preview
