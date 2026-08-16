@@ -75,5 +75,5 @@ The implementation is complete only when:
 - existing v2 map contract tests still pass;
 - the root `index.html` byte hash is unchanged;
 - a real browser verifies map → drawer → accordion → EN/TR → planner/deal/shortlist flows at desktop and phone-sized viewports;
-- the published `/Baku-2036/v2/` URL returns HTTP 200 with no console errors.
+- the local `v2/` snapshot completes the browser flow with no console errors; `/v2/` is retained in Git for reference and is not published by GitHub Pages.
 

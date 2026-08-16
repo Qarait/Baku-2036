@@ -5,7 +5,7 @@
 ## Plan
 
 1. **Lock the data contract and provenance**
-   - Add a contract test for `/v2/`, distinct geographic sources, local search data, click identification, and distance calculations.
+   - Add a contract test for the local `v2/` snapshot, distinct geographic sources, local search data, click identification, and distance calculations.
    - Validate the official rayon source and generate a filtered Baku/Absheron polygon file with source notes.
    - Add local metro and gazetteer data with stable ids and EN/TR labels.
 
@@ -20,6 +20,6 @@
 
 4. **Verify and publish the isolated entry point**
    - Run the static contract test, source-data validation, and root-image byte-hash check.
-   - Run a local HTTP smoke test for `/v2/` and verify the deployed `/Baku-2036/v2/` URL when GitHub Pages is updated.
+   - Run a local HTTP smoke test for `/v2/`. The snapshot is retained in Git under the `v2-archive` tag and is not published as a GitHub Pages URL.
    - Keep later analytical porting (time machine, heat, scenarios, planner, deal checker, shortlist, EN/TR deep links) as follow-on v2 work, without modifying v1.
 

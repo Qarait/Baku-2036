@@ -49,6 +49,9 @@ jobs:
         run: |
           node scripts/build-language-entrypoints.js
           git diff --exit-code -- en/index.html tr/index.html
+      - name: Verify Pages artifact contract
+        shell: pwsh
+        run: pwsh -File tests/pages-artifact-contract.ps1
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Build preview artifact
@@ -56,12 +59,12 @@ jobs:
         run: |
           mkdir -p dist/preview
           git archive origin/main | tar -x -C dist
-          rsync -a --exclude='.git' --exclude='dist' --exclude='node_modules' --exclude='test-results' --exclude='playwright-report' --exclude='vendor/*-dev.mjs' ./ dist/preview/
+          rsync -a --exclude='.git' --exclude='dist' --exclude='node_modules' --exclude='test-results' --exclude='playwright-report' --exclude='vendor/*-dev.mjs' --exclude='v2' ./ dist/preview/
       - name: Build live artifact
         if: github.ref_name == 'main'
         run: |
           mkdir dist
-          rsync -a --exclude='.git' --exclude='dist' --exclude='node_modules' --exclude='test-results' --exclude='playwright-report' --exclude='vendor/*-dev.mjs' ./ dist/
+          rsync -a --exclude='.git' --exclude='dist' --exclude='node_modules' --exclude='test-results' --exclude='playwright-report' --exclude='vendor/*-dev.mjs' --exclude='v2' ./ dist/
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:

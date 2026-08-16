@@ -4,7 +4,7 @@
 
 **Goal:** Publish a root audience release that consolidates the v2 map and v1 storytelling, uses one canonical zone JSON, speaks plainly in English and Turkish, and keeps the original at `/v1/`.
 
-**Architecture:** Root files are the audience release; `data/zones.json` is the single live source for all zone-specific content. The existing v2 directory remains a developer snapshot, while the previous root application is copied to `/v1/` with an archive note and relative asset references repaired.
+**Architecture:** Root files are the audience release; `data/zones.json` is the single live source for all zone-specific content. The existing v2 directory remains a developer snapshot in Git only, preserved at the `v2-archive` tag and excluded from Pages, while the previous root application is copied to `/v1/` with an archive note and relative asset references repaired.
 
 **Tech Stack:** Static HTML, CSS, browser JavaScript, MapLibre GL, PMTiles, PowerShell contract tests, Playwright CLI with Chrome and iPhone viewport emulation.
 

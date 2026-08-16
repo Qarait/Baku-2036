@@ -279,7 +279,7 @@ if($head -ne $work){throw 'root index.html changed'}
 
 - [ ] **Step 2: Run a real-browser desktop flow**
 
-Open `/v2/`, click a zone, open each accordion, switch EN/TR, move the year, toggle heat and metro, run the planner, enter a deal, star a shortlist zone, and confirm no console errors.
+Run the local `v2/` snapshot, click a zone, open each accordion, switch EN/TR, move the year, toggle heat and metro, run the planner, enter a deal, star a shortlist zone, and confirm no console errors. This snapshot is not a public Pages entry point.
 
 - [ ] **Step 3: Run a mobile flow**
 
@@ -287,7 +287,7 @@ At 390×844, verify that the map remains usable, one accordion opens at a time, 
 
 - [ ] **Step 4: Verify GitHub Pages**
 
-Push `main`, request `https://qarait.github.io/Baku-2036/v2/`, and confirm HTTP 200 plus the content marker. Re-run the published page browser smoke test.
+Confirm the Pages artifact boundary instead: `/v2/` must be absent from the published preview/live artifact, while the tracked snapshot remains available locally and at the `v2-archive` Git tag. Re-run the published root and `/v1/` browser smoke tests.
 
 - [ ] **Step 5: Commit any test-only correction and report evidence**
 
