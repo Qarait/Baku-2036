@@ -26,11 +26,11 @@
 - Consumes: the existing static server and map URL.
 - Produces: a `webkit` project with focused map, drawer, and 390px checks.
 
-- [ ] **Step 1: Write the focused WebKit tests**
+- [x] **Step 1: Write the focused WebKit tests**
 
 Add three tests for map load without browser errors, bilingual drawer collapse/reopen/close, and 390px safe-area/touch geometry with the layer menu opened.
 
-- [ ] **Step 2: Run the project to verify it fails before configuration**
+- [x] **Step 2: Run the project to verify it fails before configuration**
 
 Run `npx playwright test --project=webkit tests/webkit.spec.js`.
 
@@ -47,17 +47,17 @@ Expected: FAIL because the current configuration has no `webkit` project and Web
 - Consumes: `tests/webkit.spec.js` from Task 1.
 - Produces: local and CI WebKit execution.
 
-- [ ] **Step 1: Configure the focused project**
+- [x] **Step 1: Configure the focused project**
 
 Add a `webkit` project using `browserName: 'webkit'`, a 390px mobile viewport, and `testMatch: 'webkit.spec.js'`; keep Chromium matching `e2e.spec.js`.
 
-- [ ] **Step 2: Install and run WebKit locally**
+- [x] **Step 2: Install and run WebKit locally**
 
 Run `npx playwright install webkit` followed by `npx playwright test --project=webkit`.
 
 Expected: PASS for all focused WebKit tests.
 
-- [ ] **Step 3: Add the CI browser dependency**
+- [x] **Step 3: Add the CI browser dependency**
 
 Change both workflows’ browser installation command to install `chromium webkit` before running `npm test`.
 
@@ -70,14 +70,14 @@ Change both workflows’ browser installation command to install `chromium webki
 - Consumes: the deployed preview URL and focused WebKit results.
 - Produces: a manual checklist that distinguishes physical-device verification from automation.
 
-- [ ] **Step 1: Write the physical-device checklist**
+- [x] **Step 1: Write the physical-device checklist**
 
 Cover preview loading, portrait/landscape, safe-area placement, map tap/zoom/pan, search keyboard, layer menu, drawer collapse/reopen/close, EN/TR switching, and 360–390px scrolling.
 
-- [ ] **Step 2: Run complete local verification**
+- [x] **Step 2: Run complete local verification**
 
 Run `npm test`, `npx playwright test --project=webkit`, all four static contracts, and `git diff --check`.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 Run `git add playwright.config.js tests/webkit.spec.js .github/workflows/ci.yml .github/workflows/pages.yml docs/superpowers/specs/2026-08-16-safari-testing-design.md docs/superpowers/plans/2026-08-16-safari-testing.md docs/release/real-iphone-safari-checklist.md && git commit -m "Add WebKit Safari smoke coverage"`.
