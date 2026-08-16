@@ -26,11 +26,11 @@
 - Consumes: existing `waitForMap` helper and current map/layer/drawer controls.
 - Produces: a 390px regression that measures the actual visible hit boxes.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Add a test that loads a selected zone at 390px, opens the layer menu, and measures these visible controls: `#placeSearch`, `#langEn`, `#langTr`, the three primary `.map-button` controls, `#layersToggle`, visible `.layer-button` controls, `#collapseDetails`, `#closeDetails`, `.drawer-action`, and `#clearSelection`. Require every measured width and height to be at least 44px.
 
-- [ ] **Step 2: Run the test to verify it fails**
+- [x] **Step 2: Run the test to verify it fails**
 
 Run `npx playwright test tests/e2e.spec.js -g "mobile controls expose 44px"`.
 
@@ -45,11 +45,11 @@ Expected: FAIL with one or more controls below 44px, currently including languag
 - Consumes: the existing selectors measured by Task 1.
 - Produces: mobile rules that make the measured controls at least 44px without changing desktop layout.
 
-- [ ] **Step 1: Implement the minimal CSS**
+- [x] **Step 1: Implement the minimal CSS**
 
 Within the existing `@media (max-width: 760px)` scope, set 44px minimum dimensions for search, language, map, layer, drawer, tool, story, and search-result buttons; give text-only actions 44px vertical padding; keep action groups wrapping and preserve the 360px toolbar rule.
 
-- [ ] **Step 2: Run the focused regression**
+- [x] **Step 2: Run the focused regression**
 
 Run `npx playwright test tests/e2e.spec.js -g "mobile controls expose 44px"`.
 
@@ -64,10 +64,10 @@ Expected: PASS.
 - Consumes: the green focused regression from Tasks 1–2.
 - Produces: a committed, regression-tested mobile touch-target update.
 
-- [ ] **Step 1: Run the complete verification**
+- [x] **Step 1: Run the complete verification**
 
 Run `npm test`, all four static contracts, and `git diff --check`.
 
-- [ ] **Step 2: Commit the change**
+- [x] **Step 2: Commit the change**
 
 Run `git add v3.css tests/e2e.spec.js docs/superpowers/specs/2026-08-16-mobile-touch-targets-design.md docs/superpowers/plans/2026-08-16-mobile-touch-targets.md && git commit -m "Improve mobile touch targets"`.

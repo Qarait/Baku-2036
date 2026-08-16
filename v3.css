@@ -86,18 +86,25 @@ button { cursor: pointer; }
   .topbar { display: block; min-height: 118px; padding: 12px 14px 10px; }
   .brand p { font-size: 11px; }
   .top-actions { margin-top: 10px; gap: 7px; }
-  .search-box { flex: 1; width: auto; min-width: 0; }
+  .search-box { flex: 1; width: auto; min-width: 0; min-height: 44px; }
+  .search-result { min-height: 44px; }
+  .lang-button { min-width: 44px; min-height: 44px; }
   .search-results { top: 98px; right: 14px; left: 14px; width: auto; }
   .year-control { display: none; }
   .map-shell { overflow: visible; }
   .map-stage { min-height: 460px; height: clamp(460px, 66vh, 620px); height: clamp(460px, 66svh, 620px); }
   .map-toolbar { top: 10px; left: 10px; right: 10px; max-width: none; padding: 5px; gap: 4px; }
-  .map-button { min-width: 40px; min-height: 40px; }
+  .map-button { min-width: 44px; min-height: 44px; }
   .map-button.layer-button { flex: 1; padding: 0 5px; }
   .toolbar-rule { display: none; }
   .info-panel { position: relative; top: auto; right: auto; bottom: auto; left: auto; width: auto; max-height: none; overflow: visible; margin: 10px 8px 12px; margin-bottom: max(12px, env(safe-area-inset-bottom, 0px)); padding: 15px; border-radius: 12px; }
   .info-panel.is-collapsed { padding: 10px 12px; }
   .info-panel h2 { font-size: 22px; }
+  .panel-toggle, .panel-close { min-height: 44px; }
+  .text-button { min-height: 44px; padding: 10px 0; }
+  .retry-data { min-height: 44px; }
+  .skip-map { min-height: 44px; display: inline-flex; align-items: center; }
+  .year-track input[type="range"] { min-height: 44px; }
   .map-legend { left: 10px; bottom: 10px; max-width: 200px; }
   .attribution-note { display: none; }
   .map-status { bottom: 10px; left: auto; right: 10px; transform: none; max-width: 50%; text-align: right; }
@@ -287,6 +294,9 @@ body.engaged .quiet-controls, .quiet-controls.is-visible { opacity: 1; pointer-e
 .tour-card h2 { margin: 8px 0 7px; color: var(--navy); font-family: Georgia, serif; font-size: 27px; font-weight: 500; }
 .tour-card p { margin: 0 0 16px; color: var(--muted); font-size: 13px; line-height: 1.55; }
 .tour-close { display: block; margin-top: 10px; padding: 0; border: 0; color: var(--muted); background: transparent; font-size: 11px; cursor: pointer; }
+@media (max-width: 760px) {
+  .drawer-action, .primary-action, .secondary-action, .show-me, .city-story-actions button, .tour-close { min-height: 44px; }
+}
 @media (max-width: 520px) {
   .topbar { display: block; padding: 15px 12px 10px; }
   .brand h1 { font-size: 25px; }
@@ -298,7 +308,7 @@ body.engaged .quiet-controls, .quiet-controls.is-visible { opacity: 1; pointer-e
   .city-story { width: 100%; }
   .layer-menu { position: absolute; right: 8px; top: 45px; z-index: 7; display: none; width: min(260px, calc(100vw - 24px)); padding: 8px; flex-direction: column; align-items: stretch; border: 1px solid var(--line); border-radius: 9px; background: var(--paper); box-shadow: 0 10px 28px rgba(23,38,56,.2); }
   .layer-menu.open { display: flex; }
-  .layer-menu .layer-button { display: inline-flex; justify-content: flex-start; min-height: 40px; }
+  .layer-menu .layer-button { display: inline-flex; justify-content: flex-start; min-height: 44px; }
   .info-panel { position: relative; top: auto; right: auto; bottom: auto; left: auto; max-height: none; overflow: visible; }
   .panel-toggle, .panel-close { min-height: 44px; }
   .v2-howto, .v2-content { width: calc(100% - 20px); }

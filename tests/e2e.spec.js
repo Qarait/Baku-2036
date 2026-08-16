@@ -362,3 +362,24 @@ test('mobile zone details use one page scroll and reach their final action', asy
   await expect(page.locator('#clearSelection')).toBeInViewport();
   await expect.poll(() => page.evaluate(() => window.scrollY > 0)).toBeTruthy();
 });
+
+test('mobile controls expose 44px touch targets', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('./?cache=e2e-touch-targets#z=whitecity&y=2026&lang=en');
+  await waitForMap(page);
+  await page.locator('#layersToggle').evaluate(element => element.click());
+  await expect(page.locator('#layerMenu')).toHaveClass(/open/);
+  const selectors = [
+    '.search-box', '.search-result', '#langEn', '#langTr', '.map-button:not(.layer-button):not(#layersToggle)', '#layersToggle',
+    '.layer-menu .layer-button', '#collapseDetails', '#closeDetails', '.drawer-action', '#clearSelection',
+    '.show-me', '.primary-action', '.secondary-action', '.city-story-actions button', '.tour-close', '#timeYear'
+  ];
+  const sizes = await page.locator(selectors.join(', ')).evaluateAll(elements => elements
+    .filter(element => !element.hidden && element.offsetParent !== null && getComputedStyle(element).display !== 'none' && getComputedStyle(element).visibility !== 'hidden')
+    .map(element => {
+      const box = element.getBoundingClientRect();
+      return { id: element.id || element.className, width: Math.round(box.width), height: Math.round(box.height) };
+    }));
+  const undersized = sizes.filter(size => size.width < 44 || size.height < 44);
+  expect(undersized, JSON.stringify(sizes)).toEqual([]);
+});
