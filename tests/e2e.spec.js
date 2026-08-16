@@ -224,6 +224,30 @@ test('zone details can be closed and reopened', async ({ page }) => {
   await expect(page.locator('#closeDetails')).toHaveText('Close details');
 });
 
+test('selected drawer can collapse, reopen, and close in both languages', async ({ page }) => {
+  await page.goto('./?cache=e2e-drawer-collapse#z=whitecity&y=2030&lang=tr');
+  await waitForMap(page);
+  await expect(page.locator('#panelTitle')).toHaveText('White City / Xətai');
+  await expect(page.locator('#closeDetails')).toHaveText('Detayları kapat');
+  await page.locator('#collapseDetails').click();
+  await expect(page.locator('#v2ZoneDrawer')).toHaveClass(/is-collapsed/);
+  await expect(page.locator('#zoneBrief')).toBeHidden();
+  await expect(page.locator('#panelTitle')).toHaveText('White City / Xətai');
+  await expect(page.locator('#showDetails')).toHaveText('Ayrıntıları göster');
+  await page.locator('#showDetails').click();
+  await expect(page.locator('#v2ZoneDrawer')).not.toHaveClass(/is-collapsed/);
+  await expect(page.locator('#zoneBrief')).toBeVisible();
+  await engage(page);
+  await page.locator('#langEn').click();
+  await expect(page.locator('#closeDetails')).toHaveText('Close details');
+  await page.locator('#collapseDetails').click();
+  await expect(page.locator('#showDetails')).toHaveText('Show details');
+  await page.locator('#showDetails').click();
+  await expect(page.locator('#zoneBrief')).toBeVisible();
+  await page.locator('#closeDetails').click();
+  await expect(page.locator('#panelTitle')).toHaveText('Tap a circle to see what’s coming');
+});
+
 test('zone source insight switches to Turkish', async ({ page }) => {
   await page.goto('./?cache=e2e-zone-insight#z=whitecity&y=2026&lang=en');
   await waitForMap(page);

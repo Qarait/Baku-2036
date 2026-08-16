@@ -25,7 +25,7 @@
       administrative: 'District', investment: 'Investment spot', nearestMetro: 'Nearest metro (straight line — walking is a bit longer)', centralBaku: 'Central Baku', airport: 'Airport', coordinates: 'Coordinates',
       noRayon: 'That’s the sea', noZone: 'No nearby spot', noMetro: 'No station nearby',
       rayonNote: 'District borders show official administrative geography. Investment spots are approximate, not property boundaries.',
-      clear: 'Clear selection', closeDetails: 'Close details', loading: 'Loading map data\u2026', ready: 'Click a location to identify its geography', error: 'We couldn\u2019t load the map data. Please refresh and try again.', retry: 'Retry', searchEmpty: 'No local place matched that search.'
+      clear: 'Clear selection', closeDetails: 'Close details', collapseDetails: 'Collapse details', showDetails: 'Show details', loading: 'Loading map data\u2026', ready: 'Click a location to identify its geography', error: 'We couldn\u2019t load the map data. Please refresh and try again.', retry: 'Retry', searchEmpty: 'No local place matched that search.'
     },
     tr: {
       title: 'Bakü gayrimenkulünü anlayın',
@@ -43,7 +43,7 @@
       administrative: 'İlçe', investment: 'Yatırım noktası', nearestMetro: 'En yakın metro (kuş uçuşu — yürüyüş biraz daha uzun)', centralBaku: 'Bakü merkezi', airport: 'Havalimanı', coordinates: 'Koordinatlar',
       noRayon: 'Burası deniz', noZone: 'Yakında yatırım noktası yok', noMetro: 'Yakında istasyon yok',
       rayonNote: 'İlçe sınırları resmi idari coğrafyayı gösterir. Yatırım noktaları yaklaşık alanlardır; mülk sınırı değildir.',
-      clear: 'Se\u00e7imi temizle', closeDetails: 'Detayları kapat', loading: 'Harita verileri y\u00fckleniyor\u2026', ready: 'Co\u011frafyay\u0131 tan\u0131mlamak i\u00e7in bir yere t\u0131klay\u0131n', error: 'Harita verilerini y\u00fckleyemedik. L\u00fctfen sayfay\u0131 yenileyin ve tekrar deneyin.', retry: 'Yeniden deneyin', searchEmpty: 'Yerel gazetteer e\u015fle\u015fme bulamad\u0131.'
+      clear: 'Se\u00e7imi temizle', closeDetails: 'Detayları kapat', collapseDetails: 'Ayrıntıları gizle', showDetails: 'Ayrıntıları göster', loading: 'Harita verileri y\u00fckleniyor\u2026', ready: 'Co\u011frafyay\u0131 tan\u0131mlamak i\u00e7in bir yere t\u0131klay\u0131n', error: 'Harita verilerini y\u00fckleyemedik. L\u00fctfen sayfay\u0131 yenileyin ve tekrar deneyin.', retry: 'Yeniden deneyin', searchEmpty: 'Yerel gazetteer e\u015fle\u015fme bulamad\u0131.'
     }
   };
   const zones = [];
@@ -164,7 +164,7 @@
 
   const state = {
     lang: 'en', year: 2026, admin: true, investments: true, metro: true, heat: false,
-    selected: null, data: null, map: null, ready: false, content: null, controlsInstalled: false, shortlist: {}, shortlistAmounts: {}, scenarios: { oil: 'norm', infra: 'on', cur: 'stable' }, openAccordion: null, timeTimer: null, engaged: false, cityStory: { active: false, paused: false, index: 0, timer: null }, tourIndex: 0, tourStops: ['whitecity', 'mohammadi', 'bilgah', 'sumgayit', 'hovsan']
+    selected: null, data: null, map: null, ready: false, content: null, controlsInstalled: false, drawerCollapsed: false, shortlist: {}, shortlistAmounts: {}, scenarios: { oil: 'norm', infra: 'on', cur: 'stable' }, openAccordion: null, timeTimer: null, engaged: false, cityStory: { active: false, paused: false, index: 0, timer: null }, tourIndex: 0, tourStops: ['whitecity', 'mohammadi', 'bilgah', 'sumgayit', 'hovsan']
   };
 
   const $ = id => document.getElementById(id);
@@ -460,6 +460,7 @@
   function identifyLocation(lngLat, point, options = {}) {
     if (!state.ready) return;
     pauseCityStory();
+    state.drawerCollapsed = false;
     const coords = [Number(lngLat.lng), Number(lngLat.lat)];
     const waterHit = point ? state.map.queryRenderedFeatures(point, { layers: ['water', 'ocean'] }).length > 0 : false;
     const rendered = point ? state.map.queryRenderedFeatures(point, { layers: ['admin-fill', 'investment-zones', 'metro-stations', 'city-events-active', 'city-events-future'] }) : [];
@@ -554,6 +555,8 @@
     const u = tr();
     $('panelKicker').textContent = u.kicker;
     $('closeDetails').textContent = u.closeDetails;
+    $('collapseDetails').textContent = u.collapseDetails;
+    $('showDetails').textContent = u.showDetails;
     $('panelNote').textContent = u.rayonNote;
     $('rayonMetricLabel').textContent = u.administrative;
     $('zoneMetricLabel').textContent = u.investment;
@@ -562,10 +565,14 @@
     $('airportMetricLabel').textContent = u.airport;
     $('coordinateMetricLabel').textContent = u.coordinates;
     if (!state.selected) {
+      state.drawerCollapsed = false;
+      $('v2ZoneDrawer').classList.remove('is-collapsed');
       $('panelTitle').textContent = u.emptyTitle;
       $('panelIntro').textContent = u.emptyIntro;
       $('panelGrid').hidden = true;
       $('clearSelection').hidden = true;
+      $('collapseDetails').hidden = true;
+      $('showDetails').hidden = true;
       $('closeDetails').hidden = true;
       renderZoneDrawer(null);
       return;
@@ -586,8 +593,18 @@
     $('coordinateMetric').textContent = selected.coords[1].toFixed(4) + ', ' + selected.coords[0].toFixed(4);
     $('panelGrid').hidden = false;
     $('clearSelection').hidden = false;
+    const collapsed = state.drawerCollapsed;
+    $('v2ZoneDrawer').classList.toggle('is-collapsed', collapsed);
+    $('panelIntro').hidden = collapsed;
+    $('panelGrid').hidden = collapsed;
+    $('panelNote').hidden = collapsed;
+    $('zoneBrief').hidden = collapsed;
+    $('clearSelection').hidden = collapsed;
+    $('collapseDetails').hidden = collapsed;
+    $('showDetails').hidden = !collapsed;
     $('closeDetails').hidden = false;
     renderZoneDrawer(selected.zone?.zone?.id);
+    $('zoneBrief').hidden = collapsed;
   }
   function searchPlaces(query) {
     const needle = String(query || '').trim().toLocaleLowerCase();
@@ -1084,7 +1101,9 @@
     $('placeSearch').addEventListener('focus', () => setEngaged(true)); $('placeSearch').addEventListener('input', event => { pauseCityStory(); renderSearchResults(event.target.value); });
     $('placeSearch').addEventListener('keydown', event => { if (event.key === 'Escape') { $('searchResults').hidden = true; event.target.blur(); } if (event.key === 'Enter') { const first = searchPlaces(event.target.value)[0]; if (first) choosePlace(first); } });
     const clearSelection = () => { pauseCityStory(); state.selected = null; state.hashZone = null; renderPanel(); updateSelectionGeometry(); updateHash(); $('v2ZoneDrawer').focus({ preventScroll: true }); };
-    $('clearSelection').addEventListener('click', clearSelection); $('closeDetails').addEventListener('click', clearSelection);
+    const collapseDetails = () => { if (!state.selected) return; state.drawerCollapsed = true; renderPanel(); $('showDetails').focus({ preventScroll: true }); };
+    const showDetails = () => { if (!state.selected) return; state.drawerCollapsed = false; renderPanel(); $('collapseDetails').focus({ preventScroll: true }); };
+    $('clearSelection').addEventListener('click', clearSelection); $('closeDetails').addEventListener('click', clearSelection); $('collapseDetails').addEventListener('click', collapseDetails); $('showDetails').addEventListener('click', showDetails);
     document.querySelectorAll('[data-action]').forEach(button => button.addEventListener('click', () => {
       if (!state.map) return;
       const action = button.dataset.action;

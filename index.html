@@ -92,7 +92,11 @@
       <aside id="v2ZoneDrawer" class="info-panel" aria-labelledby="panelTitle" tabindex="-1">
         <div class="panel-head">
           <div class="panel-kicker" id="panelKicker">MAP IDENTIFICATION</div>
-          <button type="button" id="closeDetails" class="panel-close" hidden>Close details</button>
+          <div class="panel-head-actions">
+            <button type="button" id="collapseDetails" class="panel-toggle" hidden>Collapse details</button>
+            <button type="button" id="showDetails" class="panel-toggle" hidden>Show details</button>
+            <button type="button" id="closeDetails" class="panel-close" hidden>Close details</button>
+          </div>
         </div>
         <h2 id="panelTitle">Tap a circle to see what’s coming</h2>
         <p id="panelIntro">Or tap anywhere to find out where you are.</p>
