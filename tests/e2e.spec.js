@@ -383,3 +383,32 @@ test('mobile controls expose 44px touch targets', async ({ page }) => {
   const undersized = sizes.filter(size => size.width < 44 || size.height < 44);
   expect(undersized, JSON.stringify(sizes)).toEqual([]);
 });
+
+test('mobile metadata remains readable without enlarging primary headings', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('./?cache=e2e-mobile-type#z=whitecity&y=2026&lang=tr');
+  await waitForMap(page);
+  const sizes = await page.evaluate(() => {
+    const read = selector => Number.parseFloat(getComputedStyle(document.querySelector(selector)).fontSize);
+    return {
+      metricLabel: read('.metric span'),
+      drawerMetricLabel: read('.brief-metric small'),
+      drawerTier: read('.brief-tier'),
+      evidenceMeta: read('.evidence-card-head'),
+      mapLegend: read('.map-legend'),
+      dataFreshness: read('.data-freshness'),
+      panelTitle: read('#panelTitle'),
+      drawerTitle: read('.brief-head h3')
+    };
+  });
+  expect(sizes).toMatchObject({
+    metricLabel: 10,
+    drawerMetricLabel: 10,
+    drawerTier: 10,
+    evidenceMeta: 10,
+    mapLegend: 11,
+    dataFreshness: 10,
+    panelTitle: 22,
+    drawerTitle: 19
+  });
+});

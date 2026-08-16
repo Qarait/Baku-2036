@@ -296,6 +296,10 @@ body.engaged .quiet-controls, .quiet-controls.is-visible { opacity: 1; pointer-e
 .tour-close { display: block; margin-top: 10px; padding: 0; border: 0; color: var(--muted); background: transparent; font-size: 11px; cursor: pointer; }
 @media (max-width: 760px) {
   .drawer-action, .primary-action, .secondary-action, .show-me, .city-story-actions button, .tour-close { min-height: 44px; }
+  .eyebrow, .panel-kicker, .city-story-kicker, .tour-kicker { font-size: 11px; }
+  .search-result small, .year-control, .map-button.layer-button, .metric span, .brief-metric small, .brief-tier, .evidence-title-row > span, .evidence-card-head, .evidence-meta, .local-place-head span, .data-freshness { font-size: 10px; }
+  .map-legend { font-size: 11px; }
+  .panel-toggle, .panel-close, .drawer-action { font-size: 11px; }
 }
 @media (max-width: 520px) {
   .topbar { display: block; padding: max(15px, env(safe-area-inset-top, 0px)) max(12px, env(safe-area-inset-right, 0px)) 10px max(12px, env(safe-area-inset-left, 0px)); }
