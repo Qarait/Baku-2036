@@ -150,9 +150,16 @@
   }
 
   function scenarioBaseGrowth(zone) {
-    const projection = zone?.en?.proj || '';
-    const match = String(projection).match(/(\d+)\s*%/);
-    return match ? Number(match[1]) : (String(projection).includes('2') && String(projection).includes('\u00d7') ? 150 : 120);
+    const growthPct = Number(zone?.growthPct);
+    if (!Number.isFinite(growthPct)) throw new Error('Zone is missing numeric growthPct: ' + (zone?.id || 'unknown'));
+    return growthPct;
+  }
+
+  function scenarioProjection(zone, language = state.lang) {
+    const detail = zone?.[language] || zone?.en || {};
+    const prefix = language === 'tr' ? '%+' + scenarioBaseGrowth(zone) : '+' + scenarioBaseGrowth(zone) + '%';
+    const qualifier = String(detail.proj || '').trim();
+    return [prefix, qualifier].filter(Boolean).join(' ');
   }
 
   function scenarioGrowth(zone) {
@@ -529,7 +536,7 @@
     host.innerHTML =
       '<div class="brief-head"><h3>' + escapeHtml(state.lang === 'tr' ? zone.nameTr : zone.nameEn) + '</h3><span class="brief-tier">' + escapeHtml(zoneTierLabel(zone)) + '</span></div>' +
       '<div class="brief-metrics"><div class="brief-metric"><small>' + escapeHtml(ui.entry || (state.lang === 'tr' ? 'Bug?nk? giri?' : 'Entry today')) + '</small><strong>' + escapeHtml(detail.now || '—') + '</strong></div>' +
-      '<div class="brief-metric"><small>' + escapeHtml(ui.scen || (state.lang === 'tr' ? '2036 senaryosu' : '2036 scenario')) + '</small><strong>' + escapeHtml(detail.proj || 'Illustrative') + '</strong></div>' +
+      '<div class="brief-metric"><small>' + escapeHtml(ui.scen || (state.lang === 'tr' ? '2036 senaryosu' : '2036 scenario')) + '</small><strong>' + escapeHtml(scenarioProjection(zone, language)) + '</strong></div>' +
       '<div class="brief-metric"><small>' + escapeHtml(state.lang === 'tr' ? 'Kira getirisi' : 'Rental yield') + '</small><strong>' + escapeHtml(detail.yield || '—') + '</strong></div></div>' +
       '<p class="scenario-insight">' + escapeHtml(labels.scenarioInsight || (state.lang === 'tr' ? 'Bu rakamın kaynağı: kamu planları, ulaşım, yakındaki projeler ve piyasa göstergeleri. Bu bir senaryodur, garanti değildir.' : 'Where this comes from: public plans, transport, nearby projects and market signals. This is a scenario, not a promise.')) + '</p>' +
       '<div class="brief-section"><h4>' + escapeHtml(labels.whatHappening || 'What is happening?') + '</h4><div class="brief-projects">' + projectHtml + '</div></div>' +

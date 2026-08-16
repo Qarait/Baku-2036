@@ -323,6 +323,25 @@ test('city simulation content has five bilingual checkpoints and controls', asyn
     }
   }
 });
+
+test('all zones declare explicit scenario growth values', async ({ request }) => {
+  const response = await request.get('./data/zones.json');
+  const zones = await response.json();
+  expect(zones).toHaveLength(16);
+  for (const zone of zones) expect(zone.growthPct, `${zone.id} must declare growthPct`).toEqual(expect.any(Number));
+  expect(Object.fromEntries(zones.map(zone => [zone.id, zone.growthPct]))).toMatchObject({ zikh: 130, mohammadi: 150, alat: 120 });
+});
+
+test('scenario calculator uses the explicit growth value for Zikh', async ({ page }) => {
+  await page.goto('./?cache=e2e-scenario-growth#z=zikh&y=2026&lang=en');
+  await waitForMap(page);
+  await expect(page.locator('#panelTitle')).toHaveText('Zikh (Zığ)');
+  await expect(page.locator('#zoneBrief')).toContainText('+130% tracks Hovsan');
+  await page.locator('#accordion-scenarios .accordion-summary').click();
+  await page.locator('#scenarioOil').selectOption('bad');
+  await expect(page.locator('#scenarioOutput')).toContainText('Zikh (Zığ): 105%');
+});
+
 test('click-to-identify returns a district and metro distance', async ({ page }) => {
   await page.goto('./?cache=e2e-identify#z=whitecity&y=2026&lang=en');
   await waitForMap(page);

@@ -10,9 +10,10 @@
       40.383
     ],
     "radius": 15,
+    "growthPct": 140,
     "en": {
       "now": "$2,500–4,000/m² new-build",
-      "proj": "+140% scenario",
+      "proj": "scenario",
       "yield": "5–7% gross",
       "vol": "Medium",
       "inv": [
@@ -43,7 +44,7 @@
     },
     "tr": {
       "now": "2.500–4.000 $/m² (yeni yapı)",
-      "proj": "%+140 senaryo",
+      "proj": "senaryo",
       "yield": "%5–7 brüt",
       "vol": "Medium",
       "inv": [
@@ -185,9 +186,10 @@
       40.389
     ],
     "radius": 13,
+    "growthPct": 130,
     "en": {
       "now": "$1,500–2,500/m²",
-      "proj": "+130% scenario",
+      "proj": "scenario",
       "yield": "6–8% gross",
       "vol": "Medium",
       "inv": [
@@ -218,7 +220,7 @@
     },
     "tr": {
       "now": "1.500–2.500 $/m²",
-      "proj": "%+130 senaryo",
+      "proj": "senaryo",
       "yield": "%6–8 brüt",
       "vol": "Medium",
       "inv": [
@@ -340,9 +342,10 @@
       40.404
     ],
     "radius": 13,
+    "growthPct": 125,
     "en": {
       "now": "~$3,200/m² (5,525 AZN)",
-      "proj": "+125% scenario",
+      "proj": "scenario",
       "yield": "6–8% gross",
       "vol": "Medium",
       "inv": [
@@ -373,7 +376,7 @@
     },
     "tr": {
       "now": "~3.200 $/m² (5.525 AZN)",
-      "proj": "%+125 senaryo",
+      "proj": "senaryo",
       "yield": "%6–8 brüt",
       "vol": "Medium",
       "inv": [
@@ -495,9 +498,10 @@
       40.36
     ],
     "radius": 11,
+    "growthPct": 80,
     "en": {
       "now": "~$4,700/m² (8,012 AZN) — city ceiling",
-      "proj": "+80% scenario",
+      "proj": "scenario",
       "yield": "6–9% gross",
       "vol": "Low",
       "inv": [
@@ -518,7 +522,7 @@
     },
     "tr": {
       "now": "~4.700 $/m² (8.012 AZN) — şehir tavanı",
-      "proj": "%+80 senaryo",
+      "proj": "senaryo",
       "yield": "%6–9 brüt",
       "vol": "Low",
       "inv": [
@@ -620,9 +624,10 @@
       40.416
     ],
     "radius": 11,
+    "growthPct": 110,
     "en": {
       "now": "~$1,100/m²",
-      "proj": "+110% scenario",
+      "proj": "scenario",
       "yield": "7–9% gross",
       "vol": "Medium-high",
       "inv": [
@@ -648,7 +653,7 @@
     },
     "tr": {
       "now": "~1.100 $/m²",
-      "proj": "%+110 senaryo",
+      "proj": "senaryo",
       "yield": "%7–9 brüt",
       "vol": "Medium-high",
       "inv": [
@@ -760,9 +765,10 @@
       40.455
     ],
     "radius": 11,
+    "growthPct": 130,
     "en": {
       "now": "$400–700/m² new-build",
-      "proj": "+130% land / towers lag",
+      "proj": "land / towers lag",
       "yield": "8–10% gross",
       "vol": "High",
       "inv": [
@@ -788,7 +794,7 @@
     },
     "tr": {
       "now": "400–700 $/m² (yeni yapı)",
-      "proj": "arsa %+130 / kuleler geride",
+      "proj": "arsa / kuleler geride",
       "yield": "%8–10 brüt",
       "vol": "High",
       "inv": [
@@ -902,9 +908,10 @@
       40.589
     ],
     "radius": 14,
+    "growthPct": 140,
     "en": {
       "now": "$410–650/m² ($530–650 at Sahil Park)",
-      "proj": "+140% scenario",
+      "proj": "scenario",
       "yield": "8–10% gross",
       "vol": "Medium",
       "inv": [
@@ -930,7 +937,7 @@
     },
     "tr": {
       "now": "410–650 $/m² (Sahil Park’ta 530–650 $)",
-      "proj": "%+140 senaryo",
+      "proj": "senaryo",
       "yield": "%8–10 brüt",
       "vol": "Medium",
       "inv": [
@@ -1042,9 +1049,10 @@
       40.52
     ],
     "radius": 9,
+    "growthPct": 100,
     "en": {
       "now": "~$800–1,200 near water",
-      "proj": "+100% scenario",
+      "proj": "scenario",
       "yield": "seasonal",
       "vol": "Medium",
       "inv": [
@@ -1065,7 +1073,7 @@
     },
     "tr": {
       "now": "su kenarında ~800–1.200 $",
-      "proj": "%+100 senaryo",
+      "proj": "senaryo",
       "yield": "mevsimsel",
       "vol": "Medium",
       "inv": [
@@ -1167,9 +1175,10 @@
       40.56
     ],
     "radius": 16,
+    "growthPct": 150,
     "en": {
       "now": "~$1,000–1,800 near shore",
-      "proj": "+150% scenario",
+      "proj": "scenario",
       "yield": "5–8% (resort lets)",
       "vol": "High (oil-linked)",
       "inv": [
@@ -1195,7 +1204,7 @@
     },
     "tr": {
       "now": "kıyıya yakın ~1.000–1.800 $",
-      "proj": "%+150 senaryo",
+      "proj": "senaryo",
       "yield": "%5–8 (tatil kiralama)",
       "vol": "High (oil-linked)",
       "inv": [
@@ -1321,9 +1330,10 @@
       40.505
     ],
     "radius": 16,
+    "growthPct": 125,
     "en": {
       "now": "~$800–1,400; villa land varies",
-      "proj": "+125% scenario (land-led)",
+      "proj": "scenario (land-led)",
       "yield": "5–7%",
       "vol": "Medium",
       "inv": [
@@ -1349,7 +1359,7 @@
     },
     "tr": {
       "now": "~800–1.400 $; villa arsası değişken",
-      "proj": "%+125 senaryo (arsa öncülüğünde)",
+      "proj": "senaryo (arsa öncülüğünde)",
       "yield": "%5–7",
       "vol": "Medium",
       "inv": [
@@ -1461,9 +1471,10 @@
       40.47
     ],
     "radius": 12,
+    "growthPct": 120,
     "en": {
       "now": "$400–600/m²",
-      "proj": "+120% if remediated",
+      "proj": "if remediated",
       "yield": "7–9%",
       "vol": "Very high",
       "inv": [
@@ -1489,7 +1500,7 @@
     },
     "tr": {
       "now": "400–600 $/m²",
-      "proj": "ıslah edilirse %+120",
+      "proj": "ıslah edilirse",
       "yield": "%7–9",
       "vol": "Very high",
       "inv": [
@@ -1603,9 +1614,10 @@
       40.495
     ],
     "radius": 12,
+    "growthPct": 150,
     "en": {
       "now": "~$20–25/m² peripheral land; houses 55–77k AZN",
-      "proj": "2–3× land scenario",
+      "proj": "land scenario (2–3× range)",
       "yield": "n/a (land)",
       "vol": "Very high",
       "inv": [
@@ -1631,7 +1643,7 @@
     },
     "tr": {
       "now": "çeper arsa ~20–25 $/m²; evler 55–77 bin AZN",
-      "proj": "arsada 2–3× senaryo",
+      "proj": "arsada senaryo (2–3× aralık)",
       "yield": "— (arsa)",
       "vol": "Very high",
       "inv": [
@@ -1755,9 +1767,10 @@
       40.374
     ],
     "radius": 12,
+    "growthPct": 130,
     "en": {
       "now": "$500–800/m² — cheapest coast within 25km",
-      "proj": "+130% post-2030",
+      "proj": "post-2030",
       "yield": "7–9%",
       "vol": "High",
       "inv": [
@@ -1783,7 +1796,7 @@
     },
     "tr": {
       "now": "500–800 $/m² — 25 km içindeki en ucuz kıyı",
-      "proj": "2030 sonrası %+130",
+      "proj": "2030 sonrası",
       "yield": "%7–9",
       "vol": "High",
       "inv": [
@@ -1895,6 +1908,7 @@
       40.353
     ],
     "radius": 9,
+    "growthPct": 130,
     "en": {
       "now": "$500–700/m²",
       "proj": "tracks Hovsan",
@@ -2020,9 +2034,10 @@
       40.325
     ],
     "radius": 9,
+    "growthPct": 80,
     "en": {
       "now": "~$400/m²",
-      "proj": "+80% scenario",
+      "proj": "scenario",
       "yield": "8–10%",
       "vol": "Low-medium",
       "inv": [
@@ -2043,7 +2058,7 @@
     },
     "tr": {
       "now": "~400 $/m²",
-      "proj": "%+80 senaryo",
+      "proj": "senaryo",
       "yield": "%8–10",
       "vol": "Low-medium",
       "inv": [
@@ -2168,6 +2183,7 @@
       39.945
     ],
     "radius": 11,
+    "growthPct": 120,
     "en": {
       "now": "~$300/m² and below",
       "proj": "land-banking; housing lags",

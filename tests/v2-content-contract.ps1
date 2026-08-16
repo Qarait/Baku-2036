@@ -33,8 +33,12 @@ $ids = @($zones | ForEach-Object { $_.id })
 if (@($ids | Sort-Object -Unique).Count -ne 16) { throw 'Zone ids must be unique' }
 
 foreach ($zone in $zones) {
-  foreach ($field in @('id', 'nameEn', 'nameTr', 'en', 'tr', 'dd', 'risk', 'act', 'inv', 'evidence')) {
+  foreach ($field in @('id', 'nameEn', 'nameTr', 'growthPct', 'en', 'tr', 'dd', 'risk', 'act', 'inv', 'evidence')) {
     if ($null -eq $zone.$field) { throw "Zone $($zone.id) is missing $field" }
+  }
+  if ($zone.growthPct -isnot [int] -and $zone.growthPct -isnot [long] -and $zone.growthPct -isnot [double]) { throw "Zone $($zone.id) growthPct must be numeric" }
+  foreach ($language in @('en', 'tr')) {
+    if ([string]$zone.$language.proj -match '^\s*(?:\+?\d+%|%\+\d+|\d+[–-]\d+×)') { throw "Zone $($zone.id) $language projection must keep its numeric value in growthPct" }
   }
 }
 
