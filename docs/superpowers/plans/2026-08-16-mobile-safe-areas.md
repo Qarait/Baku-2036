@@ -26,11 +26,11 @@
 - Consumes: the existing responsive viewport and mobile CSS contract.
 - Produces: explicit checks for top, left, right, and bottom safe-area handling.
 
-- [ ] **Step 1: Add assertions**
+- [x] **Step 1: Add assertions**
 
 Require `safe-area-inset-top`, `safe-area-inset-left`, `safe-area-inset-right`, and `safe-area-inset-bottom` in `v3.css`.
 
-- [ ] **Step 2: Run the contract to verify it fails**
+- [x] **Step 2: Run the contract to verify it fails**
 
 Run `./tests/v3-mobile-contract.ps1`.
 
@@ -45,11 +45,11 @@ Expected: FAIL because the current stylesheet only references the bottom inset.
 - Consumes: the four safe-area contract requirements from Task 1.
 - Produces: fallback-safe edge spacing for top, side, and bottom overlays.
 
-- [ ] **Step 1: Implement the minimal CSS**
+- [x] **Step 1: Implement the minimal CSS**
 
 Use `max()` with `env(safe-area-inset-*)` on the top bar, map toolbar, info panel, legend, status, freshness, attribution, story host, and mobile drawer margins. Keep existing pixel spacing as the first argument to preserve desktop and zero-inset behavior.
 
-- [ ] **Step 2: Run the mobile contract and headed mobile checks**
+- [x] **Step 2: Run the mobile contract and headed mobile checks**
 
 Run `./tests/v3-mobile-contract.ps1` and the existing 360px/390px headed tests.
 
@@ -60,10 +60,10 @@ Expected: PASS, with no toolbar wrapping or drawer-flow regression.
 **Files:**
 - Verify: `index.html`, `v3.css`, `tests/v3-mobile-contract.ps1`, `tests/e2e.spec.js`
 
-- [ ] **Step 1: Run the complete verification**
+- [x] **Step 1: Run the complete verification**
 
 Run `npm test`, all four static contracts, and `git diff --check`.
 
-- [ ] **Step 2: Commit the change**
+- [x] **Step 2: Commit the change**
 
 Run `git add v3.css tests/v3-mobile-contract.ps1 docs/superpowers/specs/2026-08-16-mobile-safe-areas-design.md docs/superpowers/plans/2026-08-16-mobile-safe-areas.md && git commit -m "Protect mobile layout with safe areas"`.
