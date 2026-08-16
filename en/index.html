@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Baku 2036 — understand property geography</title>
+  <meta name="description" content="A plain-language map for understanding where Baku property prices may rise and why.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="vendor/maplibre-gl.css">
+  <link rel="stylesheet" href="v3.css">
+  <script src="vendor/pmtiles.js"></script>
+  <script>window.__BakuFixedLanguage = 'en';</script>
+  <script type="module">
+    import * as maplibregl from './vendor/maplibre-gl.mjs';
+    window.__V3MapLibre = maplibregl;
+    window.dispatchEvent(new Event('v3-maplibre-ready'));
+  </script>
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <div class="brand">
+        <span class="eyebrow">BAKU 2036</span>
+        <h1 id="appTitle">Understand Baku property</h1>
+        <p id="appSubtitle">See where prices may rise, what is changing, and how sure we are.</p><button type="button" id="showMe" class="show-me">▶ Show me (1 minute)</button>
+      </div>
+      <div class="top-actions quiet-controls" id="topControls">
+        <label class="search-box" for="placeSearch">
+          <span class="search-icon" aria-hidden="true">⌕</span>
+          <span class="sr-only" id="searchLabel">Search Baku and Absheron places</span>
+          <input id="placeSearch" type="search" autocomplete="off" spellcheck="false" placeholder="Search a place…">
+        </label>
+        <div id="searchResults" class="search-results" role="listbox" aria-label="Search results" hidden></div>
+        <div class="year-control">
+          <label for="yearSelect" id="yearLabel">Drag to see the future</label>
+          <select id="yearSelect" aria-labelledby="yearLabel">
+            <option value="2026">2026</option>
+            <option value="2027">2027</option>
+            <option value="2028">2028</option>
+            <option value="2029">2029</option>
+            <option value="2030">2030</option>
+            <option value="2031">2031</option>
+            <option value="2032">2032</option>
+            <option value="2033">2033</option>
+            <option value="2034">2034</option>
+            <option value="2035">2035</option>
+            <option value="2036">2036</option>
+          </select>
+        </div>
+        <span class="language-lock" id="languageLock">English</span>
+      </div>
+    </header>
+
+    <main class="map-shell">
+      <div class="map-stage">
+        <a class="skip-map" href="#v2ZoneDrawer" id="skipMap">Skip map</a>
+        <div id="v2Map" aria-label="Interactive Baku and Absheron map"></div>
+
+        <div class="map-toolbar quiet-controls" id="mapToolbar" aria-label="Map controls">
+          <button type="button" class="map-button" data-action="zoom-in" aria-label="Zoom in">+</button>
+          <button type="button" class="map-button" data-action="zoom-out" aria-label="Zoom out">−</button>
+          <button type="button" class="map-button" data-action="reset" aria-label="Show all Baku and Absheron">⌂</button>
+          <span class="toolbar-rule" aria-hidden="true"></span>
+          <button type="button" class="map-button layers-toggle" id="layersToggle" aria-expanded="false" aria-controls="layerMenu">Layers</button>
+          <div id="layerMenu" class="layer-menu" hidden>
+            <button type="button" class="map-button layer-button active" data-layer="admin" aria-pressed="true">District borders</button>
+            <button type="button" class="map-button layer-button active" data-layer="investments" aria-pressed="true">Investment spots</button>
+            <button type="button" class="map-button layer-button active" data-layer="metro" aria-pressed="true">Metro</button>
+            <button type="button" class="map-button layer-button" data-layer="heat" aria-pressed="false">Where prices rise fastest</button>
+          </div>
+        </div>
+
+        <div class="map-legend quiet-controls" id="mapLegend">
+          <span><i class="legend-swatch rayon-swatch"></i><span id="rayonLegend">District borders</span></span>
+          <span><i class="legend-swatch area-swatch"></i><span id="areaLegend">Investment spots</span></span>
+          <span><i class="legend-swatch metro-swatch"></i><span id="metroLegend">Metro: solid built / dashed planned</span></span>
+          <span class="legend-heading" id="evidenceLegend">How sure is this?</span>
+          <span><i class="legend-swatch status-operational"></i><span id="builtLegend">Already built</span></span>
+          <span><i class="legend-swatch status-contracted"></i><span id="contractedLegend">Being built now</span></span>
+          <span><i class="legend-swatch status-programmed"></i><span id="programmedLegend">Government plan</span></span>
+          <span><i class="legend-swatch status-private"></i><span id="privateLegend">Company promise</span></span>
+        </div>
+
+        <div class="map-status" id="mapStatus" role="status" aria-live="polite">Loading map data…</div>
+        <div class="data-freshness" id="dataFreshness" hidden></div>
+        <div id="cityStoryHost" class="city-story-host"></div>
+        <div class="attribution-note" id="attributionNote">Basemap © its data publishers · administrative polygons: official Azerbaijan open data · places and built metro: OpenStreetMap</div>
+      </div>
+
+      <aside id="v2ZoneDrawer" class="info-panel" aria-labelledby="panelTitle" tabindex="-1">
+        <div class="panel-head">
+          <div class="panel-kicker" id="panelKicker">MAP IDENTIFICATION</div>
+          <div class="panel-head-actions">
+            <button type="button" id="collapseDetails" class="panel-toggle" hidden>Collapse details</button>
+            <button type="button" id="showDetails" class="panel-toggle" hidden>Show details</button>
+            <button type="button" id="closeDetails" class="panel-close" hidden>Close details</button>
+          </div>
+        </div>
+        <h2 id="panelTitle">Tap a circle to see what’s coming</h2>
+        <p id="panelIntro">Or tap anywhere to find out where you are.</p>
+        <div class="panel-grid" id="panelGrid" hidden>
+          <div class="metric"><span id="rayonMetricLabel">District</span><strong id="rayonMetric">—</strong></div>
+          <div class="metric"><span id="zoneMetricLabel">Investment spot</span><strong id="zoneMetric">—</strong></div>
+          <div class="metric"><span id="stationMetricLabel">Nearest metro (straight line — walking is a bit longer)</span><strong id="stationMetric">—</strong></div>
+          <div class="metric"><span id="centreMetricLabel">Central Baku</span><strong id="centreMetric">—</strong></div>
+          <div class="metric"><span id="airportMetricLabel">Airport</span><strong id="airportMetric">—</strong></div>
+          <div class="metric"><span id="coordinateMetricLabel">Coordinates</span><strong id="coordinateMetric">—</strong></div>
+        </div>
+        <p class="panel-note" id="panelNote">District borders show official administrative geography. Investment spots are approximate, not property boundaries.</p>
+        <div id="zoneBrief" class="zone-brief" hidden></div>
+        <button type="button" id="clearSelection" class="text-button" hidden>Clear selection</button>
+      </aside>
+    </main>
+
+    <section id="v2HowTo" class="v2-howto" aria-labelledby="howToTitle"></section>
+    <section id="v2Content" class="v2-content" aria-label="Baku 2036 tools">
+      <article id="accordion-time" class="v2-accordion"></article>
+      <article id="accordion-scenarios" class="v2-accordion"></article>
+      <article id="accordion-planner" class="v2-accordion"></article>
+      <article id="accordion-deal" class="v2-accordion"></article>
+      <article id="accordion-shortlist" class="v2-accordion"></article>
+      <article id="accordion-sources" class="v2-accordion"></article>
+    </section>
+  </div>
+  <script src="v3.js?rev=single-audience-20260813"></script>
+</body>
+</html>

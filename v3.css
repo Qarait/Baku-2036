@@ -39,6 +39,7 @@ button { cursor: pointer; }
 .language-switch { display: flex; gap: 2px; padding: 3px; background: #e9e6dc; border-radius: 7px; }
 .lang-button { min-width: 34px; min-height: 31px; border: 0; border-radius: 4px; color: var(--muted); background: transparent; font-size: 11px; font-weight: 800; }
 .lang-button.active { color: #fff; background: var(--navy); }
+.language-lock { display: inline-flex; align-items: center; min-height: 31px; padding: 0 9px; color: var(--navy); background: #e9e6dc; border-radius: 7px; font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
 .lang-button:focus-visible, .map-button:focus-visible, .text-button:focus-visible, .panel-close:focus-visible { outline: 3px solid #e5a928; outline-offset: 2px; }
 
 .map-shell { position: relative; background: var(--cream); }

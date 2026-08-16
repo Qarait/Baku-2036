@@ -15,6 +15,24 @@ test('WebKit loads the map without browser errors', async ({ page }) => {
   expect(errors).toEqual([]);
 });
 
+test('WebKit loads both fixed language entry points without asset errors', async ({ page }) => {
+  for (const entry of [
+    { path: '/en/', hash: '#lang=tr', lang: 'en', legend: 'District borders' },
+    { path: '/tr/', hash: '#lang=en', lang: 'tr', legend: 'İlçe sınırları' }
+  ]) {
+    const errors = [];
+    page.on('response', response => {
+      if (response.status() >= 400) errors.push(`${response.status()}: ${response.url()}`);
+    });
+    await page.goto(`${entry.path}?cache=webkit-fixed-${entry.lang}${entry.hash}`);
+    await waitForMap(page);
+    await expect(page.locator('html')).toHaveAttribute('lang', entry.lang);
+    await expect(page.locator('#rayonLegend')).toHaveText(entry.legend);
+    await expect(page.locator('.language-switch')).toHaveCount(0);
+    expect(errors).toEqual([]);
+  }
+});
+
 test('WebKit keeps the bilingual drawer collapse flow usable', async ({ page }) => {
   await page.goto('./?cache=webkit-drawer#z=whitecity&y=2030&lang=tr');
   await waitForMap(page);

@@ -45,6 +45,10 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Verify generated language entry points
+        run: |
+          node scripts/build-language-entrypoints.js
+          git diff --exit-code -- en/index.html tr/index.html
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Build preview artifact

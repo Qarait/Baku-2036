@@ -7,6 +7,7 @@
   const PMTILES_URL = 'pmtiles://assets/baku-absheron.pmtiles';
   const COLORS = { hot: '#bd5b2d', frontier: '#137b66', established: '#2e6b9e' };
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fixedLanguage = window.__BakuFixedLanguage === 'tr' || window.__BakuFixedLanguage === 'en' ? window.__BakuFixedLanguage : null;
 
   const copy = {
     en: {
@@ -865,7 +866,8 @@
   function readHash() {
     const raw = location.hash.replace(/^#/, '');
     const params = new URLSearchParams(raw);
-    if (params.get('lang') === 'tr' || params.get('lang') === 'en') state.lang = params.get('lang');
+    if (fixedLanguage) state.lang = fixedLanguage;
+    else if (params.get('lang') === 'tr' || params.get('lang') === 'en') state.lang = params.get('lang');
     const year = Number(params.get('y')); if (Number.isInteger(year) && year >= 2026 && year <= 2036) state.year = year;
     if (params.get('heat') === '1' || params.get('heat') === '0') state.heat = params.get('heat') === '1';
     if (params.get('metro') === '1' || params.get('metro') === '0') state.metro = params.get('metro') === '1';
@@ -873,6 +875,7 @@
   }
 
   function setLanguage(lang) {
+    if (fixedLanguage) lang = fixedLanguage;
     if (!copy[lang]) return;
     state.lang = lang;
     const u = tr();
@@ -880,7 +883,8 @@
     $('appTitle').textContent = u.title; $('appSubtitle').textContent = u.subtitle; $('showMe').textContent = u.showMe || (state.lang === 'tr' ? '\u25b6 Göster (1 dakika)' : '\u25b6 Show me (1 minute)'); $('placeSearch').placeholder = u.search; $('searchLabel').textContent = u.searchLabel; $('yearLabel').textContent = u.year; $('skipMap').textContent = u.skip;
     $('rayonLegend').textContent = u.rayonBoundary; $('areaLegend').textContent = u.approxArea; $('metroLegend').textContent = u.metroLegend;
     $('evidenceLegend').textContent = u.evidenceLegend; $('builtLegend').textContent = u.builtLegend; $('contractedLegend').textContent = u.contractedLegend; $('programmedLegend').textContent = u.programmedLegend; $('privateLegend').textContent = u.privateLegend;
-    $('clearSelection').textContent = u.clear; $('langEn').classList.toggle('active', lang === 'en'); $('langTr').classList.toggle('active', lang === 'tr');
+    $('clearSelection').textContent = u.clear;
+    $('langEn')?.classList.toggle('active', lang === 'en'); $('langTr')?.classList.toggle('active', lang === 'tr');
     document.querySelector('[data-layer="admin"]').textContent = u.rayons; document.querySelector('[data-layer="investments"]').textContent = u.areas; document.querySelector('[data-layer="metro"]').textContent = u.metro; document.querySelector('[data-layer="heat"]').textContent = u.heat;
     document.querySelectorAll('[data-layer]').forEach(button => {
       const active = Boolean(state[button.dataset.layer]);
@@ -1096,7 +1100,7 @@
     $('showMe')?.addEventListener('click', startCityStory); $('layersToggle')?.addEventListener('click', () => toggleLayerMenu());
     document.addEventListener('keydown', event => { if (event.key === 'Escape') { toggleLayerMenu(false); finishCityStory(); finishTour(); } });
     document.querySelectorAll('.quiet-controls').forEach(element => element.addEventListener('focusin', () => setEngaged(true)));
-    $('langEn').addEventListener('click', () => { setEngaged(true); setLanguage('en'); }); $('langTr').addEventListener('click', () => { setEngaged(true); setLanguage('tr'); });
+    $('langEn')?.addEventListener('click', () => { setEngaged(true); setLanguage('en'); }); $('langTr')?.addEventListener('click', () => { setEngaged(true); setLanguage('tr'); });
     $('yearSelect').addEventListener('focus', () => setEngaged(true)); $('yearSelect').addEventListener('change', event => { setEngaged(true); pauseCityStory(); setYear(event.target.value); });
     $('placeSearch').addEventListener('focus', () => setEngaged(true)); $('placeSearch').addEventListener('input', event => { pauseCityStory(); renderSearchResults(event.target.value); });
     $('placeSearch').addEventListener('keydown', event => { if (event.key === 'Escape') { $('searchResults').hidden = true; event.target.blur(); } if (event.key === 'Enter') { const first = searchPlaces(event.target.value)[0]; if (first) choosePlace(first); } });
@@ -1139,6 +1143,7 @@
   }
 
   async function boot() {
+    if ($('skipMap')) $('skipMap').href = `${location.pathname}#v2ZoneDrawer`;
     readHash();
     if (!state.controlsInstalled) { installControls(); state.controlsInstalled = true; }
     setLanguage(state.lang); setMapStatus('loading', tr().loading);
