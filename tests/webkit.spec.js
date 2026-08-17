@@ -17,8 +17,8 @@ test('WebKit loads the map without browser errors', async ({ page }) => {
 
 test('WebKit loads both fixed language entry points without asset errors', async ({ page }) => {
   for (const entry of [
-    { path: '/en/', hash: '#lang=tr', lang: 'en', legend: 'District borders' },
-    { path: '/tr/', hash: '#lang=en', lang: 'tr', legend: 'İlçe sınırları' }
+    { path: './en/', hash: '#lang=tr', lang: 'en', legend: 'District borders' },
+    { path: './tr/', hash: '#lang=en', lang: 'tr', legend: 'İlçe sınırları' }
   ]) {
     const errors = [];
     page.on('response', response => {

@@ -269,13 +269,13 @@ test('EN and TR switch visible map language', async ({ page }) => {
 });
 
 test('fixed language entry points stay separated', async ({ page }) => {
-  await page.goto('/en/?cache=e2e-fixed-en#lang=tr');
+  await page.goto('./en/?cache=e2e-fixed-en#lang=tr');
   await waitForMap(page);
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   await expect(page.locator('#rayonLegend')).toHaveText('District borders');
   await expect(page.locator('.language-switch')).toHaveCount(0);
 
-  await page.goto('/tr/?cache=e2e-fixed-tr#lang=en');
+  await page.goto('./tr/?cache=e2e-fixed-tr#lang=en');
   await waitForMap(page);
   await expect(page.locator('html')).toHaveAttribute('lang', 'tr');
   await expect(page.locator('#rayonLegend')).toHaveText('İlçe sınırları');
