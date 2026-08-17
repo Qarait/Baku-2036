@@ -130,7 +130,7 @@ git diff --check
 
 Expected: contract PASS, 41 Playwright tests PASS, and no diff errors.
 
-- [ ] **Step 2: Commit and push only to preview**
+- [x] **Step 2: Commit and push only to preview**
 
 Commit with:
 
@@ -140,10 +140,10 @@ git commit -m "Exclude development files from Pages artifacts"
 git push origin HEAD:preview
 ```
 
-- [ ] **Step 3: Verify GitHub Actions and hosted paths**
+- [x] **Step 3: Verify GitHub Actions and hosted paths**
 
 Confirm the Pages workflow and browser smoke workflow for the new commit succeed. Check that `/preview/`, `/preview/en/`, and `/preview/tr/` remain HTTP 200 while `/preview/tests/e2e.spec.js`, `/preview/package.json`, `/preview/scripts/measure-performance.js`, and `/preview/docs/` no longer resolve successfully.
 
-- [ ] **Step 4: Mark the plan complete**
+- [x] **Step 4: Mark the plan complete**
 
 After the remote checks pass, mark all steps complete and commit the checklist update if needed.
