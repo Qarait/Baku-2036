@@ -57,14 +57,17 @@ jobs:
       - name: Build preview artifact
         if: github.ref_name == 'preview'
         run: |
+          mkdir -p .pages-main
           mkdir -p dist/preview
-          git archive origin/main | tar -x -C dist
-          rsync -a --exclude='.git' --exclude='dist' --exclude='node_modules' --exclude='test-results' --exclude='playwright-report' --exclude='vendor/*-dev.mjs' --exclude='v2' ./ dist/preview/
+          git archive origin/main | tar -x -C .pages-main
+          rsync -a --delete --exclude-from=.pagesignore .pages-main/ dist/
+          rsync -a --delete --exclude-from=.pagesignore ./ dist/preview/
+          rm -rf .pages-main
       - name: Build live artifact
         if: github.ref_name == 'main'
         run: |
           mkdir dist
-          rsync -a --exclude='.git' --exclude='dist' --exclude='node_modules' --exclude='test-results' --exclude='playwright-report' --exclude='vendor/*-dev.mjs' --exclude='v2' ./ dist/
+          rsync -a --delete --exclude-from=.pagesignore ./ dist/
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:

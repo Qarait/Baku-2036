@@ -1,0 +1,17 @@
+.git/
+.github/
+.gitignore
+.pagesignore
+docs/
+scripts/
+tests/
+v1/
+v2/
+dist/
+test-results/
+playwright-report/
+package.json
+package-lock.json
+playwright.config.js
+README.md
+vendor/*-dev.mjs
