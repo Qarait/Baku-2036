@@ -1,7 +1,6 @@
 name: Browser smoke tests
 
 on:
-  push:
   pull_request:
 
 permissions:
