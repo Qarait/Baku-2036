@@ -1,0 +1,55 @@
+{
+  "generatedAt": "2026-08-17T12:49:20.066Z",
+  "url": "http://127.0.0.1:8124/",
+  "browser": "chromium",
+  "cache": "cold",
+  "runs": [
+    {
+      "ttfbMs": 17.09999999962747,
+      "fcpMs": 124,
+      "lcpMs": 124,
+      "mapReadyMs": 1354,
+      "adminContentLength": 2530157,
+      "totalContentLength": 4891032,
+      "responseCount": 24
+    }
+  ],
+  "summaries": {
+    "ttfbMs": {
+      "count": 1,
+      "median": 17.09999999962747,
+      "min": 17.09999999962747,
+      "max": 17.09999999962747
+    },
+    "fcpMs": {
+      "count": 1,
+      "median": 124,
+      "min": 124,
+      "max": 124
+    },
+    "lcpMs": {
+      "count": 1,
+      "median": 124,
+      "min": 124,
+      "max": 124
+    },
+    "mapReadyMs": {
+      "count": 1,
+      "median": 1354,
+      "min": 1354,
+      "max": 1354
+    },
+    "adminContentLength": {
+      "count": 1,
+      "median": 2530157,
+      "min": 2530157,
+      "max": 2530157
+    },
+    "totalContentLength": {
+      "count": 1,
+      "median": 4891032,
+      "min": 4891032,
+      "max": 4891032
+    }
+  }
+}

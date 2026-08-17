@@ -26,7 +26,7 @@
       administrative: 'District', investment: 'Investment spot', nearestMetro: 'Nearest metro (straight line — walking is a bit longer)', centralBaku: 'Central Baku', airport: 'Airport', coordinates: 'Coordinates',
       noRayon: 'That’s the sea', noZone: 'No nearby spot', noMetro: 'No station nearby',
       rayonNote: 'District borders show official administrative geography. Investment spots are approximate, not property boundaries.',
-      clear: 'Clear selection', closeDetails: 'Close details', collapseDetails: 'Collapse details', showDetails: 'Show details', loading: 'Loading map data\u2026', ready: 'Click a location to identify its geography', error: 'We couldn\u2019t load the map data. Please refresh and try again.', retry: 'Retry', searchEmpty: 'No local place matched that search.'
+      clear: 'Clear selection', closeDetails: 'Close details', collapseDetails: 'Collapse details', showDetails: 'Show details', loading: 'Loading map data\u2026', ready: 'Click a location to identify its geography', error: 'We couldn\u2019t load the map data. Please refresh and try again.', validation: 'We couldn\u2019t validate the map data. Please refresh and try again.', retry: 'Retry', searchEmpty: 'No local place matched that search.'
     },
     tr: {
       title: 'Bakü gayrimenkulünü anlayın',
@@ -44,22 +44,39 @@
       administrative: 'İlçe', investment: 'Yatırım noktası', nearestMetro: 'En yakın metro (kuş uçuşu — yürüyüş biraz daha uzun)', centralBaku: 'Bakü merkezi', airport: 'Havalimanı', coordinates: 'Koordinatlar',
       noRayon: 'Burası deniz', noZone: 'Yakında yatırım noktası yok', noMetro: 'Yakında istasyon yok',
       rayonNote: 'İlçe sınırları resmi idari coğrafyayı gösterir. Yatırım noktaları yaklaşık alanlardır; mülk sınırı değildir.',
-      clear: 'Se\u00e7imi temizle', closeDetails: 'Detayları kapat', collapseDetails: 'Ayrıntıları gizle', showDetails: 'Ayrıntıları göster', loading: 'Harita verileri y\u00fckleniyor\u2026', ready: 'Co\u011frafyay\u0131 tan\u0131mlamak i\u00e7in bir yere t\u0131klay\u0131n', error: 'Harita verilerini y\u00fckleyemedik. L\u00fctfen sayfay\u0131 yenileyin ve tekrar deneyin.', retry: 'Yeniden deneyin', searchEmpty: 'Yerel gazetteer e\u015fle\u015fme bulamad\u0131.'
+      clear: 'Se\u00e7imi temizle', closeDetails: 'Detayları kapat', collapseDetails: 'Ayrıntıları gizle', showDetails: 'Ayrıntıları göster', loading: 'Harita verileri y\u00fckleniyor\u2026', ready: 'Co\u011frafyay\u0131 tan\u0131mlamak i\u00e7in bir yere t\u0131klay\u0131n', error: 'Harita verilerini y\u00fckleyemedik. L\u00fctfen sayfay\u0131 yenileyin ve tekrar deneyin.', validation: 'Harita verilerini do\u011frulayamad\u0131k. L\u00fctfen sayfay\u0131 yenileyin ve tekrar deneyin.', retry: 'Yeniden deneyin', searchEmpty: 'Yerel gazetteer e\u015fle\u015fme bulamad\u0131.'
     }
   };
   const zones = [];
 
+  function zoneValidationError(message) {
+    const error = new Error('Zone data validation failed: ' + message);
+    error.code = 'zone-data-validation';
+    return error;
+  }
+
   function hydrateZones(atlasZones) {
-    if (!Array.isArray(atlasZones) || atlasZones.length !== 16) return;
-    zones.length = 0;
-    atlasZones.forEach(zone => {
-      zones.push({
+    if (!Array.isArray(atlasZones)) throw zoneValidationError('expected an array');
+    if (!atlasZones.length) throw zoneValidationError('expected at least 1 zone; received 0');
+    const ids = new Set();
+    const hydrated = atlasZones.map((zone, index) => {
+      const id = typeof zone?.id === 'string' ? zone.id.trim() : '';
+      if (!id) throw zoneValidationError('zone ' + index + ' has a missing id');
+      if (ids.has(id)) throw zoneValidationError('duplicate id ' + id);
+      ids.add(id);
+      const coords = zone.coords;
+      if (!Array.isArray(coords) || coords.length < 2 || !Number.isFinite(coords[0]) || !Number.isFinite(coords[1])) throw zoneValidationError('zone ' + id + ' has invalid coordinates');
+      if (!Number.isFinite(zone.growthPct)) throw zoneValidationError('zone ' + id + ' has invalid growthPct');
+      return {
         ...zone,
+        id,
         tier: zone.tier === 'est' ? 'established' : (zone.tier === 'fr' ? 'frontier' : zone.tier),
-        coords: Array.isArray(zone.coords) ? zone.coords : [0, 0],
+        coords: [coords[0], coords[1]],
         radius: Number(zone.radius) || 10
-      });
+      };
     });
+    zones.length = 0;
+    zones.push(...hydrated);
   }
 
   function atlasCopy() {
@@ -535,7 +552,7 @@
     const starred = Boolean(state.shortlist[zone.id]);
     host.innerHTML =
       '<div class="brief-head"><h3>' + escapeHtml(state.lang === 'tr' ? zone.nameTr : zone.nameEn) + '</h3><span class="brief-tier">' + escapeHtml(zoneTierLabel(zone)) + '</span></div>' +
-      '<div class="brief-metrics"><div class="brief-metric"><small>' + escapeHtml(ui.entry || (state.lang === 'tr' ? 'Bug?nk? giri?' : 'Entry today')) + '</small><strong>' + escapeHtml(detail.now || '—') + '</strong></div>' +
+      '<div class="brief-metrics"><div class="brief-metric"><small>' + escapeHtml(ui.entry || (state.lang === 'tr' ? 'Bugünkü giriş' : 'Entry today')) + '</small><strong>' + escapeHtml(detail.now || '—') + '</strong></div>' +
       '<div class="brief-metric"><small>' + escapeHtml(ui.scen || (state.lang === 'tr' ? '2036 senaryosu' : '2036 scenario')) + '</small><strong>' + escapeHtml(scenarioProjection(zone, language)) + '</strong></div>' +
       '<div class="brief-metric"><small>' + escapeHtml(state.lang === 'tr' ? 'Kira getirisi' : 'Rental yield') + '</small><strong>' + escapeHtml(detail.yield || '—') + '</strong></div></div>' +
       '<p class="scenario-insight">' + escapeHtml(labels.scenarioInsight || (state.lang === 'tr' ? 'Bu rakamın kaynağı: kamu planları, ulaşım, yakındaki projeler ve piyasa göstergeleri. Bu bir senaryodur, garanti değildir.' : 'Where this comes from: public plans, transport, nearby projects and market signals. This is a scenario, not a promise.')) + '</p>' +
@@ -1161,7 +1178,7 @@
       renderAllContent();
       const maplibregl = window.__V3MapLibre;
       if (maplibregl) installMap(maplibregl, data); else window.addEventListener('v3-maplibre-ready', () => installMap(window.__V3MapLibre, data), { once: true });
-    } catch (error) { console.error(error); finishCityStory(); setMapStatus('error', tr().error); }
+    } catch (error) { console.error(error); finishCityStory(); setMapStatus('error', error?.code === 'zone-data-validation' ? tr().validation : tr().error); }
   }
 
   window.distanceKm = distanceKm;

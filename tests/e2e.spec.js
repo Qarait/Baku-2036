@@ -342,6 +342,98 @@ test('scenario calculator uses the explicit growth value for Zikh', async ({ pag
   await expect(page.locator('#scenarioOutput')).toContainText('Zikh (Zığ): 105%');
 });
 
+test('Zikh deal checker uses the explicit scenario growth in its dollar output', async ({ page }) => {
+  async function checkDeal(expected) {
+    await page.locator('#accordion-deal .accordion-summary').click();
+    await page.locator('#dealZone').selectOption('zikh');
+    await page.locator('#dealPrice').fill('60000');
+    await page.locator('#dealArea').fill('100');
+    await page.locator('#dealCheck').click();
+    await expect(page.locator('#dealResult')).toContainText(expected);
+  }
+
+  await page.goto('./?cache=e2e-zikh-deal#z=zikh&y=2026&lang=en');
+  await waitForMap(page);
+  await checkDeal('$138,000');
+
+  await page.locator('#accordion-scenarios .accordion-summary').click();
+  await page.locator('#scenarioOil').selectOption('bad');
+  await checkDeal('$123,000');
+
+  await page.locator('#accordion-scenarios .accordion-summary').click();
+  await page.locator('#scenarioOil').selectOption('norm');
+  await page.locator('#scenarioInfra').selectOption('late');
+  await checkDeal('$117,000');
+});
+
+test('a valid seventeenth zone still hydrates the investment layer', async ({ page }) => {
+  await page.route('**/data/zones.json*', async route => {
+    const response = await route.fetch();
+    const zones = await response.json();
+    zones.push({ ...zones[0], id: 'test-seventeenth-zone', coords: [49.81, 40.39] });
+    await route.fulfill({ json: zones });
+  });
+  await page.goto('./?cache=e2e-seventeenth-zone');
+  await waitForMap(page);
+  await page.locator('#accordion-deal .accordion-summary').click();
+  await expect(page.locator('#dealZone option')).toHaveCount(17);
+});
+
+test('an empty zone payload surfaces localized validation copy and logs its diagnostic', async ({ page }) => {
+  const diagnostics = [];
+  page.on('console', message => {
+    if (message.type() === 'error') diagnostics.push(message.text());
+  });
+  await page.route('**/data/zones.json*', route => route.fulfill({ json: [] }));
+  await page.goto('./?cache=e2e-empty-zones#lang=en');
+  await expect(page.locator('#mapStatus')).toHaveClass(/error/);
+  await expect(page.locator('#mapStatus')).toContainText(/validate the map data/i);
+  expect(diagnostics.join('\n')).toContain('received 0');
+  page.__browserErrors = [];
+
+  await page.goto('./?cache=e2e-empty-zones-tr#lang=tr');
+  await expect(page.locator('#mapStatus')).toHaveClass(/error/);
+  await expect(page.locator('#mapStatus')).toContainText(/doğrulayamadık/i);
+  await expect(page.locator('#mapStatus')).not.toContainText('Zone data validation failed');
+  page.__browserErrors = [];
+});
+
+test('Turkish entry fallback remains valid UTF-8 when content omits it', async ({ page }) => {
+  await page.route('**/data/content.json*', async route => {
+    const response = await route.fetch();
+    const content = await response.json();
+    delete content.tr.ui.entry;
+    await route.fulfill({ json: content });
+  });
+  await page.goto('./?cache=e2e-tr-entry-fallback#z=whitecity&lang=tr');
+  await waitForMap(page);
+  await expect(page.locator('#zoneBrief')).toContainText('Bugünkü giriş');
+  await expect(page.locator('#zoneBrief')).not.toContainText('Bug?nk? giri?');
+});
+
+test('city snapshot exposes the current project and evidence status totals', async ({ page }) => {
+  await page.goto('./?cache=e2e-city-status-totals#y=2026&lang=en');
+  await waitForMap(page);
+  await page.getByRole('button', { name: '▶ Show me (1 minute)' }).click();
+  const story = page.locator('#cityStory');
+  await expect(story).toHaveAttribute('data-done-projects', '14');
+  await expect(story).toHaveAttribute('data-funded-projects', '10');
+  await expect(story).toHaveAttribute('data-planned-projects', '23');
+  await expect(story).toHaveAttribute('data-operational-evidence', '9');
+  await expect(story).toHaveAttribute('data-contracted-evidence', '2');
+  await expect(story).toHaveAttribute('data-programmed-evidence', '6');
+  await expect(story).toHaveAttribute('data-private-plan-evidence', '2');
+});
+
+test('selected city-event labels remain visible in English and Turkish', async ({ page }) => {
+  await page.goto('./?cache=e2e-city-event-label#y=2026&lang=en');
+  await waitForMap(page);
+  await page.evaluate(() => window.identifyLocation({ lng: 49.807, lat: 40.397 }, null, { includeNearbyEvent: true }));
+  await expect(page.locator('#panelIntro')).toContainText('Metro B-4 station (Purple Line) opens');
+  await page.locator('#langTr').evaluate(button => button.click());
+  await expect(page.locator('#panelIntro')).toContainText('Metro B-4 istasyonu (Mor Hat) açılıyor');
+});
+
 test('click-to-identify returns a district and metro distance', async ({ page }) => {
   await page.goto('./?cache=e2e-identify#z=whitecity&y=2026&lang=en');
   await waitForMap(page);
