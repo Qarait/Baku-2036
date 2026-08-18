@@ -212,7 +212,7 @@ test('zone details can be closed and reopened', async ({ page }) => {
   await page.goto('./?cache=e2e-zone-close#z=whitecity&y=2026&lang=en');
   await waitForMap(page);
   await expect(page.locator('#closeDetails')).toBeVisible();
-  await expect(page.locator('#closeDetails')).toHaveText('Close details');
+  await expect(page.locator('#closeDetails')).toHaveText('Close');
   await page.locator('#closeDetails').click();
   await expect(page.locator('#zoneBrief')).toBeHidden();
   await expect(page.locator('#panelGrid')).toBeHidden();
@@ -221,14 +221,14 @@ test('zone details can be closed and reopened', async ({ page }) => {
   await page.goto('./?cache=e2e-zone-reopen#z=whitecity&y=2026&lang=en');
   await waitForMap(page);
   await expect(page.locator('#zoneBrief')).toBeVisible();
-  await expect(page.locator('#closeDetails')).toHaveText('Close details');
+  await expect(page.locator('#closeDetails')).toHaveText('Close');
 });
 
 test('selected drawer can collapse, reopen, and close in both languages', async ({ page }) => {
   await page.goto('./?cache=e2e-drawer-collapse#z=whitecity&y=2030&lang=tr');
   await waitForMap(page);
   await expect(page.locator('#panelTitle')).toHaveText('White City / Xətai');
-  await expect(page.locator('#closeDetails')).toHaveText('Detayları kapat');
+  await expect(page.locator('#closeDetails')).toHaveText('Kapat');
   await page.locator('#collapseDetails').click();
   await expect(page.locator('#v2ZoneDrawer')).toHaveClass(/is-collapsed/);
   await expect(page.locator('#zoneBrief')).toBeHidden();
@@ -239,13 +239,41 @@ test('selected drawer can collapse, reopen, and close in both languages', async 
   await expect(page.locator('#zoneBrief')).toBeVisible();
   await engage(page);
   await page.locator('#langEn').click();
-  await expect(page.locator('#closeDetails')).toHaveText('Close details');
+  await expect(page.locator('#closeDetails')).toHaveText('Close');
   await page.locator('#collapseDetails').click();
   await expect(page.locator('#showDetails')).toHaveText('Show details');
   await page.locator('#showDetails').click();
   await expect(page.locator('#zoneBrief')).toBeVisible();
   await page.locator('#closeDetails').click();
   await expect(page.locator('#panelTitle')).toHaveText('Tap a circle to see what’s coming');
+});
+
+test('mobile selected place starts concise and can reveal full details', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('./?cache=e2e-mobile-summary#z=whitecity&y=2030&lang=en');
+  await waitForMap(page);
+
+  await expect(page.locator('#v2ZoneDrawer')).toHaveClass(/is-collapsed/);
+  await expect(page.locator('#zoneQuickSummary')).toBeVisible();
+  await expect(page.locator('#zoneQuickSummary')).toContainText('Current price');
+  await expect(page.locator('#zoneQuickSummary')).toContainText('$2,500–4,000/m² new-build');
+  await expect(page.locator('#zoneQuickSummary')).toContainText('Possible upside under this scenario');
+  await expect(page.locator('#zoneQuickSummary')).toContainText('+140%');
+  await expect(page.locator('#zoneQuickSummary')).toContainText('Main risk');
+  await expect(page.locator('#zoneQuickSummary')).toContainText('Evidence strength');
+  await expect(page.locator('#panelDetailsTitle')).toBeHidden();
+  await expect(page.locator('#panelGrid')).toBeHidden();
+  await expect(page.locator('#zoneDetailContent')).toBeHidden();
+  await expect(page.locator('#showDetails')).toHaveText('Show details');
+  await expect(page.locator('#closeDetails')).toHaveText('Close');
+
+  await page.locator('#showDetails').click();
+  await expect(page.locator('#v2ZoneDrawer')).not.toHaveClass(/is-collapsed/);
+  await expect(page.locator('#panelDetailsTitle')).toHaveText('Location details');
+  await expect(page.locator('#panelGrid .metric')).toHaveCount(6);
+  await expect(page.locator('#zoneDetailContent')).toBeVisible();
+  await expect(page.locator('.evidence-section')).toBeVisible();
+  await expect(page.locator('#zoneDetailContent')).toContainText('What could go wrong?');
 });
 
 test('zone source insight switches to Turkish', async ({ page }) => {
@@ -274,12 +302,49 @@ test('fixed language entry points stay separated', async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   await expect(page.locator('#rayonLegend')).toHaveText('District borders');
   await expect(page.locator('.language-switch')).toHaveCount(0);
+  await expect(page.locator('#howToVideoLink')).toHaveAttribute('href', 'how-to.html?lang=en');
+  await expect(page.locator('#howToVideoLink').evaluate(link => link.href)).resolves.toMatch(/\/how-to\.html\?lang=en$/);
 
   await page.goto('./tr/?cache=e2e-fixed-tr#lang=en');
   await waitForMap(page);
   await expect(page.locator('html')).toHaveAttribute('lang', 'tr');
   await expect(page.locator('#rayonLegend')).toHaveText('İlçe sınırları');
   await expect(page.locator('.language-switch')).toHaveCount(0);
+  await expect(page.locator('#howToVideoLink')).toHaveAttribute('href', 'how-to.html?lang=tr');
+  await expect(page.locator('#howToVideoLink').evaluate(link => link.href)).resolves.toMatch(/\/how-to\.html\?lang=tr$/);
+});
+
+test('silent how-to walkthrough attachment opens a localized video page', async ({ page }) => {
+  await page.goto('./?cache=e2e-howto-video');
+  await waitForMap(page);
+  const link = page.locator('#howToVideoLink');
+  await expect(link).toBeVisible();
+  await expect(link).toHaveAttribute('target', '_blank');
+  await expect(link).toHaveAttribute('rel', 'noopener');
+  await expect(link).toHaveAttribute('href', 'how-to.html?lang=en');
+  await engage(page);
+  await page.locator('#langTr').click();
+  await expect(link).toHaveAttribute('href', 'how-to.html?lang=tr');
+
+  await page.goto('./how-to.html?lang=tr');
+  await expect(page.locator('html')).toHaveAttribute('lang', 'tr');
+  await expect(page.locator('#howToPageTitle')).toHaveText('Harita nasıl kullanılır?');
+  const video = page.locator('#howToVideo');
+  await expect(video).toBeVisible();
+  await expect(video).toHaveAttribute('controls', '');
+  await expect(video).toHaveAttribute('playsinline', '');
+  await expect(video).toHaveAttribute('preload', 'metadata');
+  await expect(video).not.toHaveAttribute('autoplay', '');
+  await expect(video.locator('track')).toHaveCount(0);
+  const duration = await video.evaluate(element => new Promise((resolve, reject) => {
+    const finish = () => Number.isFinite(element.duration) && element.duration > 0 ? resolve(element.duration) : reject(new Error('video duration is not available'));
+    if (element.readyState >= 1) finish();
+    else {
+      element.addEventListener('loadedmetadata', finish, { once: true });
+      element.addEventListener('error', () => reject(new Error('video failed to load')), { once: true });
+    }
+  }));
+  expect(duration).toBeLessThanOrEqual(20);
 });
 
 test('deal checker returns a verdict', async ({ page }) => {
@@ -464,6 +529,9 @@ test('mobile zone details use one page scroll and reach their final action', asy
   await page.goto('./?cache=e2e-mobile-scroll#z=whitecity&y=2026&lang=en');
   await waitForMap(page);
   await expect(page.locator('#zoneBrief')).toBeVisible();
+  await expect(page.locator('#zoneQuickSummary')).toBeVisible();
+  await page.locator('#showDetails').click();
+  await expect(page.locator('#zoneDetailContent')).toBeVisible();
   const layout = await page.locator('#v2ZoneDrawer').evaluate(element => {
     const drawer = element.getBoundingClientRect();
     const stageElement = document.querySelector('.map-stage');
@@ -497,7 +565,7 @@ test('mobile controls expose 44px touch targets', async ({ page }) => {
   const selectors = [
     '.search-box', '.search-result', '#langEn', '#langTr', '.map-button:not(.layer-button):not(#layersToggle)', '#layersToggle',
     '.layer-menu .layer-button', '#collapseDetails', '#closeDetails', '.drawer-action', '#clearSelection',
-    '.show-me', '.primary-action', '.secondary-action', '.city-story-actions button', '.tour-close', '#timeYear'
+    '.show-me', '.primary-action', '.secondary-action', '.city-story-actions button', '.tour-close', '#timeYear', '.howto-video-link'
   ];
   const sizes = await page.locator(selectors.join(', ')).evaluateAll(elements => elements
     .filter(element => !element.hidden && element.offsetParent !== null && getComputedStyle(element).display !== 'none' && getComputedStyle(element).visibility !== 'hidden')
@@ -513,6 +581,8 @@ test('mobile metadata remains readable without enlarging primary headings', asyn
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('./?cache=e2e-mobile-type#z=whitecity&y=2026&lang=tr');
   await waitForMap(page);
+  await page.locator('#showDetails').click();
+  await expect(page.locator('#zoneDetailContent')).toBeVisible();
   const sizes = await page.evaluate(() => {
     const read = selector => Number.parseFloat(getComputedStyle(document.querySelector(selector)).fontSize);
     return {

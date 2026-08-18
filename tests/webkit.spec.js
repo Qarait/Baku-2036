@@ -33,10 +33,31 @@ test('WebKit loads both fixed language entry points without asset errors', async
   }
 });
 
+test('WebKit loads the silent how-to walkthrough in both languages', async ({ page }) => {
+  for (const entry of [
+    { path: './how-to.html?lang=en', lang: 'en', title: 'How to use the map' },
+    { path: './how-to.html?lang=tr', lang: 'tr', title: 'Harita nasıl kullanılır?' }
+  ]) {
+    const errors = [];
+    page.on('response', response => {
+      if (response.status() >= 400) errors.push(`${response.status()}: ${response.url()}`);
+    });
+    await page.goto(`${entry.path}&cache=webkit-howto-${entry.lang}`, { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('html')).toHaveAttribute('lang', entry.lang);
+    await expect(page.locator('#howToPageTitle')).toHaveText(entry.title);
+    await expect(page.locator('#howToVideo')).toBeVisible();
+    await expect.poll(() => page.locator('#howToVideo').evaluate(video => video.canPlayType('video/webm'))).toMatch(/probably|maybe/);
+    await expect(page.locator('#howToVideo')).not.toHaveAttribute('autoplay', '');
+    expect(errors).toEqual([]);
+  }
+});
+
 test('WebKit keeps the bilingual drawer collapse flow usable', async ({ page }) => {
   await page.goto('./?cache=webkit-drawer#z=whitecity&y=2030&lang=tr');
   await waitForMap(page);
   await expect(page.locator('#panelTitle')).toHaveText('White City / Xətai');
+  await page.locator('#showDetails').click();
+  await expect(page.locator('#zoneDetailContent')).toBeVisible();
   await page.locator('#collapseDetails').click();
   await expect(page.locator('#v2ZoneDrawer')).toHaveClass(/is-collapsed/);
   await expect(page.locator('#showDetails')).toHaveText('Ayrıntıları göster');
@@ -45,7 +66,7 @@ test('WebKit keeps the bilingual drawer collapse flow usable', async ({ page }) 
   await page.locator('#langTr').focus();
   await expect(page.locator('body')).toHaveClass(/engaged/);
   await page.locator('#langEn').click();
-  await expect(page.locator('#closeDetails')).toHaveText('Close details');
+  await expect(page.locator('#closeDetails')).toHaveText('Close');
   await page.locator('#closeDetails').click();
   await expect(page.locator('#panelTitle')).toHaveText('Tap a circle to see what’s coming');
 });
@@ -60,7 +81,7 @@ test('WebKit keeps the 390px safe-area and touch layout usable', async ({ page }
   expect(viewport).toContain('viewport-fit=cover');
   const selectors = [
     '.search-box', '#langEn', '#langTr', '.map-button:not(.layer-button):not(#layersToggle)', '#layersToggle',
-    '.layer-menu .layer-button', '#collapseDetails', '#closeDetails', '.drawer-action', '#clearSelection'
+    '.layer-menu .layer-button', '#collapseDetails', '#closeDetails', '.drawer-action', '#clearSelection', '.howto-video-link'
   ];
   const sizes = await page.locator(selectors.join(', ')).evaluateAll(elements => elements
     .filter(element => !element.hidden && element.offsetParent !== null && getComputedStyle(element).display !== 'none' && getComputedStyle(element).visibility !== 'hidden')

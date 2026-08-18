@@ -4,7 +4,8 @@
   "scripts": {
     "test": "playwright test",
     "test:headed": "playwright test --headed",
-    "measure:performance": "node scripts/measure-performance.js"
+    "measure:performance": "node scripts/measure-performance.js",
+    "record:howto": "node scripts/record-how-to.js"
   },
   "devDependencies": {
     "@playwright/test": "1.62.1"

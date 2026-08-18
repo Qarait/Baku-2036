@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>How to use the map · Baku 2036</title>
+  <meta name="description" content="A short silent screen recording showing how to use the Baku 2036 map.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="v3.css">
+</head>
+<body>
+  <main class="howto-page">
+    <header class="howto-page-head">
+      <a id="howToBack" class="howto-back" href="./?lang=en">Back to the map</a>
+      <div class="eyebrow">BAKU 2036</div>
+      <h1 id="howToPageTitle">How to use the map</h1>
+      <p id="howToPageIntro">A short, silent screen recording of the website flow.</p>
+    </header>
+    <section class="howto-video-card" aria-labelledby="howToPageTitle">
+      <video id="howToVideo" controls playsinline preload="metadata" aria-describedby="howToVideoDescription">
+        <source src="assets/how-to-use.webm" type="video/webm">
+        Your browser cannot play this video.
+      </video>
+      <p id="howToVideoDescription">Silent screen recording: search for a place, open its details, and move through the map tools.</p>
+    </section>
+  </main>
+  <script>
+    const language = new URLSearchParams(window.location.search).get('lang') === 'tr' ? 'tr' : 'en';
+    document.documentElement.lang = language;
+    const escapeHtml = value => String(value).replace(/[&<>'"]/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[character]));
+    const loadCopy = async () => {
+      try {
+        const response = await fetch('data/content.json');
+        if (!response.ok) throw new Error('content request failed');
+        const content = await response.json();
+        const video = content?.[language]?.howTo?.video;
+        if (!video) return;
+        document.title = video.pageTitle + ' · Baku 2036';
+        document.getElementById('howToPageTitle').textContent = video.pageTitle;
+        document.getElementById('howToPageIntro').textContent = video.pageIntro;
+        document.getElementById('howToVideoDescription').textContent = video.description;
+        document.getElementById('howToBack').textContent = video.back;
+        document.getElementById('howToVideo').lastChild.textContent = video.fallback;
+      } catch (error) {
+        document.documentElement.dataset.copyError = 'true';
+      }
+    };
+    document.getElementById('howToBack').href = './?lang=' + language;
+    loadCopy();
+  </script>
+</body>
+</html>
