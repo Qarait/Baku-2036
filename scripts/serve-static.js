@@ -5,6 +5,8 @@ const path = require('path');
 const root = path.resolve(__dirname, '..');
 const portIndex = process.argv.indexOf('--port');
 const port = Number(portIndex >= 0 ? process.argv[portIndex + 1] : 8123);
+const cacheControlIndex = process.argv.indexOf('--cache-control');
+const cacheControl = cacheControlIndex >= 0 ? process.argv[cacheControlIndex + 1] : 'no-store';
 const contentTypes = {
   '.css': 'text/css; charset=utf-8',
   '.geojson': 'application/geo+json; charset=utf-8',
@@ -36,7 +38,7 @@ function sendFile(request, response, filePath) {
     const range = request.headers.range;
     const headers = {
       'Accept-Ranges': 'bytes',
-      'Cache-Control': 'no-store',
+      'Cache-Control': cacheControl,
       'Content-Type': contentTypes[path.extname(filePath).toLowerCase()] || 'application/octet-stream'
     };
     if (!range) {

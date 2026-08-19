@@ -40,6 +40,24 @@ test('root loads a rendered map without browser errors', async ({ page }) => {
   await expect(page.locator('#v2Map')).toHaveAttribute('aria-label', /Interactive Baku/);
 });
 
+test('map startup exposes phase marks', async ({ page }) => {
+  await page.goto('./?cache=e2e-performance');
+  await waitForMap(page);
+  const diagnostics = await page.evaluate(() => ({
+    marks: window.__bakuPerformance?.marks || [],
+    performanceMarks: performance.getEntriesByType('mark').map(entry => entry.name)
+  }));
+  const names = [
+    'boot-start', 'data-fetch-start', 'data-fetch-end', 'data-hydrated',
+    'admin-centroids-start', 'admin-centroids-end', 'style-build-start',
+    'style-build-end', 'map-constructor-start', 'map-constructor-end',
+    'map-load', 'boot-ready'
+  ];
+  expect(diagnostics.marks.map(mark => mark.name)).toEqual(expect.arrayContaining(names));
+  expect(diagnostics.performanceMarks).toEqual(expect.arrayContaining(names.map(name => `baku:${name}`)));
+  expect(diagnostics.marks.every(mark => Number.isFinite(mark.timeMs))).toBeTruthy();
+});
+
 test('one-minute tour runs through its stops and exits', async ({ page }) => {
   await page.goto('./?cache=e2e-tour');
   await waitForMap(page);

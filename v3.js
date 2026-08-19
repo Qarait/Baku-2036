@@ -7,6 +7,14 @@
   const PMTILES_URL = 'pmtiles://assets/baku-absheron.pmtiles';
   const COLORS = { hot: '#bd5b2d', frontier: '#137b66', established: '#2e6b9e' };
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const performanceDiagnostics = window.__bakuPerformance = { version: 1, marks: [] };
+
+  function recordPerformanceMark(name, detail) {
+    const markName = 'baku:' + name;
+    const timeMs = window.performance.now();
+    window.performance.mark(markName);
+    performanceDiagnostics.marks.push({ name, timeMs, ...(detail ? { detail } : {}) });
+  }
 
   const copy = {
     en: {
@@ -228,11 +236,13 @@
   }
 
   function adminLabelFeatures(admin) {
+    recordPerformanceMark('admin-centroids-start');
     const features = (admin?.features || []).map(feature => {
       const polygons = feature.geometry?.type === 'MultiPolygon' ? feature.geometry.coordinates : [feature.geometry?.coordinates];
       const outer = polygons.filter(polygon => Array.isArray(polygon?.[0]) && polygon[0].length > 2).sort((a, b) => ringArea(b[0]) - ringArea(a[0]))[0]?.[0];
       return outer ? pointFeature(ringCentroid(outer), { ...feature.properties }) : null;
     }).filter(Boolean);
+    recordPerformanceMark('admin-centroids-end', { features: features.length });
     return featureCollection(features);
   }
   function updateSource(id, data) {
@@ -261,7 +271,8 @@
   }
 
   function createStyle(data) {
-    return {
+    recordPerformanceMark('style-build-start');
+    const style = {
       version: 8,
       name: 'Baku 2036 audience map',
       glyphs: 'assets/glyphs/{fontstack}/{range}.pbf',
@@ -299,6 +310,8 @@
         { id: 'click-point', type: 'circle', source: 'click-point', paint: { 'circle-radius': 6, 'circle-color': '#fffdf8', 'circle-stroke-color': '#183b58', 'circle-stroke-width': 2 } },
       ]
     };
+    recordPerformanceMark('style-build-end', { layers: style.layers.length });
+    return style;
   }
 
   function nearestStation(coords) {
@@ -813,11 +826,16 @@
   function installMap(maplibregl, data) {
     if (!window.pmtiles || !maplibregl || state.map) return;
     const protocol = new window.pmtiles.Protocol(); maplibregl.addProtocol('pmtiles', protocol.tile);
-    state.map = new maplibregl.Map({ container: 'v2Map', style: createStyle(data), center: [49.86, 40.42], zoom: 9.6, minZoom: 8, maxZoom: 15.4, dragRotate: false, pitchWithRotate: false, attributionControl: { compact: true } });
+    const style = createStyle(data);
+    recordPerformanceMark('map-constructor-start');
+    state.map = new maplibregl.Map({ container: 'v2Map', style, center: [49.86, 40.42], zoom: 9.6, minZoom: 8, maxZoom: 15.4, dragRotate: false, pitchWithRotate: false, attributionControl: { compact: true } });
+    recordPerformanceMark('map-constructor-end');
     state.map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-right');
     state.map.on('load', () => {
+      recordPerformanceMark('map-load');
       state.ready = true; $('mapStatus').textContent = tr().ready; $('mapStatus').classList.remove('error'); $('yearSelect').value = String(state.year);
       updateLayers(); renderPanel();
+      recordPerformanceMark('boot-ready');
       state.map.on('click', event => identifyLocation(event.lngLat, event.point));
       ['investment-zones', 'metro-stations', 'admin-fill'].forEach(layer => { state.map.on('mouseenter', layer, () => { state.map.getCanvas().style.cursor = 'pointer'; }); state.map.on('mouseleave', layer, () => { state.map.getCanvas().style.cursor = ''; }); });
       if (state.hashZone) selectZone(state.hashZone, false); else state.map.fitBounds(BBOX, { padding: 50, duration: 0 });
@@ -826,14 +844,18 @@
   }
 
   async function loadData() {
+    recordPerformanceMark('data-fetch-start');
     const [admin, metro, places, zonesData, content] = await Promise.all(['data/admin-absheron.geojson', 'data/metro.json', 'data/places.json', 'data/zones.json?rev=b35a571', 'data/content.json?rev=b35a571'].map(path => fetch(path).then(response => { if (!response.ok) throw new Error(path); return response.json(); })));
+    recordPerformanceMark('data-fetch-end', { files: 5 });
     state.data = { admin, metro, places, zones: zonesData, content };
     hydrateZones(zonesData);
     if (state.hashZone && !zones.some(zone => zone.id === state.hashZone)) { state.hashZone = null; updateHash(); }
+    recordPerformanceMark('data-hydrated', { zones: zones.length });
     return state.data;
   }
 
   async function boot() {
+    recordPerformanceMark('boot-start');
     readHash(); installControls(); setLanguage(state.lang); $('mapStatus').textContent = tr().loading;
     try {
       const data = await loadData();
