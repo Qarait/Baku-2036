@@ -299,6 +299,7 @@ button { cursor: pointer; }
 
 .show-me { display: inline-flex; align-items: center; min-height: 42px; margin-top: 13px; padding: 0 16px; border: 0; border-radius: 999px; color: #fffdf7; background: var(--navy); font-size: 12px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 12px rgba(23,38,56,.16); }
 .show-me:hover, .show-me:focus-visible { background: #234e70; }
+.top-howto-video-link { display: flex; width: fit-content; margin-top: 8px; }
 .quiet-controls { opacity: 0; pointer-events: none; transition: opacity .2s ease; }
 body.engaged .quiet-controls, .quiet-controls.is-visible { opacity: 1; pointer-events: auto; }
 .layers-toggle { display: none; }

@@ -713,8 +713,15 @@
     if (!$('v2HowTo') || !how) return;
     const video = how.video || {};
     const videoHref = 'how-to.html?lang=' + (state.lang === 'tr' ? 'tr' : 'en');
+    const videoLabel = video.linkLabel || (state.lang === 'tr' ? 'Haritayı nasıl kullanacağınızı izle' : 'Watch how to use the map');
+    const videoLink = $('howToVideoLink');
+    if (videoLink) {
+      videoLink.setAttribute('href', videoHref);
+      const videoLabelNode = $('howToVideoLabel');
+      if (videoLabelNode) videoLabelNode.textContent = videoLabel;
+    }
     $('v2HowTo').innerHTML = '<h2 id="howToTitle">' + escapeHtml(how.title) + '</h2><div><p>' + escapeHtml(how.intro) + '</p><div class="howto-steps">' +
-      (how.steps || []).map((step, index) => '<div class="howto-step"><b>' + (index + 1) + '</b><span>' + escapeHtml(step) + '</span></div>').join('') + '</div><a id="howToVideoLink" class="howto-video-link" href="' + videoHref + '" target="_blank" rel="noopener"><span class="howto-video-icon" aria-hidden="true">▶</span><span>' + escapeHtml(video.linkLabel || (state.lang === 'tr' ? 'Haritayı nasıl kullanacağınızı izle' : 'Watch how to use the map')) + '</span></a></div>';
+      (how.steps || []).map((step, index) => '<div class="howto-step"><b>' + (index + 1) + '</b><span>' + escapeHtml(step) + '</span></div>').join('') + '</div></div>';
   }
 
   function renderTimeMachine() {

@@ -10,6 +10,7 @@ function render(language, label) {
     .replace('<html lang="en">', `<html lang="${language}">`)
     .replace('<head>', '<head>\n  <base href="../">')
     .replace('<script type="module">', `<script>window.__BakuFixedLanguage = '${language}';</script>\n  <script type="module">`)
+    .replace('how-to.html?lang=en', `how-to.html?lang=${language}`)
     .replace(/\n        <div class="language-switch"[\s\S]*?\n        <\/div>/, `\n        <span class="language-lock" id="languageLock">${label}</span>`);
 }
 

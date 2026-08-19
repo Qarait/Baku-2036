@@ -42,6 +42,20 @@ test('root loads a rendered map and tour starts without browser errors', async (
   await expect(page.locator('#v2Map')).toHaveAttribute('aria-label', /Interactive Baku/);
 });
 
+test('mobile intro exposes the how-to video before the map', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('./?cache=e2e-howto-top');
+  await waitForMap(page);
+  const link = page.locator('.brand #howToVideoLink');
+  await expect(link).toBeVisible();
+  const positions = await page.evaluate(() => {
+    const linkBox = document.querySelector('.brand #howToVideoLink')?.getBoundingClientRect();
+    const mapBox = document.querySelector('#v2Map')?.getBoundingClientRect();
+    return { linkBottom: linkBox?.bottom || 0, mapTop: mapBox?.top || 0 };
+  });
+  expect(positions.linkBottom).toBeLessThanOrEqual(positions.mapTop);
+});
+
 test('basemap attribution is visible and links to the OSM copyright page', async ({ page }) => {
   await page.goto('./?cache=e2e-attribution');
   await waitForMap(page);
