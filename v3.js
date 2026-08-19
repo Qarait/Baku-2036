@@ -405,7 +405,11 @@
       name: 'Baku 2036 audience map',
       glyphs: 'assets/glyphs/{fontstack}/{range}.pbf',
       sources: {
-        basemap: { type: 'vector', url: PMTILES_URL },
+        basemap: {
+          type: 'vector',
+          url: PMTILES_URL,
+          attribution: '<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors</a> · processed by <a href="https://download.geofabrik.de/" target="_blank" rel="noopener">Geofabrik</a>'
+        },
         admin: { type: 'geojson', data: data.admin },
         'admin-labels': { type: 'geojson', data: adminLabelFeatures(data.admin) },
         'investment-zones': { type: 'geojson', data: featureCollection(investmentFeatures()) },

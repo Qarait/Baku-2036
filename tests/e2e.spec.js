@@ -42,6 +42,16 @@ test('root loads a rendered map and tour starts without browser errors', async (
   await expect(page.locator('#v2Map')).toHaveAttribute('aria-label', /Interactive Baku/);
 });
 
+test('basemap attribution is visible and links to the OSM copyright page', async ({ page }) => {
+  await page.goto('./?cache=e2e-attribution');
+  await waitForMap(page);
+  const control = page.locator('.maplibregl-ctrl-attrib-inner');
+  await expect(control).toContainText('OpenStreetMap contributors');
+  await expect(control.locator('a[href="https://www.openstreetmap.org/copyright"]')).toHaveCount(1);
+  await expect(page.locator('#attributionNote')).toContainText('Geofabrik');
+  await expect(page.locator('#attributionNote a[href="https://www.openstreetmap.org/copyright"]')).toHaveCount(1);
+});
+
 test('one-minute tour runs through its stops and exits', async ({ page }) => {
   await page.goto('./?cache=e2e-tour');
   await waitForMap(page);
