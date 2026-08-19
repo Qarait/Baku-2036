@@ -15,6 +15,7 @@ const contentTypes = {
   '.pbf': 'application/x-protobuf',
   '.pmtiles': 'application/octet-stream',
   '.svg': 'image/svg+xml',
+  '.webm': 'video/webm',
   '.woff2': 'font/woff2'
 };
 

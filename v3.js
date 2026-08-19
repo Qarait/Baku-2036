@@ -20,13 +20,13 @@
       skip: 'Skip map',
       rayons: 'District borders', areas: 'Investment spots', metro: 'Metro', heat: 'Where prices rise fastest',
       rayonBoundary: 'District borders', approxArea: 'Investment spots', metroLegend: 'Metro: solid built / dashed planned', evidenceLegend: 'How sure is this?', builtLegend: 'Already built', contractedLegend: 'Being built now', programmedLegend: 'Government plan', privateLegend: 'Company promise',
-      kicker: 'MAP IDENTIFICATION',
+      kicker: 'SELECTED PLACE',
       emptyTitle: 'Tap a circle to see what’s coming',
       emptyIntro: 'Or tap anywhere to find out where you are.',
       administrative: 'District', investment: 'Investment spot', nearestMetro: 'Nearest metro (straight line — walking is a bit longer)', centralBaku: 'Central Baku', airport: 'Airport', coordinates: 'Coordinates',
       noRayon: 'That’s the sea', noZone: 'No nearby spot', noMetro: 'No station nearby',
       rayonNote: 'District borders show official administrative geography. Investment spots are approximate, not property boundaries.',
-      clear: 'Clear selection', closeDetails: 'Close details', collapseDetails: 'Collapse details', showDetails: 'Show details', loading: 'Loading map data\u2026', ready: 'Click a location to identify its geography', error: 'We couldn\u2019t load the map data. Please refresh and try again.', validation: 'We couldn\u2019t validate the map data. Please refresh and try again.', retry: 'Retry', searchEmpty: 'No local place matched that search.'
+      clear: 'Clear', closeDetails: 'Close', collapseDetails: 'Hide details', showDetails: 'Show details', locationDetails: 'Location details', loading: 'Loading map data\u2026', ready: 'Click a location to identify its geography', error: 'We couldn\u2019t load the map data. Please refresh and try again.', validation: 'We couldn\u2019t validate the map data. Please refresh and try again.', retry: 'Retry', searchEmpty: 'No local place matched that search.'
     },
     tr: {
       title: 'Bakü gayrimenkulünü anlayın',
@@ -38,13 +38,13 @@
       skip: 'Haritay\u0131 ge\u00e7',
       rayons: 'İlçe sınırları', areas: 'Yatırım noktaları', metro: 'Metro', heat: 'Fiyatların en hızlı arttığı yerler',
       rayonBoundary: 'İlçe sınırları', approxArea: 'Yatırım noktaları', metroLegend: 'Metro: çalışan / planlanan hatlar', evidenceLegend: 'Ne kadar emin olabiliriz?', builtLegend: 'Zaten yapıldı', contractedLegend: 'Şimdi yapılıyor', programmedLegend: 'Devlet planı', privateLegend: 'Şirket sözü',
-      kicker: 'HAR\u0130TA TANIMLAMA',
+      kicker: 'SE\u00c7\u0130LEN YER',
       emptyTitle: 'Bir daireye dokunarak ne olacağını görün',
       emptyIntro: 'Ya da nerede olduğunuzu öğrenmek için haritada herhangi bir yere dokunun.',
       administrative: 'İlçe', investment: 'Yatırım noktası', nearestMetro: 'En yakın metro (kuş uçuşu — yürüyüş biraz daha uzun)', centralBaku: 'Bakü merkezi', airport: 'Havalimanı', coordinates: 'Koordinatlar',
       noRayon: 'Burası deniz', noZone: 'Yakında yatırım noktası yok', noMetro: 'Yakında istasyon yok',
       rayonNote: 'İlçe sınırları resmi idari coğrafyayı gösterir. Yatırım noktaları yaklaşık alanlardır; mülk sınırı değildir.',
-      clear: 'Se\u00e7imi temizle', closeDetails: 'Detayları kapat', collapseDetails: 'Ayrıntıları gizle', showDetails: 'Ayrıntıları göster', loading: 'Harita verileri y\u00fckleniyor\u2026', ready: 'Co\u011frafyay\u0131 tan\u0131mlamak i\u00e7in bir yere t\u0131klay\u0131n', error: 'Harita verilerini y\u00fckleyemedik. L\u00fctfen sayfay\u0131 yenileyin ve tekrar deneyin.', validation: 'Harita verilerini do\u011frulayamad\u0131k. L\u00fctfen sayfay\u0131 yenileyin ve tekrar deneyin.', retry: 'Yeniden deneyin', searchEmpty: 'Yerel gazetteer e\u015fle\u015fme bulamad\u0131.'
+      clear: 'Temizle', closeDetails: 'Kapat', collapseDetails: 'Ayrıntıları gizle', showDetails: 'Ayrıntıları göster', locationDetails: 'Konum ayrıntıları', loading: 'Harita verileri y\u00fckleniyor\u2026', ready: 'Co\u011frafyay\u0131 tan\u0131mlamak i\u00e7in bir yere t\u0131klay\u0131n', error: 'Harita verilerini y\u00fckleyemedik. L\u00fctfen sayfay\u0131 yenileyin ve tekrar deneyin.', validation: 'Harita verilerini do\u011frulayamad\u0131k. L\u00fctfen sayfay\u0131 yenileyin ve tekrar deneyin.', retry: 'Yeniden deneyin', searchEmpty: 'Yerel gazetteer e\u015fle\u015fme bulamad\u0131.'
     }
   };
   const zones = [];
@@ -194,6 +194,7 @@
 
   const $ = id => document.getElementById(id);
   const tr = () => copy[state.lang];
+  const isMobileViewport = () => window.matchMedia('(max-width: 760px)').matches;
   function setMapStatus(kind, message) {
     const host = $('mapStatus');
     if (!host) return;
@@ -498,6 +499,7 @@
     const station = stationFeature ? { station: state.data.metro.stations.find(s => s.id === stationFeature.properties.id), distance: 0 } : nearestStation(coords);
     const event = cityEventFeature ? cityEventFeature.properties : (options.includeNearbyEvent ? nearestCityEvent(coords) : null);
     state.selected = { coords, admin: adminFeature?.properties || (waterHit ? null : findAdministrativeProperties(coords)), waterHit, zone: nearbyZone, station, event };
+    state.drawerCollapsed = isMobileViewport();
     renderPanel();
     updateSelectionGeometry();
     updateHash();
@@ -530,6 +532,15 @@
 
   function formatDistance(value) { return value < 1 ? `${Math.round(value * 1000)} m` : `${value.toFixed(1)} km`; }
 
+  function zoneEvidenceStrength(zone) {
+    const labels = atlasCopy().labels || {};
+    const items = Array.isArray(zone.evidence) ? zone.evidence : [];
+    if (!items.length) return labels.noEvidence || (state.lang === 'tr' ? 'Kaynak yok' : 'No sources attached');
+    const confidence = items.every(item => item.confidence === 'high') ? 'high' : items.some(item => item.confidence === 'low') ? 'low' : 'medium';
+    const sourceWord = labels.sourceCount || (state.lang === 'tr' ? 'kaynak' : 'sources');
+    return items.length + ' ' + sourceWord + ' · ' + (labels[confidence] || confidence);
+  }
+
   function renderZoneDrawer(zoneId) {
     const host = $('zoneBrief');
     const zone = zones.find(item => item.id === zoneId);
@@ -550,8 +561,17 @@
       return '<label class="zone-check"><input type="checkbox" data-check-key="' + escapeHtml(key) + '"' + (checked ? ' checked' : '') + '><span>' + escapeHtml(item) + '</span></label>';
     }).join('');
     const starred = Boolean(state.shortlist[zone.id]);
-    host.innerHTML =
-      '<div class="brief-head"><h3>' + escapeHtml(state.lang === 'tr' ? zone.nameTr : zone.nameEn) + '</h3><span class="brief-tier">' + escapeHtml(zoneTierLabel(zone)) + '</span></div>' +
+    const risk = detail.risk || zone.risk || (state.lang === 'tr' ? 'Ana risk belirtilmedi.' : 'Main risk not specified.');
+    const compactHtml =
+      '<div id="zoneQuickSummary" class="zone-quick-summary" aria-label="' + escapeHtml(labels.quickSummary || (state.lang === 'tr' ? 'Kısa özet' : 'Quick summary')) + '">' +
+        '<div class="quick-fact"><small>' + escapeHtml(labels.currentPrice || (state.lang === 'tr' ? 'Bugünkü fiyat' : 'Current price')) + '</small><strong>' + escapeHtml(detail.now || '—') + '</strong></div>' +
+        '<div class="quick-fact"><small>' + escapeHtml(labels.possibleUpside || (state.lang === 'tr' ? 'Bu senaryoda olası artış' : 'Possible upside under this scenario')) + '</small><strong>' + escapeHtml(scenarioProjection(zone, language)) + '</strong></div>' +
+        '<div class="quick-fact quick-fact-wide"><small>' + escapeHtml(labels.mainRisk || (state.lang === 'tr' ? 'Ana risk' : 'Main risk')) + '</small><p>' + escapeHtml(risk) + '</p></div>' +
+        '<div class="quick-fact"><small>' + escapeHtml(labels.evidenceStrength || (state.lang === 'tr' ? 'Kanıt gücü' : 'Evidence strength')) + '</small><strong>' + escapeHtml(zoneEvidenceStrength(zone)) + '</strong></div>' +
+      '</div>' +
+      '<p class="scenario-insight">' + escapeHtml(labels.scenarioInsight || (state.lang === 'tr' ? 'Bu rakamın kaynağı: kamu planları, ulaşım, yakındaki projeler ve piyasa göstergeleri. Bu bir senaryodur, garanti değildir.' : 'Where this comes from: public plans, transport, nearby projects and market signals. This is a scenario, not a promise.')) + '</p>';
+    const detailHtml =
+      '<div id="zoneDetailContent" class="zone-detail-content">' +
       '<div class="brief-metrics"><div class="brief-metric"><small>' + escapeHtml(ui.entry || (state.lang === 'tr' ? 'Bugünkü giriş' : 'Entry today')) + '</small><strong>' + escapeHtml(detail.now || '—') + '</strong></div>' +
       '<div class="brief-metric"><small>' + escapeHtml(ui.scen || (state.lang === 'tr' ? '2036 senaryosu' : '2036 scenario')) + '</small><strong>' + escapeHtml(scenarioProjection(zone, language)) + '</strong></div>' +
       '<div class="brief-metric"><small>' + escapeHtml(state.lang === 'tr' ? 'Kira getirisi' : 'Rental yield') + '</small><strong>' + escapeHtml(detail.yield || '—') + '</strong></div></div>' +
@@ -560,11 +580,15 @@
       renderLocalPlaces(zone) +
       renderEvidence(zone) +
       '<div class="brief-section"><h4>' + escapeHtml(labels.whyMatters || 'Why this place matters') + '</h4><p>' + escapeHtml(detail.thesis || '') + '</p></div>' +
-      '<div class="brief-section"><h4>' + escapeHtml(labels.riskQuestion || 'What could go wrong?') + '</h4><p>' + escapeHtml(detail.risk || zone.risk || '') + '</p></div>' +
+      '<div class="brief-section"><h4>' + escapeHtml(labels.riskQuestion || 'What could go wrong?') + '</h4><p>' + escapeHtml(risk) + '</p></div>' +
       '<div class="brief-section"><h4>' + escapeHtml(labels.nextStep || 'A sensible next step') + '</h4><p>' + escapeHtml(detail.act || zone.act || '') + '</p></div>' +
       '<div class="brief-section"><h4>' + escapeHtml(labels.checklist || 'Before you buy here') + '</h4><div class="brief-checklist">' + checklistHtml + '</div></div>' +
       '<div class="drawer-actions"><button type="button" class="drawer-action' + (starred ? ' starred' : '') + '" data-zone-star="' + escapeHtml(zone.id) + '">' + escapeHtml(starred ? (labels.remove || 'Remove from shortlist') : (labels.add || 'Add to shortlist')) + '</button>' +
-      '<button type="button" class="drawer-action" data-open-tool="accordion-deal">' + escapeHtml(labels.check || 'Check a real listing') + '</button></div>';
+      '<button type="button" class="drawer-action" data-open-tool="accordion-deal">' + escapeHtml(labels.check || 'Check it') + '</button></div>' +
+      '</div>';
+    host.innerHTML =
+      '<div class="brief-head"><h3>' + escapeHtml(state.lang === 'tr' ? zone.nameTr : zone.nameEn) + '</h3><span class="brief-tier">' + escapeHtml(zoneTierLabel(zone)) + '</span></div>' +
+      (state.drawerCollapsed && isMobileViewport() ? compactHtml : detailHtml);
     host.hidden = false;
     host.querySelector('[data-zone-star]')?.addEventListener('click', event => toggleShortlist(event.currentTarget.dataset.zoneStar));
     host.querySelector('[data-open-tool]')?.addEventListener('click', event => {
@@ -582,6 +606,7 @@
     $('closeDetails').textContent = u.closeDetails;
     $('collapseDetails').textContent = u.collapseDetails;
     $('showDetails').textContent = u.showDetails;
+    $('panelDetailsTitle').textContent = u.locationDetails;
     $('panelNote').textContent = u.rayonNote;
     $('rayonMetricLabel').textContent = u.administrative;
     $('zoneMetricLabel').textContent = u.investment;
@@ -595,6 +620,7 @@
       $('panelTitle').textContent = u.emptyTitle;
       $('panelIntro').textContent = u.emptyIntro;
       $('panelGrid').hidden = true;
+      $('panelDetailsTitle').hidden = true;
       $('clearSelection').hidden = true;
       $('collapseDetails').hidden = true;
       $('showDetails').hidden = true;
@@ -616,20 +642,22 @@
     $('centreMetric').textContent = formatDistance(distanceKm(selected.coords, CENTRE));
     $('airportMetric').textContent = formatDistance(distanceKm(selected.coords, AIRPORT));
     $('coordinateMetric').textContent = selected.coords[1].toFixed(4) + ', ' + selected.coords[0].toFixed(4);
+    $('panelDetailsTitle').hidden = false;
     $('panelGrid').hidden = false;
     $('clearSelection').hidden = false;
     const collapsed = state.drawerCollapsed;
     $('v2ZoneDrawer').classList.toggle('is-collapsed', collapsed);
     $('panelIntro').hidden = collapsed;
+    $('panelDetailsTitle').hidden = collapsed;
     $('panelGrid').hidden = collapsed;
     $('panelNote').hidden = collapsed;
-    $('zoneBrief').hidden = collapsed;
+    $('zoneBrief').hidden = collapsed && !isMobileViewport();
     $('clearSelection').hidden = collapsed;
     $('collapseDetails').hidden = collapsed;
     $('showDetails').hidden = !collapsed;
     $('closeDetails').hidden = false;
     renderZoneDrawer(selected.zone?.zone?.id);
-    $('zoneBrief').hidden = collapsed;
+    $('zoneBrief').hidden = collapsed && !isMobileViewport();
   }
   function searchPlaces(query) {
     const needle = String(query || '').trim().toLocaleLowerCase();
@@ -679,8 +707,10 @@
   function renderHowTo() {
     const how = atlasCopy().howTo;
     if (!$('v2HowTo') || !how) return;
+    const video = how.video || {};
+    const videoHref = 'how-to.html?lang=' + (state.lang === 'tr' ? 'tr' : 'en');
     $('v2HowTo').innerHTML = '<h2 id="howToTitle">' + escapeHtml(how.title) + '</h2><div><p>' + escapeHtml(how.intro) + '</p><div class="howto-steps">' +
-      (how.steps || []).map((step, index) => '<div class="howto-step"><b>' + (index + 1) + '</b><span>' + escapeHtml(step) + '</span></div>').join('') + '</div></div>';
+      (how.steps || []).map((step, index) => '<div class="howto-step"><b>' + (index + 1) + '</b><span>' + escapeHtml(step) + '</span></div>').join('') + '</div><a id="howToVideoLink" class="howto-video-link" href="' + videoHref + '" target="_blank" rel="noopener"><span class="howto-video-icon" aria-hidden="true">▶</span><span>' + escapeHtml(video.linkLabel || (state.lang === 'tr' ? 'Haritayı nasıl kullanacağınızı izle' : 'Watch how to use the map')) + '</span></a></div>';
   }
 
   function renderTimeMachine() {

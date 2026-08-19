@@ -22,7 +22,15 @@
         "Tap a circle or search for a place.",
         "Read what is built, funded, or still only planned.",
         "Check the risks and due-diligence list before acting."
-      ]
+      ],
+      "video": {
+        "linkLabel": "Watch how to use the map · 20 sec",
+        "pageTitle": "How to use the map",
+        "pageIntro": "A short, silent screen recording of the website flow.",
+        "description": "Silent screen recording: search for a place, open its details, and move through the map tools.",
+        "back": "Back to the map",
+        "fallback": "Your browser cannot play this video."
+      }
     },
     "simulation": {
       "checkpoints": {
@@ -77,6 +85,12 @@
       "open": "Open",
       "close": "Close",
       "scenarioInsight": "Where this comes from: public plans, transport, nearby projects and market signals. This is a scenario, not a promise.",
+      "currentPrice": "Current price",
+      "possibleUpside": "Possible upside under this scenario",
+      "mainRisk": "Main risk",
+      "evidenceStrength": "Evidence strength",
+      "sourceCount": "sources",
+      "locationDetails": "Location details",
       "learnMore": "What does this mean?",
       "built": "Built / underway",
       "funded": "Funded / committed",
@@ -127,7 +141,7 @@
       "localOpen": "Open",
       "localBuilding": "Being built"
     },
-    "disclaimer": "Growth figures are illustrative scenario midpoints synthesized from public data — not forecasts and not financial advice. Verify title (çıxarış), cadastral rayon, and zoning at the state registry before any purchase. Base map © its respective publisher, used for personal analysis. Analysis: Claude + Aurelius, August 2026.",
+    "disclaimer": "Growth figures are illustrative scenario midpoints synthesized from public data — not forecasts and not financial advice. Verify title (çıxarış), cadastral rayon, and zoning at the state registry before any purchase. Base map © its respective publisher, used for personal analysis. Prepared from public sources, August 2026.",
     "ui": {
       "kicker": "Investment Memorandum · Interactive Atlas",
       "title": "Baku-<span>2036</span> — where value moves next",
@@ -148,7 +162,7 @@
       "emptyT": "Select a rayon or zone",
       "emptyB": "Click any circle on the map — or an edge arrow for Sumgayit, Bilgah, Mardakan and Alat — to see the concrete investments coming by 2036, the price story, and how to position.",
       "trayT": "Your shortlist — side by side",
-      "foot": "Growth figures are illustrative scenario midpoints synthesized from public data — not forecasts and not financial advice. Verify title (çıxarış), cadastral rayon, and zoning at the state registry before any purchase. Base map © its respective publisher, used for personal analysis. Analysis: Claude + Aurelius, August 2026.",
+      "foot": "Growth figures are illustrative scenario midpoints synthesized from public data — not forecasts and not financial advice. Verify title (çıxarış), cadastral rayon, and zoning at the state registry before any purchase. Base map © its respective publisher, used for personal analysis. Prepared from public sources, August 2026.",
       "entry": "Entry today",
       "scen": "2036 scenario",
       "yld": "Rental yield",
@@ -453,7 +467,15 @@
         "Haritada bir daireye dokunun veya yer arayın.",
         "Neyin yapıldığını, finanse edildiğini ya da hâlâ plan olduğunu okuyun.",
         "İşlem yapmadan önce riskleri ve kontrol listesini inceleyin."
-      ]
+      ],
+      "video": {
+        "linkLabel": "Haritayı nasıl kullanacağınızı izle · 20 sn",
+        "pageTitle": "Harita nasıl kullanılır?",
+        "pageIntro": "Web sitesinin akışını gösteren kısa, sessiz bir ekran kaydı.",
+        "description": "Sessiz ekran kaydı: bir yer arayın, ayrıntılarını açın ve harita araçlarında ilerleyin.",
+        "back": "Haritaya dön",
+        "fallback": "Tarayıcınız bu videoyu oynatamıyor."
+      }
     },
     "simulation": {
       "checkpoints": {
@@ -508,6 +530,12 @@
       "open": "Aç",
       "close": "Kapat",
       "scenarioInsight": "Bu rakamın kaynağı: kamu planları, ulaşım, yakındaki projeler ve piyasa göstergeleri. Bu bir senaryodur, garanti değildir.",
+      "currentPrice": "Bugünkü fiyat",
+      "possibleUpside": "Bu senaryoda olası artış",
+      "mainRisk": "Ana risk",
+      "evidenceStrength": "Kanıt gücü",
+      "sourceCount": "kaynak",
+      "locationDetails": "Konum ayrıntıları",
       "learnMore": "Bu ne anlama geliyor?",
       "built": "Yapıldı / sürüyor",
       "funded": "Finanse edildi / taahhüt edildi",
@@ -558,7 +586,7 @@
       "localOpen": "Açık",
       "localBuilding": "İnşaat sürüyor"
     },
-    "disclaimer": "Büyüme rakamları kamuya açık verilerden sentezlenmiş örnek senaryo orta noktalarıdır — tahmin veya yatırım tavsiyesi değildir. Satın almadan önce tapu (çıxarış), kadastro rayonu ve imar durumunu devlet sicilinde doğrulayın. Altlık harita © ilgili yayıncısına aittir, kişisel analiz için kullanılmıştır. Analiz: Claude + Aurelius, Ağustos 2026.",
+    "disclaimer": "Büyüme rakamları kamuya açık verilerden sentezlenmiş örnek senaryo orta noktalarıdır — tahmin veya yatırım tavsiyesi değildir. Satın almadan önce tapu (çıxarış), kadastro rayonu ve imar durumunu devlet sicilinde doğrulayın. Altlık harita © ilgili yayıncısına aittir, kişisel analiz için kullanılmıştır. Kamuya açık kaynaklardan hazırlanmıştır, Ağustos 2026.",
     "ui": {
       "kicker": "Yatırım Rehberi · İnteraktif Atlas",
       "title": "Baku-<span>2036</span> — gayrimenkul öngörüsü",
@@ -579,7 +607,7 @@
       "emptyT": "Bir rayon veya bölge seçin",
       "emptyB": "Haritadaki herhangi bir daireye — veya Sumgayıt, Bilgəh, Mərdəkan ve Ələt için kenar oklarına — tıklayın; 2036’ya kadar gelecek somut yatırımları, fiyat hikâyesini ve nasıl konumlanacağınızı görün.",
       "trayT": "Kısa listeniz — yan yana karşılaştırma",
-      "foot": "Büyüme rakamları kamuya açık verilerden sentezlenmiş örnek senaryo orta noktalarıdır — tahmin veya yatırım tavsiyesi değildir. Satın almadan önce tapu (çıxarış), kadastro rayonu ve imar durumunu devlet sicilinde doğrulayın. Altlık harita © ilgili yayıncısına aittir, kişisel analiz için kullanılmıştır. Analiz: Claude + Aurelius, Ağustos 2026.",
+      "foot": "Büyüme rakamları kamuya açık verilerden sentezlenmiş örnek senaryo orta noktalarıdır — tahmin veya yatırım tavsiyesi değildir. Satın almadan önce tapu (çıxarış), kadastro rayonu ve imar durumunu devlet sicilinde doğrulayın. Altlık harita © ilgili yayıncısına aittir, kişisel analiz için kullanılmıştır. Kamuya açık kaynaklardan hazırlanmıştır, Ağustos 2026.",
       "entry": "Bugünkü giriş",
       "scen": "2036 senaryosu",
       "yld": "Kira getirisi",

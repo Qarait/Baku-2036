@@ -66,6 +66,7 @@ button { cursor: pointer; }
 .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .panel-head-actions { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
 .panel-toggle, .panel-close { min-height: 40px; padding: 6px 9px; border: 1px solid var(--line); border-radius: 5px; color: var(--navy); background: #fffdf7; font-size: 10px; font-weight: 800; }
+.panel-section-title { margin: 17px 0 0; color: var(--navy); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
 .panel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px; }
 .panel-grid[hidden] { display: none; }
 .metric { min-height: 62px; padding: 10px; background: #f0eee7; border-radius: 6px; }
@@ -125,6 +126,18 @@ button { cursor: pointer; }
 .howto-step { min-height: 82px; padding: 13px; background: #fffdf7; border: 1px solid var(--line); border-radius: 9px; }
 .howto-step b { display: block; margin-bottom: 5px; color: var(--gold); font-size: 12px; }
 .howto-step span { color: var(--ink); font-size: 12px; line-height: 1.4; }
+.howto-video-link { display: inline-flex; align-items: center; gap: 9px; min-height: 46px; margin-top: 12px; padding: 10px 13px; color: var(--navy); background: #fffdf7; border: 1px solid var(--gold); border-radius: 7px; font-size: 12px; font-weight: 800; text-decoration: none; }
+.howto-video-link:hover, .howto-video-link:focus-visible { background: #f9f0d9; outline: 3px solid rgba(229,169,40,.35); outline-offset: 2px; }
+.howto-video-icon { display: inline-grid; width: 22px; height: 22px; place-items: center; color: #fff; background: var(--navy); border-radius: 50%; font-size: 10px; }
+.howto-page { width: min(860px, calc(100% - 32px)); min-height: 100vh; margin: 0 auto; padding: clamp(24px, 6vw, 68px) 0; }
+.howto-page-head { max-width: 680px; }
+.howto-back { display: inline-flex; align-items: center; min-height: 44px; margin-bottom: 28px; color: var(--blue); font-size: 12px; font-weight: 800; text-decoration: none; }
+.howto-back:hover, .howto-back:focus-visible { text-decoration: underline; outline: 3px solid rgba(229,169,40,.35); outline-offset: 2px; }
+.howto-page h1 { margin: 7px 0 8px; color: var(--navy); font-family: Georgia, serif; font-size: clamp(28px, 5vw, 44px); font-weight: 500; letter-spacing: -.02em; }
+.howto-page-head p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.55; }
+.howto-video-card { margin-top: 30px; padding: 16px; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 10px 30px rgba(23,38,56,.1); }
+.howto-video-card video { display: block; width: 100%; max-height: 72vh; background: var(--navy); border-radius: 7px; }
+.howto-video-card p { margin: 12px 2px 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
 .v2-content { display: grid; gap: 10px; padding: 0 0 54px; }
 .v2-accordion { overflow: hidden; background: rgba(255,253,247,.9); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 3px 14px rgba(23,38,56,.05); }
 .accordion-summary { display: grid; grid-template-columns: 1fr auto; gap: 18px; width: 100%; min-height: 72px; padding: 15px 18px; border: 0; background: transparent; color: var(--ink); text-align: left; }
@@ -168,6 +181,13 @@ button { cursor: pointer; }
 .brief-head { display: flex; justify-content: space-between; gap: 8px; align-items: start; margin-top: 16px; }
 .brief-head h3 { margin: 0; color: var(--navy); font-family: Georgia, serif; font-size: 19px; font-weight: 500; }
 .brief-tier { display: inline-block; padding: 4px 7px; color: #fff; background: var(--hot); border-radius: 4px; font-size: 9px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+.zone-quick-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-top: 12px; }
+.quick-fact { min-width: 0; padding: 9px; background: #f0eee7; border-radius: 6px; }
+.quick-fact-wide { grid-column: 1 / -1; background: #f9f0d9; border-left: 3px solid var(--hot); }
+.quick-fact small { display: block; color: var(--muted); font-size: 9px; line-height: 1.25; text-transform: uppercase; }
+.quick-fact strong { display: block; margin-top: 4px; color: var(--navy); font-size: 12px; line-height: 1.3; }
+.quick-fact p { margin: 4px 0 0; color: var(--ink); font-size: 11px; line-height: 1.45; }
+.zone-detail-content { display: block; }
 .brief-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 9px; }
 .scenario-insight { margin: 9px 0 0; padding: 9px 10px; color: var(--muted); background: #f9f0d9; border-left: 3px solid var(--gold); border-radius: 4px; font-size: 10px; line-height: 1.45; }
 .scenario-insight strong { color: var(--navy); }
@@ -207,6 +227,7 @@ button { cursor: pointer; }
   .v2-howto p { margin-top: 7px; }
   .howto-steps { grid-template-columns: 1fr; gap: 7px; }
   .howto-step { min-height: 0; padding: 11px; }
+  .howto-video-link { min-height: 44px; }
   .tool-grid { grid-template-columns: 1fr; }
   .accordion-summary { min-height: 78px; padding: 14px; }
   .accordion-title { font-size: 18px; }
@@ -216,6 +237,7 @@ button { cursor: pointer; }
   .outcome-grid { grid-template-columns: 1fr; }
   .shortlist-row { grid-template-columns: 1fr 1fr; }
   .shortlist-row strong { grid-column: span 2; }
+  .quick-fact strong { font-size: 11px; }
 }
 
 .evidence-section { padding: 10px; background: #f7f4e9; border: 1px solid rgba(183,131,39,.25); border-radius: 7px; }
