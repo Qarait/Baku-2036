@@ -51,7 +51,7 @@
     "sections": {
       "time": {
         "yearSliderHint": "As you move forward, circles grow where this scenario sees more investment interest; that is not a guaranteed price rise.",
-        "title": "Watch the decade: 2026?2036",
+        "title": "Watch the decade: 2026–2036",
         "description": "Move through the years and see when projects are meant to arrive. This is a story tool, not a promise.",
         "whatThisMeans": "A growing circle shows the atlas sensitivity scenario getting larger; it is not a guaranteed price path."
       },
@@ -67,8 +67,8 @@
       },
       "deal": {
         "title": "Check a real listing",
-        "description": "Enter an asking price and size for a plain-words comparison with the area?s rough range.",
-        "whatThisMeans": "A cheap result is a prompt to ask why?not a signal to buy."
+        "description": "Enter an asking price and size for a plain-words comparison with the area’s rough range.",
+        "whatThisMeans": "A cheap result is a prompt to ask why—not a signal to buy."
       },
       "shortlist": {
         "title": "Compare your shortlist",
@@ -77,7 +77,7 @@
       },
       "sources": {
         "title": "Sources and important warning",
-        "description": "Understand where the map comes from and what it can?and cannot?tell you.",
+        "description": "Understand where the map comes from and what it can—and cannot—tell you.",
         "whatThisMeans": "Rayon boundaries are geographic context. Investment circles are approximate areas, not property or exact investment borders."
       }
     },
@@ -111,7 +111,22 @@
       "infrastructure": "Infrastructure",
       "currency": "Currency",
       "price": "Asking price (USD)",
-      "size": "Size (m?)",
+      "size": "Size (m²)",
+      "scenarioOutput": "illustrative growth sensitivity",
+      "profile": "Buyer profile",
+      "noProfile": "No profile",
+      "howToRead": "How to read it",
+      "total": "Total",
+      "amount": "Amount",
+      "priceExample": "e.g. 85000",
+      "sizeExample": "e.g. 70",
+      "plannerBelowEntry": "Below rough entry point",
+      "plannerAreaEstimate": "About __N__ m² at the rough midpoint",
+      "geography": "Geography",
+      "geographyNote": "Baku and Absheron rayon polygons, local PMTiles basemap, and the offline place gazetteer in data/.",
+      "projects": "Projects",
+      "projectsNote": "Built, funded, planned, and scenario-only labels are kept separate in the shared zone briefs. Planned lines and sensitivities must be verified before any purchase.",
+      "howToReadCircles": "How to read the circles",
       "check": "Check it",
       "noData": "Start by choosing a place on the map.",
       "saved": "Saved on this device",
@@ -561,6 +576,21 @@
       "currency": "Para birimi",
       "price": "İstenen fiyat (USD)",
       "size": "Alan (m²)",
+      "scenarioOutput": "örnek büyüme duyarlılığı",
+      "profile": "Alıcı profili",
+      "noProfile": "Profil yok",
+      "howToRead": "Nasıl okunur?",
+      "total": "Toplam",
+      "amount": "Tutar",
+      "priceExample": "ör. 85000",
+      "sizeExample": "ör. 70",
+      "plannerBelowEntry": "Kaba giriş noktasının altında",
+      "plannerAreaEstimate": "Kaba orta fiyat tahminiyle yaklaşık __N__ m²",
+      "geography": "Coğrafya",
+      "geographyNote": "Bakü ve Abşeron rayon poligonları, yerel PMTiles altlık haritası ve data/ içindeki çevrimdışı yer adları dizini.",
+      "projects": "Projeler",
+      "projectsNote": "Yapılmış, finanse edilmiş, planlanmış ve yalnızca senaryo olan etiketler ortak bölge özetlerinde ayrı tutulur. Planlanan hatlar ve duyarlılıklar satın almadan önce doğrulanmalıdır.",
+      "howToReadCircles": "Daireleri nasıl okumalı?",
       "check": "Kontrol et",
       "noData": "Haritada bir yer seçerek başlayın.",
       "saved": "Bu cihaza kaydedildi",

@@ -427,6 +427,65 @@ test('fixed language entry points stay separated', async ({ page }) => {
   await expect(page.locator('#howToVideoLink').evaluate(link => link.href)).resolves.toMatch(/\/how-to\.html\?lang=tr$/);
 });
 
+test('Turkish tools keep planner, scenario, shortlist, and source copy localized', async ({ page }) => {
+  await page.goto('./tr/?cache=e2e-turkish-tools#z=whitecity&y=2026');
+  await waitForMap(page);
+
+  await page.locator('#accordion-scenarios .accordion-summary').click();
+  const scenarios = page.locator('#accordion-scenarios');
+  await expect(scenarios).toContainText('örnek büyüme duyarlılığı');
+  await expect(scenarios).not.toContainText('illustrative growth sensitivity');
+
+  await page.locator('#accordion-planner .accordion-summary').click();
+  const planner = page.locator('#accordion-planner');
+  await expect(planner).toContainText('Alıcı profili');
+  await expect(planner).toContainText('Bu bütçeyle ulaşılabilenler');
+  await expect(planner).not.toContainText('Buyer profile');
+  await expect(planner).not.toContainText('About ');
+  await expect(planner).not.toContainText('Below rough entry point');
+
+  await page.locator('#accordion-deal .accordion-summary').click();
+  await expect(page.locator('#accordion-deal')).toContainText('Nasıl okunur?');
+  await expect(page.locator('#accordion-deal')).not.toContainText('How to read it');
+
+  await page.locator('#zoneBrief [data-zone-star]').click();
+  await page.locator('#accordion-shortlist .accordion-summary').click();
+  const shortlist = page.locator('#accordion-shortlist');
+  await expect(shortlist).toContainText('Toplam');
+  await expect(shortlist).toContainText('Tutar');
+  await expect(shortlist).not.toContainText('Total:');
+  await expect(shortlist).not.toContainText('Amount');
+
+  await page.locator('#accordion-sources .accordion-summary').click();
+  const sources = page.locator('#accordion-sources');
+  await expect(sources).toContainText('Coğrafya');
+  await expect(sources).toContainText('Projeler');
+  await expect(sources).toContainText('Daireleri nasıl okumalı?');
+  await expect(sources).not.toContainText('Geography');
+  await expect(sources).not.toContainText('How to read the circles');
+});
+
+test('Turkish investment timelines preserve the meaning of their English counterparts', async ({ request }) => {
+  const response = await request.get('./data/zones.json');
+  const zones = await response.json();
+  const byId = Object.fromEntries(zones.map(zone => [zone.id, zone]));
+  expect(byId.whitecity.tr.inv[0][1]).toBe('Yeşil Hat Y14–Y17 istasyonları resmî genişleme programında; tasarım çalışmaları sürüyor ve açılış yaklaşık 2030 için hedefleniyor');
+  expect(byId.mardakan.tr.inv[1][1]).toBe('Planlanan demiryolu restorasyonu ve bölgesel merkez yönelimi, kuzeydoğuya erişim durumunu güçlendiriyor');
+  expect(byId.mardakan.tr.inv[2][1]).toBe('Çevre metro hattı konsepti uzun vadeli; yakın vadeli bir taahhüt olarak kullanılmamalı');
+  expect(byId.hovsan.tr.inv[2][1]).toBe('Demiryolu restorasyonu veya yol programının teyidi, pratik giriş tetikleyicisidir');
+  expect(byId.zikh.tr.inv[0][1]).toBe('Doğu kıyısındaki lojistik ve bağlantı iyileştirmeleri bir tezdir; ölçülmüş bir göç rakamı değildir');
+});
+
+test('English tool copy preserves punctuation and square-metre units', async ({ request }) => {
+  const response = await request.get('./data/content.json');
+  const content = await response.json();
+  expect(content.en.sections.time.title).toBe('Watch the decade: 2026–2036');
+  expect(content.en.sections.deal.description).toBe('Enter an asking price and size for a plain-words comparison with the area’s rough range.');
+  expect(content.en.sections.deal.whatThisMeans).toBe('A cheap result is a prompt to ask why—not a signal to buy.');
+  expect(content.en.sections.sources.description).toBe('Understand where the map comes from and what it can—and cannot—tell you.');
+  expect(content.en.labels.size).toBe('Size (m²)');
+});
+
 test('silent how-to walkthrough attachment opens a localized video page', async ({ page }) => {
   await page.goto('./?cache=e2e-howto-video');
   await waitForMap(page);
