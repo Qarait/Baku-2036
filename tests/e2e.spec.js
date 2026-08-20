@@ -510,6 +510,20 @@ test('all zones declare explicit scenario growth values', async ({ request }) =>
   expect(Object.fromEntries(zones.map(zone => [zone.id, zone.growthPct]))).toMatchObject({ zikh: 130, mohammadi: 150, alat: 120 });
 });
 
+test('affected evidence cards use durable official source documents', async ({ request }) => {
+  const response = await request.get('./data/zones.json');
+  const zones = await response.json();
+  const evidenceByZone = Object.fromEntries(zones.map(zone => [zone.id, zone.evidence[0]]));
+  const metroExpansion = 'https://www.aiib.org/en/projects/details/2025/_download/Azerbaijan/Baku-Metro-ESMPF-281125-to-Disclose.pdf';
+  const stateProgramme = 'https://static.president.az/upload/Files/2025/01/31/4f32a6bd6ffc6b39efcfb5153e868c88_5073315.pdf';
+  expect(evidenceByZone.whitecity.url).toBe(metroExpansion);
+  expect(evidenceByZone.khojasan.url).toBe(metroExpansion);
+  for (const zoneId of ['yasamal', 'hovsan']) expect(evidenceByZone[zoneId].url).toBe(stateProgramme);
+  for (const zoneId of ['whitecity', 'yasamal', 'khojasan', 'hovsan']) {
+    expect(evidenceByZone[zoneId].url).not.toMatch(/metro\.gov\.az|ayna\.gov\.az/);
+  }
+});
+
 test('scenario calculator uses the explicit growth value for Zikh', async ({ page }) => {
   await page.goto('./?cache=e2e-scenario-growth#z=zikh&y=2026&lang=en');
   await waitForMap(page);
