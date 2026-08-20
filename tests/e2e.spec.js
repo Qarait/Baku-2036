@@ -257,6 +257,29 @@ test('year control advances the selected map year', async ({ page }) => {
   await expect(page.locator('#panelIntro')).toContainText('2030');
 });
 
+test('growth layers use price growth and year progress', async ({ page }) => {
+  await page.goto('./?cache=e2e-growth-layer&testHooks=1#y=2026&lang=en');
+  await waitForMap(page);
+
+  const atBaseline = await page.evaluate(() => window.__V3TestHooks.getLayerFeatures());
+  const baselineInvestment = id => atBaseline.investments.find(feature => feature.id === id);
+  const baselineHeat = id => atBaseline.heat.find(feature => feature.id === id);
+
+  expect(baselineInvestment('whitecity')).toMatchObject({ growthPct: 140, radius: 15, yearProgress: 0 });
+  expect(baselineHeat('bilgah').growthPct).toBe(150);
+  expect(baselineHeat('bilgah').radius).toBeGreaterThan(baselineHeat('sabail').radius);
+  expect(baselineHeat('bilgah').color).not.toBe(baselineHeat('sabail').color);
+
+  await page.locator('#yearSelect').selectOption('2036');
+  const at2036 = await page.evaluate(() => window.__V3TestHooks.getLayerFeatures());
+  const futureInvestment = id => at2036.investments.find(feature => feature.id === id);
+
+  expect(futureInvestment('whitecity').yearProgress).toBe(1);
+  expect(futureInvestment('whitecity').radius).toBeGreaterThan(baselineInvestment('whitecity').radius);
+  expect(futureInvestment('bilgah').radius / baselineInvestment('bilgah').radius)
+    .toBeGreaterThan(futureInvestment('sabail').radius / baselineInvestment('sabail').radius);
+});
+
 test('deep-linked zone refreshes the scenario tool with its selected output', async ({ page }) => {
   await page.goto('./?cache=e2e-scenario-selection#z=whitecity&y=2026&lang=en');
   await waitForMap(page);
