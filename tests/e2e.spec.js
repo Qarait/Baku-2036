@@ -634,12 +634,41 @@ test('city snapshot exposes the current project and evidence status totals', asy
 });
 
 test('selected city-event labels remain visible in English and Turkish', async ({ page }) => {
-  await page.goto('./?cache=e2e-city-event-label#y=2026&lang=en');
+  await page.goto('./?cache=e2e-city-event-label#y=2027&lang=en');
   await waitForMap(page);
-  await page.evaluate(() => window.identifyLocation({ lng: 49.807, lat: 40.397 }, null, { includeNearbyEvent: true }));
+  await page.evaluate(() => window.identifyLocation({ lng: 49.8282314, lat: 40.3937251 }, null, { includeNearbyEvent: true }));
   await expect(page.locator('#panelIntro')).toContainText('Metro B-4 station (Purple Line) opens');
   await page.locator('#langTr').evaluate(button => button.click());
   await expect(page.locator('#panelIntro')).toContainText('Metro B-4 istasyonu (Mor Hat) açılıyor');
+});
+
+test('metro story, station sources, and route labels stay consistent', async ({ page }) => {
+  await page.goto('./?cache=e2e-metro-consistency&testHooks=1#y=2026&lang=en');
+  await waitForMap(page);
+  const sourceData = await page.evaluate(async () => {
+    const [metro, content] = await Promise.all([
+      fetch('data/metro.json').then(response => response.json()),
+      fetch('data/content.json').then(response => response.json())
+    ]);
+    return {
+      metro,
+      b4Event: content.en.events.find(event => event.en.includes('Metro B-4'))
+    };
+  });
+  const plannedB4 = sourceData.metro.stations.find(station => station.id === 'plan-b-4');
+  expect(sourceData.b4Event.y).toBe(plannedB4.builtYear);
+  expect(sourceData.b4Event.ll).toEqual(plannedB4.coords);
+  expect(sourceData.metro.lines.every(line => line.status === 'planned' && line.source === 'Baku 2036 scenario layer')).toBeTruthy();
+  await expect(page.locator('#metroLegend')).toContainText('scenario');
+
+  const metro = await page.evaluate(() => window.__V3TestHooks.getMetroFeatures(2026));
+  expect(metro.activeStations.some(station => station.id === 'plan-b-4')).toBeFalsy();
+  const imported = metro.stations.find(station => station.id.startsWith('osm-'));
+  expect(imported.line).toBe('unclassified');
+  expect(imported.color).toBe('#64748b');
+  const planned = metro.stations.find(station => station.id === 'plan-b-4');
+  expect(planned.color).toBe('#7d3c98');
+  expect(metro.lines.every(line => line.status === 'planned' && line.source === 'Baku 2036 scenario layer')).toBeTruthy();
 });
 
 test('click-to-identify returns a district and metro distance', async ({ page }) => {

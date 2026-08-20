@@ -265,7 +265,7 @@
       "heatBtn": "💰 Value heat",
       "heatLeg": "warm = money grows fast by 2036 · cool = slow",
       "metroBtn": "🚇 Metro lines",
-      "metroLeg": "solid = running · dashed = planned (solidifies in the time machine)",
+      "metroLeg": "stations = mapped points · routes = Baku 2036 scenario geometry (dashed until the scenario year)",
       "view3dBtn": "3D view",
       "view2dBtn": "2D view",
       "zoomHint": "scroll or pinch to zoom · drag to move",
@@ -373,10 +373,10 @@
       },
       {
         "ll": [
-          49.807,
-          40.397
+          49.8282314,
+          40.3937251
         ],
-        "y": 2026,
+        "y": 2027,
         "en": "Metro B-4 station (Purple Line) opens",
         "tr": "Metro B-4 istasyonu (Mor Hat) açılıyor"
       },
@@ -714,7 +714,7 @@
       "heatBtn": "💰 Değer ısısı",
       "heatLeg": "sıcak = para 2036’ya kadar hızlı büyür · soğuk = yavaş",
       "metroBtn": "🚇 Metro hatları",
-      "metroLeg": "düz çizgi = çalışıyor · kesik çizgi = planlanan (zaman makinesinde düzleşir)",
+      "metroLeg": "istasyonlar = haritalanan noktalar · hatlar = Bakü 2036 senaryo geometrisi (senaryo yılına kadar kesik)",
       "view3dBtn": "3B görünüm",
       "view2dBtn": "2B görünüm",
       "zoomHint": "yakınlaştırmak için kaydırın veya parmakla açın · gezmek için sürükleyin",
@@ -822,10 +822,10 @@
       },
       {
         "ll": [
-          49.807,
-          40.397
+          49.8282314,
+          40.3937251
         ],
-        "y": 2026,
+        "y": 2027,
         "en": "Metro B-4 station (Purple Line) opens",
         "tr": "Metro B-4 istasyonu (Mor Hat) açılıyor"
       },

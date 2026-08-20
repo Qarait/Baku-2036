@@ -19,7 +19,7 @@
       dataChecked: 'Data checked', projectStatus: 'Project status checked', scenarioBaseline: 'Scenario baseline',
       skip: 'Skip map',
       rayons: 'District borders', areas: 'Investment spots', metro: 'Metro', heat: 'Where prices rise fastest',
-      rayonBoundary: 'District borders', approxArea: 'Investment spots', metroLegend: 'Metro: solid built / dashed planned', evidenceLegend: 'How sure is this?', builtLegend: 'Already built', contractedLegend: 'Being built now', programmedLegend: 'Government plan', privateLegend: 'Company promise',
+      rayonBoundary: 'District borders', approxArea: 'Investment spots', metroLegend: 'Mapped stations · Baku 2036 scenario routes (dashed until their scenario year)', evidenceLegend: 'How sure is this?', builtLegend: 'Already built', contractedLegend: 'Being built now', programmedLegend: 'Government plan', privateLegend: 'Company promise',
       kicker: 'SELECTED PLACE',
       emptyTitle: 'Tap a circle to see what’s coming',
       emptyIntro: 'Or tap anywhere to find out where you are.',
@@ -37,7 +37,7 @@
       dataChecked: 'Veriler kontrol edildi', projectStatus: 'Proje durumu kontrol edildi', scenarioBaseline: 'Senaryo ba\u015flang\u0131c\u0131',
       skip: 'Haritay\u0131 ge\u00e7',
       rayons: 'İlçe sınırları', areas: 'Yatırım noktaları', metro: 'Metro', heat: 'Fiyatların en hızlı arttığı yerler',
-      rayonBoundary: 'İlçe sınırları', approxArea: 'Yatırım noktaları', metroLegend: 'Metro: çalışan / planlanan hatlar', evidenceLegend: 'Ne kadar emin olabiliriz?', builtLegend: 'Zaten yapıldı', contractedLegend: 'Şimdi yapılıyor', programmedLegend: 'Devlet planı', privateLegend: 'Şirket sözü',
+      rayonBoundary: 'İlçe sınırları', approxArea: 'Yatırım noktaları', metroLegend: 'Haritalanan istasyonlar · Bakü 2036 senaryo hatları (senaryo yılına kadar kesik)', evidenceLegend: 'Ne kadar emin olabiliriz?', builtLegend: 'Zaten yapıldı', contractedLegend: 'Şimdi yapılıyor', programmedLegend: 'Devlet planı', privateLegend: 'Şirket sözü',
       kicker: 'SE\u00c7\u0130LEN YER',
       emptyTitle: 'Bir daireye dokunarak ne olacağını görün',
       emptyIntro: 'Ya da nerede olduğunuzu öğrenmek için haritada herhangi bir yere dokunun.',
@@ -478,19 +478,34 @@
   function metroLineFeatures() {
 
     return (state.data?.metro.lines || []).map(line => lineFeature(line.coordinates, {
-      id: line.id, line: line.line, color: line.color, built: state.year >= line.builtYear, status: line.status
+      id: line.id, line: line.line, color: line.color, built: state.year >= line.builtYear, status: line.status, source: line.source
     }));
   }
 
+  function metroStationNameKey(station) {
+    return String(station.nameEn || station.nameTr || '').trim().toLocaleLowerCase();
+  }
+
   function metroStationKey(station) {
-    const name = String(station.nameEn || station.nameTr || '').trim().toLocaleLowerCase();
+    const name = metroStationNameKey(station);
     const coords = (station.coords || []).map(value => Number(value).toFixed(6)).join(',');
     return name + '|' + coords;
   }
 
+  function isScenarioMetroRecord(station) {
+    return String(station.source || '').trim().toLocaleLowerCase() === 'baku 2036 scenario layer';
+  }
+
+  function isImportedMetroRecord(station) {
+    return /^openstreetmap\b/i.test(String(station.source || '').trim());
+  }
+
   function metroStations() {
+    const stations = state.data?.metro?.stations || [];
+    const scenarioNames = new Set(stations.filter(isScenarioMetroRecord).map(metroStationNameKey));
     const unique = new Map();
-    for (const station of state.data?.metro?.stations || []) {
+    for (const station of stations) {
+      if (isImportedMetroRecord(station) && scenarioNames.has(metroStationNameKey(station))) continue;
       const key = metroStationKey(station);
       const existing = unique.get(key);
       if (!existing || (station.status === 'planned' && existing.status !== 'planned')) unique.set(key, station);
@@ -504,7 +519,8 @@
 
   function metroStationFeatures() {
     return metroStations().map(station => pointFeature(station.coords, {
-      id: station.id, label: state.lang === 'tr' ? station.nameTr : station.nameEn, line: station.line, color: station.color,
+      id: station.id, label: state.lang === 'tr' ? station.nameTr : station.nameEn, line: isImportedMetroRecord(station) ? 'unclassified' : station.line,
+      color: isImportedMetroRecord(station) ? '#64748b' : station.color, source: station.source, lineVerified: !isImportedMetroRecord(station),
       built: state.year >= station.builtYear, status: station.status
     }));
   }
@@ -1478,6 +1494,12 @@
       getLayerFeatures: () => ({
         investments: investmentFeatures().map(feature => feature.properties),
         heat: heatFeatures().map(feature => feature.properties)
+      }),
+      getMetroFeatures: (year = state.year) => ({
+        stations: metroStationFeatures().map(feature => feature.properties),
+        activeStations: activeMetroStations(year).map(station => ({ id: station.id, nameEn: station.nameEn, builtYear: station.builtYear, source: station.source, line: station.line, color: station.color })),
+        lines: metroLineFeatures().map(feature => feature.properties),
+        story: citySimulationSnapshot(year)
       })
     };
   }
