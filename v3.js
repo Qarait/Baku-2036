@@ -174,6 +174,14 @@
     return profile ? zones.filter(zone => profile.zones.includes(zone.id)) : zones;
   }
 
+  function plannerReachableZones(budget) {
+    return plannerZones().filter(zone => Number(zone.mint || 0) <= budget);
+  }
+
+  function plannerOutOfReachZones(budget) {
+    return plannerZones().filter(zone => Number(zone.mint || 0) > budget);
+  }
+
   function renderDataFreshness() {
     const host = $('dataFreshness');
     const meta = state.data?.content?.meta;
@@ -912,7 +920,10 @@
     if (budget < Number(zone.mint || 0)) return 'Below rough entry point (' + formatMoney(zone.mint) + ')';
     const range = zone.med || [500, 1000];
     const mid = (Number(range[0]) + Number(range[1])) / 2;
-    if (zone.kind === 'land') return 'Roughly ' + (budget / (mid * 100)).toFixed(1) + ' sot';
+    if (zone.kind === 'land') {
+      const ui = atlasCopy().ui || {};
+      return String(ui.plannerLandEstimate || 'Roughly __N__ sot at a rough midpoint estimate; not a guaranteed purchasable plot').replace('__N__', (budget / (mid * 100)).toFixed(1));
+    }
     return 'About ' + Math.max(1, Math.round(budget / mid)) + ' m² at the rough midpoint';
   }
 
@@ -920,8 +931,16 @@
     return '$' + Math.round(Number(value) || 0).toLocaleString(state.lang === 'tr' ? 'tr-TR' : 'en-US');
   }
 
-  function plannerListHtml(budget) {
-    return plannerZones().slice().sort((a, b) => Number(a.mint || 0) - Number(b.mint || 0)).map(zone => '<div class="zone-result"><strong>' + escapeHtml(state.lang === 'tr' ? zone.nameTr : zone.nameEn) + '</strong><small>' + escapeHtml(plannerBuyingText(zone, budget)) + '</small></div>').join('');
+  function plannerListHtml(budget, candidateZones = plannerReachableZones(budget)) {
+    return candidateZones.slice().sort((a, b) => Number(a.mint || 0) - Number(b.mint || 0)).map(zone => '<div class="zone-result"><strong>' + escapeHtml(state.lang === 'tr' ? zone.nameTr : zone.nameEn) + '</strong><small>' + escapeHtml(plannerBuyingText(zone, budget)) + '</small></div>').join('');
+  }
+
+  function plannerOutOfReachHtml(budget) {
+    const outOfReach = plannerOutOfReachZones(budget);
+    if (!outOfReach.length) return '';
+    const ui = atlasCopy().ui || {};
+    const title = state.profile ? (ui.plannerAboveBudget || 'Profile matches above this budget') : (ui.plannerAboveBudgetAny || 'Other zones above this budget');
+    return '<div id="plannerOutOfReach" class="planner-unreachable"><h4>' + escapeHtml(title) + '</h4><div class="zone-result-list">' + plannerListHtml(budget, outOfReach) + '</div></div>';
   }
 
   function renderPlanner() {
@@ -930,7 +949,7 @@
     const budget = plannerBudgetValue();
     const profiles = content.profiles || {};
     const profileLabels = { safe: ui.pr1T || 'Safer and easier to rent', patient: ui.pr2T || 'Patient land buyer', summer: ui.pr3T || 'Summer and investment', rent: ui.pr4T || 'Monthly rental income' };
-    return '<div class="tool-grid"><div class="tool-card"><h3>' + escapeHtml(ui.planT || content.sections.planner.title) + '</h3><p>' + escapeHtml(ui.planL || content.sections.planner.description) + '</p><label>' + escapeHtml(content.labels.budget || 'My budget (USD)') + '<output id="budgetOutput">' + formatMoney(budget) + '</output><input id="budgetRange" type="range" min="5000" max="200000" step="5000" value="' + budget + '" aria-label="' + escapeHtml(content.labels.budget || 'My budget') + '"></label><label>Buyer profile<select id="profileSelect"><option value="">No profile</option>' + Object.keys(profiles).map(key => '<option value="' + key + '"' + (state.profile === key ? ' selected' : '') + '>' + escapeHtml(profileLabels[key]) + '</option>').join('') + '</select></label><p class="tool-note">' + escapeHtml(ui.budNote || content.sections.planner.whatThisMeans) + '</p></div><div class="tool-card"><h3>What this budget reaches</h3><div id="plannerResults" class="zone-result-list">' + plannerListHtml(budget) + '</div></div></div>';
+    return '<div class="tool-grid"><div class="tool-card"><h3>' + escapeHtml(ui.planT || content.sections.planner.title) + '</h3><p>' + escapeHtml(ui.planL || content.sections.planner.description) + '</p><label>' + escapeHtml(content.labels.budget || 'My budget (USD)') + '<output id="budgetOutput">' + formatMoney(budget) + '</output><input id="budgetRange" type="range" min="5000" max="200000" step="5000" value="' + budget + '" aria-label="' + escapeHtml(content.labels.budget || 'My budget') + '"></label><label>Buyer profile<select id="profileSelect"><option value="">No profile</option>' + Object.keys(profiles).map(key => '<option value="' + key + '"' + (state.profile === key ? ' selected' : '') + '>' + escapeHtml(profileLabels[key]) + '</option>').join('') + '</select></label><p class="tool-note">' + escapeHtml(ui.budNote || content.sections.planner.whatThisMeans) + '</p></div><div class="tool-card"><h3>' + escapeHtml(ui.plannerReachable || 'What this budget reaches') + '</h3><div id="plannerResults" class="zone-result-list">' + plannerListHtml(budget) + '</div><div id="plannerOutOfReachHost">' + plannerOutOfReachHtml(budget) + '</div></div></div>';
   }
 
   function renderDealChecker() {
@@ -1003,6 +1022,7 @@
     if ($('budgetOutput')) $('budgetOutput').textContent = formatMoney(budget);
     if ($('budgetRange')) $('budgetRange').value = String(budget);
     if ($('plannerResults')) $('plannerResults').innerHTML = plannerListHtml(budget);
+    if ($('plannerOutOfReachHost')) $('plannerOutOfReachHost').innerHTML = plannerOutOfReachHtml(budget);
     updateLayers();
   }
 

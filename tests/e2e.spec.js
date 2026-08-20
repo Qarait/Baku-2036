@@ -669,19 +669,31 @@ test('nearest metro and year snapshots exclude future duplicate stations', async
   await expect(page.locator('#cityStory')).toHaveAttribute('data-planned-stations', '2');
 });
 
-test('buyer profile applies its budget and scopes the planner results', async ({ page }) => {
+test('buyer profile separates unaffordable matches from reachable planner results', async ({ page }) => {
   await page.goto('./?cache=e2e-buyer-profile#lang=en');
   await waitForMap(page);
   await page.locator('#accordion-planner .accordion-summary').click();
   await page.locator('#profileSelect').selectOption('safe');
   await expect(page.locator('#budgetOutput')).toHaveText('$25,000');
   await expect(page.locator('#budgetRange')).toHaveValue('25000');
-  await expect(page.locator('#plannerResults .zone-result')).toHaveCount(3);
+  await expect(page.locator('#plannerResults .zone-result')).toHaveCount(2);
   await expect(page.locator('#plannerResults')).toContainText('Lokbatan');
   await expect(page.locator('#plannerResults')).toContainText('Khirdalan');
-  await expect(page.locator('#plannerResults')).toContainText('Khojasan');
+  await expect(page.locator('#plannerResults')).not.toContainText('Khojasan');
+  await expect(page.locator('#plannerOutOfReach')).toContainText('Khojasan');
+  await expect(page.locator('#plannerOutOfReach')).toContainText('$40,000');
   await expect(page.locator('#plannerResults')).not.toContainText('White City');
   await expect(page.evaluate(() => Object.keys(JSON.parse(localStorage.getItem('baku2036-v2-shortlist') || '{}')).sort())).resolves.toEqual(['khirdalan', 'khojasan', 'lokbatan']);
+});
+
+test('land planner output explains its rough midpoint estimate', async ({ page }) => {
+  await page.goto('./?cache=e2e-buyer-profile-land#lang=en');
+  await waitForMap(page);
+  await page.locator('#accordion-planner .accordion-summary').click();
+  await page.locator('#profileSelect').selectOption('summer');
+  await expect(page.locator('#plannerResults')).toContainText('Roughly 0.6 sot');
+  await expect(page.locator('#plannerResults')).toContainText('rough midpoint estimate');
+  await expect(page.locator('#plannerResults')).toContainText('not a guaranteed purchasable plot');
 });
 
 test('360px toolbar stays on one row and collapses to Layers', async ({ page }) => {

@@ -171,6 +171,8 @@ button { cursor: pointer; }
 .zone-result { display: flex; justify-content: space-between; gap: 10px; padding: 9px; background: #fffdf7; border-radius: 6px; font-size: 12px; }
 .zone-result strong { color: var(--navy); }
 .zone-result small { color: var(--muted); text-align: right; }
+.planner-unreachable { margin-top: 12px; padding-top: 12px; border-top: 1px solid #e1d8c6; }
+.planner-unreachable h4 { margin: 0 0 7px; color: var(--muted); font-size: 11px; }
 .outcome-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; margin-top: 10px; }
 .outcome { display: grid; gap: 4px; padding: 10px; border-radius: 6px; background: #fffdf7; }
 .outcome small { color: var(--muted); font-size: 10px; }
