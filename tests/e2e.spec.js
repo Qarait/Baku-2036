@@ -520,6 +520,19 @@ test('scenario calculator uses the explicit growth value for Zikh', async ({ pag
   await expect(page.locator('#scenarioOutput')).toContainText('Zikh (Zığ): 105%');
 });
 
+test('weak manat scenario changes the illustrative USD sensitivity', async ({ page }) => {
+  await page.goto('./?cache=e2e-scenario-currency#z=whitecity&y=2026&lang=en');
+  await waitForMap(page);
+  await page.locator('#accordion-scenarios .accordion-summary').click();
+  await expect(page.locator('#scenarioOutput')).toContainText('White City / Khatai: 140%');
+  await page.locator('#scenarioCurrency').selectOption('weak');
+  await expect(page.locator('#scenarioOutput')).toContainText('White City / Khatai: 110%');
+  await expect(page.locator('#scenarioOutput')).not.toContainText('White City / Khatai: 140%');
+  await expect(page.locator('#accordion-scenarios .tool-note')).toContainText('20% illustrative USD-value adjustment');
+  await page.locator('#scenarioCurrency').selectOption('stable');
+  await expect(page.locator('#scenarioOutput')).toContainText('White City / Khatai: 140%');
+});
+
 test('Zikh deal checker uses the explicit scenario growth in its dollar output', async ({ page }) => {
   async function checkDeal(expected) {
     await page.locator('#accordion-deal .accordion-summary').click();

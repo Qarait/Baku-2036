@@ -282,7 +282,8 @@
     const base = scenarioBaseGrowth(zone);
     const oil = state.scenarios.oil === 'bad' ? .8 : state.scenarios.oil === 'good' ? 1.15 : 1;
     const infra = state.scenarios.infra === 'late' ? .72 : 1;
-    return Math.round(base * oil * infra / 5) * 5;
+    const currency = state.scenarios.cur === 'weak' ? .8 : 1;
+    return Math.round(base * oil * infra * currency / 5) * 5;
   }
 
 
