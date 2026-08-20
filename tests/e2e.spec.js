@@ -121,6 +121,30 @@ test('city story controls and caption switch to Turkish', async ({ page }) => {
   await expect(page.locator('#cityStoryCaption')).toContainText('Buradan başlayın');
 });
 
+test('time machine wraps from 2036 and resets its button to Play', async ({ page }) => {
+  await page.goto('./?cache=e2e-time-wrap#y=2036&lang=en');
+  await waitForMap(page);
+  await page.locator('#accordion-time .accordion-summary').click();
+  await expect(page.locator('#timeYear')).toHaveValue('2036');
+  await page.locator('#timePlay').click();
+  await expect(page.locator('#timeYear')).toHaveValue('2026', { timeout: 5000 });
+  await expect(page.locator('#timePlay')).toHaveText('Play the decade');
+});
+
+test('time machine, city story, and tour playback cannot run concurrently', async ({ page }) => {
+  await page.goto('./?cache=e2e-playback-exclusive#y=2026&lang=en');
+  await waitForMap(page);
+  await page.getByRole('button', { name: '▶ Show me (1 minute)' }).click();
+  await expect(page.locator('#cityStory')).toBeVisible();
+  await page.locator('#accordion-time .accordion-summary').click();
+  await page.locator('#timePlay').click();
+  await expect(page.locator('#cityStory')).toHaveCount(0);
+  await expect(page.locator('#timePlay')).toHaveText('Pause');
+  await page.locator('#zoneTourStart').click();
+  await expect(page.locator('#tourOverlay')).toBeVisible();
+  await expect(page.locator('#timePlay')).toHaveText('Play the decade');
+});
+
 test('city simulation data failure is visible and retryable', async ({ page }) => {
   let failContent = true;
   await page.route('**/data/content.json*', route => failContent ? route.fulfill({ status: 503, body: 'temporary failure' }) : route.continue());
@@ -133,6 +157,40 @@ test('city simulation data failure is visible and retryable', async ({ page }) =
   await page.locator('#retryData').click();
   await expect(page.locator('#mapStatus')).toContainText('Click a location', { timeout: 30000 });
   page.__browserErrors = [];
+});
+
+test('missing MapLibre reports a retryable map error instead of loading forever', async ({ page }) => {
+  await page.route('**/vendor/maplibre-gl.mjs', route => route.fulfill({ status: 200, contentType: 'text/javascript', body: 'throw new Error("simulated missing MapLibre");' }));
+  await page.goto('./?cache=e2e-maplibre-missing#lang=en');
+  await expect(page.locator('#mapStatus')).toHaveClass(/error/, { timeout: 15000 });
+  await expect(page.locator('#mapStatus')).toContainText('couldn’t load');
+  await expect(page.locator('#retryData')).toBeVisible();
+  await expect(page.locator('#mapStatus')).not.toContainText('Loading map data');
+  page.__browserErrors = [];
+});
+
+test('missing PMTiles reports a retryable map error instead of loading forever', async ({ page }) => {
+  await page.route('**/vendor/pmtiles.js', route => route.fulfill({ status: 200, contentType: 'text/javascript', body: '' }));
+  await page.goto('./?cache=e2e-pmtiles-missing#lang=en');
+  await expect(page.locator('#mapStatus')).toHaveClass(/error/, { timeout: 15000 });
+  await expect(page.locator('#mapStatus')).toContainText('couldn’t load');
+  await expect(page.locator('#retryData')).toBeVisible();
+  await expect(page.locator('#mapStatus')).not.toContainText('Loading map data');
+  page.__browserErrors = [];
+});
+
+test('PMTiles basemap failure reports an error instead of ready', async ({ page }) => {
+  let failBasemap = true;
+  await page.route('**/assets/baku-absheron.pmtiles*', route => failBasemap ? route.fulfill({ status: 503, body: 'temporary basemap failure' }) : route.continue());
+  await page.goto('./?cache=e2e-pmtiles-failure#lang=en');
+  await expect(page.locator('#mapStatus')).toHaveClass(/error/, { timeout: 30000 });
+  await expect(page.locator('#mapStatus')).toContainText('couldn’t load');
+  await expect(page.locator('#retryData')).toBeVisible();
+  await expect(page.locator('#mapStatus')).not.toContainText('Click a location');
+  failBasemap = false;
+  page.__browserErrors = [];
+  await page.locator('#retryData').click();
+  await expect(page.locator('#mapStatus')).toContainText('Click a location', { timeout: 30000 });
 });
 
 test('deep-linked zone remains selectable after the city story finishes', async ({ page }) => {
@@ -197,6 +255,14 @@ test('year control advances the selected map year', async ({ page }) => {
   await expect(page.locator('#yearSelect')).toHaveValue('2030');
   await expect(page).toHaveURL(/#z=whitecity&y=2030&lang=en/);
   await expect(page.locator('#panelIntro')).toContainText('2030');
+});
+
+test('deep-linked zone refreshes the scenario tool with its selected output', async ({ page }) => {
+  await page.goto('./?cache=e2e-scenario-selection#z=whitecity&y=2026&lang=en');
+  await waitForMap(page);
+  await page.locator('#accordion-scenarios .accordion-summary').click();
+  await expect(page.locator('#scenarioOutput')).toContainText('White City');
+  await expect(page.locator('#scenarioOutput')).not.toContainText('Start by choosing a place');
 });
 
 test('data freshness and year slider explanation are clear in both languages', async ({ page }) => {
@@ -487,6 +553,36 @@ test('an empty zone payload surfaces localized validation copy and logs its diag
   page.__browserErrors = [];
 });
 
+test('malformed administrative data fails validation before map startup', async ({ page }) => {
+  await page.route('**/data/admin-absheron.geojson*', route => route.fulfill({ json: { type: 'FeatureCollection', features: [{ type: 'Feature', geometry: null, properties: {} }] } }));
+  await page.goto('./?cache=e2e-invalid-admin#lang=en');
+  await expect(page.locator('#mapStatus')).toHaveClass(/error/);
+  await expect(page.locator('#mapStatus')).toContainText(/validate the map data/i);
+  await expect(page.locator('#v2Map canvas')).toHaveCount(0);
+  await expect(page.locator('#retryData')).toBeVisible();
+  page.__browserErrors = [];
+});
+
+test('malformed metro data fails validation before map startup', async ({ page }) => {
+  await page.route('**/data/metro.json*', route => route.fulfill({ json: { lines: [], stations: [] } }));
+  await page.goto('./?cache=e2e-invalid-metro#lang=en');
+  await expect(page.locator('#mapStatus')).toHaveClass(/error/);
+  await expect(page.locator('#mapStatus')).toContainText(/validate the map data/i);
+  await expect(page.locator('#v2Map canvas')).toHaveCount(0);
+  await expect(page.locator('#retryData')).toBeVisible();
+  page.__browserErrors = [];
+});
+
+test('malformed place data fails validation before map startup', async ({ page }) => {
+  await page.route('**/data/places.json*', route => route.fulfill({ json: [{ id: 'broken-place', nameEn: 'Broken place', nameTr: 'Broken place', type: 'town', coords: ['not-a-number', 40.4], source: 'test' }] }));
+  await page.goto('./?cache=e2e-invalid-places#lang=en');
+  await expect(page.locator('#mapStatus')).toHaveClass(/error/);
+  await expect(page.locator('#mapStatus')).toContainText(/validate the map data/i);
+  await expect(page.locator('#v2Map canvas')).toHaveCount(0);
+  await expect(page.locator('#retryData')).toBeVisible();
+  page.__browserErrors = [];
+});
+
 test('Turkish entry fallback remains valid UTF-8 when content omits it', async ({ page }) => {
   await page.route('**/data/content.json*', async route => {
     const response = await route.fetch();
@@ -531,6 +627,38 @@ test('click-to-identify returns a district and metro distance', async ({ page })
   await map.click({ position: { x: box.width / 2, y: box.height / 2 } });
   await expect(page.locator('#rayonMetric')).not.toHaveText('—');
   await expect(page.locator('#stationMetric')).toHaveText(/\d+(\.\d+)?\s*(m|km)/);
+});
+
+test('nearest metro and year snapshots exclude future duplicate stations', async ({ page }) => {
+  await page.goto('./?cache=e2e-metro-timeline#y=2026&lang=en');
+  await waitForMap(page);
+  await page.evaluate(() => window.identifyLocation({ lng: 49.94, lat: 40.47 }, null));
+  await expect(page.locator('#stationMetric')).toHaveText('Koroğlu metro stansiyası · 5.8 km');
+
+  await page.getByRole('button', { name: '▶ Show me (1 minute)' }).click();
+  const story = page.locator('#cityStory');
+  await expect(story).toHaveAttribute('data-built-stations', '30');
+  await expect(story).toHaveAttribute('data-planned-stations', '5');
+  await page.locator('#cityStoryFinish').click();
+  await page.locator('#yearSelect').selectOption('2030');
+  await page.getByRole('button', { name: '▶ Show me (1 minute)' }).click();
+  await expect(page.locator('#cityStory')).toHaveAttribute('data-built-stations', '33');
+  await expect(page.locator('#cityStory')).toHaveAttribute('data-planned-stations', '2');
+});
+
+test('buyer profile applies its budget and scopes the planner results', async ({ page }) => {
+  await page.goto('./?cache=e2e-buyer-profile#lang=en');
+  await waitForMap(page);
+  await page.locator('#accordion-planner .accordion-summary').click();
+  await page.locator('#profileSelect').selectOption('safe');
+  await expect(page.locator('#budgetOutput')).toHaveText('$25,000');
+  await expect(page.locator('#budgetRange')).toHaveValue('25000');
+  await expect(page.locator('#plannerResults .zone-result')).toHaveCount(3);
+  await expect(page.locator('#plannerResults')).toContainText('Lokbatan');
+  await expect(page.locator('#plannerResults')).toContainText('Khirdalan');
+  await expect(page.locator('#plannerResults')).toContainText('Khojasan');
+  await expect(page.locator('#plannerResults')).not.toContainText('White City');
+  await expect(page.evaluate(() => Object.keys(JSON.parse(localStorage.getItem('baku2036-v2-shortlist') || '{}')).sort())).resolves.toEqual(['khirdalan', 'khojasan', 'lokbatan']);
 });
 
 test('360px toolbar stays on one row and collapses to Layers', async ({ page }) => {
