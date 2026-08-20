@@ -79,8 +79,99 @@
     zones.push(...hydrated);
   }
 
+  function dataValidationError(dataset, message) {
+    const error = new Error(dataset + ' data validation failed: ' + message);
+    error.code = 'data-validation';
+    return error;
+  }
+
+  function isObject(value) {
+    return value !== null && typeof value === 'object' && !Array.isArray(value);
+  }
+
+  function validateCoordinatePair(coords, dataset, label) {
+    if (!Array.isArray(coords) || coords.length < 2 || typeof coords[0] !== 'number' || !Number.isFinite(coords[0]) || coords[0] < -180 || coords[0] > 180 || typeof coords[1] !== 'number' || !Number.isFinite(coords[1]) || coords[1] < -90 || coords[1] > 90) {
+      throw dataValidationError(dataset, label + ' has invalid coordinates');
+    }
+  }
+
+  function validateLineCoordinates(coords, dataset, label) {
+    if (!Array.isArray(coords) || coords.length < 2) throw dataValidationError(dataset, label + ' needs at least 2 coordinate pairs');
+    coords.forEach((pair, index) => validateCoordinatePair(pair, dataset, label + '[' + index + ']'));
+  }
+
+  function validateRing(ring, dataset, label) {
+    if (!Array.isArray(ring) || ring.length < 4) throw dataValidationError(dataset, label + ' needs at least 4 coordinates');
+    ring.forEach((pair, index) => validateCoordinatePair(pair, dataset, label + '[' + index + ']'));
+    const first = ring[0]; const last = ring[ring.length - 1];
+    if (first[0] !== last[0] || first[1] !== last[1]) throw dataValidationError(dataset, label + ' must be closed');
+  }
+
+  function validatePolygonCoordinates(coordinates, dataset, label) {
+    if (!Array.isArray(coordinates) || !coordinates.length) throw dataValidationError(dataset, label + ' needs at least 1 ring');
+    coordinates.forEach((ring, index) => validateRing(ring, dataset, label + '[' + index + ']'));
+  }
+
+  function validateAdminData(admin) {
+    const dataset = 'Administrative';
+    if (!isObject(admin) || admin.type !== 'FeatureCollection' || !Array.isArray(admin.features) || !admin.features.length) throw dataValidationError(dataset, 'expected a non-empty FeatureCollection');
+    admin.features.forEach((feature, index) => {
+      if (!isObject(feature) || feature.type !== 'Feature' || !isObject(feature.properties) || typeof feature.properties.nameEn !== 'string' || !feature.properties.nameEn.trim()) throw dataValidationError(dataset, 'feature ' + index + ' has invalid properties');
+      const geometry = feature.geometry;
+      if (!isObject(geometry) || !['Polygon', 'MultiPolygon'].includes(geometry.type) || !Array.isArray(geometry.coordinates) || !geometry.coordinates.length) throw dataValidationError(dataset, 'feature ' + index + ' has invalid geometry');
+      if (geometry.type === 'Polygon') validatePolygonCoordinates(geometry.coordinates, dataset, 'feature ' + index + '.coordinates');
+      else geometry.coordinates.forEach((polygon, polygonIndex) => validatePolygonCoordinates(polygon, dataset, 'feature ' + index + '.coordinates[' + polygonIndex + ']'));
+    });
+  }
+
+  function validateIdentifiedRecords(records, dataset, label, validator) {
+    if (!Array.isArray(records) || !records.length) throw dataValidationError(dataset, 'expected a non-empty ' + label + ' array');
+    const ids = new Set();
+    records.forEach((record, index) => {
+      if (!isObject(record) || typeof record.id !== 'string' || !record.id.trim()) throw dataValidationError(dataset, label + ' ' + index + ' has a missing id');
+      if (ids.has(record.id)) throw dataValidationError(dataset, 'duplicate ' + label + ' id ' + record.id);
+      ids.add(record.id);
+      validator(record, index);
+    });
+  }
+
+  function validateMetroData(metro) {
+    const dataset = 'Metro';
+    if (!isObject(metro)) throw dataValidationError(dataset, 'expected an object');
+    validateIdentifiedRecords(metro.lines, dataset, 'line', (line, index) => {
+      if (typeof line.line !== 'string' || typeof line.color !== 'string' || !['built', 'planned'].includes(line.status) || !Number.isInteger(line.builtYear)) throw dataValidationError(dataset, 'line ' + index + ' has invalid metadata');
+      validateLineCoordinates(line.coordinates, dataset, 'line ' + index + '.coordinates');
+    });
+    validateIdentifiedRecords(metro.stations, dataset, 'station', (station, index) => {
+      if (typeof station.nameEn !== 'string' || typeof station.nameTr !== 'string' || typeof station.line !== 'string' || typeof station.color !== 'string' || typeof station.source !== 'string' || !['built', 'planned'].includes(station.status) || !Number.isInteger(station.builtYear)) throw dataValidationError(dataset, 'station ' + index + ' has invalid metadata');
+      validateCoordinatePair(station.coords, dataset, 'station ' + index + '.coords');
+    });
+  }
+
+  function validatePlacesData(places) {
+    const dataset = 'Places';
+    validateIdentifiedRecords(places, dataset, 'place', (place, index) => {
+      if (typeof place.nameEn !== 'string' || typeof place.nameTr !== 'string' || typeof place.type !== 'string' || typeof place.source !== 'string') throw dataValidationError(dataset, 'place ' + index + ' has invalid metadata');
+      validateCoordinatePair(place.coords, dataset, 'place ' + index + '.coords');
+    });
+  }
+
   function atlasCopy() {
     return state.data?.content?.[state.lang] || { ui: copy[state.lang], labels: {} };
+  }
+
+  function activePlannerProfile() {
+    const profile = state.profile ? (atlasCopy().profiles || {})[state.profile] : null;
+    return profile && Array.isArray(profile.zones) ? profile : null;
+  }
+
+  function plannerBudgetValue() {
+    return state.plannerBudget == null ? 50000 : Number(state.plannerBudget) || 50000;
+  }
+
+  function plannerZones() {
+    const profile = activePlannerProfile();
+    return profile ? zones.filter(zone => profile.zones.includes(zone.id)) : zones;
   }
 
   function renderDataFreshness() {
@@ -189,7 +280,7 @@
 
   const state = {
     lang: 'en', year: 2026, admin: true, investments: true, metro: true, heat: false,
-    selected: null, data: null, map: null, ready: false, content: null, controlsInstalled: false, drawerCollapsed: false, shortlist: {}, shortlistAmounts: {}, scenarios: { oil: 'norm', infra: 'on', cur: 'stable' }, openAccordion: null, timeTimer: null, engaged: false, cityStory: { active: false, paused: false, index: 0, timer: null }, tourIndex: 0, tourStops: ['whitecity', 'mohammadi', 'bilgah', 'sumgayit', 'hovsan']
+    selected: null, data: null, map: null, ready: false, content: null, controlsInstalled: false, mapRuntimeTimer: null, drawerCollapsed: false, shortlist: {}, shortlistAmounts: {}, profile: null, plannerBudget: null, scenarios: { oil: 'norm', infra: 'on', cur: 'stable' }, openAccordion: null, timeTimer: null, engaged: false, cityStory: { active: false, paused: false, index: 0, timer: null }, tourIndex: 0, tourStops: ['whitecity', 'mohammadi', 'bilgah', 'sumgayit', 'hovsan']
   };
 
   const $ = id => document.getElementById(id);
@@ -208,6 +299,11 @@
       retry.addEventListener('click', boot);
       host.append(' ', retry);
     }
+  }
+  function reportMapFailure() {
+    state.ready = false;
+    finishCityStory();
+    setMapStatus('error', tr().error);
   }
   const featureCollection = features => ({ type: 'FeatureCollection', features });
   const pointFeature = (coords, properties) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: coords }, properties: properties || {} });
@@ -244,7 +340,16 @@
   }
 
   function investmentFeatures() {
-    return zones.map(z => pointFeature(z.coords, { id: z.id, labelEn: z.nameEn.replace(/[\u2013\u2014]/g, '-'), tier: z.tier, color: COLORS[z.tier], radius: z.radius }));
+    const profile = activePlannerProfile();
+    const budget = state.plannerBudget == null ? null : plannerBudgetValue();
+    return zones.map(z => pointFeature(z.coords, {
+      id: z.id,
+      labelEn: z.nameEn.replace(/[\u2013\u2014]/g, '-'),
+      tier: z.tier,
+      color: COLORS[z.tier],
+      radius: z.radius,
+      dim: Boolean((profile && !profile.zones.includes(z.id)) || (budget !== null && budget < Number(z.mint || 0)))
+    }));
   }
 
   function heatFeatures() {
@@ -307,7 +412,7 @@
   function citySimulationSnapshot(year) {
     const metro = state.data?.metro || { lines: [], stations: [] };
     const lines = metro.lines || [];
-    const stations = metro.stations || [];
+    const stations = metroStations();
     const events = cityEventFeatures(year);
     return {
       year,
@@ -342,8 +447,28 @@
     }));
   }
 
+  function metroStationKey(station) {
+    const name = String(station.nameEn || station.nameTr || '').trim().toLocaleLowerCase();
+    const coords = (station.coords || []).map(value => Number(value).toFixed(6)).join(',');
+    return name + '|' + coords;
+  }
+
+  function metroStations() {
+    const unique = new Map();
+    for (const station of state.data?.metro?.stations || []) {
+      const key = metroStationKey(station);
+      const existing = unique.get(key);
+      if (!existing || (station.status === 'planned' && existing.status !== 'planned')) unique.set(key, station);
+    }
+    return [...unique.values()];
+  }
+
+  function activeMetroStations(year = state.year) {
+    return metroStations().filter(station => Number(station.builtYear) <= year);
+  }
+
   function metroStationFeatures() {
-    return (state.data?.metro.stations || []).map(station => pointFeature(station.coords, {
+    return metroStations().map(station => pointFeature(station.coords, {
       id: station.id, label: state.lang === 'tr' ? station.nameTr : station.nameEn, line: station.line, color: station.color,
       built: state.year >= station.builtYear, status: station.status
     }));
@@ -405,7 +530,11 @@
       name: 'Baku 2036 audience map',
       glyphs: 'assets/glyphs/{fontstack}/{range}.pbf',
       sources: {
-        basemap: { type: 'vector', url: PMTILES_URL },
+        basemap: {
+          type: 'vector',
+          url: PMTILES_URL,
+          attribution: '<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors</a> · processed by <a href="https://download.geofabrik.de/" target="_blank" rel="noopener">Geofabrik</a>'
+        },
         admin: { type: 'geojson', data: data.admin },
         'admin-labels': { type: 'geojson', data: adminLabelFeatures(data.admin) },
         'investment-zones': { type: 'geojson', data: featureCollection(investmentFeatures()) },
@@ -435,8 +564,8 @@
         { id: 'city-events-future', type: 'circle', source: 'city-events', filter: ['==', ['get', 'phase'], 'future'], paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, 4.2, 12, 6.8], 'circle-color': COLORS.hot, 'circle-opacity': .1, 'circle-stroke-color': COLORS.hot, 'circle-stroke-width': 1.4, 'circle-stroke-opacity': .42 } },
         { id: 'city-events-active', type: 'circle', source: 'city-events', filter: ['==', ['get', 'phase'], 'active'], paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, 4.6, 12, 7.2], 'circle-color': COLORS.hot, 'circle-opacity': .86, 'circle-stroke-color': '#fffdf8', 'circle-stroke-width': 1.2, 'circle-stroke-opacity': .95 } },
         { id: 'heat-layer', type: 'circle', source: 'heat', layout: { visibility: 'none' }, paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, ['*', ['get', 'radius'], .45], 11, ['get', 'radius'], 14, ['*', ['get', 'radius'], 1.25]], 'circle-color': ['get', 'color'], 'circle-opacity': .24, 'circle-blur': .82 } },
-        { id: 'investment-zones', type: 'circle', source: 'investment-zones', paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, ['*', ['get', 'radius'], .55], 11, ['get', 'radius'], 14, ['*', ['get', 'radius'], 1.45]], 'circle-color': ['get', 'color'], 'circle-opacity': .48, 'circle-stroke-color': ['get', 'color'], 'circle-stroke-width': 1.5, 'circle-stroke-opacity': .9 } },
-        { id: 'investment-labels', type: 'symbol', source: 'investment-zones', layout: { 'text-field': ['get', 'labelEn'], 'text-font': ['noto_sans_bold'], 'text-size': 10, 'text-anchor': 'top', 'text-offset': [0, 1.2], 'text-allow-overlap': false }, paint: { 'text-color': '#27333c', 'text-halo-color': '#fffdf8', 'text-halo-width': 2 } },
+        { id: 'investment-zones', type: 'circle', source: 'investment-zones', paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, ['*', ['get', 'radius'], .55], 11, ['get', 'radius'], 14, ['*', ['get', 'radius'], 1.45]], 'circle-color': ['get', 'color'], 'circle-opacity': ['case', ['get', 'dim'], .12, .48], 'circle-stroke-color': ['get', 'color'], 'circle-stroke-width': 1.5, 'circle-stroke-opacity': ['case', ['get', 'dim'], .28, .9] } },
+        { id: 'investment-labels', type: 'symbol', source: 'investment-zones', layout: { 'text-field': ['get', 'labelEn'], 'text-font': ['noto_sans_bold'], 'text-size': 10, 'text-anchor': 'top', 'text-offset': [0, 1.2], 'text-allow-overlap': false }, paint: { 'text-color': '#27333c', 'text-opacity': ['case', ['get', 'dim'], .28, 1], 'text-halo-color': '#fffdf8', 'text-halo-width': 2, 'text-halo-blur': ['case', ['get', 'dim'], .4, 0] } },
         { id: 'rings', type: 'line', source: 'rings', paint: { 'line-color': '#214a69', 'line-width': 1.2, 'line-dasharray': [2, 2], 'line-opacity': .72 } },
         { id: 'click-point', type: 'circle', source: 'click-point', paint: { 'circle-radius': 6, 'circle-color': '#fffdf8', 'circle-stroke-color': '#183b58', 'circle-stroke-width': 2 } },
       ]
@@ -445,7 +574,7 @@
 
   function nearestStation(coords) {
     let nearest = null;
-    for (const station of state.data.metro.stations) {
+    for (const station of activeMetroStations()) {
       const distance = distanceKm(coords, station.coords);
       if (!nearest || distance < nearest.distance) nearest = { station, distance };
     }
@@ -492,15 +621,16 @@
     const rendered = point ? state.map.queryRenderedFeatures(point, { layers: ['admin-fill', 'investment-zones', 'metro-stations', 'city-events-active', 'city-events-future'] }) : [];
     const adminFeature = rendered.find(f => f.layer.id === 'admin-fill');
     const zoneFeature = rendered.find(f => f.layer.id === 'investment-zones');
-    const stationFeature = rendered.find(f => f.layer.id === 'metro-stations');
+    const stationFeature = rendered.find(f => f.layer.id === 'metro-stations' && f.properties.built);
     const cityEventFeature = rendered.find(f => f.layer.id === 'city-events-active' || f.layer.id === 'city-events-future');
     const byId = id => zones.find(z => z.id === id);
     const nearbyZone = zoneFeature ? { zone: byId(zoneFeature.properties.id), distance: distanceKm(coords, byId(zoneFeature.properties.id).coords) } : nearestZone(coords);
-    const station = stationFeature ? { station: state.data.metro.stations.find(s => s.id === stationFeature.properties.id), distance: 0 } : nearestStation(coords);
+    const station = stationFeature ? { station: metroStations().find(s => s.id === stationFeature.properties.id), distance: 0 } : nearestStation(coords);
     const event = cityEventFeature ? cityEventFeature.properties : (options.includeNearbyEvent ? nearestCityEvent(coords) : null);
     state.selected = { coords, admin: adminFeature?.properties || (waterHit ? null : findAdministrativeProperties(coords)), waterHit, zone: nearbyZone, station, event };
     state.drawerCollapsed = isMobileViewport();
     renderPanel();
+    if (state.data) renderAllContent();
     updateSelectionGeometry();
     updateHash();
   }
@@ -709,15 +839,23 @@
     if (!$('v2HowTo') || !how) return;
     const video = how.video || {};
     const videoHref = 'how-to.html?lang=' + (state.lang === 'tr' ? 'tr' : 'en');
+    const videoLabel = video.linkLabel || (state.lang === 'tr' ? 'Haritayı nasıl kullanacağınızı izle' : 'Watch how to use the map');
+    const videoLink = $('howToVideoLink');
+    if (videoLink) {
+      videoLink.setAttribute('href', videoHref);
+      const videoLabelNode = $('howToVideoLabel');
+      if (videoLabelNode) videoLabelNode.textContent = videoLabel;
+    }
     $('v2HowTo').innerHTML = '<h2 id="howToTitle">' + escapeHtml(how.title) + '</h2><div><p>' + escapeHtml(how.intro) + '</p><div class="howto-steps">' +
-      (how.steps || []).map((step, index) => '<div class="howto-step"><b>' + (index + 1) + '</b><span>' + escapeHtml(step) + '</span></div>').join('') + '</div><a id="howToVideoLink" class="howto-video-link" href="' + videoHref + '" target="_blank" rel="noopener"><span class="howto-video-icon" aria-hidden="true">▶</span><span>' + escapeHtml(video.linkLabel || (state.lang === 'tr' ? 'Haritayı nasıl kullanacağınızı izle' : 'Watch how to use the map')) + '</span></a></div>';
+      (how.steps || []).map((step, index) => '<div class="howto-step"><b>' + (index + 1) + '</b><span>' + escapeHtml(step) + '</span></div>').join('') + '</div></div>';
   }
 
   function renderTimeMachine() {
     const content = atlasCopy();
     const ui = content.ui || {};
     const story = ui.tmY?.[String(state.year)] || '';
-    return '<div class="tool-grid"><div class="tool-card"><h3>' + escapeHtml(ui.tmTitle || 'Time machine') + '</h3><p>' + escapeHtml(content.sections.time.whatThisMeans) + '</p><div class="year-track"><output id="timeYearOutput">' + state.year + '</output><input id="timeYear" type="range" min="2026" max="2036" step="1" value="' + state.year + '" aria-label="Timeline year"></div><div class="tool-actions"><button type="button" class="primary-action" id="timePlay">' + escapeHtml(content.labels.play || 'Play the decade') + '</button><button type="button" class="secondary-action" id="zoneTourStart">' + escapeHtml(ui.tourBtn || '') + '</button></div></div><div class="year-story" id="timeStory"><strong>' + state.year + '</strong>' + escapeHtml(story) + '</div></div>';
+    const playLabel = state.timeTimer ? (content.labels.pause || 'Pause') : (content.labels.play || 'Play the decade');
+    return '<div class="tool-grid"><div class="tool-card"><h3>' + escapeHtml(ui.tmTitle || 'Time machine') + '</h3><p>' + escapeHtml(content.sections.time.whatThisMeans) + '</p><div class="year-track"><output id="timeYearOutput">' + state.year + '</output><input id="timeYear" type="range" min="2026" max="2036" step="1" value="' + state.year + '" aria-label="Timeline year"></div><div class="tool-actions"><button type="button" class="primary-action" id="timePlay">' + escapeHtml(playLabel) + '</button><button type="button" class="secondary-action" id="zoneTourStart">' + escapeHtml(ui.tourBtn || '') + '</button></div></div><div class="year-story" id="timeStory"><strong>' + state.year + '</strong>' + escapeHtml(story) + '</div></div>';
   }
 
   function renderYearSliderHint() {
@@ -756,13 +894,13 @@
   }
 
   function plannerListHtml(budget) {
-    return zones.slice().sort((a, b) => Number(a.mint || 0) - Number(b.mint || 0)).map(zone => '<div class="zone-result"><strong>' + escapeHtml(state.lang === 'tr' ? zone.nameTr : zone.nameEn) + '</strong><small>' + escapeHtml(plannerBuyingText(zone, budget)) + '</small></div>').join('');
+    return plannerZones().slice().sort((a, b) => Number(a.mint || 0) - Number(b.mint || 0)).map(zone => '<div class="zone-result"><strong>' + escapeHtml(state.lang === 'tr' ? zone.nameTr : zone.nameEn) + '</strong><small>' + escapeHtml(plannerBuyingText(zone, budget)) + '</small></div>').join('');
   }
 
   function renderPlanner() {
     const content = atlasCopy();
     const ui = content.ui || {};
-    const budget = Number(state.plannerBudget || 50000);
+    const budget = plannerBudgetValue();
     const profiles = content.profiles || {};
     const profileLabels = { safe: ui.pr1T || 'Safer and easier to rent', patient: ui.pr2T || 'Patient land buyer', summer: ui.pr3T || 'Summer and investment', rent: ui.pr4T || 'Monthly rental income' };
     return '<div class="tool-grid"><div class="tool-card"><h3>' + escapeHtml(ui.planT || content.sections.planner.title) + '</h3><p>' + escapeHtml(ui.planL || content.sections.planner.description) + '</p><label>' + escapeHtml(content.labels.budget || 'My budget (USD)') + '<output id="budgetOutput">' + formatMoney(budget) + '</output><input id="budgetRange" type="range" min="5000" max="200000" step="5000" value="' + budget + '" aria-label="' + escapeHtml(content.labels.budget || 'My budget') + '"></label><label>Buyer profile<select id="profileSelect"><option value="">No profile</option>' + Object.keys(profiles).map(key => '<option value="' + key + '"' + (state.profile === key ? ' selected' : '') + '>' + escapeHtml(profileLabels[key]) + '</option>').join('') + '</select></label><p class="tool-note">' + escapeHtml(ui.budNote || content.sections.planner.whatThisMeans) + '</p></div><div class="tool-card"><h3>What this budget reaches</h3><div id="plannerResults" class="zone-result-list">' + plannerListHtml(budget) + '</div></div></div>';
@@ -834,15 +972,31 @@
   }
 
   function updatePlannerResults() {
-    const budget = Number(state.plannerBudget || 50000);
+    const budget = plannerBudgetValue();
     if ($('budgetOutput')) $('budgetOutput').textContent = formatMoney(budget);
+    if ($('budgetRange')) $('budgetRange').value = String(budget);
     if ($('plannerResults')) $('plannerResults').innerHTML = plannerListHtml(budget);
+    updateLayers();
   }
 
   function setBudget(value) {
     const budget = Math.max(5000, Math.min(200000, Number(value) || 50000));
     state.plannerBudget = budget;
     updatePlannerResults();
+  }
+
+  function setProfile(value) {
+    const profiles = atlasCopy().profiles || {};
+    const profile = value ? profiles[value] : null;
+    if (value && (!profile || !Array.isArray(profile.zones))) return;
+    state.profile = value || null;
+    state.plannerBudget = profile ? Math.max(5000, Math.min(200000, Number(profile.bud) || 50000)) : null;
+    if (profile) {
+      profile.zones.forEach(id => { state.shortlist[id] = true; });
+      writeLocalObject('baku2036-v2-shortlist', state.shortlist);
+    }
+    updatePlannerResults();
+    renderShortlist();
   }
 
   function setScenario(key, value) {
@@ -852,32 +1006,41 @@
     renderPanel();
   }
 
-  function toggleTimeMachine() {
-    const button = $('timePlay');
+  function stopTimeMachine() {
     if (state.timeTimer) {
       clearInterval(state.timeTimer);
       state.timeTimer = null;
-      if (button) button.textContent = atlasCopy().labels.play || 'Play the decade';
+    }
+    const button = $('timePlay');
+    if (button) button.textContent = atlasCopy().labels.play || 'Play the decade';
+  }
+
+  function toggleTimeMachine() {
+    const button = $('timePlay');
+    if (state.timeTimer) {
+      stopTimeMachine();
       return;
     }
+    finishCityStory();
+    finishTour();
     if (button) button.textContent = atlasCopy().labels.pause || 'Pause';
     state.timeTimer = setInterval(() => {
       const next = state.year >= 2036 ? 2026 : state.year + 1;
       setYear(next);
-      if (next === 2026 && state.timeTimer) { clearInterval(state.timeTimer); state.timeTimer = null; }
+      if (next === 2026) stopTimeMachine();
     }, reducedMotion ? 1100 : 760);
   }
 
   function wireContent() {
     document.querySelectorAll('.accordion-summary').forEach(button => button.addEventListener('click', () => setAccordion(button.closest('.v2-accordion').id)));
-    $('timeYear')?.addEventListener('input', event => { pauseCityStory(); setYear(event.target.value); });
+    $('timeYear')?.addEventListener('input', event => { stopTimeMachine(); pauseCityStory(); setYear(event.target.value); });
     $('timePlay')?.addEventListener('click', toggleTimeMachine);
     $('zoneTourStart')?.addEventListener('click', startTour);
     $('scenarioOil')?.addEventListener('change', event => setScenario('oil', event.target.value));
     $('scenarioInfra')?.addEventListener('change', event => setScenario('infra', event.target.value));
     $('scenarioCurrency')?.addEventListener('change', event => setScenario('cur', event.target.value));
     $('budgetRange')?.addEventListener('input', event => setBudget(event.target.value));
-    $('profileSelect')?.addEventListener('change', event => { state.profile = event.target.value || null; updatePlannerResults(); });
+    $('profileSelect')?.addEventListener('change', event => setProfile(event.target.value));
     $('dealCheck')?.addEventListener('click', checkDeal);
     document.querySelectorAll('[data-shortlist-amount]').forEach(input => input.addEventListener('change', event => {
       state.shortlistAmounts[event.currentTarget.dataset.shortlistAmount] = Number(event.currentTarget.value) || 0;
@@ -1080,6 +1243,7 @@
 
   function startCityStory() {
     if (!state.data) return;
+    stopTimeMachine();
     finishTour();
     finishCityStory();
     setEngaged(true);
@@ -1142,7 +1306,7 @@
 
   function startTour() {
     if (!state.data) return;
-    finishCityStory(); setEngaged(true); state.tourIndex = 0;
+    stopTimeMachine(); finishCityStory(); setEngaged(true); state.tourIndex = 0;
     let overlay = $('tourOverlay');
     if (!overlay) { overlay = document.createElement('div'); overlay.id = 'tourOverlay'; overlay.className = 'tour-overlay'; overlay.setAttribute('role', 'dialog'); overlay.setAttribute('aria-modal', 'true'); document.body.appendChild(overlay); }
     renderTourStop();
@@ -1155,10 +1319,10 @@
     document.addEventListener('keydown', event => { if (event.key === 'Escape') { toggleLayerMenu(false); finishCityStory(); finishTour(); } });
     document.querySelectorAll('.quiet-controls').forEach(element => element.addEventListener('focusin', () => setEngaged(true)));
     $('langEn')?.addEventListener('click', () => { setEngaged(true); setLanguage('en'); }); $('langTr')?.addEventListener('click', () => { setEngaged(true); setLanguage('tr'); });
-    $('yearSelect').addEventListener('focus', () => setEngaged(true)); $('yearSelect').addEventListener('change', event => { setEngaged(true); pauseCityStory(); setYear(event.target.value); });
+    $('yearSelect').addEventListener('focus', () => setEngaged(true)); $('yearSelect').addEventListener('change', event => { setEngaged(true); stopTimeMachine(); pauseCityStory(); setYear(event.target.value); });
     $('placeSearch').addEventListener('focus', () => setEngaged(true)); $('placeSearch').addEventListener('input', event => { pauseCityStory(); renderSearchResults(event.target.value); });
     $('placeSearch').addEventListener('keydown', event => { if (event.key === 'Escape') { $('searchResults').hidden = true; event.target.blur(); } if (event.key === 'Enter') { const first = searchPlaces(event.target.value)[0]; if (first) choosePlace(first); } });
-    const clearSelection = () => { pauseCityStory(); state.selected = null; state.hashZone = null; renderPanel(); updateSelectionGeometry(); updateHash(); $('v2ZoneDrawer').focus({ preventScroll: true }); };
+    const clearSelection = () => { pauseCityStory(); state.selected = null; state.hashZone = null; renderPanel(); if (state.data) renderAllContent(); updateSelectionGeometry(); updateHash(); $('v2ZoneDrawer').focus({ preventScroll: true }); };
     const collapseDetails = () => { if (!state.selected) return; state.drawerCollapsed = true; renderPanel(); $('showDetails').focus({ preventScroll: true }); };
     const showDetails = () => { if (!state.selected) return; state.drawerCollapsed = false; renderPanel(); $('collapseDetails').focus({ preventScroll: true }); };
     $('clearSelection').addEventListener('click', clearSelection); $('closeDetails').addEventListener('click', clearSelection); $('collapseDetails').addEventListener('click', collapseDetails); $('showDetails').addEventListener('click', showDetails);
@@ -1174,24 +1338,52 @@
   }
 
   function installMap(maplibregl, data) {
-    if (!window.pmtiles || !maplibregl || state.map) return;
+    const runtimeReady = window.pmtiles && typeof window.pmtiles.Protocol === 'function' && maplibregl && typeof maplibregl.Map === 'function' && typeof maplibregl.NavigationControl === 'function' && typeof maplibregl.addProtocol === 'function';
+    if (!runtimeReady || state.map) {
+      if (!runtimeReady) reportMapFailure();
+      return;
+    }
+    state.ready = false;
     const protocol = new window.pmtiles.Protocol(); maplibregl.addProtocol('pmtiles', protocol.tile);
-    state.map = new maplibregl.Map({ container: 'v2Map', style: createStyle(data), center: [49.86, 40.42], zoom: 9.6, minZoom: 8, maxZoom: 15.4, dragRotate: false, pitchWithRotate: false, attributionControl: { compact: true } });
-    state.map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-right');
-    state.map.on('load', () => {
+    const map = new maplibregl.Map({ container: 'v2Map', style: createStyle(data), center: [49.86, 40.42], zoom: 9.6, minZoom: 8, maxZoom: 15.4, dragRotate: false, pitchWithRotate: false, attributionControl: { compact: true } });
+    state.map = map;
+    let mapFailed = false;
+    const isBasemapFailure = event => {
+      const detail = event?.error || event;
+      const status = Number(detail?.status || detail?.statusCode);
+      const sourceId = event?.sourceId || event?.source?.id || detail?.sourceId;
+      const message = String(detail?.message || detail || '').toLowerCase();
+      return sourceId === 'basemap' || status >= 500 || /pmtiles|baku-absheron|bad response code|range request/.test(message);
+    };
+    const handleMapFailure = event => {
+      if (mapFailed || state.map !== map) return;
+      mapFailed = true;
+      state.map = null;
+      reportMapFailure();
+      if (event?.error) console.warn('Baku v2 map error', event.error);
+      try { map.remove(); } catch (error) { console.warn('Baku v2 map cleanup failed', error); }
+    };
+    map.on('error', event => {
+      if (!state.ready || isBasemapFailure(event)) handleMapFailure(event);
+    });
+    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-right');
+    map.on('load', () => {
+      if (mapFailed || state.map !== map) return;
       state.ready = true; setMapStatus('ready', tr().ready); $('yearSelect').value = String(state.year);
       updateLayers(); renderPanel();
-      state.map.on('click', event => identifyLocation(event.lngLat, event.point));
-      ['investment-zones', 'metro-stations', 'admin-fill', 'city-events-active', 'city-events-future'].forEach(layer => { state.map.on('mouseenter', layer, () => { state.map.getCanvas().style.cursor = 'pointer'; }); state.map.on('mouseleave', layer, () => { state.map.getCanvas().style.cursor = ''; }); });
-      if (state.hashZone) selectZone(state.hashZone, false); else state.map.fitBounds(BBOX, { padding: 50, duration: 0 });
+      map.on('click', event => identifyLocation(event.lngLat, event.point));
+      ['investment-zones', 'metro-stations', 'admin-fill', 'city-events-active', 'city-events-future'].forEach(layer => { map.on('mouseenter', layer, () => { map.getCanvas().style.cursor = 'pointer'; }); map.on('mouseleave', layer, () => { map.getCanvas().style.cursor = ''; }); });
+      if (state.hashZone) selectZone(state.hashZone, false); else map.fitBounds(BBOX, { padding: 50, duration: 0 });
     });
-    state.map.on('error', event => { if (event?.error) console.warn('Baku v2 map error', event.error); });
   }
 
   async function loadData() {
     const [admin, metro, places, zonesData, content] = await Promise.all(['data/admin-absheron.geojson', 'data/metro.json', 'data/places.json', 'data/zones.json?rev=b35a571', 'data/content.json?rev=b35a571'].map(path => fetch(path).then(response => { if (!response.ok) throw new Error(path); return response.json(); })));
-    state.data = { admin, metro, places, zones: zonesData, content };
+    validateAdminData(admin);
+    validateMetroData(metro);
+    validatePlacesData(places);
     hydrateZones(zonesData);
+    state.data = { admin, metro, places, zones: zonesData, content };
     if (state.hashZone && !zones.some(zone => zone.id === state.hashZone)) { state.hashZone = null; updateHash(); }
     return state.data;
   }
@@ -1207,8 +1399,23 @@
       loadLocalState();
       renderAllContent();
       const maplibregl = window.__V3MapLibre;
-      if (maplibregl) installMap(maplibregl, data); else window.addEventListener('v3-maplibre-ready', () => installMap(window.__V3MapLibre, data), { once: true });
-    } catch (error) { console.error(error); finishCityStory(); setMapStatus('error', error?.code === 'zone-data-validation' ? tr().validation : tr().error); }
+      if (state.mapRuntimeTimer) clearTimeout(state.mapRuntimeTimer);
+      if (maplibregl) {
+        installMap(maplibregl, data);
+      } else {
+        const onMapLibreReady = () => {
+          if (state.mapRuntimeTimer) clearTimeout(state.mapRuntimeTimer);
+          state.mapRuntimeTimer = null;
+          installMap(window.__V3MapLibre, data);
+        };
+        window.addEventListener('v3-maplibre-ready', onMapLibreReady, { once: true });
+        state.mapRuntimeTimer = setTimeout(() => {
+          window.removeEventListener('v3-maplibre-ready', onMapLibreReady);
+          state.mapRuntimeTimer = null;
+          if (window.__V3MapLibre) installMap(window.__V3MapLibre, data); else reportMapFailure();
+        }, 5000);
+      }
+    } catch (error) { console.error(error); finishCityStory(); setMapStatus('error', ['zone-data-validation', 'data-validation'].includes(error?.code) ? tr().validation : tr().error); }
   }
 
   window.distanceKm = distanceKm;
