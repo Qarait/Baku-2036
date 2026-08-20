@@ -924,24 +924,31 @@
 
   function renderScenarios() {
     const content = atlasCopy();
+    const labels = content.labels || {};
     const ui = content.ui || {};
     const current = state.scenarios;
+    const selectedZone = state.selected?.zone?.zone;
+    const scenarioOutput = selectedZone
+      ? ((state.lang === 'tr' ? selectedZone.nameTr : selectedZone.nameEn) + ': ' + (state.lang === 'tr' ? '%' + scenarioGrowth(selectedZone) : scenarioGrowth(selectedZone) + '%') + ' ' + (labels.scenarioOutput || 'illustrative growth sensitivity'))
+      : labels.noData;
     return '<div class="tool-grid"><div class="tool-card"><h3>' + escapeHtml(content.sections.scenarios.title) + '</h3><p>' + escapeHtml(content.sections.scenarios.whatThisMeans) + '</p>' +
       '<label>' + escapeHtml(ui.scOil || 'Oil money') + '<select id="scenarioOil"><option value="norm"' + (current.oil === 'norm' ? ' selected' : '') + '>' + escapeHtml(ui.scNorm || 'Normal') + '</option><option value="bad"' + (current.oil === 'bad' ? ' selected' : '') + '>' + escapeHtml(ui.scBad || 'Bad years') + '</option><option value="good"' + (current.oil === 'good' ? ' selected' : '') + '>' + escapeHtml(ui.scGood || 'Boom years') + '</option></select></label>' +
       '<label>' + escapeHtml(ui.scInfra || 'Metro & roads') + '<select id="scenarioInfra"><option value="on"' + (current.infra === 'on' ? ' selected' : '') + '>' + escapeHtml(ui.scOn || 'Built on time') + '</option><option value="late"' + (current.infra === 'late' ? ' selected' : '') + '>' + escapeHtml(ui.scLate || 'Years late') + '</option></select></label>' +
       '<label>' + escapeHtml(ui.scCur || 'Manat') + '<select id="scenarioCurrency"><option value="stable"' + (current.cur === 'stable' ? ' selected' : '') + '>' + escapeHtml(ui.scStable || 'Stays stable') + '</option><option value="weak"' + (current.cur === 'weak' ? ' selected' : '') + '>' + escapeHtml(ui.scWeak || 'Loses value') + '</option></select></label></div>' +
-      '<div class="tool-card"><h3>' + escapeHtml(content.labels.sensitivity || 'Sensitivity, not a forecast') + '</h3><p id="scenarioOutput">' + escapeHtml(state.selected?.zone?.zone ? ((state.lang === 'tr' ? state.selected.zone.zone.nameTr : state.selected.zone.zone.nameEn) + ': ' + scenarioGrowth(state.selected.zone.zone) + '% illustrative growth sensitivity') : content.labels.noData) + '</p><div class="tool-note">' + escapeHtml(ui.scNoteWeak || content.labels.noAdvice) + '</div></div></div>';
+      '<div class="tool-card"><h3>' + escapeHtml(labels.sensitivity || 'Sensitivity, not a forecast') + '</h3><p id="scenarioOutput">' + escapeHtml(scenarioOutput) + '</p><div class="tool-note">' + escapeHtml(ui.scNoteWeak || labels.noAdvice) + '</div></div></div>';
   }
 
   function plannerBuyingText(zone, budget) {
-    if (budget < Number(zone.mint || 0)) return 'Below rough entry point (' + formatMoney(zone.mint) + ')';
+    const content = atlasCopy();
+    const labels = content.labels || {};
+    if (budget < Number(zone.mint || 0)) return (labels.plannerBelowEntry || 'Below rough entry point') + ' (' + formatMoney(zone.mint) + ')';
     const range = zone.med || [500, 1000];
     const mid = (Number(range[0]) + Number(range[1])) / 2;
     if (zone.kind === 'land') {
       const ui = atlasCopy().ui || {};
       return String(ui.plannerLandEstimate || 'Roughly __N__ sot at a rough midpoint estimate; not a guaranteed purchasable plot').replace('__N__', (budget / (mid * 100)).toFixed(1));
     }
-    return 'About ' + Math.max(1, Math.round(budget / mid)) + ' m² at the rough midpoint';
+    return String(labels.plannerAreaEstimate || 'About __N__ m² at the rough midpoint').replace('__N__', Math.max(1, Math.round(budget / mid)));
   }
 
   function formatMoney(value) {
@@ -962,18 +969,20 @@
 
   function renderPlanner() {
     const content = atlasCopy();
+    const labels = content.labels || {};
     const ui = content.ui || {};
     const budget = plannerBudgetValue();
     const profiles = content.profiles || {};
     const profileLabels = { safe: ui.pr1T || 'Safer and easier to rent', patient: ui.pr2T || 'Patient land buyer', summer: ui.pr3T || 'Summer and investment', rent: ui.pr4T || 'Monthly rental income' };
-    return '<div class="tool-grid"><div class="tool-card"><h3>' + escapeHtml(ui.planT || content.sections.planner.title) + '</h3><p>' + escapeHtml(ui.planL || content.sections.planner.description) + '</p><label>' + escapeHtml(content.labels.budget || 'My budget (USD)') + '<output id="budgetOutput">' + formatMoney(budget) + '</output><input id="budgetRange" type="range" min="5000" max="200000" step="5000" value="' + budget + '" aria-label="' + escapeHtml(content.labels.budget || 'My budget') + '"></label><label>Buyer profile<select id="profileSelect"><option value="">No profile</option>' + Object.keys(profiles).map(key => '<option value="' + key + '"' + (state.profile === key ? ' selected' : '') + '>' + escapeHtml(profileLabels[key]) + '</option>').join('') + '</select></label><p class="tool-note">' + escapeHtml(ui.budNote || content.sections.planner.whatThisMeans) + '</p></div><div class="tool-card"><h3>' + escapeHtml(ui.plannerReachable || 'What this budget reaches') + '</h3><div id="plannerResults" class="zone-result-list">' + plannerListHtml(budget) + '</div><div id="plannerOutOfReachHost">' + plannerOutOfReachHtml(budget) + '</div></div></div>';
+    return '<div class="tool-grid"><div class="tool-card"><h3>' + escapeHtml(ui.planT || content.sections.planner.title) + '</h3><p>' + escapeHtml(ui.planL || content.sections.planner.description) + '</p><label>' + escapeHtml(labels.budget || 'My budget (USD)') + '<output id="budgetOutput">' + formatMoney(budget) + '</output><input id="budgetRange" type="range" min="5000" max="200000" step="5000" value="' + budget + '" aria-label="' + escapeHtml(labels.budget || 'My budget') + '"></label><label>' + escapeHtml(labels.profile || 'Buyer profile') + '<select id="profileSelect"><option value="">' + escapeHtml(labels.noProfile || 'No profile') + '</option>' + Object.keys(profiles).map(key => '<option value="' + key + '"' + (state.profile === key ? ' selected' : '') + '>' + escapeHtml(profileLabels[key]) + '</option>').join('') + '</select></label><p class="tool-note">' + escapeHtml(ui.budNote || content.sections.planner.whatThisMeans) + '</p></div><div class="tool-card"><h3>' + escapeHtml(ui.plannerReachable || 'What this budget reaches') + '</h3><div id="plannerResults" class="zone-result-list">' + plannerListHtml(budget) + '</div><div id="plannerOutOfReachHost">' + plannerOutOfReachHtml(budget) + '</div></div></div>';
   }
 
   function renderDealChecker() {
     const content = atlasCopy();
+    const labels = content.labels || {};
     const ui = content.ui || {};
     const selectedId = state.selected?.zone?.zone?.id || zones[0]?.id;
-    return '<div class="tool-grid"><div class="tool-card"><h3>' + escapeHtml(ui.dealT || content.sections.deal.title) + '</h3><p>' + escapeHtml(ui.dealSub || content.sections.deal.description) + '</p><label>' + escapeHtml(ui.dZone || 'Area') + '<select id="dealZone">' + zones.map(zone => '<option value="' + zone.id + '"' + (zone.id === selectedId ? ' selected' : '') + '>' + escapeHtml(state.lang === 'tr' ? zone.nameTr : zone.nameEn) + '</option>').join('') + '</select></label><label>' + escapeHtml(content.labels.price || ui.dPrice || 'Asking price (USD)') + '<input id="dealPrice" type="number" min="0" inputmode="decimal" placeholder="e.g. 85000"></label><label>' + escapeHtml(content.labels.size || ui.dArea || 'Size (m²)') + '<input id="dealArea" type="number" min="1" inputmode="decimal" placeholder="e.g. 70"></label><div class="tool-actions"><button type="button" class="primary-action" id="dealCheck">' + escapeHtml(content.labels.check || ui.dGo || 'Check it') + '</button></div><div id="dealResult" class="tool-result" aria-live="polite"></div></div><div class="tool-card"><h3>How to read it</h3><p>' + escapeHtml(content.sections.deal.whatThisMeans) + '</p><div class="tool-note">' + escapeHtml(ui.dCaveat || content.labels.noAdvice) + '</div></div></div>';
+    return '<div class="tool-grid"><div class="tool-card"><h3>' + escapeHtml(ui.dealT || content.sections.deal.title) + '</h3><p>' + escapeHtml(ui.dealSub || content.sections.deal.description) + '</p><label>' + escapeHtml(ui.dZone || 'Area') + '<select id="dealZone">' + zones.map(zone => '<option value="' + zone.id + '"' + (zone.id === selectedId ? ' selected' : '') + '>' + escapeHtml(state.lang === 'tr' ? zone.nameTr : zone.nameEn) + '</option>').join('') + '</select></label><label>' + escapeHtml(labels.price || ui.dPrice || 'Asking price (USD)') + '<input id="dealPrice" type="number" min="0" inputmode="decimal" placeholder="' + escapeHtml(labels.priceExample || 'e.g. 85000') + '"></label><label>' + escapeHtml(labels.size || ui.dArea || 'Size (m²)') + '<input id="dealArea" type="number" min="1" inputmode="decimal" placeholder="' + escapeHtml(labels.sizeExample || 'e.g. 70') + '"></label><div class="tool-actions"><button type="button" class="primary-action" id="dealCheck">' + escapeHtml(labels.check || ui.dGo || 'Check it') + '</button></div><div id="dealResult" class="tool-result" aria-live="polite"></div></div><div class="tool-card"><h3>' + escapeHtml(labels.howToRead || 'How to read it') + '</h3><p>' + escapeHtml(content.sections.deal.whatThisMeans) + '</p><div class="tool-note">' + escapeHtml(ui.dCaveat || labels.noAdvice) + '</div></div></div>';
   }
 
   function checkDeal() {
@@ -1008,9 +1017,9 @@
     const rows = ids.map(id => {
       const zone = zones.find(item => item.id === id);
       const detail = zone[state.lang] || zone.en;
-      return '<div class="shortlist-row"><strong>' + escapeHtml(state.lang === 'tr' ? zone.nameTr : zone.nameEn) + '</strong><span>' + escapeHtml(detail.now || '—') + '</span><span>' + escapeHtml(detail.yield || '—') + '</span><label><span class="sr-only">Amount</span><input type="number" min="0" placeholder="Amount" data-shortlist-amount="' + zone.id + '" value="' + (Number(state.shortlistAmounts[id]) || '') + '"></label></div>';
+      return '<div class="shortlist-row"><strong>' + escapeHtml(state.lang === 'tr' ? zone.nameTr : zone.nameEn) + '</strong><span>' + escapeHtml(detail.now || '—') + '</span><span>' + escapeHtml(detail.yield || '—') + '</span><label><span class="sr-only">' + escapeHtml(content.labels.amount || 'Amount') + '</span><input type="number" min="0" placeholder="' + escapeHtml(content.labels.amount || 'Amount') + '" data-shortlist-amount="' + zone.id + '" value="' + (Number(state.shortlistAmounts[id]) || '') + '"></label></div>';
     }).join('');
-    article.dataset.shortlistBody = '<div class="tool-card"><p>' + escapeHtml(content.labels.saved || 'Saved on this device') + ' · Total: ' + escapeHtml(formatMoney(total)) + '</p><div class="shortlist-table">' + rows + '</div><div class="tool-note">' + escapeHtml(content.labels.noAdvice || 'Not financial advice') + '</div></div>';
+    article.dataset.shortlistBody = '<div class="tool-card"><p>' + escapeHtml(content.labels.saved || 'Saved on this device') + ' · ' + escapeHtml(content.labels.total || 'Total') + ': ' + escapeHtml(formatMoney(total)) + '</p><div class="shortlist-table">' + rows + '</div><div class="tool-note">' + escapeHtml(content.labels.noAdvice || 'Not financial advice') + '</div></div>';
   }
 
   function evidenceLegend() {
@@ -1020,7 +1029,8 @@
 
   function renderSources() {
     const content = atlasCopy();
-    return '<div class="source-list">' + evidenceLegend() + '<p><strong>Geography:</strong> ' + escapeHtml('Baku and Absheron rayon polygons, local PMTiles basemap, and the offline place gazetteer in data/.') + '</p><p><strong>Projects:</strong> ' + escapeHtml('Built, funded, planned, and scenario-only labels are kept separate in the shared zone briefs. Planned lines and sensitivities must be verified before any purchase.') + '</p><p><strong>How to read the circles:</strong> ' + escapeHtml(content.sections.sources.whatThisMeans) + '</p><div class="disclaimer-box">' + escapeHtml(content.disclaimer) + '</div></div>';
+    const labels = content.labels || {};
+    return '<div class="source-list">' + evidenceLegend() + '<p><strong>' + escapeHtml(labels.geography || 'Geography') + ':</strong> ' + escapeHtml(labels.geographyNote || 'Baku and Absheron rayon polygons, local PMTiles basemap, and the offline place gazetteer in data/.') + '</p><p><strong>' + escapeHtml(labels.projects || 'Projects') + ':</strong> ' + escapeHtml(labels.projectsNote || 'Built, funded, planned, and scenario-only labels are kept separate in the shared zone briefs. Planned lines and sensitivities must be verified before any purchase.') + '</p><p><strong>' + escapeHtml(labels.howToReadCircles || 'How to read the circles') + ':</strong> ' + escapeHtml(content.sections.sources.whatThisMeans) + '</p><div class="disclaimer-box">' + escapeHtml(content.disclaimer) + '</div></div>';
   }
 
   function setAccordion(sectionId, forceOpen = false) {
