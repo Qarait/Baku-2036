@@ -339,21 +339,48 @@
     return '#' + [f(0), f(8), f(4)].map(v => Math.round(255 * v).toString(16).padStart(2, '0')).join('');
   }
 
+  function yearProgress(year = state.year) {
+    return Math.max(0, Math.min(1, (Number(year) - 2026) / 10));
+  }
+
+  function growthRange() {
+    const values = zones.map(zone => scenarioBaseGrowth(zone));
+    return { min: Math.min(...values), max: Math.max(...values) };
+  }
+
+  function normalizedGrowth(zone) {
+    const { min, max } = growthRange();
+    if (max === min) return 1;
+    return Math.max(0, Math.min(1, (scenarioBaseGrowth(zone) - min) / (max - min)));
+  }
+
   function investmentFeatures() {
     const profile = activePlannerProfile();
     const budget = state.plannerBudget == null ? null : plannerBudgetValue();
+    const progress = yearProgress();
     return zones.map(z => pointFeature(z.coords, {
       id: z.id,
       labelEn: z.nameEn.replace(/[\u2013\u2014]/g, '-'),
       tier: z.tier,
       color: COLORS[z.tier],
-      radius: z.radius,
+      growthPct: scenarioBaseGrowth(z),
+      yearProgress: progress,
+      radius: z.radius * (1 + progress * scenarioBaseGrowth(z) / 100),
       dim: Boolean((profile && !profile.zones.includes(z.id)) || (budget !== null && budget < Number(z.mint || 0)))
     }));
   }
 
   function heatFeatures() {
-    return zones.map((z, index) => pointFeature(z.coords, { id: z.id, radius: z.radius * 3.5, color: hslToHex(28 + index * 4, 77, 51) }));
+    return zones.map(z => {
+      const growthIndex = normalizedGrowth(z);
+      return pointFeature(z.coords, {
+        id: z.id,
+        growthPct: scenarioBaseGrowth(z),
+        growthIndex,
+        radius: 28 + growthIndex * 28,
+        color: hslToHex(210 - growthIndex * 180, 77, 51)
+      });
+    });
   }
 
   const CITY_STORY_YEARS = [2026, 2028, 2030, 2033, 2036];
@@ -1426,5 +1453,13 @@
   window.setLang = setLanguage;
   window.startTour = startTour;
   window.toggleLayerMenu = toggleLayerMenu;
+  if (new URLSearchParams(location.search).get('testHooks') === '1') {
+    window.__V3TestHooks = {
+      getLayerFeatures: () => ({
+        investments: investmentFeatures().map(feature => feature.properties),
+        heat: heatFeatures().map(feature => feature.properties)
+      })
+    };
+  }
   boot();
 })();
