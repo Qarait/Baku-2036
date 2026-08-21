@@ -2,7 +2,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
 
-import { buildCoverageReport, buildDuplicateReport, buildMissingnessReport } from './market-data/reports.mjs';
+import { buildCoverageReport, buildDuplicateReport, buildMissingnessReport, buildSafeCoverageFrame } from './market-data/reports.mjs';
 import { loadAndValidate } from './validate-market-data.mjs';
 
 const schemaVersion = '1.0';
@@ -29,6 +29,7 @@ export function runReportCli(argv = process.argv.slice(2)) {
     'missingness.json': buildMissingnessReport(result.observations.records, reportOptions),
     'coverage.json': buildCoverageReport(result.observations.records, {
       ...reportOptions,
+      coverageFrame: buildSafeCoverageFrame(result.observations.records),
       rejectedCount: result.observations.rejected.length
     }),
     'summary.json': {

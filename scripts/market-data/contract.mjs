@@ -155,7 +155,7 @@ export function validateRights(records, { intendedUse } = {}) {
   return { valid: errors.length === 0, errors: sortByPath(errors), rightsById };
 }
 
-function validateObservation(record, path, rightsById) {
+function validateObservation(record, path, rightsById, intendedUse) {
   const errors = [];
   if (!isObject(record)) return [error('invalid-record', path, 'observation record must be an object')];
   hasOnlyKeys(record, new Set([
@@ -205,7 +205,15 @@ function validateObservation(record, path, rightsById) {
   }
   const rights = rightsById?.get(record.rightsId);
   if (!rights) errors.push(error('missing-rights', `${path}.rightsId`, 'rights reference is absent or not valid for intended use'));
-  else if (rights.sourceId !== record.sourceId) errors.push(error('rights-source-mismatch', `${path}.sourceId`, 'sourceId must match the referenced rights record'));
+  else {
+    if (!ALLOWED_USES.has(intendedUse) || !Array.isArray(rights.allowedUses) || !rights.allowedUses.includes(intendedUse)) {
+      errors.push(error('rights-intended-use-not-allowed', `${path}.rightsId`, 'referenced rights do not allow the intended use'));
+    }
+    if (!RIGHTS_STATUSES.has(rights.status) || rights.status === 'rejected' || rights.status === 'expired') {
+      errors.push(error('invalid-rights-status', `${path}.rightsId`, 'referenced rights are not valid for the intended use'));
+    }
+    if (rights.sourceId !== record.sourceId) errors.push(error('rights-source-mismatch', `${path}.sourceId`, 'sourceId must match the referenced rights record'));
+  }
   return errors;
 }
 
@@ -219,7 +227,7 @@ export function validateObservations(records, rightsById, { intendedUse } = {}) 
   const duplicateIds = collectDuplicates(records, 'observationId');
   records.forEach((record, index) => {
     const path = recordPath('observations', record, index, 'observationId');
-    const recordErrors = validateObservation(record, path, rightsById);
+    const recordErrors = validateObservation(record, path, rightsById, intendedUse);
     if (isObject(record) && duplicateIds.has(record.observationId)) recordErrors.push(error('duplicate-observation-id', `${path}.observationId`, 'observationId must be unique'));
     if (recordErrors.length === 0) accepted.push(record);
     else rejected.push({ record, errors: sortByPath(recordErrors) });

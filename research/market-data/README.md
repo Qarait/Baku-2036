@@ -16,4 +16,6 @@ Before any non-synthetic use, review the source terms and rights record, includi
 
 Reports are deterministic quality summaries, not a market assessment. They do not establish that observed records are complete, representative, current, licensed for publication, or suitable for valuation.
 
+Coverage reports use observed safe periods and geographies, plus every contract property type as an explicit zero-capable cell. Those zero cells are data-quality bookkeeping, not a claim that a market segment has no activity or coverage.
+
 Never copy raw or private files into tracked paths or Pages artifacts. Keep restricted material only under `research/market-data/raw/` or `research/market-data/private/`, and keep generated reports under `research/market-data/generated/`. Git ignore reduces accidental staging; it is not a rights-control mechanism and does not grant permission to collect, retain, share, or publish data.

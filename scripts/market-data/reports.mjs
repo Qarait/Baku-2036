@@ -1,16 +1,18 @@
 import { canonicalJson } from './contract.mjs';
 
 const LIMITATION = 'Observed records are not automatically a representative sample of the Baku market.';
+const INVALID_DIMENSION = '__invalid__';
 
 const FIELD_PATHS = [
-  'sourceId', 'sourceRecordId', 'rightsId', 'transactionType', 'observedAt', 'eventDate', 'propertyType',
-  'price.amount', 'price.currency', 'price.basis', 'area.value', 'area.unit', 'area.measure',
-  'location.geography', 'location.district', 'location.zoneId', 'location.precision',
-  'characteristics', 'characteristics.rooms', 'characteristics.bedrooms',
-  'characteristics.bathrooms', 'characteristics.condition'
+  'schemaVersion', 'observationId', 'sourceId', 'sourceRecordId', 'rightsId', 'transactionType', 'observedAt', 'eventDate',
+  'propertyType', 'price', 'price.amount', 'price.currency', 'price.basis', 'area', 'area.value', 'area.unit', 'area.measure',
+  'location', 'location.geography', 'location.district', 'location.zoneId', 'location.precision',
+  'characteristics', 'characteristics.rooms', 'characteristics.bedrooms', 'characteristics.bathrooms', 'characteristics.condition'
 ];
 const TRANSACTION_TYPES = new Set(['asking', 'completed_sale']);
-const PROPERTY_TYPES = new Set(['apartment', 'house', 'land', 'commercial', 'other']);
+const PRICE_BASES = new Set(['total', 'per_m2']);
+export const CONTRACT_PROPERTY_TYPES = Object.freeze(['apartment', 'house', 'land', 'commercial', 'other']);
+const PROPERTY_TYPES = new Set(CONTRACT_PROPERTY_TYPES);
 
 function compare(left, right) {
   return String(left).localeCompare(String(right));
@@ -34,7 +36,10 @@ function coarseLocation(record) {
 }
 
 function validObservedAt(value) {
-  return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value);
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const [year, month, day] = value.split('-').map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day));
+  return date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day;
 }
 
 function monthFor(record) {
@@ -52,13 +57,24 @@ function safeCoarseLocation(record) {
   return nonEmptyString(value) ? value : undefined;
 }
 
-function periodFor(date, periods) {
-  if (typeof date !== 'string') return undefined;
-  const month = date.slice(0, 7);
-  const quarter = `${date.slice(0, 4)}-Q${Math.floor((Number(date.slice(5, 7)) - 1) / 3) + 1}`;
-  if (periods.includes(month)) return month;
-  if (periods.includes(quarter)) return quarter;
+function periodKind(period) {
+  if (/^\d{4}-(0[1-9]|1[0-2])$/.test(period)) return 'month';
+  if (/^\d{4}-Q[1-4]$/.test(period)) return 'quarter';
   return undefined;
+}
+
+function configuredPeriods(coverageFrame) {
+  return sorted((coverageFrame.periods ?? []).filter((period) => periodKind(period)));
+}
+
+function observedCoveragePeriods(records, framePeriods) {
+  const configuredKinds = new Set(framePeriods.map(periodKind));
+  const useQuarter = configuredKinds.size === 1 && configuredKinds.has('quarter');
+  return sorted(records.map((record) => useQuarter ? quarterFor(record) : monthFor(record)));
+}
+
+function periodMatches(record, period) {
+  return period === monthFor(record) || period === quarterFor(record);
 }
 
 function countBy(records, valueFor, configured = []) {
@@ -104,24 +120,30 @@ function fingerprint(record) {
 
 function invalidFieldsForRejected(rejected) {
   const invalidFields = new Set();
-  const observationId = rejected?.record?.observationId;
-  const prefix = nonEmptyString(observationId) ? `observations/${observationId}.` : undefined;
   for (const reportError of rejected?.errors ?? []) {
     const path = typeof reportError?.path === 'string' ? reportError.path : '';
-    const tail = prefix && path.startsWith(prefix) ? path.slice(prefix.length) : '';
-    for (const field of FIELD_PATHS) {
-      if (tail === field || tail.startsWith(`${field}.`) || field.startsWith(`${tail}.`)) invalidFields.add(field);
+    const matches = FIELD_PATHS.filter((field) => path === field || path.endsWith(`.${field}`));
+    const longestMatch = Math.max(0, ...matches.map((field) => field.length));
+    for (const field of matches) {
+      if (field.length === longestMatch) invalidFields.add(field);
     }
   }
   return invalidFields;
 }
 
-function errorFieldPaths(rejectedRecords) {
+function invalidAttribution(rejectedRecords) {
   const fields = new Map(FIELD_PATHS.map((field) => [field, 0]));
+  let fieldAttributedRejectedRecordCount = 0;
   for (const rejected of rejectedRecords ?? []) {
-    for (const field of invalidFieldsForRejected(rejected)) fields.set(field, fields.get(field) + 1);
+    const invalidFields = invalidFieldsForRejected(rejected);
+    if (invalidFields.size > 0) fieldAttributedRejectedRecordCount += 1;
+    for (const field of invalidFields) fields.set(field, fields.get(field) + 1);
   }
-  return fields;
+  return {
+    fields,
+    fieldAttributedRejectedRecordCount,
+    unattributedRejectedRecordCount: rejectedRecords.length - fieldAttributedRejectedRecordCount
+  };
 }
 
 function fieldState(record, field) {
@@ -132,40 +154,53 @@ function fieldState(record, field) {
   return 'present';
 }
 
-function emptyFieldSummary(invalid = 0, denominator = 0) {
-  return { present: 0, missing: 0, explicitUnknown: 0, notApplicable: 0, invalid, rate: denominator === 0 ? 0 : invalid / denominator };
-}
-
-function summarizeFields(records, invalidByField = new Map(), rejectedCount = 0) {
-  const denominator = records.length + rejectedCount;
+function summarizeFields(records, attribution = invalidAttribution([]), rejectedCount = 0) {
+  const stateDenominator = records.length;
+  const invalidDenominator = rejectedCount;
   return Object.fromEntries(FIELD_PATHS.map((field) => {
-    const summary = emptyFieldSummary(invalidByField.get(field) ?? 0, denominator);
+    const summary = {
+      present: 0,
+      missing: 0,
+      explicitUnknown: 0,
+      notApplicable: 0,
+      invalid: attribution.fields.get(field) ?? 0,
+      stateDenominator,
+      invalidDenominator,
+      rate: 0,
+      invalidRate: 0
+    };
     for (const record of records) summary[fieldState(record, field)] += 1;
-    summary.rate = denominator === 0 ? 0 : (summary.missing + summary.explicitUnknown + summary.invalid) / denominator;
+    summary.rate = stateDenominator === 0 ? 0 : (summary.missing + summary.explicitUnknown) / stateDenominator;
+    summary.invalidRate = invalidDenominator === 0 ? 0 : summary.invalid / invalidDenominator;
     return [field, summary];
   }));
 }
 
+const MISSINGNESS_DIMENSIONS = {
+  source: (record) => nonEmptyString(record?.sourceId) ? record.sourceId : undefined,
+  month: monthFor,
+  quarter: quarterFor,
+  transactionType: (record) => TRANSACTION_TYPES.has(record?.transactionType) ? record.transactionType : undefined,
+  propertyType: (record) => PROPERTY_TYPES.has(record?.propertyType) ? record.propertyType : undefined,
+  priceBasis: (record) => PRICE_BASES.has(record?.price?.basis) ? record.price.basis : undefined,
+  coarseLocation: safeCoarseLocation
+};
+
 function missingnessBreakdowns(records, rejectedRecords) {
-  const dimensions = {
-    source: (record) => nonEmptyString(record?.sourceId) ? record.sourceId : undefined,
-    month: monthFor,
-    quarter: quarterFor,
-    transactionType: (record) => TRANSACTION_TYPES.has(record?.transactionType) ? record.transactionType : undefined,
-    propertyType: (record) => PROPERTY_TYPES.has(record?.propertyType) ? record.propertyType : undefined,
-    coarseLocation: safeCoarseLocation
-  };
-  return Object.fromEntries(Object.entries(dimensions).map(([name, keyFor]) => {
+  return Object.fromEntries(Object.entries(MISSINGNESS_DIMENSIONS).map(([name, keyFor]) => {
     const validGroups = groupBy(records, keyFor);
-    const rejectedGroups = groupBy(rejectedRecords, (rejected) => keyFor(rejected?.record));
-    const keys = sorted([...validGroups.keys(), ...rejectedGroups.keys()]);
+    const keys = sorted([
+      ...validGroups.keys(),
+      ...(rejectedRecords.length > 0 ? [INVALID_DIMENSION] : [])
+    ]);
     return [name, Object.fromEntries(keys.map((key) => {
       const validRecords = validGroups.get(key) ?? [];
-      const rejected = rejectedGroups.get(key) ?? [];
+      const rejected = key === INVALID_DIMENSION ? rejectedRecords : [];
+      const attribution = invalidAttribution(rejected);
       return [key, {
         recordCount: validRecords.length,
         rejectedRecordCount: rejected.length,
-        fields: summarizeFields(validRecords, errorFieldPaths(rejected), rejected.length)
+        fields: summarizeFields(validRecords, attribution, rejected.length)
       }];
     }))];
   }));
@@ -210,47 +245,66 @@ export function buildDuplicateReport(records, { inputDigest, schemaVersion } = {
 }
 
 export function buildMissingnessReport(records, { inputDigest, schemaVersion, rejectedRecords = [] } = {}) {
-  const invalidByField = errorFieldPaths(rejectedRecords);
+  const attribution = invalidAttribution(rejectedRecords);
   return {
     schemaVersion,
     inputDigest,
     counts: {
+      inputRecordCount: records.length + rejectedRecords.length,
       validRecordCount: records.length,
-      rejectedRecordCount: rejectedRecords.length
+      rejectedRecordCount: rejectedRecords.length,
+      invalidRecordCount: rejectedRecords.length
     },
-    dimensions: {
-      field: FIELD_PATHS,
-      source: sorted(records.map((record) => record.sourceId)),
-      month: sorted(records.map(monthFor)),
-      quarter: sorted(records.map(quarterFor)),
-      transactionType: sorted(records.map((record) => record.transactionType)),
-      propertyType: sorted(records.map((record) => record.propertyType)),
-      coarseLocation: sorted(records.map(safeCoarseLocation))
-    },
+    dimensions: Object.fromEntries(Object.entries(MISSINGNESS_DIMENSIONS).map(([name, keyFor]) => [
+      name,
+      sorted([
+        ...records.map(keyFor),
+        ...(rejectedRecords.length > 0 ? [INVALID_DIMENSION] : [])
+      ])
+    ]).concat([['field', FIELD_PATHS]])),
     validRecordCount: records.length,
     rejectedRecordCount: rejectedRecords.length,
-    fields: summarizeFields(records, invalidByField, rejectedRecords.length),
+    invalid: {
+      rejectedRecordCount: rejectedRecords.length,
+      fieldAttributedRejectedRecordCount: attribution.fieldAttributedRejectedRecordCount,
+      unattributedRejectedRecordCount: attribution.unattributedRejectedRecordCount
+    },
+    fields: summarizeFields(records, attribution, rejectedRecords.length),
     breakdowns: missingnessBreakdowns(records, rejectedRecords),
     limitation: LIMITATION
   };
 }
 
+export function buildSafeCoverageFrame(records) {
+  const validRecords = Array.isArray(records) ? records : [];
+  return {
+    periods: observedCoveragePeriods(validRecords, []),
+    geographies: sorted(validRecords.map(safeCoarseLocation)),
+    propertyTypes: sorted(CONTRACT_PROPERTY_TYPES)
+  };
+}
+
 export function buildCoverageReport(records, { inputDigest, schemaVersion, coverageFrame = {}, rejectedCount = 0 } = {}) {
-  const periods = sorted(coverageFrame.periods ?? []);
-  const geographies = sorted(coverageFrame.geographies ?? []);
+  const configuredFramePeriods = configuredPeriods(coverageFrame);
+  const framePeriods = sorted([...configuredFramePeriods, ...observedCoveragePeriods(records, configuredFramePeriods)]);
+  const configuredGeographies = sorted(coverageFrame.geographies ?? []);
+  const allGeographies = sorted([...configuredGeographies, ...records.map(safeCoarseLocation)]);
+  const configuredPropertyTypes = sorted((coverageFrame.propertyTypes ?? []).filter((propertyType) => PROPERTY_TYPES.has(propertyType)));
+  const allPropertyTypes = sorted([...configuredPropertyTypes, ...records.map((record) => record.propertyType)]);
   const sourceIds = sorted(records.map((record) => record.sourceId));
-  const observedGeographies = sorted(records.map(coarseLocation));
-  const framePeriods = periods.length > 0 ? periods : sorted(records.map((record) => record.observedAt?.slice(0, 7)));
-  const allGeographies = sorted([...geographies, ...observedGeographies]);
-  const periodCounts = Object.fromEntries(framePeriods.map((period) => [period, records.filter((record) => periodFor(record.observedAt, framePeriods) === period).length]));
-  const geographyCounts = countBy(records, coarseLocation, allGeographies);
+  const periodCounts = Object.fromEntries(framePeriods.map((period) => [period, records.filter((record) => periodMatches(record, period)).length]));
+  const geographyCounts = countBy(records, safeCoarseLocation, allGeographies);
   const sourceByPeriodCounts = Object.fromEntries(sourceIds.map((sourceId) => [sourceId, Object.fromEntries(framePeriods.map((period) => [
     period,
-    records.filter((record) => record.sourceId === sourceId && periodFor(record.observedAt, framePeriods) === period).length
+    records.filter((record) => record.sourceId === sourceId && periodMatches(record, period)).length
   ]))]));
   const geographyByPeriodCounts = Object.fromEntries(allGeographies.map((geography) => [geography, Object.fromEntries(framePeriods.map((period) => [
     period,
-    records.filter((record) => coarseLocation(record) === geography && periodFor(record.observedAt, framePeriods) === period).length
+    records.filter((record) => safeCoarseLocation(record) === geography && periodMatches(record, period)).length
+  ]))]));
+  const propertyTypeByPeriodCounts = Object.fromEntries(allPropertyTypes.map((propertyType) => [propertyType, Object.fromEntries(framePeriods.map((period) => [
+    period,
+    records.filter((record) => record.propertyType === propertyType && periodMatches(record, period)).length
   ]))]));
   const dates = sorted(records.map((record) => record.observedAt));
 
@@ -268,7 +322,7 @@ export function buildCoverageReport(records, { inputDigest, schemaVersion, cover
       geography: allGeographies,
       source: sourceIds,
       transactionType: sorted(records.map((record) => record.transactionType)),
-      propertyType: sorted(records.map((record) => record.propertyType)),
+      propertyType: allPropertyTypes,
       currency: sorted(records.map((record) => record.price?.currency)),
       priceBasis: sorted(records.map((record) => record.price?.basis))
     },
@@ -281,7 +335,7 @@ export function buildCoverageReport(records, { inputDigest, schemaVersion, cover
     sourceIds,
     rightsIds: sorted(records.map((record) => record.rightsId)),
     transactionTypeCounts: countBy(records, (record) => record.transactionType),
-    propertyTypeCounts: countBy(records, (record) => record.propertyType),
+    propertyTypeCounts: countBy(records, (record) => record.propertyType, allPropertyTypes),
     currencyCounts: countBy(records, (record) => record.price?.currency),
     priceBasisCounts: countBy(records, (record) => record.price?.basis),
     coarseGeographies: allGeographies,
@@ -289,6 +343,7 @@ export function buildCoverageReport(records, { inputDigest, schemaVersion, cover
     periodCounts,
     sourceByPeriodCounts,
     geographyByPeriodCounts,
+    propertyTypeByPeriodCounts,
     limitation: LIMITATION
   };
 }
