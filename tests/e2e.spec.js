@@ -634,9 +634,108 @@ test('weak manat scenario changes the illustrative USD sensitivity', async ({ pa
   await page.locator('#scenarioCurrency').selectOption('weak');
   await expect(page.locator('#scenarioOutput')).toContainText('White City / Khatai: 110%');
   await expect(page.locator('#scenarioOutput')).not.toContainText('White City / Khatai: 140%');
-  await expect(page.locator('#accordion-scenarios .tool-note')).toContainText('20% illustrative USD-value adjustment');
+  await expect(page.locator('#accordion-scenarios .tool-card:nth-child(2) > .tool-note')).toContainText('20% illustrative USD-value adjustment');
   await page.locator('#scenarioCurrency').selectOption('stable');
   await expect(page.locator('#scenarioOutput')).toContainText('White City / Khatai: 140%');
+});
+
+test('scenario breakdown exposes the editorial baseline and exact fixed modifiers', async ({ page }) => {
+  await page.goto('./?cache=e2e-scenario-breakdown&testHooks=1#z=whitecity&y=2026&lang=en');
+  await waitForMap(page);
+
+  const breakdown = await page.evaluate(() => window.__V3TestHooks.getScenarioBreakdown('whitecity', {
+    oil: 'bad',
+    infra: 'late',
+    cur: 'weak'
+  }));
+
+  expect(breakdown.baseGrowth).toBe(140);
+  expect(breakdown.modifiers).toEqual({
+    oil: { option: 'bad', multiplier: 0.8 },
+    infra: { option: 'late', multiplier: 0.72 },
+    cur: { option: 'weak', multiplier: 0.8 }
+  });
+  expect(breakdown.rawGrowth).toBeCloseTo(64.512, 6);
+  expect(breakdown.roundedGrowth).toBe(65);
+  expect(breakdown.roundingIncrement).toBe(5);
+});
+
+test('scenario selections load from and round-trip through the shareable hash', async ({ page }) => {
+  await page.goto('./?cache=e2e-scenario-hash#z=whitecity&y=2026&lang=en&oil=bad&infra=late&cur=weak');
+  await waitForMap(page);
+  await page.locator('#accordion-scenarios .accordion-summary').click();
+  await expect(page.locator('#scenarioOil')).toHaveValue('bad');
+  await expect(page.locator('#scenarioInfra')).toHaveValue('late');
+  await expect(page.locator('#scenarioCurrency')).toHaveValue('weak');
+  await expect(page.locator('#scenarioOutput')).toContainText('65%');
+
+  await page.locator('#scenarioOil').selectOption('good');
+  await expect(page).toHaveURL(/oil=good/);
+  await expect(page).toHaveURL(/infra=late/);
+  await expect(page).toHaveURL(/cur=weak/);
+});
+
+test('invalid scenario hash values fall back to existing defaults', async ({ page }) => {
+  await page.goto('./?cache=e2e-scenario-invalid#z=whitecity&y=2026&lang=en&oil=extreme&infra=never&cur=unknown');
+  await waitForMap(page);
+  await page.locator('#accordion-scenarios .accordion-summary').click();
+  await expect(page.locator('#scenarioOil')).toHaveValue('norm');
+  await expect(page.locator('#scenarioInfra')).toHaveValue('on');
+  await expect(page.locator('#scenarioCurrency')).toHaveValue('stable');
+  await expect(page.locator('#scenarioOutput')).toContainText('140%');
+});
+
+test('legacy hashes without scenario fields preserve existing defaults', async ({ page }) => {
+  await page.goto('./?cache=e2e-scenario-legacy#z=whitecity&y=2026&lang=en&heat=0&metro=1');
+  await waitForMap(page);
+  await page.locator('#accordion-scenarios .accordion-summary').click();
+  await expect(page.locator('#scenarioOil')).toHaveValue('norm');
+  await expect(page.locator('#scenarioInfra')).toHaveValue('on');
+  await expect(page.locator('#scenarioCurrency')).toHaveValue('stable');
+});
+
+test('fixed Turkish entry preserves scenario hash values while overriding language', async ({ page }) => {
+  await page.goto('./tr/?cache=e2e-scenario-fixed-tr#z=whitecity&y=2026&lang=en&oil=bad&infra=late&cur=weak');
+  await waitForMap(page);
+  await expect(page.locator('html')).toHaveAttribute('lang', 'tr');
+  await page.locator('#accordion-scenarios .accordion-summary').click();
+  await expect(page.locator('#scenarioOil')).toHaveValue('bad');
+  await expect(page.locator('#scenarioInfra')).toHaveValue('late');
+  await expect(page.locator('#scenarioCurrency')).toHaveValue('weak');
+  await expect(page.locator('#scenarioOutput')).toContainText('%65');
+});
+
+test('scenario output explains its editorial baseline, modifiers, rounding, and limitation', async ({ page }) => {
+  await page.goto('./?cache=e2e-scenario-explanation#z=whitecity&y=2026&lang=en&oil=bad&infra=late&cur=weak');
+  await waitForMap(page);
+  await page.locator('#accordion-scenarios .accordion-summary').click();
+  const breakdown = page.locator('#scenarioBreakdown');
+  await expect(breakdown).toHaveAttribute('data-scenario-base', '140');
+  await expect(breakdown).toHaveAttribute('data-scenario-result', '65');
+  await expect(breakdown).toContainText('Editorial scenario baseline');
+  await expect(breakdown).toContainText('×0.80');
+  await expect(breakdown).toContainText('×0.72');
+  await expect(breakdown).toContainText('Rounded to the nearest 5 percentage points');
+  await expect(breakdown).toContainText('not a valuation or forecast');
+
+  await engage(page);
+  await page.locator('#langTr').click();
+  await expect(page.locator('#scenarioBreakdown')).toContainText('Editoryal senaryo başlangıcı');
+  await expect(page.locator('#scenarioBreakdown')).toContainText('değerleme veya tahmin değildir');
+});
+
+test('sources disclose the scenario method in both languages', async ({ page }) => {
+  await page.goto('./?cache=e2e-scenario-method#z=whitecity&y=2026&lang=en');
+  await waitForMap(page);
+  await page.locator('#accordion-sources .accordion-summary').click();
+  await expect(page.locator('.scenario-methodology')).toContainText('editorial growth assumption');
+  await expect(page.locator('.scenario-methodology')).toContainText('does not statistically derive');
+  await expect(page.locator('.scenario-methodology')).toContainText('not trained on property transactions');
+
+  await engage(page);
+  await page.locator('#langTr').click();
+  await expect(page.locator('.scenario-methodology')).toContainText('editoryal bir büyüme varsayımı');
+  await expect(page.locator('.scenario-methodology')).toContainText('istatistiksel olarak üretmez');
 });
 
 test('Zikh deal checker uses the explicit scenario growth in its dollar output', async ({ page }) => {

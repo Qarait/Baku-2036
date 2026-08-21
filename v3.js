@@ -265,6 +265,13 @@
     renderAllContent();
   }
 
+  const SCENARIO_MODIFIERS = Object.freeze({
+    oil: Object.freeze({ norm: 1, bad: 0.8, good: 1.15 }),
+    infra: Object.freeze({ on: 1, late: 0.72 }),
+    cur: Object.freeze({ stable: 1, weak: 0.8 })
+  });
+  const SCENARIO_ROUNDING_INCREMENT = 5;
+
   function scenarioBaseGrowth(zone) {
     const growthPct = Number(zone?.growthPct);
     if (!Number.isFinite(growthPct)) throw new Error('Zone is missing numeric growthPct: ' + (zone?.id || 'unknown'));
@@ -278,12 +285,31 @@
     return [prefix, qualifier].filter(Boolean).join(' ');
   }
 
+  function scenarioOption(group, requested) {
+    const options = SCENARIO_MODIFIERS[group];
+    const fallback = group === 'oil' ? 'norm' : group === 'infra' ? 'on' : 'stable';
+    return Object.prototype.hasOwnProperty.call(options, requested) ? requested : fallback;
+  }
+
+  function scenarioBreakdown(zone, scenarios = {}) {
+    const baseGrowth = scenarioBaseGrowth(zone);
+    const selected = {
+      oil: scenarioOption('oil', scenarios.oil),
+      infra: scenarioOption('infra', scenarios.infra),
+      cur: scenarioOption('cur', scenarios.cur)
+    };
+    const modifiers = {
+      oil: { option: selected.oil, multiplier: SCENARIO_MODIFIERS.oil[selected.oil] },
+      infra: { option: selected.infra, multiplier: SCENARIO_MODIFIERS.infra[selected.infra] },
+      cur: { option: selected.cur, multiplier: SCENARIO_MODIFIERS.cur[selected.cur] }
+    };
+    const rawGrowth = baseGrowth * modifiers.oil.multiplier * modifiers.infra.multiplier * modifiers.cur.multiplier;
+    const roundedGrowth = Math.round(rawGrowth / SCENARIO_ROUNDING_INCREMENT) * SCENARIO_ROUNDING_INCREMENT;
+    return { baseGrowth, modifiers, rawGrowth, roundedGrowth, roundingIncrement: SCENARIO_ROUNDING_INCREMENT };
+  }
+
   function scenarioGrowth(zone) {
-    const base = scenarioBaseGrowth(zone);
-    const oil = state.scenarios.oil === 'bad' ? .8 : state.scenarios.oil === 'good' ? 1.15 : 1;
-    const infra = state.scenarios.infra === 'late' ? .72 : 1;
-    const currency = state.scenarios.cur === 'weak' ? .8 : 1;
-    return Math.round(base * oil * infra * currency / 5) * 5;
+    return scenarioBreakdown(zone, state.scenarios).roundedGrowth;
   }
 
 
@@ -922,20 +948,49 @@
     input.parentElement.appendChild(hint);
   }
 
+  function scenarioGroupLabel(ui, group) {
+    return group === 'oil' ? (ui.scOil || 'Oil money') : group === 'infra' ? (ui.scInfra || 'Metro & roads') : (ui.scCur || 'Manat');
+  }
+
+  function scenarioOptionLabel(ui, group, option) {
+    const keys = {
+      oil: { norm: 'scNorm', bad: 'scBad', good: 'scGood' },
+      infra: { on: 'scOn', late: 'scLate' },
+      cur: { stable: 'scStable', weak: 'scWeak' }
+    };
+    const fallbacks = {
+      norm: 'Normal', bad: 'Bad years', good: 'Boom years',
+      on: 'Built on time', late: 'Years late', stable: 'Stays stable', weak: 'Loses value'
+    };
+    return ui[keys[group][option]] || fallbacks[option];
+  }
+
   function renderScenarios() {
     const content = atlasCopy();
     const labels = content.labels || {};
     const ui = content.ui || {};
     const current = state.scenarios;
     const selectedZone = state.selected?.zone?.zone;
+    const breakdown = selectedZone ? scenarioBreakdown(selectedZone, current) : null;
     const scenarioOutput = selectedZone
       ? ((state.lang === 'tr' ? selectedZone.nameTr : selectedZone.nameEn) + ': ' + (state.lang === 'tr' ? '%' + scenarioGrowth(selectedZone) : scenarioGrowth(selectedZone) + '%') + ' ' + (labels.scenarioOutput || 'illustrative growth sensitivity'))
       : labels.noData;
+    const modifierRows = breakdown ? Object.entries(breakdown.modifiers).map(([group, item]) =>
+      '<div class="scenario-modifier"><span>' + escapeHtml(scenarioGroupLabel(ui, group)) + ': ' + escapeHtml(scenarioOptionLabel(ui, group, item.option)) + '</span><strong>×' + item.multiplier.toFixed(2) + '</strong></div>'
+    ).join('') : '';
+    const breakdownHtml = breakdown
+      ? '<div id="scenarioBreakdown" data-scenario-base="' + breakdown.baseGrowth + '" data-scenario-result="' + breakdown.roundedGrowth + '">' +
+        '<p><strong>' + escapeHtml(labels.editorialBaseline || 'Editorial scenario baseline') + ':</strong> ' + breakdown.baseGrowth + '%</p>' +
+        '<div><strong>' + escapeHtml(labels.activeModifiers || 'Sensitivity modifiers') + '</strong>' + modifierRows + '</div>' +
+        '<p><strong>' + escapeHtml(labels.calculatedResult || 'Illustrative sensitivity result') + ':</strong> ' + breakdown.roundedGrowth + '%</p>' +
+        '<p>' + escapeHtml(labels.roundingRule || 'Rounded to the nearest 5 percentage points') + '</p>' +
+        '<div class="tool-note">' + escapeHtml(labels.scenarioMethodWarning || 'This calculation uses an editorial zone baseline and fixed sensitivity multipliers. It is not trained on property transactions and is not a valuation or forecast.') + '</div></div>'
+      : '';
     return '<div class="tool-grid"><div class="tool-card"><h3>' + escapeHtml(content.sections.scenarios.title) + '</h3><p>' + escapeHtml(content.sections.scenarios.whatThisMeans) + '</p>' +
       '<label>' + escapeHtml(ui.scOil || 'Oil money') + '<select id="scenarioOil"><option value="norm"' + (current.oil === 'norm' ? ' selected' : '') + '>' + escapeHtml(ui.scNorm || 'Normal') + '</option><option value="bad"' + (current.oil === 'bad' ? ' selected' : '') + '>' + escapeHtml(ui.scBad || 'Bad years') + '</option><option value="good"' + (current.oil === 'good' ? ' selected' : '') + '>' + escapeHtml(ui.scGood || 'Boom years') + '</option></select></label>' +
       '<label>' + escapeHtml(ui.scInfra || 'Metro & roads') + '<select id="scenarioInfra"><option value="on"' + (current.infra === 'on' ? ' selected' : '') + '>' + escapeHtml(ui.scOn || 'Built on time') + '</option><option value="late"' + (current.infra === 'late' ? ' selected' : '') + '>' + escapeHtml(ui.scLate || 'Years late') + '</option></select></label>' +
       '<label>' + escapeHtml(ui.scCur || 'Manat') + '<select id="scenarioCurrency"><option value="stable"' + (current.cur === 'stable' ? ' selected' : '') + '>' + escapeHtml(ui.scStable || 'Stays stable') + '</option><option value="weak"' + (current.cur === 'weak' ? ' selected' : '') + '>' + escapeHtml(ui.scWeak || 'Loses value') + '</option></select></label></div>' +
-      '<div class="tool-card"><h3>' + escapeHtml(labels.sensitivity || 'Sensitivity, not a forecast') + '</h3><p id="scenarioOutput">' + escapeHtml(scenarioOutput) + '</p><div class="tool-note">' + escapeHtml(ui.scNoteWeak || labels.noAdvice) + '</div></div></div>';
+      '<div class="tool-card"><h3>' + escapeHtml(labels.sensitivity || 'Sensitivity, not a forecast') + '</h3><p id="scenarioOutput">' + escapeHtml(scenarioOutput) + '</p>' + breakdownHtml + '<div class="tool-note">' + escapeHtml(ui.scNoteWeak || labels.noAdvice) + '</div></div></div>';
   }
 
   function plannerBuyingText(zone, budget) {
@@ -1030,7 +1085,9 @@
   function renderSources() {
     const content = atlasCopy();
     const labels = content.labels || {};
-    return '<div class="source-list">' + evidenceLegend() + '<p><strong>' + escapeHtml(labels.geography || 'Geography') + ':</strong> ' + escapeHtml(labels.geographyNote || 'Baku and Absheron rayon polygons, local PMTiles basemap, and the offline place gazetteer in data/.') + '</p><p><strong>' + escapeHtml(labels.projects || 'Projects') + ':</strong> ' + escapeHtml(labels.projectsNote || 'Built, funded, planned, and scenario-only labels are kept separate in the shared zone briefs. Planned lines and sensitivities must be verified before any purchase.') + '</p><p><strong>' + escapeHtml(labels.howToReadCircles || 'How to read the circles') + ':</strong> ' + escapeHtml(content.sections.sources.whatThisMeans) + '</p><div class="disclaimer-box">' + escapeHtml(content.disclaimer) + '</div></div>';
+    const sourceSection = content.sections.sources || {};
+    const methodology = '<section class="scenario-methodology"><h3>' + escapeHtml(sourceSection.scenarioMethodTitle || 'How the scenario calculation works') + '</h3><p>' + escapeHtml(sourceSection.scenarioMethodBody || 'Each zone starts with an editorial growth assumption. Fixed sensitivity multipliers are applied and rounded to the nearest 5 percentage points. This is not a valuation or forecast.') + '</p></section>';
+    return '<div class="source-list">' + evidenceLegend() + '<p><strong>' + escapeHtml(labels.geography || 'Geography') + ':</strong> ' + escapeHtml(labels.geographyNote || 'Baku and Absheron rayon polygons, local PMTiles basemap, and the offline place gazetteer in data/.') + '</p><p><strong>' + escapeHtml(labels.projects || 'Projects') + ':</strong> ' + escapeHtml(labels.projectsNote || 'Built, funded, planned, and scenario-only labels are kept separate in the shared zone briefs. Planned lines and sensitivities must be verified before any purchase.') + '</p><p><strong>' + escapeHtml(labels.howToReadCircles || 'How to read the circles') + ':</strong> ' + escapeHtml(sourceSection.whatThisMeans) + '</p>' + methodology + '<div class="disclaimer-box">' + escapeHtml(content.disclaimer) + '</div></div>';
   }
 
   function setAccordion(sectionId, forceOpen = false) {
@@ -1075,7 +1132,8 @@
 
   function setScenario(key, value) {
     if (!['oil', 'infra', 'cur'].includes(key)) return;
-    state.scenarios[key] = value;
+    state.scenarios[key] = scenarioOption(key, value);
+    updateHash();
     renderAllContent();
     renderPanel();
   }
@@ -1151,6 +1209,9 @@
     const params = new URLSearchParams();
     if (state.selected?.zone?.zone?.id) params.set('z', state.selected.zone.zone.id); else if (state.hashZone) params.set('z', state.hashZone);
     params.set('y', String(state.year)); params.set('lang', state.lang); params.set('heat', state.heat ? '1' : '0'); params.set('metro', state.metro ? '1' : '0');
+    params.set('oil', scenarioOption('oil', state.scenarios.oil));
+    params.set('infra', scenarioOption('infra', state.scenarios.infra));
+    params.set('cur', scenarioOption('cur', state.scenarios.cur));
     history.replaceState(null, '', `${location.pathname}${location.search}#${params.toString()}`);
   }
 
@@ -1162,6 +1223,9 @@
     const year = Number(params.get('y')); if (Number.isInteger(year) && year >= 2026 && year <= 2036) state.year = year;
     if (params.get('heat') === '1' || params.get('heat') === '0') state.heat = params.get('heat') === '1';
     if (params.get('metro') === '1' || params.get('metro') === '0') state.metro = params.get('metro') === '1';
+    state.scenarios.oil = scenarioOption('oil', params.get('oil'));
+    state.scenarios.infra = scenarioOption('infra', params.get('infra'));
+    state.scenarios.cur = scenarioOption('cur', params.get('cur'));
     const zoneId = params.get('z'); if (zoneId) state.hashZone = zoneId;
   }
 
@@ -1511,7 +1575,12 @@
         activeStations: activeMetroStations(year).map(station => ({ id: station.id, nameEn: station.nameEn, builtYear: station.builtYear, source: station.source, line: station.line, color: station.color })),
         lines: metroLineFeatures().map(feature => feature.properties),
         story: citySimulationSnapshot(year)
-      })
+      }),
+      getScenarioBreakdown: (zoneId, scenarios) => {
+        const zone = zones.find(item => item.id === zoneId);
+        if (!zone) throw new Error('Unknown zone: ' + zoneId);
+        return scenarioBreakdown(zone, scenarios);
+      }
     };
   }
   boot();
