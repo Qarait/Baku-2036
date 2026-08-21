@@ -376,11 +376,47 @@ test('reports rejected records only as safe invalid missingness counts and prese
 
   assert.equal(report.fields['price.amount'].invalid, 1);
   assert.equal(report.fields.characteristics.missing, 0);
-  assert.equal(report.breakdowns.source['source-synthetic-fixture'].fields['price.amount'].invalid, 0);
+  assert.equal(report.breakdowns.source['source-synthetic-fixture'].fields['price.amount'].invalid, 1);
   assert.deepEqual(result.records, validBefore);
   assert.deepEqual(result.rejected, rejectedBefore);
   assert.equal(JSON.stringify(report).includes('observation-synthetic-invalid'), false);
   assert.equal(JSON.stringify(report).includes('250000'), false);
+});
+
+test('breaks down dotted-ID invalid records safely by month, quarter, source, type, property, and coarse location', () => {
+  const valid = {
+    ...validObservation,
+    observationId: 'observation-synthetic-unknown-location',
+    location: { precision: 'unknown' }
+  };
+  const invalid = {
+    ...validObservation,
+    observationId: 'observation.synthetic.invalid',
+    sourceId: 'source-synthetic-breakdown',
+    transactionType: 'completed_sale',
+    eventDate: '2026-02-10',
+    observedAt: '2026-02-11',
+    propertyType: 'house',
+    location: { geography: 'synthetic-zone-breakdown', precision: 'zone' },
+    price: { ...validObservation.price, amount: 0 }
+  };
+  const result = observationResult([valid, invalid]);
+  const report = buildMissingnessReport(result.records, {
+    inputDigest: 'digest-synthetic',
+    schemaVersion: '1.0',
+    rejectedRecords: result.rejected
+  });
+
+  assert.equal(report.fields['location.precision'].explicitUnknown, 1);
+  assert.equal(report.fields.eventDate.notApplicable, 1);
+  assert.equal(report.fields['price.amount'].invalid, 1);
+  assert.equal(report.breakdowns.source['source-synthetic-breakdown'].fields['price.amount'].invalid, 1);
+  assert.equal(report.breakdowns.month['2026-02'].fields['price.amount'].invalid, 1);
+  assert.equal(report.breakdowns.quarter['2026-Q1'].fields['price.amount'].invalid, 1);
+  assert.equal(report.breakdowns.transactionType.completed_sale.fields['price.amount'].invalid, 1);
+  assert.equal(report.breakdowns.propertyType.house.fields['price.amount'].invalid, 1);
+  assert.equal(report.breakdowns.coarseLocation['synthetic-zone-breakdown'].fields['price.amount'].invalid, 1);
+  assert.equal(JSON.stringify(report).includes('observation.synthetic.invalid'), false);
 });
 
 test('reports configured zero coverage cells and report metadata without mutating records', () => {

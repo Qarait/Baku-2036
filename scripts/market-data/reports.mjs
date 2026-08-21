@@ -9,6 +9,8 @@ const FIELD_PATHS = [
   'characteristics', 'characteristics.rooms', 'characteristics.bedrooms',
   'characteristics.bathrooms', 'characteristics.condition'
 ];
+const TRANSACTION_TYPES = new Set(['asking', 'completed_sale']);
+const PROPERTY_TYPES = new Set(['apartment', 'house', 'land', 'commercial', 'other']);
 
 function compare(left, right) {
   return String(left).localeCompare(String(right));
@@ -29,6 +31,25 @@ function readPath(record, path) {
 function coarseLocation(record) {
   if (record?.location?.precision === 'unknown') return undefined;
   return record?.location?.geography ?? record?.location?.district ?? record?.location?.zoneId;
+}
+
+function validObservedAt(value) {
+  return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value);
+}
+
+function monthFor(record) {
+  return validObservedAt(record?.observedAt) ? record.observedAt.slice(0, 7) : undefined;
+}
+
+function quarterFor(record) {
+  if (!validObservedAt(record?.observedAt)) return undefined;
+  return `${record.observedAt.slice(0, 4)}-Q${Math.floor((Number(record.observedAt.slice(5, 7)) - 1) / 3) + 1}`;
+}
+
+function safeCoarseLocation(record) {
+  if (!['district', 'zone'].includes(record?.location?.precision)) return undefined;
+  const value = coarseLocation(record);
+  return nonEmptyString(value) ? value : undefined;
 }
 
 function periodFor(date, periods) {
@@ -81,18 +102,24 @@ function fingerprint(record) {
   });
 }
 
+function invalidFieldsForRejected(rejected) {
+  const invalidFields = new Set();
+  const observationId = rejected?.record?.observationId;
+  const prefix = nonEmptyString(observationId) ? `observations/${observationId}.` : undefined;
+  for (const reportError of rejected?.errors ?? []) {
+    const path = typeof reportError?.path === 'string' ? reportError.path : '';
+    const tail = prefix && path.startsWith(prefix) ? path.slice(prefix.length) : '';
+    for (const field of FIELD_PATHS) {
+      if (tail === field || tail.startsWith(`${field}.`) || field.startsWith(`${tail}.`)) invalidFields.add(field);
+    }
+  }
+  return invalidFields;
+}
+
 function errorFieldPaths(rejectedRecords) {
   const fields = new Map(FIELD_PATHS.map((field) => [field, 0]));
   for (const rejected of rejectedRecords ?? []) {
-    const invalidFields = new Set();
-    for (const reportError of rejected?.errors ?? []) {
-      const separator = typeof reportError?.path === 'string' ? reportError.path.indexOf('.') : -1;
-      const tail = separator === -1 ? '' : reportError.path.slice(separator + 1);
-      for (const field of FIELD_PATHS) {
-        if (tail === field || tail.startsWith(`${field}.`) || field.startsWith(`${tail}.`)) invalidFields.add(field);
-      }
-    }
-    for (const field of invalidFields) fields.set(field, fields.get(field) + 1);
+    for (const field of invalidFieldsForRejected(rejected)) fields.set(field, fields.get(field) + 1);
   }
   return fields;
 }
@@ -119,20 +146,28 @@ function summarizeFields(records, invalidByField = new Map(), rejectedCount = 0)
   }));
 }
 
-function missingnessBreakdowns(records) {
+function missingnessBreakdowns(records, rejectedRecords) {
   const dimensions = {
-    source: (record) => record.sourceId,
-    period: (record) => record.observedAt?.slice(0, 7),
-    transactionType: (record) => record.transactionType,
-    propertyType: (record) => record.propertyType,
-    coarseLocation
+    source: (record) => nonEmptyString(record?.sourceId) ? record.sourceId : undefined,
+    month: monthFor,
+    quarter: quarterFor,
+    transactionType: (record) => TRANSACTION_TYPES.has(record?.transactionType) ? record.transactionType : undefined,
+    propertyType: (record) => PROPERTY_TYPES.has(record?.propertyType) ? record.propertyType : undefined,
+    coarseLocation: safeCoarseLocation
   };
   return Object.fromEntries(Object.entries(dimensions).map(([name, keyFor]) => {
-    const groups = groupBy(records, keyFor);
-    return [name, Object.fromEntries([...groups.entries()].sort(([left], [right]) => compare(left, right)).map(([key, group]) => [
-      key,
-      { recordCount: group.length, fields: summarizeFields(group) }
-    ]))];
+    const validGroups = groupBy(records, keyFor);
+    const rejectedGroups = groupBy(rejectedRecords, (rejected) => keyFor(rejected?.record));
+    const keys = sorted([...validGroups.keys(), ...rejectedGroups.keys()]);
+    return [name, Object.fromEntries(keys.map((key) => {
+      const validRecords = validGroups.get(key) ?? [];
+      const rejected = rejectedGroups.get(key) ?? [];
+      return [key, {
+        recordCount: validRecords.length,
+        rejectedRecordCount: rejected.length,
+        fields: summarizeFields(validRecords, errorFieldPaths(rejected), rejected.length)
+      }];
+    }))];
   }));
 }
 
@@ -170,7 +205,7 @@ export function buildMissingnessReport(records, { inputDigest, schemaVersion, re
     validRecordCount: records.length,
     rejectedRecordCount: rejectedRecords.length,
     fields: summarizeFields(records, invalidByField, rejectedRecords.length),
-    breakdowns: missingnessBreakdowns(records)
+    breakdowns: missingnessBreakdowns(records, rejectedRecords)
   };
 }
 
