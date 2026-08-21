@@ -265,6 +265,13 @@
     renderAllContent();
   }
 
+  const SCENARIO_MODIFIERS = Object.freeze({
+    oil: Object.freeze({ norm: 1, bad: 0.8, good: 1.15 }),
+    infra: Object.freeze({ on: 1, late: 0.72 }),
+    cur: Object.freeze({ stable: 1, weak: 0.8 })
+  });
+  const SCENARIO_ROUNDING_INCREMENT = 5;
+
   function scenarioBaseGrowth(zone) {
     const growthPct = Number(zone?.growthPct);
     if (!Number.isFinite(growthPct)) throw new Error('Zone is missing numeric growthPct: ' + (zone?.id || 'unknown'));
@@ -278,12 +285,31 @@
     return [prefix, qualifier].filter(Boolean).join(' ');
   }
 
+  function scenarioOption(group, requested) {
+    const options = SCENARIO_MODIFIERS[group];
+    const fallback = group === 'oil' ? 'norm' : group === 'infra' ? 'on' : 'stable';
+    return Object.prototype.hasOwnProperty.call(options, requested) ? requested : fallback;
+  }
+
+  function scenarioBreakdown(zone, scenarios = {}) {
+    const baseGrowth = scenarioBaseGrowth(zone);
+    const selected = {
+      oil: scenarioOption('oil', scenarios.oil),
+      infra: scenarioOption('infra', scenarios.infra),
+      cur: scenarioOption('cur', scenarios.cur)
+    };
+    const modifiers = {
+      oil: { option: selected.oil, multiplier: SCENARIO_MODIFIERS.oil[selected.oil] },
+      infra: { option: selected.infra, multiplier: SCENARIO_MODIFIERS.infra[selected.infra] },
+      cur: { option: selected.cur, multiplier: SCENARIO_MODIFIERS.cur[selected.cur] }
+    };
+    const rawGrowth = baseGrowth * modifiers.oil.multiplier * modifiers.infra.multiplier * modifiers.cur.multiplier;
+    const roundedGrowth = Math.round(rawGrowth / SCENARIO_ROUNDING_INCREMENT) * SCENARIO_ROUNDING_INCREMENT;
+    return { baseGrowth, modifiers, rawGrowth, roundedGrowth, roundingIncrement: SCENARIO_ROUNDING_INCREMENT };
+  }
+
   function scenarioGrowth(zone) {
-    const base = scenarioBaseGrowth(zone);
-    const oil = state.scenarios.oil === 'bad' ? .8 : state.scenarios.oil === 'good' ? 1.15 : 1;
-    const infra = state.scenarios.infra === 'late' ? .72 : 1;
-    const currency = state.scenarios.cur === 'weak' ? .8 : 1;
-    return Math.round(base * oil * infra * currency / 5) * 5;
+    return scenarioBreakdown(zone, state.scenarios).roundedGrowth;
   }
 
 
@@ -1511,7 +1537,12 @@
         activeStations: activeMetroStations(year).map(station => ({ id: station.id, nameEn: station.nameEn, builtYear: station.builtYear, source: station.source, line: station.line, color: station.color })),
         lines: metroLineFeatures().map(feature => feature.properties),
         story: citySimulationSnapshot(year)
-      })
+      }),
+      getScenarioBreakdown: (zoneId, scenarios) => {
+        const zone = zones.find(item => item.id === zoneId);
+        if (!zone) throw new Error('Unknown zone: ' + zoneId);
+        return scenarioBreakdown(zone, scenarios);
+      }
     };
   }
   boot();
