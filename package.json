@@ -3,6 +3,9 @@
   "private": true,
   "scripts": {
     "test": "playwright test",
+    "test:market-data": "node --test tests/market-data-contract.test.mjs",
+    "validate:market-data": "node scripts/validate-market-data.mjs",
+    "report:market-data": "node scripts/report-market-data.mjs --out-dir research/market-data/generated",
     "test:headed": "playwright test --headed",
     "measure:performance": "node scripts/measure-performance.js",
     "record:howto": "node scripts/record-how-to.js"
