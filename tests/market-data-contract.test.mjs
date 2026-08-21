@@ -526,11 +526,25 @@ test('CLI reports write deterministic safe files for default synthetic fixtures'
     assert.deepEqual(firstReports, secondReports);
 
     const reports = Object.values(firstReports);
+    const parsedReports = Object.fromEntries(Object.entries(firstReports).map(([fileName, report]) => [fileName, JSON.parse(report)]));
     const digests = reports.map((report) => JSON.parse(report).inputDigest);
     assert.equal(new Set(digests).size, 1);
+    for (const report of Object.values(parsedReports)) {
+      assert.equal(report.schemaVersion, '1.0');
+      assert.equal(typeof report.inputDigest, 'string');
+      assert.equal(typeof report.counts, 'object');
+      assert.equal(typeof report.dimensions, 'object');
+      assert.equal(report.limitation, 'Observed records are not automatically a representative sample of the Baku market.');
+    }
+    assert.deepEqual(Object.keys(parsedReports['duplicates.json'].dimensions).sort(), ['exact', 'probable']);
+    assert.deepEqual(Object.keys(parsedReports['missingness.json'].dimensions).sort(), ['coarseLocation', 'field', 'month', 'propertyType', 'quarter', 'source', 'transactionType']);
+    assert.deepEqual(Object.keys(parsedReports['coverage.json'].dimensions).sort(), ['currency', 'geography', 'period', 'priceBasis', 'propertyType', 'source', 'transactionType']);
+    assert.deepEqual(Object.keys(parsedReports['summary.json'].dimensions).sort(), ['recordStatus', 'rights', 'validation']);
     assert.ok(reports.every((report) => report.endsWith('\n')));
     assert.ok(reports.every((report) => !report.includes('101000')));
     assert.ok(reports.every((report) => !report.includes('synthetic-record-001')));
+    assert.ok(reports.every((report) => !report.includes('"price": {')));
+    assert.ok(reports.every((report) => !report.includes('"area": {')));
   } finally {
     rmSync(firstDirectory, { recursive: true, force: true });
     rmSync(secondDirectory, { recursive: true, force: true });

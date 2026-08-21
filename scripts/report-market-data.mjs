@@ -34,12 +34,24 @@ export function runReportCli(argv = process.argv.slice(2)) {
     'summary.json': {
       schemaVersion,
       inputDigest: result.inputDigest,
+      counts: {
+        recordsRead: result.recordsRead,
+        rightsRecordsRead: result.rightsRecordsRead,
+        validRecordCount: result.observations.records.length,
+        rejectedRecordCount: result.observations.rejected.length
+      },
+      dimensions: {
+        validation: result.valid ? ['valid'] : ['invalid'],
+        recordStatus: ['valid', 'rejected'],
+        rights: ['recordsRead']
+      },
       valid: result.valid,
       recordsRead: result.recordsRead,
       rightsRecordsRead: result.rightsRecordsRead,
       validRecordCount: result.observations.records.length,
       rejectedRecordCount: result.observations.rejected.length,
-      errors: result.errors
+      errors: result.errors,
+      limitation: 'Observed records are not automatically a representative sample of the Baku market.'
     }
   };
 

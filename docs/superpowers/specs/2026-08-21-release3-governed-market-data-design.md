@@ -1,7 +1,7 @@
 # Release 3 — Governed market-data foundation
 
-**Status:** Approved concept; implementation specification for review  
-**Date:** 2026-08-21  
+**Status:** Approved concept; implementation specification for review
+**Date:** 2026-08-21
 **Scope:** Private/offline research infrastructure only
 
 ## Purpose

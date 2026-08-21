@@ -188,12 +188,24 @@ export function buildDuplicateReport(records, { inputDigest, schemaVersion } = {
   return {
     schemaVersion,
     inputDigest,
+    counts: {
+      validRecordCount: records.length,
+      retainedRecordCount: records.length,
+      exactDuplicateGroupCount: exactGroups.length,
+      probableFingerprintGroupCount: probableGroups.length,
+      duplicateGroupCount: groups.length
+    },
+    dimensions: {
+      exact: ['sourceId+sourceRecordId'],
+      probable: ['sourceId+transactionType+observedAt+propertyType+price+area+coarseLocation+characteristics']
+    },
     validRecordCount: records.length,
     retainedRecordCount: records.length,
     exactDuplicateGroupCount: exactGroups.length,
     probableFingerprintGroupCount: probableGroups.length,
     duplicateGroupCount: groups.length,
-    groups
+    groups,
+    limitation: LIMITATION
   };
 }
 
@@ -202,10 +214,24 @@ export function buildMissingnessReport(records, { inputDigest, schemaVersion, re
   return {
     schemaVersion,
     inputDigest,
+    counts: {
+      validRecordCount: records.length,
+      rejectedRecordCount: rejectedRecords.length
+    },
+    dimensions: {
+      field: FIELD_PATHS,
+      source: sorted(records.map((record) => record.sourceId)),
+      month: sorted(records.map(monthFor)),
+      quarter: sorted(records.map(quarterFor)),
+      transactionType: sorted(records.map((record) => record.transactionType)),
+      propertyType: sorted(records.map((record) => record.propertyType)),
+      coarseLocation: sorted(records.map(safeCoarseLocation))
+    },
     validRecordCount: records.length,
     rejectedRecordCount: rejectedRecords.length,
     fields: summarizeFields(records, invalidByField, rejectedRecords.length),
-    breakdowns: missingnessBreakdowns(records, rejectedRecords)
+    breakdowns: missingnessBreakdowns(records, rejectedRecords),
+    limitation: LIMITATION
   };
 }
 
@@ -231,6 +257,21 @@ export function buildCoverageReport(records, { inputDigest, schemaVersion, cover
   return {
     schemaVersion,
     inputDigest,
+    counts: {
+      inputRecordCount: records.length + rejectedCount,
+      validRecordCount: records.length,
+      rejectedRecordCount: rejectedCount,
+      reportableRecordCount: records.length
+    },
+    dimensions: {
+      period: framePeriods,
+      geography: allGeographies,
+      source: sourceIds,
+      transactionType: sorted(records.map((record) => record.transactionType)),
+      propertyType: sorted(records.map((record) => record.propertyType)),
+      currency: sorted(records.map((record) => record.price?.currency)),
+      priceBasis: sorted(records.map((record) => record.price?.basis))
+    },
     inputRecordCount: records.length + rejectedCount,
     validRecordCount: records.length,
     rejectedRecordCount: rejectedCount,
