@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 
 import {
   validateRights,
@@ -54,6 +55,22 @@ function rightsResult(records = [validRights], use = intendedUse) {
 function observationResult(records, rights = rightsResult().rightsById) {
   return validateObservations(records, rights, { intendedUse });
 }
+
+function loadFixture(fileName) {
+  return JSON.parse(readFileSync(new URL(`../research/market-data/fixtures/${fileName}`, import.meta.url), 'utf8'));
+}
+
+test('loads versioned fixtures that are explicitly synthetic and not real market data', () => {
+  const observations = loadFixture('synthetic-observations.json');
+  const rights = loadFixture('synthetic-rights.json');
+
+  assert.ok(Array.isArray(observations));
+  assert.ok(Array.isArray(rights));
+  assert.ok(observations.every((record) => record.schemaVersion === '1.0'));
+  assert.ok(rights.every((record) => record.schemaVersion === '1.0'));
+  assert.ok(rights.every((record) => /synthetic/i.test(record.sourceName)));
+  assert.ok(rights.every((record) => /not real market data/i.test(record.sourceName)));
+});
 
 test('accepts a valid synthetic observation with approved rights', () => {
   const result = observationResult([validObservation]);

@@ -1,0 +1,18 @@
+[
+  {
+    "schemaVersion": "1.0",
+    "rightsId": "synthetic-rights-fixture",
+    "sourceId": "synthetic-source-fixture",
+    "sourceName": "Synthetic fixture source — not real market data",
+    "acquisitionBasis": "synthetic",
+    "termsUrl": null,
+    "allowedUses": ["internal_testing"],
+    "rawRedistribution": "not_applicable",
+    "derivedPublication": "not_applicable",
+    "retention": "synthetic_fixture_only",
+    "personalDataHandling": "prohibited",
+    "reviewedAt": "2026-08-21",
+    "reviewer": "synthetic-release3-reviewer",
+    "status": "approved_for_fixture_testing"
+  }
+]

@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.synthetic.invalid/market-data/rights-record/1.0",
+  "title": "Market-data rights record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "rightsId",
+    "sourceId",
+    "sourceName",
+    "acquisitionBasis",
+    "allowedUses",
+    "rawRedistribution",
+    "derivedPublication",
+    "retention",
+    "personalDataHandling",
+    "reviewedAt",
+    "reviewer",
+    "status"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "1.0" },
+    "rightsId": { "type": "string", "minLength": 1 },
+    "sourceId": { "type": "string", "minLength": 1 },
+    "sourceName": { "type": "string", "minLength": 1 },
+    "acquisitionBasis": { "enum": ["synthetic", "licensed", "permission", "public_terms", "internal"] },
+    "termsUrl": { "type": ["string", "null"], "format": "uri", "pattern": "^https?://" },
+    "allowedUses": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "rawRedistribution": { "enum": ["prohibited", "allowed", "not_applicable"] },
+    "derivedPublication": { "enum": ["prohibited", "allowed", "review_required", "not_applicable"] },
+    "retention": { "type": "string", "minLength": 1 },
+    "personalDataHandling": { "enum": ["prohibited", "redacted", "allowed"] },
+    "reviewedAt": { "type": "string", "format": "date" },
+    "reviewer": { "type": "string", "minLength": 1 },
+    "status": { "enum": ["approved_for_fixture_testing", "approved", "restricted", "rejected", "expired"] }
+  }
+}
