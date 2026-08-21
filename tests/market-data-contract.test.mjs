@@ -390,14 +390,14 @@ test('reports rejected records only as safe invalid missingness counts and prese
 
   assert.equal(report.fields['price.amount'].invalid, 1);
   assert.equal(report.fields.characteristics.missing, 0);
-  assert.equal(report.breakdowns.source.__invalid__.fields['price.amount'].invalid, 1);
+  assert.equal(report.rejectedBreakdowns.source.fields['price.amount'].invalid, 1);
   assert.deepEqual(result.records, validBefore);
   assert.deepEqual(result.rejected, rejectedBefore);
   assert.equal(JSON.stringify(report).includes('observation-synthetic-invalid'), false);
   assert.equal(JSON.stringify(report).includes('250000'), false);
 });
 
-test('places dotted-ID invalid records in safe sentinel breakdowns without serializing their dimensions', () => {
+test('places dotted-ID invalid records in safe rejected aggregates without serializing their dimensions', () => {
   const valid = {
     ...validObservation,
     observationId: 'observation-synthetic-unknown-location',
@@ -425,7 +425,7 @@ test('places dotted-ID invalid records in safe sentinel breakdowns without seria
   assert.equal(report.fields.eventDate.notApplicable, 1);
   assert.equal(report.fields['price.amount'].invalid, 1);
   for (const dimension of ['source', 'month', 'quarter', 'transactionType', 'propertyType', 'priceBasis', 'coarseLocation']) {
-    assert.equal(report.breakdowns[dimension].__invalid__.fields['price.amount'].invalid, 1, dimension);
+    assert.equal(report.rejectedBreakdowns[dimension].fields['price.amount'].invalid, 1, dimension);
   }
   assert.equal(JSON.stringify(report).includes('observation.synthetic.invalid'), false);
   assert.equal(JSON.stringify(report).includes('source-synthetic-breakdown'), false);
@@ -627,7 +627,7 @@ test('rechecks a reused rights map against the observation intended use', () => 
   assert.ok(expiredResult.rejected[0].errors.some((reportError) => reportError.code === 'invalid-rights-status'));
 });
 
-test('uses invalid sentinels for rejected missingness dimensions without serializing rejected payload values', () => {
+test('uses safe rejected aggregates for missingness dimensions without serializing rejected payload values', () => {
   const restrictedSource = 'restricted-source-token-canary';
   const restrictedLocation = 'restricted-location-token-canary';
   const restrictedAddress = 'restricted-address-token-canary';
@@ -647,11 +647,11 @@ test('uses invalid sentinels for rejected missingness dimensions without seriali
   });
 
   for (const dimension of ['source', 'month', 'quarter', 'transactionType', 'propertyType', 'coarseLocation', 'priceBasis']) {
-    assert.equal(report.breakdowns[dimension].__invalid__.recordCount, 0, dimension);
-    assert.equal(report.breakdowns[dimension].__invalid__.rejectedRecordCount, 1, dimension);
-    assert.equal(report.breakdowns[dimension].__invalid__.fields['price.basis'].invalid, 1, dimension);
+    assert.equal(report.rejectedBreakdowns[dimension].recordCount, 0, dimension);
+    assert.equal(report.rejectedBreakdowns[dimension].rejectedRecordCount, 1, dimension);
+    assert.equal(report.rejectedBreakdowns[dimension].fields['price.basis'].invalid, 1, dimension);
   }
-  const priceBasis = report.breakdowns.source.__invalid__.fields['price.basis'];
+  const priceBasis = report.rejectedBreakdowns.source.fields['price.basis'];
   assert.equal(priceBasis.present + priceBasis.missing + priceBasis.explicitUnknown + priceBasis.notApplicable, priceBasis.stateDenominator);
   assert.equal(priceBasis.invalid, priceBasis.invalidDenominator);
   assert.equal(priceBasis.rate, 0);
@@ -690,7 +690,7 @@ test('accounts for ID-less rejected records with explicit field and invalid-reco
   assert.equal(report.fields.schemaVersion.invalidDenominator, 2);
   assert.equal(report.fields.schemaVersion.rate, 0);
   assert.equal(report.fields.schemaVersion.invalidRate, 0.5);
-  assert.equal(report.breakdowns.source.__invalid__.rejectedRecordCount, 2);
+  assert.equal(report.rejectedBreakdowns.source.rejectedRecordCount, 2);
 });
 
 test('unions configured and observed coverage periods and emits configured property-type zero cells', () => {
@@ -742,10 +742,10 @@ test('reports price-basis missingness dimensions for valid and rejected records'
     rejectedRecords: result.rejected
   });
 
-  assert.deepEqual(report.dimensions.priceBasis, ['__invalid__', 'per_m2', 'total']);
+  assert.deepEqual(report.dimensions.priceBasis, ['per_m2', 'total']);
   assert.equal(report.breakdowns.priceBasis.total.recordCount, 1);
   assert.equal(report.breakdowns.priceBasis.per_m2.recordCount, 1);
-  assert.equal(report.breakdowns.priceBasis.__invalid__.fields['price.basis'].invalid, 1);
+  assert.equal(report.rejectedBreakdowns.priceBasis.fields['price.basis'].invalid, 1);
 });
 
 test('schemas and executable validation reject whitespace identifiers and encode event and use contracts', () => {
@@ -787,7 +787,82 @@ test('CLI default coverage frame includes observed dimensions and every contract
     assert.equal(coverage.propertyTypeCounts.land, 0);
     assert.ok(Object.values(coverage.propertyTypeByPeriodCounts.land).every((count) => count === 0));
     assert.deepEqual(coverage.dimensions.period, ['2026-01', '2026-02', '2026-03', '2026-04']);
+    assert.ok(coverage.dimensions.period.every((period) => /^\d{4}-(0[1-9]|1[0-2])$/.test(period)));
   } finally {
     rmSync(directory, { recursive: true, force: true });
   }
+});
+
+test('keeps valid __invalid__ missingness dimensions separate from rejected aggregates', () => {
+  const restrictedSource = 'restricted-source-token-canary';
+  const restrictedLocation = 'restricted-location-token-canary';
+  const restrictedPriceBasis = 'restricted-price-basis-token-canary';
+  const restrictedAddress = 'restricted-address-token-canary';
+  const canaryRights = {
+    ...validRights,
+    rightsId: 'rights-synthetic-invalid-dimension-canary',
+    sourceId: '__invalid__'
+  };
+  const validCanary = {
+    ...validObservation,
+    observationId: 'observation-synthetic-invalid-dimension-canary',
+    sourceId: '__invalid__',
+    sourceRecordId: 'record-synthetic-invalid-dimension-canary',
+    rightsId: canaryRights.rightsId,
+    location: { geography: '__invalid__', precision: 'zone' }
+  };
+  const rejected = {
+    ...validObservation,
+    observationId: 'observation-synthetic-rejected-token-canary',
+    sourceId: restrictedSource,
+    price: { ...validObservation.price, basis: restrictedPriceBasis },
+    location: { geography: restrictedLocation, precision: 'zone' },
+    seller: restrictedAddress
+  };
+  const result = observationResult([validCanary, rejected], rightsResult([canaryRights]).rightsById);
+  const report = buildMissingnessReport(result.records, {
+    inputDigest: 'digest-synthetic',
+    schemaVersion: '1.0',
+    rejectedRecords: result.rejected
+  });
+
+  assert.deepEqual(Object.keys(report.breakdowns.source), ['__invalid__']);
+  assert.deepEqual(Object.keys(report.breakdowns.coarseLocation), ['__invalid__']);
+  assert.deepEqual(Object.keys(report.breakdowns.month), ['2026-01']);
+  assert.equal(report.breakdowns.source.__invalid__.recordCount, 1);
+  assert.equal(report.breakdowns.source.__invalid__.rejectedRecordCount, 0);
+  for (const dimension of ['source', 'month', 'quarter', 'transactionType', 'propertyType', 'priceBasis', 'coarseLocation']) {
+    assert.equal(report.rejectedBreakdowns?.[dimension]?.recordCount, 0, dimension);
+    assert.equal(report.rejectedBreakdowns?.[dimension]?.rejectedRecordCount, 1, dimension);
+    assert.equal(report.rejectedBreakdowns?.[dimension]?.fields['price.basis'].invalid, 1, dimension);
+  }
+  const json = JSON.stringify(report);
+  for (const token of [restrictedSource, restrictedLocation, restrictedPriceBasis, restrictedAddress]) {
+    assert.equal(json.includes(token), false, token);
+  }
+});
+
+test('rejects mixed coverage-frame granularities and counts same-granularity records once', () => {
+  const februaryRecord = {
+    ...validObservation,
+    observationId: 'observation-synthetic-february-coverage',
+    sourceRecordId: 'record-synthetic-february-coverage',
+    observedAt: '2026-02-15'
+  };
+  const options = { inputDigest: 'digest-synthetic', schemaVersion: '1.0' };
+
+  assert.throws(
+    () => buildCoverageReport([februaryRecord], {
+      ...options,
+      coverageFrame: { periods: ['2026-02', '2026-Q1'] }
+    }),
+    { name: 'Error', message: 'coverage frame periods must use a single granularity' }
+  );
+
+  const report = buildCoverageReport([februaryRecord], {
+    ...options,
+    coverageFrame: { periods: ['2026-Q1', '2026-Q2'] }
+  });
+  assert.deepEqual(report.periodCounts, { '2026-Q1': 1, '2026-Q2': 0 });
+  assert.equal(Object.values(report.periodCounts).reduce((total, count) => total + count, 0), 1);
 });

@@ -1,7 +1,6 @@
 import { canonicalJson } from './contract.mjs';
 
 const LIMITATION = 'Observed records are not automatically a representative sample of the Baku market.';
-const INVALID_DIMENSION = '__invalid__';
 
 const FIELD_PATHS = [
   'schemaVersion', 'observationId', 'sourceId', 'sourceRecordId', 'rightsId', 'transactionType', 'observedAt', 'eventDate',
@@ -64,7 +63,11 @@ function periodKind(period) {
 }
 
 function configuredPeriods(coverageFrame) {
-  return sorted((coverageFrame.periods ?? []).filter((period) => periodKind(period)));
+  const periods = sorted((coverageFrame.periods ?? []).filter((period) => periodKind(period)));
+  if (periods.length > 0 && new Set(periods.map(periodKind)).size > 1) {
+    throw new Error('coverage frame periods must use a single granularity');
+  }
+  return periods;
 }
 
 function observedCoveragePeriods(records, framePeriods) {
@@ -74,7 +77,7 @@ function observedCoveragePeriods(records, framePeriods) {
 }
 
 function periodMatches(record, period) {
-  return period === monthFor(record) || period === quarterFor(record);
+  return periodKind(period) === 'quarter' ? period === quarterFor(record) : period === monthFor(record);
 }
 
 function countBy(records, valueFor, configured = []) {
@@ -186,24 +189,27 @@ const MISSINGNESS_DIMENSIONS = {
   coarseLocation: safeCoarseLocation
 };
 
-function missingnessBreakdowns(records, rejectedRecords) {
+function missingnessBreakdowns(records) {
   return Object.fromEntries(Object.entries(MISSINGNESS_DIMENSIONS).map(([name, keyFor]) => {
     const validGroups = groupBy(records, keyFor);
-    const keys = sorted([
-      ...validGroups.keys(),
-      ...(rejectedRecords.length > 0 ? [INVALID_DIMENSION] : [])
-    ]);
+    const keys = sorted(validGroups.keys());
     return [name, Object.fromEntries(keys.map((key) => {
       const validRecords = validGroups.get(key) ?? [];
-      const rejected = key === INVALID_DIMENSION ? rejectedRecords : [];
-      const attribution = invalidAttribution(rejected);
       return [key, {
         recordCount: validRecords.length,
-        rejectedRecordCount: rejected.length,
-        fields: summarizeFields(validRecords, attribution, rejected.length)
+        rejectedRecordCount: 0,
+        fields: summarizeFields(validRecords)
       }];
     }))];
   }));
+}
+
+function rejectedMissingnessBreakdowns(rejectedRecords, attribution) {
+  return Object.fromEntries(Object.keys(MISSINGNESS_DIMENSIONS).map((name) => [name, {
+    recordCount: 0,
+    rejectedRecordCount: rejectedRecords.length,
+    fields: summarizeFields([], attribution, rejectedRecords.length)
+  }]));
 }
 
 export function buildDuplicateReport(records, { inputDigest, schemaVersion } = {}) {
@@ -257,10 +263,7 @@ export function buildMissingnessReport(records, { inputDigest, schemaVersion, re
     },
     dimensions: Object.fromEntries(Object.entries(MISSINGNESS_DIMENSIONS).map(([name, keyFor]) => [
       name,
-      sorted([
-        ...records.map(keyFor),
-        ...(rejectedRecords.length > 0 ? [INVALID_DIMENSION] : [])
-      ])
+      sorted(records.map(keyFor))
     ]).concat([['field', FIELD_PATHS]])),
     validRecordCount: records.length,
     rejectedRecordCount: rejectedRecords.length,
@@ -270,7 +273,8 @@ export function buildMissingnessReport(records, { inputDigest, schemaVersion, re
       unattributedRejectedRecordCount: attribution.unattributedRejectedRecordCount
     },
     fields: summarizeFields(records, attribution, rejectedRecords.length),
-    breakdowns: missingnessBreakdowns(records, rejectedRecords),
+    breakdowns: missingnessBreakdowns(records),
+    rejectedBreakdowns: rejectedMissingnessBreakdowns(rejectedRecords, attribution),
     limitation: LIMITATION
   };
 }
