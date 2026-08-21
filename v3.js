@@ -1101,7 +1101,8 @@
 
   function setScenario(key, value) {
     if (!['oil', 'infra', 'cur'].includes(key)) return;
-    state.scenarios[key] = value;
+    state.scenarios[key] = scenarioOption(key, value);
+    updateHash();
     renderAllContent();
     renderPanel();
   }
@@ -1177,6 +1178,9 @@
     const params = new URLSearchParams();
     if (state.selected?.zone?.zone?.id) params.set('z', state.selected.zone.zone.id); else if (state.hashZone) params.set('z', state.hashZone);
     params.set('y', String(state.year)); params.set('lang', state.lang); params.set('heat', state.heat ? '1' : '0'); params.set('metro', state.metro ? '1' : '0');
+    params.set('oil', scenarioOption('oil', state.scenarios.oil));
+    params.set('infra', scenarioOption('infra', state.scenarios.infra));
+    params.set('cur', scenarioOption('cur', state.scenarios.cur));
     history.replaceState(null, '', `${location.pathname}${location.search}#${params.toString()}`);
   }
 
@@ -1188,6 +1192,9 @@
     const year = Number(params.get('y')); if (Number.isInteger(year) && year >= 2026 && year <= 2036) state.year = year;
     if (params.get('heat') === '1' || params.get('heat') === '0') state.heat = params.get('heat') === '1';
     if (params.get('metro') === '1' || params.get('metro') === '0') state.metro = params.get('metro') === '1';
+    state.scenarios.oil = scenarioOption('oil', params.get('oil'));
+    state.scenarios.infra = scenarioOption('infra', params.get('infra'));
+    state.scenarios.cur = scenarioOption('cur', params.get('cur'));
     const zoneId = params.get('z'); if (zoneId) state.hashZone = zoneId;
   }
 

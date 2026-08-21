@@ -660,6 +660,51 @@ test('scenario breakdown exposes the editorial baseline and exact fixed modifier
   expect(breakdown.roundingIncrement).toBe(5);
 });
 
+test('scenario selections load from and round-trip through the shareable hash', async ({ page }) => {
+  await page.goto('./?cache=e2e-scenario-hash#z=whitecity&y=2026&lang=en&oil=bad&infra=late&cur=weak');
+  await waitForMap(page);
+  await page.locator('#accordion-scenarios .accordion-summary').click();
+  await expect(page.locator('#scenarioOil')).toHaveValue('bad');
+  await expect(page.locator('#scenarioInfra')).toHaveValue('late');
+  await expect(page.locator('#scenarioCurrency')).toHaveValue('weak');
+  await expect(page.locator('#scenarioOutput')).toContainText('65%');
+
+  await page.locator('#scenarioOil').selectOption('good');
+  await expect(page).toHaveURL(/oil=good/);
+  await expect(page).toHaveURL(/infra=late/);
+  await expect(page).toHaveURL(/cur=weak/);
+});
+
+test('invalid scenario hash values fall back to existing defaults', async ({ page }) => {
+  await page.goto('./?cache=e2e-scenario-invalid#z=whitecity&y=2026&lang=en&oil=extreme&infra=never&cur=unknown');
+  await waitForMap(page);
+  await page.locator('#accordion-scenarios .accordion-summary').click();
+  await expect(page.locator('#scenarioOil')).toHaveValue('norm');
+  await expect(page.locator('#scenarioInfra')).toHaveValue('on');
+  await expect(page.locator('#scenarioCurrency')).toHaveValue('stable');
+  await expect(page.locator('#scenarioOutput')).toContainText('140%');
+});
+
+test('legacy hashes without scenario fields preserve existing defaults', async ({ page }) => {
+  await page.goto('./?cache=e2e-scenario-legacy#z=whitecity&y=2026&lang=en&heat=0&metro=1');
+  await waitForMap(page);
+  await page.locator('#accordion-scenarios .accordion-summary').click();
+  await expect(page.locator('#scenarioOil')).toHaveValue('norm');
+  await expect(page.locator('#scenarioInfra')).toHaveValue('on');
+  await expect(page.locator('#scenarioCurrency')).toHaveValue('stable');
+});
+
+test('fixed Turkish entry preserves scenario hash values while overriding language', async ({ page }) => {
+  await page.goto('./tr/?cache=e2e-scenario-fixed-tr#z=whitecity&y=2026&lang=en&oil=bad&infra=late&cur=weak');
+  await waitForMap(page);
+  await expect(page.locator('html')).toHaveAttribute('lang', 'tr');
+  await page.locator('#accordion-scenarios .accordion-summary').click();
+  await expect(page.locator('#scenarioOil')).toHaveValue('bad');
+  await expect(page.locator('#scenarioInfra')).toHaveValue('late');
+  await expect(page.locator('#scenarioCurrency')).toHaveValue('weak');
+  await expect(page.locator('#scenarioOutput')).toContainText('%65');
+});
+
 test('Zikh deal checker uses the explicit scenario growth in its dollar output', async ({ page }) => {
   async function checkDeal(expected) {
     await page.locator('#accordion-deal .accordion-summary').click();
