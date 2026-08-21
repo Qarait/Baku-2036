@@ -79,6 +79,28 @@ test('canonicalizes object key order before digesting', () => {
   assert.equal(digestJson(first), digestJson(second));
 });
 
+test('keeps validator outputs identical when equivalent rights and observations are reordered', () => {
+  const secondRights = {
+    ...validRights,
+    rightsId: 'rights-synthetic-fixture-002',
+    sourceId: 'source-synthetic-fixture-002'
+  };
+  const secondObservation = {
+    ...validObservation,
+    observationId: 'observation-synthetic-002',
+    sourceId: secondRights.sourceId,
+    rightsId: secondRights.rightsId,
+    sourceRecordId: 'record-synthetic-002'
+  };
+  const forwardRights = rightsResult([validRights, secondRights]);
+  const reverseRights = rightsResult([secondRights, validRights]);
+  const forwardObservations = observationResult([validObservation, secondObservation], forwardRights.rightsById);
+  const reverseObservations = observationResult([secondObservation, validObservation], reverseRights.rightsById);
+
+  assert.deepEqual(reverseRights, forwardRights);
+  assert.deepEqual(reverseObservations, forwardObservations);
+});
+
 test('rejects observations without a rights reference', () => {
   const result = observationResult([{ ...validObservation, rightsId: 'missing-rights' }]);
 
@@ -127,16 +149,60 @@ test('reports exact duplicate groups by source record key', () => {
   const records = [
     validObservation,
     { ...validObservation, observationId: 'observation-synthetic-002' },
-    { ...validObservation, observationId: 'observation-synthetic-003', sourceRecordId: 'record-synthetic-003' }
+    { ...validObservation, observationId: 'observation-synthetic-003', sourceRecordId: 'record-synthetic-003' },
+    { ...validObservation, observationId: 'observation-synthetic-004', sourceRecordId: 'record-synthetic-004' },
+    { ...validObservation, observationId: 'observation-synthetic-005', sourceRecordId: 'record-synthetic-004' }
   ];
   const report = buildDuplicateReport(records, { inputDigest: 'digest-synthetic', schemaVersion: '1.0' });
 
-  assert.equal(report.duplicateGroupCount, 1);
-  assert.deepEqual(report.groups[0], {
-    kind: 'exact-source-record',
-    key: 'source-synthetic-fixture:record-synthetic-001',
-    observationIds: ['observation-synthetic-001', 'observation-synthetic-002']
-  });
+  assert.equal(report.duplicateGroupCount, 2);
+  assert.deepEqual(report.groups, [
+    {
+      kind: 'exact-source-record',
+      key: 'source-synthetic-fixture:record-synthetic-001',
+      observationIds: ['observation-synthetic-001', 'observation-synthetic-002']
+    },
+    {
+      kind: 'exact-source-record',
+      key: 'source-synthetic-fixture:record-synthetic-004',
+      observationIds: ['observation-synthetic-004', 'observation-synthetic-005']
+    }
+  ]);
+});
+
+test('keeps report outputs identical when records are reordered', () => {
+  const records = [
+    validObservation,
+    { ...validObservation, observationId: 'observation-synthetic-002', sourceRecordId: 'record-synthetic-002' },
+    { ...validObservation, observationId: 'observation-synthetic-003', transactionType: 'completed_sale', eventDate: '2026-02-10', observedAt: '2026-02-11', sourceRecordId: 'record-synthetic-003', location: { geography: 'synthetic-zone-b', precision: 'zone' } }
+  ];
+  const options = {
+    inputDigest: 'digest-synthetic',
+    schemaVersion: '1.0',
+    rejectedRecords: []
+  };
+  const coverageOptions = {
+    ...options,
+    coverageFrame: {
+      periods: ['2026-01', '2026-02'],
+      geographies: ['synthetic-zone-a', 'synthetic-zone-b']
+    },
+    rejectedCount: 0
+  };
+  const reordered = [...records].reverse();
+
+  assert.deepEqual(
+    buildDuplicateReport(reordered, options),
+    buildDuplicateReport(records, options)
+  );
+  assert.deepEqual(
+    buildMissingnessReport(reordered, options),
+    buildMissingnessReport(records, options)
+  );
+  assert.deepEqual(
+    buildCoverageReport(reordered, coverageOptions),
+    buildCoverageReport(records, coverageOptions)
+  );
 });
 
 test('reports omitted optional fields as missingness', () => {
