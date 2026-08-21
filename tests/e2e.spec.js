@@ -802,7 +802,17 @@ test('a valid seventeenth zone still hydrates the investment layer', async ({ pa
   await page.route('**/data/zones.json*', async route => {
     const response = await route.fetch();
     const zones = await response.json();
-    zones.push({ ...zones[0], id: 'test-seventeenth-zone', coords: [49.81, 40.39] });
+    const testZone = JSON.parse(JSON.stringify(zones[0]));
+    testZone.id = 'test-seventeenth-zone';
+    testZone.coords = [49.81, 40.39];
+    const evidenceIdMap = new Map(testZone.evidence.map((evidence, index) => [evidence.id, `test-seventeenth-zone.evidence-${index}`]));
+    testZone.evidence.forEach((evidence, index) => { evidence.id = `test-seventeenth-zone.evidence-${index}`; });
+    testZone.scenarioFactors = testZone.scenarioFactors.map((factor, index) => ({
+      ...factor,
+      id: `test-seventeenth-zone.factor-${index}`,
+      evidenceIds: factor.evidenceIds.map(evidenceId => evidenceIdMap.get(evidenceId))
+    }));
+    zones.push(testZone);
     await route.fulfill({ json: zones });
   });
   await page.goto('./?cache=e2e-seventeenth-zone');
