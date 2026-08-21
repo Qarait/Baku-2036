@@ -634,7 +634,7 @@ test('weak manat scenario changes the illustrative USD sensitivity', async ({ pa
   await page.locator('#scenarioCurrency').selectOption('weak');
   await expect(page.locator('#scenarioOutput')).toContainText('White City / Khatai: 110%');
   await expect(page.locator('#scenarioOutput')).not.toContainText('White City / Khatai: 140%');
-  await expect(page.locator('#accordion-scenarios .tool-note')).toContainText('20% illustrative USD-value adjustment');
+  await expect(page.locator('#accordion-scenarios .tool-card:nth-child(2) > .tool-note')).toContainText('20% illustrative USD-value adjustment');
   await page.locator('#scenarioCurrency').selectOption('stable');
   await expect(page.locator('#scenarioOutput')).toContainText('White City / Khatai: 140%');
 });
@@ -703,6 +703,25 @@ test('fixed Turkish entry preserves scenario hash values while overriding langua
   await expect(page.locator('#scenarioInfra')).toHaveValue('late');
   await expect(page.locator('#scenarioCurrency')).toHaveValue('weak');
   await expect(page.locator('#scenarioOutput')).toContainText('%65');
+});
+
+test('scenario output explains its editorial baseline, modifiers, rounding, and limitation', async ({ page }) => {
+  await page.goto('./?cache=e2e-scenario-explanation#z=whitecity&y=2026&lang=en&oil=bad&infra=late&cur=weak');
+  await waitForMap(page);
+  await page.locator('#accordion-scenarios .accordion-summary').click();
+  const breakdown = page.locator('#scenarioBreakdown');
+  await expect(breakdown).toHaveAttribute('data-scenario-base', '140');
+  await expect(breakdown).toHaveAttribute('data-scenario-result', '65');
+  await expect(breakdown).toContainText('Editorial scenario baseline');
+  await expect(breakdown).toContainText('×0.80');
+  await expect(breakdown).toContainText('×0.72');
+  await expect(breakdown).toContainText('Rounded to the nearest 5 percentage points');
+  await expect(breakdown).toContainText('not a valuation or forecast');
+
+  await engage(page);
+  await page.locator('#langTr').click();
+  await expect(page.locator('#scenarioBreakdown')).toContainText('Editoryal senaryo başlangıcı');
+  await expect(page.locator('#scenarioBreakdown')).toContainText('değerleme veya tahmin değildir');
 });
 
 test('Zikh deal checker uses the explicit scenario growth in its dollar output', async ({ page }) => {

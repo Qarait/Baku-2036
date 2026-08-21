@@ -162,6 +162,10 @@ button { cursor: pointer; }
 .secondary-action { border: 1px solid var(--line); color: var(--navy); background: #fffdf7; }
 .primary-action:focus-visible, .secondary-action:focus-visible { outline: 3px solid #e5a928; outline-offset: 2px; }
 .tool-note { margin-top: 12px; padding: 10px; color: #5f4b1e; background: #f9f0d9; border-left: 3px solid var(--gold); border-radius: 4px; font-size: 11px; line-height: 1.45; }
+#scenarioBreakdown { display: grid; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+#scenarioBreakdown > p { margin: 0; }
+.scenario-modifier { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+.scenario-modifier strong { color: var(--navy); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .tool-result { margin-top: 13px; }
 .year-story { min-height: 76px; padding: 13px; color: var(--navy); background: #fffdf7; border-radius: 7px; font-size: 13px; line-height: 1.5; }
 .year-story strong { display: block; margin-bottom: 4px; color: var(--gold); font-size: 18px; }

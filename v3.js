@@ -948,20 +948,49 @@
     input.parentElement.appendChild(hint);
   }
 
+  function scenarioGroupLabel(ui, group) {
+    return group === 'oil' ? (ui.scOil || 'Oil money') : group === 'infra' ? (ui.scInfra || 'Metro & roads') : (ui.scCur || 'Manat');
+  }
+
+  function scenarioOptionLabel(ui, group, option) {
+    const keys = {
+      oil: { norm: 'scNorm', bad: 'scBad', good: 'scGood' },
+      infra: { on: 'scOn', late: 'scLate' },
+      cur: { stable: 'scStable', weak: 'scWeak' }
+    };
+    const fallbacks = {
+      norm: 'Normal', bad: 'Bad years', good: 'Boom years',
+      on: 'Built on time', late: 'Years late', stable: 'Stays stable', weak: 'Loses value'
+    };
+    return ui[keys[group][option]] || fallbacks[option];
+  }
+
   function renderScenarios() {
     const content = atlasCopy();
     const labels = content.labels || {};
     const ui = content.ui || {};
     const current = state.scenarios;
     const selectedZone = state.selected?.zone?.zone;
+    const breakdown = selectedZone ? scenarioBreakdown(selectedZone, current) : null;
     const scenarioOutput = selectedZone
       ? ((state.lang === 'tr' ? selectedZone.nameTr : selectedZone.nameEn) + ': ' + (state.lang === 'tr' ? '%' + scenarioGrowth(selectedZone) : scenarioGrowth(selectedZone) + '%') + ' ' + (labels.scenarioOutput || 'illustrative growth sensitivity'))
       : labels.noData;
+    const modifierRows = breakdown ? Object.entries(breakdown.modifiers).map(([group, item]) =>
+      '<div class="scenario-modifier"><span>' + escapeHtml(scenarioGroupLabel(ui, group)) + ': ' + escapeHtml(scenarioOptionLabel(ui, group, item.option)) + '</span><strong>×' + item.multiplier.toFixed(2) + '</strong></div>'
+    ).join('') : '';
+    const breakdownHtml = breakdown
+      ? '<div id="scenarioBreakdown" data-scenario-base="' + breakdown.baseGrowth + '" data-scenario-result="' + breakdown.roundedGrowth + '">' +
+        '<p><strong>' + escapeHtml(labels.editorialBaseline || 'Editorial scenario baseline') + ':</strong> ' + breakdown.baseGrowth + '%</p>' +
+        '<div><strong>' + escapeHtml(labels.activeModifiers || 'Sensitivity modifiers') + '</strong>' + modifierRows + '</div>' +
+        '<p><strong>' + escapeHtml(labels.calculatedResult || 'Illustrative sensitivity result') + ':</strong> ' + breakdown.roundedGrowth + '%</p>' +
+        '<p>' + escapeHtml(labels.roundingRule || 'Rounded to the nearest 5 percentage points') + '</p>' +
+        '<div class="tool-note">' + escapeHtml(labels.scenarioMethodWarning || 'This calculation uses an editorial zone baseline and fixed sensitivity multipliers. It is not trained on property transactions and is not a valuation or forecast.') + '</div></div>'
+      : '';
     return '<div class="tool-grid"><div class="tool-card"><h3>' + escapeHtml(content.sections.scenarios.title) + '</h3><p>' + escapeHtml(content.sections.scenarios.whatThisMeans) + '</p>' +
       '<label>' + escapeHtml(ui.scOil || 'Oil money') + '<select id="scenarioOil"><option value="norm"' + (current.oil === 'norm' ? ' selected' : '') + '>' + escapeHtml(ui.scNorm || 'Normal') + '</option><option value="bad"' + (current.oil === 'bad' ? ' selected' : '') + '>' + escapeHtml(ui.scBad || 'Bad years') + '</option><option value="good"' + (current.oil === 'good' ? ' selected' : '') + '>' + escapeHtml(ui.scGood || 'Boom years') + '</option></select></label>' +
       '<label>' + escapeHtml(ui.scInfra || 'Metro & roads') + '<select id="scenarioInfra"><option value="on"' + (current.infra === 'on' ? ' selected' : '') + '>' + escapeHtml(ui.scOn || 'Built on time') + '</option><option value="late"' + (current.infra === 'late' ? ' selected' : '') + '>' + escapeHtml(ui.scLate || 'Years late') + '</option></select></label>' +
       '<label>' + escapeHtml(ui.scCur || 'Manat') + '<select id="scenarioCurrency"><option value="stable"' + (current.cur === 'stable' ? ' selected' : '') + '>' + escapeHtml(ui.scStable || 'Stays stable') + '</option><option value="weak"' + (current.cur === 'weak' ? ' selected' : '') + '>' + escapeHtml(ui.scWeak || 'Loses value') + '</option></select></label></div>' +
-      '<div class="tool-card"><h3>' + escapeHtml(labels.sensitivity || 'Sensitivity, not a forecast') + '</h3><p id="scenarioOutput">' + escapeHtml(scenarioOutput) + '</p><div class="tool-note">' + escapeHtml(ui.scNoteWeak || labels.noAdvice) + '</div></div></div>';
+      '<div class="tool-card"><h3>' + escapeHtml(labels.sensitivity || 'Sensitivity, not a forecast') + '</h3><p id="scenarioOutput">' + escapeHtml(scenarioOutput) + '</p>' + breakdownHtml + '<div class="tool-note">' + escapeHtml(ui.scNoteWeak || labels.noAdvice) + '</div></div></div>';
   }
 
   function plannerBuyingText(zone, budget) {
