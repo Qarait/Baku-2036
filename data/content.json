@@ -286,14 +286,14 @@
       "zoomHint": "scroll or pinch to zoom · drag to move",
       "proofK": "It already happened",
       "proof": {
-        "mohammadi": "2024–25: the Beyukshor–Pirshagi road was built — and this village repriced more than anywhere in the district. Not theory. It happened.",
+        "mohammadi": "2024: the Beyukshor–Pirshagi road opened through nearby northern settlements. The access catalyst is verified; any property repricing here is an investment interpretation, not a measured result.",
         "whitecity": "2010s → today: oil-blackened land was cleaned and rebuilt into one of Baku’s priciest addresses. The same playbook is now running again — this time on the metro.",
-        "narimanov": "2025: prices here rose +20% in a single year — the fastest in the city. The renewal that drove it is still running."
+        "narimanov": "2025: Narimanov is an established central market with dated local price bands. The AQP report is useful context, not proof of a city-leading 20% rise; compare local listings before treating it as an outlier."
       },
       "tourEnd": "That’s the tour. Now explore yourself — click any circle, or press play on the time machine below.",
       "tour": {
         "whitecity": "This was the “Black City” — oil factories and soot. Now it’s cleaned, rebuilt, and the metro arrives in 2030. The safest big bet on the map.",
-        "mohammadi": "This was a quiet village. Then one road was built — and prices jumped more than anywhere in the district. Two more projects are on the way. (Rule one here: real title deed only.)",
+        "mohammadi": "This was a quiet village. The Beyukshor–Pirshagi road opened nearby — a verified access catalyst, while any price effect remains an investment interpretation. Two more projects are on the way. (Rule one here: real title deed only.)",
         "bilgah": "A world-class resort is rising on this shore, off the map’s top edge. Villages next to it get expensive one by one — you buy the neighbour, not the brand.",
         "sumgayit": "Jobs, a doubled railway, and a seafront — the only cheap place with all three. This is Baku’s future satellite city, up the north-west corridor.",
         "hovsan": "The sleeper. The cheapest coastline near the city, held back by fixable problems. After 2030, watch it wake up."
@@ -301,7 +301,7 @@
       "tmY": {
         "2026": "This is today. The metro tenders are signed and the cranes are already up. Press ▶ and watch what plans on paper do to prices on the ground. (Growing circle = growing value.)",
         "2027": "The construction premium begins: buyers move in before the trains do. The orange central zones heat up first — that’s how transit always works.",
-        "2028": "The new Baku–Sumgayit road opens. Watch land near its junctions repeat the Mohammadi trick: road first, price jump right after.",
+        "2028": "The new Baku–Sumgayit road opens. Watch land near its junctions, and check local evidence before assuming access will translate into a price rise.",
         "2029": "Jobs follow concrete: the airport city takes shape and the doubled railway turns Sumgayit into a real commute.",
         "2030": "The big one — the metro reaches White City. Premiums that formed on promises are now locked in by actual trains.",
         "2031": "The baton passes: the center slows down, and the cheap east — Hovsan, Zikh, the airport belt — starts to move.",
@@ -383,8 +383,8 @@
           40.47
         ],
         "y": 2025,
-        "en": "Beyukshor–Pirshagi road — DONE. This is what repriced Mohammadi.",
-        "tr": "Böyükşor–Pirşağı yolu — BİTTİ. Məhəmmədli’yi pahalandıran bu."
+        "en": "Beyukshor–Pirshagi road — DONE. Verified access catalyst near Mohammadi; its price effect is an investment hypothesis.",
+        "tr": "Böyükşor–Pirşağı yolu — BİTTİ. Məhəmmədli yakınında doğrulanmış ulaşım katalizörü; değer etkisi yatırım hipotezidir."
       },
       {
         "ll": [
@@ -750,14 +750,14 @@
       "zoomHint": "yakınlaştırmak için kaydırın veya parmakla açın · gezmek için sürükleyin",
       "proofK": "Zaten oldu",
       "proof": {
-        "mohammadi": "2024–25: Böyükşor–Pirşağı yolu yapıldı — ve bu köy, ilçede her yerden çok pahalandı. Teori değil. Yaşandı.",
+        "mohammadi": "2024: Böyükşor–Pirşağı yolu kuzey yerleşimlerinin yakınından geçerek açıldı. Ulaşım katalizörü doğrulandı; buradaki değer artışı ölçülmüş bir sonuç değil, yatırım yorumudur.",
         "whitecity": "2010’lardan bugüne: petrol karası arazi temizlendi, yeniden yapıldı ve Bakü’nün en pahalı adreslerinden biri oldu. Aynı oyun şimdi yeniden oynanıyor — bu kez metroyla.",
-        "narimanov": "2025: buradaki fiyatlar tek yılda %20 arttı — şehrin en hızlısı. Bunu sağlayan yenileme hâlâ sürüyor."
+        "narimanov": "2025: Nərimanov yerleşik ve merkezi bir piyasa alanı; AQP raporu tarihli yerel fiyat bantları sunuyor. Bu, şehir lideri %20 artışı kanıtlamaz; bölgeyi aykırı saymadan önce yerel ilanları karşılaştırın."
       },
       "tourEnd": "Tur bitti. Şimdi kendiniz keşfedin — bir daireye tıklayın ya da aşağıdaki zaman makinesinde ▶ tuşuna basın.",
       "tour": {
         "whitecity": "Burası “Kara Şehir”di — petrol fabrikaları, is ve kir. Şimdi temizlendi, yeniden yapılıyor ve 2030’da metro geliyor. Haritadaki en güvenli büyük bahis.",
-        "mohammadi": "Burası sessiz bir köydü. Sonra tek bir yol yapıldı — fiyatlar ilçede herkesten çok sıçradı. Yolda iki proje daha var. (Buranın bir numaralı kuralı: sadece gerçek tapu.)",
+        "mohammadi": "Burası sessiz bir köydü. Böyükşor–Pirşağı yolu yakında açıldı — doğrulanmış bir ulaşım katalizörü; değer etkisi ise yatırım yorumudur. Yolda iki proje daha var. (Buranın bir numaralı kuralı: sadece gerçek tapu.)",
         "bilgah": "Bu kıyıda, haritanın üst kenarının hemen dışında dünya çapında bir tatil şehri yükseliyor. Yanındaki köyler tek tek pahalanıyor — markayı değil, komşuyu alırsınız.",
         "sumgayit": "İş, çiftlenmiş demiryolu ve deniz kıyısı — üçü birden olan tek ucuz yer. Burası Bakü’nün geleceğin uydu kenti, kuzeybatı koridorunun ucunda.",
         "hovsan": "Uyuyan dev. Şehre yakın en ucuz sahil; onu tutan sorunların hepsi çözülebilir. 2030’dan sonra uyanışını izleyin."
@@ -765,7 +765,7 @@
       "tmY": {
         "2026": "Bugün buradayız. Metro ihaleleri imzalandı, vinçler çoktan dikildi. ▶ tuşuna basın; kâğıttaki planların yerdeki fiyatlara ne yaptığını izleyin. (Büyüyen daire = büyüyen değer.)",
         "2027": "İnşaat primi başlıyor: alıcılar trenlerden önce geliyor. Önce turuncu merkez bölgeler ısınıyor — ulaşım yatırımı hep böyle çalışır.",
-        "2028": "Yeni Bakü–Sumgayıt yolu açılıyor. Kavşaklara yakın arsalar Məhəmmədli numarasını tekrarlıyor: önce yol, hemen ardından fiyat.",
+        "2028": "Yeni Bakü–Sumgayıt yolu açılıyor. Kavşaklara yakın arsaları izleyin; erişimin fiyat artışına dönüşeceğini varsaymadan önce yerel kanıtları kontrol edin.",
         "2029": "İş, betonu takip eder: havalimanı şehri şekilleniyor, çiftlenen demiryolu Sumgayıt’ı gerçek bir işe-gidiş mesafesine sokuyor.",
         "2030": "Büyük an — metro White City’ye ulaştı. Vaatle oluşan primler artık gerçek trenlerle kilitlendi.",
         "2031": "Bayrak el değiştiriyor: merkez yavaşlıyor, ucuz doğu — Hovsan, Zığ, havalimanı kuşağı — kıpırdamaya başlıyor.",
@@ -847,8 +847,8 @@
           40.47
         ],
         "y": 2025,
-        "en": "Beyukshor–Pirshagi road — DONE. This is what repriced Mohammadi.",
-        "tr": "Böyükşor–Pirşağı yolu — BİTTİ. Məhəmmədli’yi pahalandıran bu."
+        "en": "Beyukshor–Pirshagi road — DONE. Verified access catalyst near Mohammadi; its price effect is an investment hypothesis.",
+        "tr": "Böyükşor–Pirşağı yolu — BİTTİ. Məhəmmədli yakınında doğrulanmış ulaşım katalizörü; değer etkisi yatırım hipotezidir."
       },
       {
         "ll": [
