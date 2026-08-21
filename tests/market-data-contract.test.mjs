@@ -169,6 +169,21 @@ test('rejects rights that do not allow the intended use', () => {
   assert.ok(result.errors.some((error) => error.code === 'intended-use-not-allowed'));
 });
 
+test('rejects rights metadata values outside the versioned schema enums', () => {
+  const invalidFields = {
+    acquisitionBasis: 'unreviewed',
+    rawRedistribution: 'conditional',
+    derivedPublication: 'internal_only',
+    personalDataHandling: 'masked'
+  };
+
+  for (const [field, value] of Object.entries(invalidFields)) {
+    const result = rightsResult([{ ...validRights, [field]: value }]);
+    assert.equal(result.valid, false, field);
+    assert.ok(result.errors.some((error) => error.path.endsWith(`.${field}`)), field);
+  }
+});
+
 test('rejects non-approved rights and excludes them from the rights map', () => {
   const rights = { ...validRights, status: 'expired' };
   const result = rightsResult([rights]);
@@ -194,6 +209,42 @@ test('rejects unsupported characteristic and nested personal-data keys', () => {
   assert.equal(result.valid, false);
   assert.ok(result.rejected[0].errors.some((error) => error.code === 'personal-data-field'));
   assert.ok(result.rejected[0].errors.some((error) => error.code === 'unsupported-characteristic'));
+});
+
+test('rejects invalid characteristic values', () => {
+  const invalidCharacteristics = [
+    { condition: 'unlisted' },
+    { rooms: -1 },
+    { bedrooms: 1.5 },
+    { bathrooms: 'two' }
+  ];
+
+  for (const characteristics of invalidCharacteristics) {
+    const result = observationResult([{ ...validObservation, characteristics }]);
+    assert.equal(result.valid, false);
+    assert.ok(result.rejected[0].errors.some((error) => error.code === 'invalid-characteristic-value'));
+  }
+});
+
+test('rejects non-string optional location identifiers', () => {
+  for (const key of ['geography', 'district', 'zoneId']) {
+    const result = observationResult([{
+      ...validObservation,
+      location: { ...validObservation.location, [key]: 42 }
+    }]);
+    assert.equal(result.valid, false, key);
+    assert.ok(result.rejected[0].errors.some((error) => error.code === 'invalid-location-identifier'), key);
+  }
+});
+
+test('keeps rejected duplicate-ID records deterministic when input order changes', () => {
+  const first = { ...validObservation, sourceRecordId: 'record-synthetic-a' };
+  const second = { ...validObservation, sourceRecordId: 'record-synthetic-b' };
+
+  assert.deepEqual(
+    observationResult([first, second]).rejected,
+    observationResult([second, first]).rejected
+  );
 });
 
 test('reports validation errors with stable identifiers and paths only', () => {

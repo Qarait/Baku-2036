@@ -3,6 +3,10 @@ import { createHash } from 'node:crypto';
 const SCHEMA_VERSION = '1.0';
 const RIGHTS_STATUSES = new Set(['approved_for_fixture_testing', 'approved', 'restricted', 'rejected', 'expired']);
 const ALLOWED_USES = new Set(['internal_testing', 'internal_analysis']);
+const ACQUISITION_BASES = new Set(['synthetic', 'licensed', 'permission', 'public_terms', 'internal']);
+const RAW_REDISTRIBUTION_VALUES = new Set(['prohibited', 'allowed', 'not_applicable']);
+const DERIVED_PUBLICATION_VALUES = new Set(['prohibited', 'allowed', 'review_required', 'not_applicable']);
+const PERSONAL_DATA_HANDLING_VALUES = new Set(['prohibited', 'redacted', 'allowed']);
 const TRANSACTION_TYPES = new Set(['asking', 'completed_sale']);
 const PROPERTY_TYPES = new Set(['apartment', 'house', 'land', 'commercial', 'other']);
 const CURRENCIES = new Set(['AZN', 'USD', 'EUR']);
@@ -10,6 +14,7 @@ const PRICE_BASES = new Set(['total', 'per_m2']);
 const AREA_MEASURES = new Set(['gross', 'net', 'land']);
 const LOCATION_PRECISIONS = new Set(['exact', 'street', 'district', 'zone', 'unknown']);
 const CHARACTERISTICS = new Set(['rooms', 'bedrooms', 'bathrooms', 'condition']);
+const CONDITION_VALUES = new Set(['new', 'good', 'needs_repair', 'unknown']);
 const PERSONAL_DATA_KEY = /seller|broker|phone|email/i;
 
 function error(code, path, message) {
@@ -121,6 +126,14 @@ export function validateRights(records, { intendedUse } = {}) {
       if (!isDate(record.reviewedAt)) recordErrors.push(error('invalid-date', `${path}.reviewedAt`, 'date must use YYYY-MM-DD'));
       if (!RIGHTS_STATUSES.has(record.status)) recordErrors.push(error('invalid-rights-status', `${path}.status`, 'status must be explicit and recognized'));
       if (record.status === 'rejected' || record.status === 'expired') recordErrors.push(error('invalid-rights-status', `${path}.status`, 'rejected or expired rights cannot be used'));
+      for (const [key, values] of [
+        ['acquisitionBasis', ACQUISITION_BASES],
+        ['rawRedistribution', RAW_REDISTRIBUTION_VALUES],
+        ['derivedPublication', DERIVED_PUBLICATION_VALUES],
+        ['personalDataHandling', PERSONAL_DATA_HANDLING_VALUES]
+      ]) {
+        if (!values.has(record[key])) recordErrors.push(error('invalid-rights-metadata', `${path}.${key}`, 'rights metadata value must be explicit and recognized'));
+      }
       if (record.termsUrl !== undefined && record.termsUrl !== null) {
         let validUrl = typeof record.termsUrl === 'string';
         if (validUrl) {
@@ -171,6 +184,11 @@ function validateObservation(record, path, rightsById) {
 
   hasOnlyKeys(record.location, new Set(['geography', 'district', 'zoneId', 'precision']), `${path}.location`, errors);
   if (!LOCATION_PRECISIONS.has(record.location?.precision)) errors.push(error('invalid-location-precision', `${path}.location.precision`, 'location precision must be explicit and recognized'));
+  for (const key of ['geography', 'district', 'zoneId']) {
+    if (record.location?.[key] !== undefined && !isNonEmptyString(record.location[key])) {
+      errors.push(error('invalid-location-identifier', `${path}.location.${key}`, 'location identifier must be a non-empty string when present'));
+    }
+  }
 
   if (record.characteristics !== undefined) {
     if (!isObject(record.characteristics)) errors.push(error('invalid-characteristics', `${path}.characteristics`, 'characteristics must be an object when present'));
@@ -178,6 +196,10 @@ function validateObservation(record, path, rightsById) {
       for (const key of Object.keys(record.characteristics).sort()) {
         if (PERSONAL_DATA_KEY.test(key)) errors.push(error('personal-data-field', `${path}.characteristics.${key}`, 'personal-data field is prohibited'));
         if (!CHARACTERISTICS.has(key)) errors.push(error('unsupported-characteristic', `${path}.characteristics.${key}`, 'characteristic is not permitted by the contract'));
+        else if (
+          (key === 'condition' && !CONDITION_VALUES.has(record.characteristics[key])) ||
+          (key !== 'condition' && (!Number.isInteger(record.characteristics[key]) || record.characteristics[key] < 0))
+        ) errors.push(error('invalid-characteristic-value', `${path}.characteristics.${key}`, 'characteristic value must match the contract type and range'));
       }
     }
   }
@@ -207,6 +229,11 @@ export function validateObservations(records, rightsById, { intendedUse } = {}) 
     valid: errors.length === 0,
     errors: sortByPath(errors),
     records: sortedRecords(accepted, 'observationId'),
-    rejected: rejected.sort((left, right) => String(left.record?.observationId ?? '').localeCompare(String(right.record?.observationId ?? '')))
+    rejected: rejected.sort((left, right) => {
+      const idOrder = String(left.record?.observationId ?? '').localeCompare(String(right.record?.observationId ?? ''));
+      if (idOrder !== 0) return idOrder;
+      return canonicalJson({ errors: left.errors, record: left.record })
+        .localeCompare(canonicalJson({ errors: right.errors, record: right.record }));
+    })
   };
 }
