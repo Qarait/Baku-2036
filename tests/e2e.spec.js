@@ -639,6 +639,27 @@ test('weak manat scenario changes the illustrative USD sensitivity', async ({ pa
   await expect(page.locator('#scenarioOutput')).toContainText('White City / Khatai: 140%');
 });
 
+test('scenario breakdown exposes the editorial baseline and exact fixed modifiers', async ({ page }) => {
+  await page.goto('./?cache=e2e-scenario-breakdown&testHooks=1#z=whitecity&y=2026&lang=en');
+  await waitForMap(page);
+
+  const breakdown = await page.evaluate(() => window.__V3TestHooks.getScenarioBreakdown('whitecity', {
+    oil: 'bad',
+    infra: 'late',
+    cur: 'weak'
+  }));
+
+  expect(breakdown.baseGrowth).toBe(140);
+  expect(breakdown.modifiers).toEqual({
+    oil: { option: 'bad', multiplier: 0.8 },
+    infra: { option: 'late', multiplier: 0.72 },
+    cur: { option: 'weak', multiplier: 0.8 }
+  });
+  expect(breakdown.rawGrowth).toBeCloseTo(64.512, 6);
+  expect(breakdown.roundedGrowth).toBe(65);
+  expect(breakdown.roundingIncrement).toBe(5);
+});
+
 test('Zikh deal checker uses the explicit scenario growth in its dollar output', async ({ page }) => {
   async function checkDeal(expected) {
     await page.locator('#accordion-deal .accordion-summary').click();
