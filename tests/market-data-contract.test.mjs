@@ -582,3 +582,20 @@ test('CLI reports do not write files for malformed input', () => {
     rmSync(directory, { recursive: true, force: true });
   }
 });
+
+test('keeps restricted market-data paths ignored without creating private files', () => {
+  for (const path of [
+    'research/market-data/raw/',
+    'research/market-data/private/',
+    'research/market-data/generated/'
+  ]) {
+    const result = spawnSync('git', ['check-ignore', '--quiet', path], {
+      cwd: new URL('..', import.meta.url),
+      encoding: 'utf8'
+    });
+
+    assert.equal(result.status, 0, `${path} must be ignored`);
+    assert.equal(result.stdout, '');
+    assert.equal(result.stderr, '');
+  }
+});
