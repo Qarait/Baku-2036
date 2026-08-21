@@ -1,6 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 
 import {
   validateRights,
@@ -58,6 +61,17 @@ function observationResult(records, rights = rightsResult().rightsById) {
 
 function loadFixture(fileName) {
   return JSON.parse(readFileSync(new URL(`../research/market-data/fixtures/${fileName}`, import.meta.url), 'utf8'));
+}
+
+function runMarketDataCli(script, args = []) {
+  return spawnSync(process.execPath, [script, ...args], {
+    cwd: new URL('..', import.meta.url),
+    encoding: 'utf8'
+  });
+}
+
+function temporaryDirectory() {
+  return mkdtempSync(join(tmpdir(), 'release3-market-data-'));
 }
 
 test('loads versioned fixtures that are explicitly synthetic and not real market data', () => {
@@ -455,4 +469,116 @@ test('reports configured zero coverage cells and report metadata without mutatin
   assert.equal(report.inputDigest, 'digest-synthetic');
   assert.equal(report.limitation, 'Observed records are not automatically a representative sample of the Baku market.');
   assert.deepEqual(records, before);
+});
+
+test('CLI validation returns a safe successful summary for the default synthetic fixtures', () => {
+  const result = runMarketDataCli('scripts/validate-market-data.mjs');
+  const output = JSON.parse(result.stdout);
+
+  assert.equal(result.status, 0);
+  assert.deepEqual(Object.keys(output).sort(), ['errors', 'inputDigest', 'recordsRead', 'rightsRecordsRead', 'schemaVersion', 'valid']);
+  assert.equal(output.valid, true);
+  assert.equal(output.schemaVersion, '1.0');
+  assert.equal(output.recordsRead, 5);
+  assert.equal(output.rightsRecordsRead, 1);
+  assert.deepEqual(output.errors, []);
+  assert.equal(result.stdout.includes('101000'), false);
+  assert.equal(result.stdout.includes('synthetic-record-001'), false);
+});
+
+test('CLI validation exits 1 with stable safe errors for contract-invalid records', () => {
+  const directory = temporaryDirectory();
+  try {
+    const observations = loadFixture('synthetic-observations.json');
+    observations[0].price.amount = 0;
+    const observationsPath = join(directory, 'observations.json');
+    const rightsPath = join(directory, 'rights.json');
+    writeFileSync(observationsPath, JSON.stringify(observations));
+    writeFileSync(rightsPath, JSON.stringify(loadFixture('synthetic-rights.json')));
+
+    const result = runMarketDataCli('scripts/validate-market-data.mjs', ['--observations', observationsPath, '--rights', rightsPath]);
+    const output = JSON.parse(result.stdout);
+
+    assert.equal(result.status, 1);
+    assert.equal(output.valid, false);
+    assert.ok(output.errors.some((error) => error.code === 'invalid-price-amount'));
+    assert.equal(result.stdout.includes('"amount":0'), false);
+    assert.equal(result.stdout.includes('synthetic-record-001'), false);
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
+});
+
+test('CLI reports write deterministic safe files for default synthetic fixtures', () => {
+  const firstDirectory = temporaryDirectory();
+  const secondDirectory = temporaryDirectory();
+  try {
+    const first = runMarketDataCli('scripts/report-market-data.mjs', ['--out-dir', firstDirectory]);
+    const second = runMarketDataCli('scripts/report-market-data.mjs', ['--out-dir', secondDirectory]);
+
+    assert.equal(first.status, 0);
+    assert.equal(second.status, 0);
+    assert.deepEqual(readdirSync(firstDirectory).sort(), ['coverage.json', 'duplicates.json', 'missingness.json', 'summary.json']);
+    assert.deepEqual(readdirSync(secondDirectory).sort(), ['coverage.json', 'duplicates.json', 'missingness.json', 'summary.json']);
+
+    const firstReports = Object.fromEntries(readdirSync(firstDirectory).sort().map((fileName) => [fileName, readFileSync(join(firstDirectory, fileName), 'utf8')]));
+    const secondReports = Object.fromEntries(readdirSync(secondDirectory).sort().map((fileName) => [fileName, readFileSync(join(secondDirectory, fileName), 'utf8')]));
+    assert.deepEqual(firstReports, secondReports);
+
+    const reports = Object.values(firstReports);
+    const digests = reports.map((report) => JSON.parse(report).inputDigest);
+    assert.equal(new Set(digests).size, 1);
+    assert.ok(reports.every((report) => report.endsWith('\n')));
+    assert.ok(reports.every((report) => !report.includes('101000')));
+    assert.ok(reports.every((report) => !report.includes('synthetic-record-001')));
+  } finally {
+    rmSync(firstDirectory, { recursive: true, force: true });
+    rmSync(secondDirectory, { recursive: true, force: true });
+  }
+});
+
+test('CLI reports retain safe aggregate metadata and exit 1 for contract-invalid records', () => {
+  const directory = temporaryDirectory();
+  const outputDirectory = join(directory, 'reports');
+  try {
+    const observations = loadFixture('synthetic-observations.json');
+    observations[0].price.amount = 0;
+    const observationsPath = join(directory, 'observations.json');
+    const rightsPath = join(directory, 'rights.json');
+    writeFileSync(observationsPath, JSON.stringify(observations));
+    writeFileSync(rightsPath, JSON.stringify(loadFixture('synthetic-rights.json')));
+
+    const result = runMarketDataCli('scripts/report-market-data.mjs', ['--observations', observationsPath, '--rights', rightsPath, '--out-dir', outputDirectory]);
+    const summary = JSON.parse(readFileSync(join(outputDirectory, 'summary.json'), 'utf8'));
+    const missingness = JSON.parse(readFileSync(join(outputDirectory, 'missingness.json'), 'utf8'));
+
+    assert.equal(result.status, 1);
+    assert.equal(summary.valid, false);
+    assert.equal(summary.rejectedRecordCount, 1);
+    assert.equal(missingness.rejectedRecordCount, 1);
+    assert.equal(missingness.fields['price.amount'].invalid, 1);
+    assert.equal(JSON.stringify(summary).includes('"amount":0'), false);
+    assert.equal(JSON.stringify(missingness).includes('"amount":0'), false);
+    assert.equal(JSON.stringify(missingness).includes('synthetic-record-001'), false);
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
+});
+
+test('CLI reports do not write files for malformed input', () => {
+  const directory = temporaryDirectory();
+  const outputDirectory = join(directory, 'reports');
+  try {
+    const observationsPath = join(directory, 'observations.json');
+    const rightsPath = join(directory, 'rights.json');
+    writeFileSync(observationsPath, '{not-json');
+    writeFileSync(rightsPath, JSON.stringify(loadFixture('synthetic-rights.json')));
+
+    const result = runMarketDataCli('scripts/report-market-data.mjs', ['--observations', observationsPath, '--rights', rightsPath, '--out-dir', outputDirectory]);
+
+    assert.equal(result.status, 1);
+    assert.equal(existsSync(outputDirectory), false);
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
 });
