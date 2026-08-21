@@ -724,6 +724,20 @@ test('scenario output explains its editorial baseline, modifiers, rounding, and 
   await expect(page.locator('#scenarioBreakdown')).toContainText('değerleme veya tahmin değildir');
 });
 
+test('sources disclose the scenario method in both languages', async ({ page }) => {
+  await page.goto('./?cache=e2e-scenario-method#z=whitecity&y=2026&lang=en');
+  await waitForMap(page);
+  await page.locator('#accordion-sources .accordion-summary').click();
+  await expect(page.locator('.scenario-methodology')).toContainText('editorial growth assumption');
+  await expect(page.locator('.scenario-methodology')).toContainText('does not statistically derive');
+  await expect(page.locator('.scenario-methodology')).toContainText('not trained on property transactions');
+
+  await engage(page);
+  await page.locator('#langTr').click();
+  await expect(page.locator('.scenario-methodology')).toContainText('editoryal bir büyüme varsayımı');
+  await expect(page.locator('.scenario-methodology')).toContainText('istatistiksel olarak üretmez');
+});
+
 test('Zikh deal checker uses the explicit scenario growth in its dollar output', async ({ page }) => {
   async function checkDeal(expected) {
     await page.locator('#accordion-deal .accordion-summary').click();

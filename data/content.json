@@ -78,7 +78,9 @@
       "sources": {
         "title": "Sources and important warning",
         "description": "Understand where the map comes from and what it can—and cannot—tell you.",
-        "whatThisMeans": "Rayon boundaries are geographic context. Investment circles are approximate areas, not property or exact investment borders."
+        "whatThisMeans": "Rayon boundaries are geographic context. Investment circles are approximate areas, not property or exact investment borders.",
+        "scenarioMethodTitle": "How the scenario calculation works",
+        "scenarioMethodBody": "Each zone starts with an editorial growth assumption stored in the atlas data. The oil, infrastructure, and currency controls apply fixed sensitivity multipliers, and the result is rounded to the nearest 5 percentage points. Source evidence informs the area narrative but does not statistically derive the growth assumption. Baku 2036 is not trained on property transactions and does not provide a professional valuation or forecast."
       }
     },
     "labels": {
@@ -547,7 +549,9 @@
       "sources": {
         "title": "Kaynaklar ve önemli uyarı",
         "description": "Haritanın nereden geldiğini ve size ne söyleyip ne söyleyemeyeceğini anlayın.",
-        "whatThisMeans": "Rayon sınırları coğrafi bağlamdır. Yatırım daireleri yaklaşık alanları gösterir; mülk veya kesin yatırım sınırlarını göstermez."
+        "whatThisMeans": "Rayon sınırları coğrafi bağlamdır. Yatırım daireleri yaklaşık alanları gösterir; mülk veya kesin yatırım sınırlarını göstermez.",
+        "scenarioMethodTitle": "Senaryo hesaplaması nasıl çalışır?",
+        "scenarioMethodBody": "Her bölge, atlas verisinde kayıtlı editoryal bir büyüme varsayımıyla başlar. Petrol, altyapı ve döviz kontrolleri sabit duyarlılık çarpanları uygular; sonuç en yakın 5 yüzde puanına yuvarlanır. Kaynak kanıtları bölge anlatısını destekler, ancak büyüme varsayımını istatistiksel olarak üretmez. Baku 2036 gayrimenkul işlemleriyle eğitilmemiştir ve profesyonel değerleme veya tahmin sunmaz."
       }
     },
     "labels": {

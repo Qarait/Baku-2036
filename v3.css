@@ -221,6 +221,9 @@ button { cursor: pointer; }
 .source-list { display: grid; gap: 8px; padding: 16px 0 0; }
 .source-list p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.55; }
 .source-list strong { color: var(--navy); }
+.scenario-methodology { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+.scenario-methodology h3 { margin: 0 0 6px; color: var(--navy); font-size: 14px; }
+.scenario-methodology p { margin: 0; }
 .disclaimer-box { margin-top: 12px; padding: 13px; color: #5f4b1e; background: #f9f0d9; border-radius: 7px; font-size: 11px; line-height: 1.5; }
 .shortlist-empty { padding: 15px 0 4px; color: var(--muted); font-size: 12px; }
 .shortlist-table { display: grid; gap: 6px; padding-top: 15px; }
