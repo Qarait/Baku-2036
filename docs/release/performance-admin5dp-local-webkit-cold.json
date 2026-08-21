@@ -1,0 +1,73 @@
+{
+  "generatedAt": "2026-08-21T12:51:20.942Z",
+  "url": "http://127.0.0.1:8124/",
+  "browser": "webkit",
+  "cache": "cold",
+  "runs": [
+    {
+      "ttfbMs": 5,
+      "fcpMs": 109,
+      "lcpMs": 186,
+      "mapReadyMs": 1688,
+      "adminContentLength": 1304098,
+      "totalContentLength": 3673655,
+      "responseCount": 22
+    },
+    {
+      "ttfbMs": 8,
+      "fcpMs": 216,
+      "lcpMs": 319,
+      "mapReadyMs": 2090,
+      "adminContentLength": 1304098,
+      "totalContentLength": 3693839,
+      "responseCount": 24
+    },
+    {
+      "ttfbMs": 5,
+      "fcpMs": 116,
+      "lcpMs": 177,
+      "mapReadyMs": 2444,
+      "adminContentLength": 1304098,
+      "totalContentLength": 3691676,
+      "responseCount": 23
+    }
+  ],
+  "summaries": {
+    "ttfbMs": {
+      "count": 3,
+      "median": 5,
+      "min": 5,
+      "max": 8
+    },
+    "fcpMs": {
+      "count": 3,
+      "median": 116,
+      "min": 109,
+      "max": 216
+    },
+    "lcpMs": {
+      "count": 3,
+      "median": 186,
+      "min": 177,
+      "max": 319
+    },
+    "mapReadyMs": {
+      "count": 3,
+      "median": 2090,
+      "min": 1688,
+      "max": 2444
+    },
+    "adminContentLength": {
+      "count": 3,
+      "median": 1304098,
+      "min": 1304098,
+      "max": 1304098
+    },
+    "totalContentLength": {
+      "count": 3,
+      "median": 3691676,
+      "min": 3673655,
+      "max": 3693839
+    }
+  }
+}

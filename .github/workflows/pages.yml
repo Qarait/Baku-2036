@@ -54,6 +54,9 @@ jobs:
       - name: Verify Pages artifact contract
         shell: pwsh
         run: pwsh -File tests/pages-artifact-contract.ps1
+      - name: Verify administrative GeoJSON derivative
+        shell: pwsh
+        run: pwsh -File tests/admin-geojson-contract.ps1
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Build preview artifact

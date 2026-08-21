@@ -59,7 +59,7 @@ async function measurePage(page, url) {
   });
   const successfulResponses = responses.filter(response => response.status >= 200 && response.status < 400);
   const contentLengths = successfulResponses.map(response => response.contentLength).filter(Number.isFinite);
-  const adminResponse = successfulResponses.find(response => /admin-absheron\.geojson/.test(response.url));
+  const adminResponse = successfulResponses.find(response => /admin-absheron(?:-5dp)?\.geojson/.test(response.url));
   return {
     ...timings,
     adminContentLength: adminResponse?.contentLength ?? null,
