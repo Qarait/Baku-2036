@@ -161,7 +161,13 @@
       "privateLegend": "Private developer plan",
       "localPlaces": "New places nearby",
       "localOpen": "Open",
-      "localBuilding": "Being built"
+      "localBuilding": "Being built",
+      "factorLedger": "What supports or weakens this scenario?",
+      "factorSupport": "Support",
+      "factorRisk": "Risk",
+      "factorDependency": "Dependency",
+      "factorUnknown": "Evidence gap",
+      "factorEvidence": "Evidence"
     },
     "disclaimer": "Growth figures are illustrative scenario midpoints synthesized from public data — not forecasts and not financial advice. Verify title (çıxarış), cadastral rayon, and zoning at the state registry before any purchase. Base map © its respective publisher, used for personal analysis. Prepared from public sources, August 2026.",
     "ui": {
@@ -632,7 +638,13 @@
       "privateLegend": "Özel geliştirici planı",
       "localPlaces": "Yakında yeni yerler",
       "localOpen": "Açık",
-      "localBuilding": "İnşaat sürüyor"
+      "localBuilding": "İnşaat sürüyor",
+      "factorLedger": "Bu senaryoyu ne destekler veya zayıflatır?",
+      "factorSupport": "Destek",
+      "factorRisk": "Risk",
+      "factorDependency": "Bağımlılık",
+      "factorUnknown": "Kanıt boşluğu",
+      "factorEvidence": "Kanıt"
     },
     "disclaimer": "Büyüme rakamları kamuya açık verilerden sentezlenmiş örnek senaryo orta noktalarıdır — tahmin veya yatırım tavsiyesi değildir. Satın almadan önce tapu (çıxarış), kadastro rayonu ve imar durumunu devlet sicilinde doğrulayın. Altlık harita © ilgili yayıncısına aittir, kişisel analiz için kullanılmıştır. Kamuya açık kaynaklardan hazırlanmıştır, Ağustos 2026.",
     "ui": {
