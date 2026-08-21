@@ -125,6 +125,13 @@ test('rejects observations without a rights reference', () => {
   assert.ok(result.rejected[0].errors.some((error) => error.code === 'missing-rights'));
 });
 
+test('rejects observations whose source does not match their rights record', () => {
+  const result = observationResult([{ ...validObservation, sourceId: 'source-synthetic-mismatch' }]);
+
+  assert.equal(result.valid, false);
+  assert.ok(result.rejected[0].errors.some((error) => error.code === 'rights-source-mismatch'));
+});
+
 test('rejects area values whose unit is not m2', () => {
   const result = observationResult([{ ...validObservation, area: { ...validObservation.area, unit: 'sqft' } }]);
 
@@ -160,6 +167,42 @@ test('rejects rights that do not allow the intended use', () => {
 
   assert.equal(result.valid, false);
   assert.ok(result.errors.some((error) => error.code === 'intended-use-not-allowed'));
+});
+
+test('rejects non-approved rights and excludes them from the rights map', () => {
+  const rights = { ...validRights, status: 'expired' };
+  const result = rightsResult([rights]);
+
+  assert.equal(result.valid, false);
+  assert.equal(result.rightsById.has(rights.rightsId), false);
+  assert.ok(result.errors.some((error) => error.code === 'invalid-rights-status'));
+});
+
+test('rejects an asking observation with an event date', () => {
+  const result = observationResult([{ ...validObservation, eventDate: '2026-01-14' }]);
+
+  assert.equal(result.valid, false);
+  assert.ok(result.rejected[0].errors.some((error) => error.code === 'unexpected-event-date'));
+});
+
+test('rejects unsupported characteristic and nested personal-data keys', () => {
+  const result = observationResult([{
+    ...validObservation,
+    characteristics: { bedrooms: 3, seller: 'synthetic-person' }
+  }]);
+
+  assert.equal(result.valid, false);
+  assert.ok(result.rejected[0].errors.some((error) => error.code === 'personal-data-field'));
+  assert.ok(result.rejected[0].errors.some((error) => error.code === 'unsupported-characteristic'));
+});
+
+test('reports validation errors with stable identifiers and paths only', () => {
+  const result = observationResult([{ ...validObservation, seller: 'must-not-appear' }]);
+  const [error] = result.errors;
+
+  assert.match(error.path, /observation-synthetic-001/);
+  assert.equal(JSON.stringify(error).includes('must-not-appear'), false);
+  assert.deepEqual(Object.keys(error).sort(), ['code', 'message', 'path']);
 });
 
 test('reports exact duplicate groups by source record key', () => {
