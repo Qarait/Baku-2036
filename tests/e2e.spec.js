@@ -561,6 +561,39 @@ test('city simulation content has five bilingual checkpoints and controls', asyn
   }
 });
 
+test('Mohammadi and Narimanov proof copy stays within its cited evidence', async ({ request }) => {
+  const [contentResponse, zonesResponse] = await Promise.all([
+    request.get('./data/content.json'),
+    request.get('./data/zones.json')
+  ]);
+  const content = await contentResponse.json();
+  const zones = await zonesResponse.json();
+  const narimanov = zones.find(zone => zone.id === 'narimanov');
+  const mohammadi = zones.find(zone => zone.id === 'mohammadi');
+  const visibleCopy = [
+    content.en.ui.proof.mohammadi,
+    content.en.ui.proof.narimanov,
+    content.en.ui.tour.mohammadi,
+    content.tr.ui.proof.mohammadi,
+    content.tr.ui.proof.narimanov,
+    content.tr.ui.tour.mohammadi,
+    narimanov.en.thesis,
+    narimanov.tr.thesis,
+    mohammadi.en.thesis,
+    mohammadi.tr.thesis,
+    mohammadi.en.inv[0][1],
+    mohammadi.tr.inv[0][1],
+    mohammadi.inv[0][1]
+  ].join(' ');
+
+  expect(visibleCopy).not.toMatch(/more than anywhere|prices jumped|\+20%|fastest in the city|led the entire city|repriced sharply|repriced it/i);
+  expect(visibleCopy).not.toMatch(/her yerden çok|%20 arttı|şehrin en hızlısı|herkesten çok|kəskin bahalaşdı|pahalandıran|fiyatlar fırladı/i);
+  expect(content.en.ui.proof.mohammadi).toContain('not a measured result');
+  expect(content.en.ui.proof.narimanov).toContain('not proof of a city-leading 20% rise');
+  expect(content.tr.ui.proof.mohammadi).toContain('ölçülmüş bir sonuç değil');
+  expect(content.tr.ui.proof.narimanov).toContain('şehir lideri %20 artışı kanıtlamaz');
+});
+
 test('all zones declare explicit scenario growth values', async ({ request }) => {
   const response = await request.get('./data/zones.json');
   const zones = await response.json();
