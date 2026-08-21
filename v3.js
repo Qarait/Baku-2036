@@ -1516,7 +1516,7 @@
   }
 
   async function loadData() {
-    const [admin, metro, places, zonesData, content] = await Promise.all(['data/admin-absheron.geojson', 'data/metro.json', 'data/places.json', 'data/zones.json?rev=b35a571', 'data/content.json?rev=b35a571'].map(path => fetch(path).then(response => { if (!response.ok) throw new Error(path); return response.json(); })));
+    const [admin, metro, places, zonesData, content] = await Promise.all(['data/admin-absheron-5dp.geojson', 'data/metro.json', 'data/places.json', 'data/zones.json?rev=b35a571', 'data/content.json?rev=b35a571'].map(path => fetch(path).then(response => { if (!response.ok) throw new Error(path); return response.json(); })));
     validateAdminData(admin);
     validateMetroData(metro);
     validatePlacesData(places);

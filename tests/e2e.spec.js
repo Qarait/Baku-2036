@@ -1,7 +1,7 @@
 const { test, expect } = require('@playwright/test');
 
 const dataFiles = [
-  'admin-absheron.geojson',
+  'admin-absheron-5dp.geojson',
   'metro.json',
   'places.json',
   'zones.json',
@@ -795,7 +795,7 @@ test('an empty zone payload surfaces localized validation copy and logs its diag
 });
 
 test('malformed administrative data fails validation before map startup', async ({ page }) => {
-  await page.route('**/data/admin-absheron.geojson*', route => route.fulfill({ json: { type: 'FeatureCollection', features: [{ type: 'Feature', geometry: null, properties: {} }] } }));
+  await page.route('**/data/admin-absheron-5dp.geojson*', route => route.fulfill({ json: { type: 'FeatureCollection', features: [{ type: 'Feature', geometry: null, properties: {} }] } }));
   await page.goto('./?cache=e2e-invalid-admin#lang=en');
   await expect(page.locator('#mapStatus')).toHaveClass(/error/);
   await expect(page.locator('#mapStatus')).toContainText(/validate the map data/i);
