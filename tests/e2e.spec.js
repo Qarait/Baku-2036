@@ -321,6 +321,24 @@ test('zone selection shows JSON-backed content and proof cards', async ({ page }
   await expect(page.locator('#zoneBrief')).toContainText('Where this comes from:');
 });
 
+test('zone details show evidence-linked qualitative factors without changing scenario output', async ({ page }) => {
+  await page.goto('./?cache=e2e-release2-factors#z=whitecity&y=2026&lang=en');
+  await waitForMap(page);
+  const scenarioOutputBefore = await page.locator('#scenarioOutput').textContent();
+  if (await page.locator('#showDetails').isVisible()) await page.locator('#showDetails').click();
+
+  await expect(page.locator('#factorLedger')).toContainText('What supports or weakens this scenario?');
+  await expect(page.locator('.factor-card[data-factor-role="dependency"]')).toContainText('AIIB / Baku Metro expansion framework');
+  await expect(page.locator('.factor-card[data-factor-role="support"]')).toContainText('AtkinsRéalis / Baku White City project');
+  await expect(page.locator('#scenarioOutput')).toHaveText(scenarioOutputBefore);
+
+  await engage(page);
+  await page.locator('#langTr').click();
+  await expect(page.locator('#factorLedger')).toContainText('Bu senaryoyu ne destekler veya zayıflatır?');
+  await expect(page.locator('.factor-card[data-factor-role="dependency"]')).toContainText('Resmî bir plan veya program');
+  await expect(page.locator('.factor-card[data-factor-role="support"]')).toContainText('Adı belirtilen bir yenileme');
+});
+
 test('zone details can be closed and reopened', async ({ page }) => {
   await page.goto('./?cache=e2e-zone-close#z=whitecity&y=2026&lang=en');
   await waitForMap(page);
