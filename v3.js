@@ -55,9 +55,41 @@
     return error;
   }
 
+  function validateScenarioFactors(atlasZones) {
+    const evidenceIds = new Set();
+    atlasZones.forEach((zone, zoneIndex) => {
+      if (!Array.isArray(zone.evidence) || !zone.evidence.length) throw zoneValidationError('zone ' + (zone.id || zoneIndex) + ' has no evidence');
+      zone.evidence.forEach((evidence, evidenceIndex) => {
+        const evidenceId = typeof evidence?.id === 'string' ? evidence.id.trim() : '';
+        if (!evidenceId) throw zoneValidationError('zone ' + (zone.id || zoneIndex) + ' evidence ' + evidenceIndex + ' has a missing id');
+        if (evidenceIds.has(evidenceId)) throw zoneValidationError('duplicate evidence id ' + evidenceId);
+        evidenceIds.add(evidenceId);
+      });
+    });
+    const allowedRoles = new Set(['support', 'risk', 'dependency', 'unknown']);
+    atlasZones.forEach((zone, zoneIndex) => {
+      if (!Array.isArray(zone.scenarioFactors) || !zone.scenarioFactors.length) throw zoneValidationError('zone ' + (zone.id || zoneIndex) + ' has no scenarioFactors');
+      const factorIds = new Set();
+      zone.scenarioFactors.forEach((factor, factorIndex) => {
+        const factorId = typeof factor?.id === 'string' ? factor.id.trim() : '';
+        if (!factorId) throw zoneValidationError('zone ' + (zone.id || zoneIndex) + ' factor ' + factorIndex + ' has a missing id');
+        if (factorIds.has(factorId)) throw zoneValidationError('zone ' + zone.id + ' has duplicate factor id ' + factorId);
+        factorIds.add(factorId);
+        if (!allowedRoles.has(factor.role)) throw zoneValidationError('zone ' + zone.id + ' factor ' + factorId + ' has invalid role ' + factor.role);
+        if (!Array.isArray(factor.evidenceIds) || !factor.evidenceIds.length) throw zoneValidationError('zone ' + zone.id + ' factor ' + factorId + ' has no evidenceIds');
+        factor.evidenceIds.forEach(evidenceId => {
+          if (typeof evidenceId !== 'string' || !evidenceIds.has(evidenceId.trim())) throw zoneValidationError('zone ' + zone.id + ' factor ' + factorId + ' references unknown evidence ' + evidenceId);
+        });
+        if (typeof factor.en !== 'string' || !factor.en.trim()) throw zoneValidationError('zone ' + zone.id + ' factor ' + factorId + ' has no English statement');
+        if (typeof factor.tr !== 'string' || !factor.tr.trim()) throw zoneValidationError('zone ' + zone.id + ' factor ' + factorId + ' has no Turkish statement');
+      });
+    });
+  }
+
   function hydrateZones(atlasZones) {
     if (!Array.isArray(atlasZones)) throw zoneValidationError('expected an array');
     if (!atlasZones.length) throw zoneValidationError('expected at least 1 zone; received 0');
+    validateScenarioFactors(atlasZones);
     const ids = new Set();
     const hydrated = atlasZones.map((zone, index) => {
       const id = typeof zone?.id === 'string' ? zone.id.trim() : '';
@@ -226,6 +258,32 @@
       '<div class="evidence-meta"><span>' + escapeHtml(item.source) + '</span><span>' + escapeHtml((labels.checked || 'Checked') + ' ' + item.checkedAt) + '</span><a href="' + escapeHtml(safeUrl(item)) + '" target="_blank" rel="noopener">' + escapeHtml(labels.readSource || 'Read source') + '</a></div>' +
       '</article>').join('');
     return '<div class="brief-section evidence-section"><div class="evidence-title-row"><h4>' + escapeHtml(tr().evidenceLegend || 'How sure is this?') + '</h4><span>' + escapeHtml(labels.evidenceHint || 'What is real, who says it, and what it may mean.') + '</span></div>' + cards + '</div>';
+  }
+
+  function renderScenarioFactors(zone) {
+    const labels = atlasCopy().labels || {};
+    const factors = Array.isArray(zone.scenarioFactors) ? zone.scenarioFactors : [];
+    if (!factors.length) return '';
+    const roleLabels = {
+      support: labels.factorSupport || (state.lang === 'tr' ? 'Destek' : 'Support'),
+      risk: labels.factorRisk || (state.lang === 'tr' ? 'Risk' : 'Risk'),
+      dependency: labels.factorDependency || (state.lang === 'tr' ? 'Bağımlılık' : 'Dependency'),
+      unknown: labels.factorUnknown || (state.lang === 'tr' ? 'Kanıt boşluğu' : 'Evidence gap')
+    };
+    const evidenceById = new Map(zones.flatMap(item => (Array.isArray(item.evidence) ? item.evidence : []).map(item => [item.id, item])));
+    const cards = factors.map(factor => {
+      const statement = state.lang === 'tr' ? (factor.tr || factor.en) : factor.en;
+      const evidenceLinks = factor.evidenceIds.map(evidenceId => evidenceById.get(evidenceId)).filter(Boolean).map(evidence => {
+        const url = /^https?:\/\//i.test(String(evidence.url || '')) ? evidence.url : '#';
+        return '<a href="' + escapeHtml(url) + '" target="_blank" rel="noopener">' + escapeHtml(evidence.source) + '</a>';
+      }).join(' · ');
+      return '<article class="factor-card factor-' + escapeHtml(factor.role) + '" data-factor-role="' + escapeHtml(factor.role) + '">' +
+        '<div class="factor-card-head"><span class="factor-role">' + escapeHtml(roleLabels[factor.role] || factor.role) + '</span></div>' +
+        '<p class="factor-statement">' + escapeHtml(statement) + '</p>' +
+        '<div class="factor-evidence"><span>' + escapeHtml(labels.factorEvidence || (state.lang === 'tr' ? 'Kanıt' : 'Evidence')) + '</span> ' + evidenceLinks + '</div>' +
+        '</article>';
+    }).join('');
+    return '<section id="factorLedger" class="brief-section factor-ledger" aria-labelledby="factorLedgerTitle"><div class="factor-ledger-title"><h4 id="factorLedgerTitle">' + escapeHtml(labels.factorLedger || (state.lang === 'tr' ? 'Bu senaryoyu ne destekler veya zayıflatır?' : 'What supports or weakens this scenario?')) + '</h4></div>' + cards + '</section>';
   }
 
   function localPlaceStatusLabel(status) {
@@ -787,6 +845,7 @@
       '<div class="brief-section"><h4>' + escapeHtml(labels.whatHappening || 'What is happening?') + '</h4><div class="brief-projects">' + projectHtml + '</div></div>' +
       renderLocalPlaces(zone) +
       renderEvidence(zone) +
+      renderScenarioFactors(zone) +
       '<div class="brief-section"><h4>' + escapeHtml(labels.whyMatters || 'Why this place matters') + '</h4><p>' + escapeHtml(detail.thesis || '') + '</p></div>' +
       '<div class="brief-section"><h4>' + escapeHtml(labels.riskQuestion || 'What could go wrong?') + '</h4><p>' + escapeHtml(risk) + '</p></div>' +
       '<div class="brief-section"><h4>' + escapeHtml(labels.nextStep || 'A sensible next step') + '</h4><p>' + escapeHtml(detail.act || zone.act || '') + '</p></div>' +

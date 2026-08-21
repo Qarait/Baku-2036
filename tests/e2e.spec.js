@@ -339,6 +339,24 @@ test('zone details show evidence-linked qualitative factors without changing sce
   await expect(page.locator('.factor-card[data-factor-role="support"]')).toContainText('Adı belirtilen bir yenileme');
 });
 
+test('market-context factors stay visibly unknown instead of implying a local price lead', async ({ page }) => {
+  for (const zoneId of ['narimanov', 'sabail']) {
+    await page.goto(`./?cache=e2e-release2-unknown-${zoneId}#z=${zoneId}&y=2026&lang=en`);
+    await waitForMap(page);
+    await expect(page.locator('#factorLedger')).toContainText('Evidence gap');
+    await expect(page.locator('.factor-card[data-factor-role="unknown"]')).toContainText('citywide context');
+    await expect(page.locator('.factor-card[data-factor-role="unknown"]')).not.toContainText('fastest-rising');
+  }
+});
+
+test('fixed Turkish entry point renders the factor ledger in Turkish', async ({ page }) => {
+  await page.goto('./tr/?cache=e2e-release2-fixed-tr#z=whitecity&y=2026');
+  await waitForMap(page);
+  await expect(page.locator('html')).toHaveAttribute('lang', 'tr');
+  await expect(page.locator('#factorLedger')).toContainText('Bu senaryoyu ne destekler veya zayıflatır?');
+  await expect(page.locator('.factor-card[data-factor-role="dependency"]')).toContainText('Resmî bir plan veya program');
+});
+
 test('zone details can be closed and reopened', async ({ page }) => {
   await page.goto('./?cache=e2e-zone-close#z=whitecity&y=2026&lang=en');
   await waitForMap(page);
@@ -839,6 +857,48 @@ test('malformed place data fails validation before map startup', async ({ page }
   await expect(page.locator('#mapStatus')).toContainText(/validate the map data/i);
   await expect(page.locator('#v2Map canvas')).toHaveCount(0);
   await expect(page.locator('#retryData')).toBeVisible();
+  page.__browserErrors = [];
+});
+
+test('unresolved qualitative factor references fail validation before map startup', async ({ page }) => {
+  await page.route('**/data/zones.json*', async route => {
+    const response = await route.fetch();
+    const zones = await response.json();
+    zones[0].scenarioFactors[0].evidenceIds = ['missing-evidence-id'];
+    await route.fulfill({ json: zones });
+  });
+  await page.goto('./?cache=e2e-invalid-factor-reference#lang=en');
+  await expect(page.locator('#mapStatus')).toHaveClass(/error/);
+  await expect(page.locator('#mapStatus')).toContainText(/validate the map data/i);
+  await expect(page.locator('#v2Map canvas')).toHaveCount(0);
+  page.__browserErrors = [];
+});
+
+test('duplicate qualitative evidence IDs fail validation before map startup', async ({ page }) => {
+  await page.route('**/data/zones.json*', async route => {
+    const response = await route.fetch();
+    const zones = await response.json();
+    zones[1].evidence[0].id = zones[0].evidence[0].id;
+    await route.fulfill({ json: zones });
+  });
+  await page.goto('./?cache=e2e-invalid-factor-evidence-id#lang=en');
+  await expect(page.locator('#mapStatus')).toHaveClass(/error/);
+  await expect(page.locator('#mapStatus')).toContainText(/validate the map data/i);
+  await expect(page.locator('#v2Map canvas')).toHaveCount(0);
+  page.__browserErrors = [];
+});
+
+test('invalid qualitative factor roles fail validation before map startup', async ({ page }) => {
+  await page.route('**/data/zones.json*', async route => {
+    const response = await route.fetch();
+    const zones = await response.json();
+    zones[0].scenarioFactors[0].role = 'forecast';
+    await route.fulfill({ json: zones });
+  });
+  await page.goto('./?cache=e2e-invalid-factor-role#lang=en');
+  await expect(page.locator('#mapStatus')).toHaveClass(/error/);
+  await expect(page.locator('#mapStatus')).toContainText(/validate the map data/i);
+  await expect(page.locator('#v2Map canvas')).toHaveCount(0);
   page.__browserErrors = [];
 });
 
