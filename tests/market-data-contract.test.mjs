@@ -266,19 +266,25 @@ test('reports exact duplicate groups by source record key', () => {
   ];
   const report = buildDuplicateReport(records, { inputDigest: 'digest-synthetic', schemaVersion: '1.0' });
 
-  assert.equal(report.duplicateGroupCount, 2);
-  assert.deepEqual(report.groups, [
-    {
-      kind: 'exact-source-record',
-      key: 'source-synthetic-fixture:record-synthetic-001',
-      observationIds: ['observation-synthetic-001', 'observation-synthetic-002']
-    },
-    {
-      kind: 'exact-source-record',
-      key: 'source-synthetic-fixture:record-synthetic-004',
-      observationIds: ['observation-synthetic-004', 'observation-synthetic-005']
-    }
-  ]);
+  assert.equal(report.exactDuplicateGroupCount, 2);
+  assert.ok(report.duplicateGroupCount >= report.exactDuplicateGroupCount);
+  assert.deepEqual(
+    report.groups.filter((group) => group.kind === 'exact-source-record'),
+    [
+      {
+        kind: 'exact-source-record',
+        keyType: 'sourceId+sourceRecordId',
+        observationIds: ['observation-synthetic-001', 'observation-synthetic-002']
+      },
+      {
+        kind: 'exact-source-record',
+        keyType: 'sourceId+sourceRecordId',
+        observationIds: ['observation-synthetic-004', 'observation-synthetic-005']
+      }
+    ]
+  );
+  assert.ok(report.groups.some((group) => group.kind === 'probable-normalized-fingerprint'));
+  assert.equal(JSON.stringify(report).includes('record-synthetic-001'), false);
 });
 
 test('keeps report outputs identical when records are reordered', () => {
@@ -353,4 +359,64 @@ test('reports period, transaction type, and geography coverage counts', () => {
   assert.deepEqual(report.transactionTypeCounts, { asking: 1, completed_sale: 1 });
   assert.deepEqual(report.periodCounts, { '2026-01': 1, '2026-02': 1 });
   assert.deepEqual(report.geographyCounts, { 'synthetic-zone-a': 1, 'synthetic-zone-b': 1 });
+});
+
+test('reports rejected records only as safe invalid missingness counts and preserves inputs', () => {
+  const invalid = { ...validObservation, observationId: 'observation-synthetic-invalid', price: { ...validObservation.price, amount: 0 } };
+  const result = observationResult([validObservation, invalid]);
+  const validBefore = structuredClone(result.records);
+  const rejectedBefore = structuredClone(result.rejected);
+  const options = {
+    inputDigest: digestJson([validObservation, invalid]),
+    schemaVersion: '1.0',
+    rejectedRecords: result.rejected
+  };
+
+  const report = buildMissingnessReport(result.records, options);
+
+  assert.equal(report.fields['price.amount'].invalid, 1);
+  assert.equal(report.fields.characteristics.missing, 0);
+  assert.equal(report.breakdowns.source['source-synthetic-fixture'].fields['price.amount'].invalid, 0);
+  assert.deepEqual(result.records, validBefore);
+  assert.deepEqual(result.rejected, rejectedBefore);
+  assert.equal(JSON.stringify(report).includes('observation-synthetic-invalid'), false);
+  assert.equal(JSON.stringify(report).includes('250000'), false);
+});
+
+test('reports configured zero coverage cells and report metadata without mutating records', () => {
+  const records = [
+    validObservation,
+    {
+      ...validObservation,
+      observationId: 'observation-synthetic-coverage-sale',
+      transactionType: 'completed_sale',
+      eventDate: '2026-02-10',
+      observedAt: '2026-02-11',
+      propertyType: 'house',
+      location: { geography: 'synthetic-zone-b', precision: 'zone' }
+    }
+  ];
+  const before = structuredClone(records);
+  const report = buildCoverageReport(records, {
+    inputDigest: 'digest-synthetic',
+    schemaVersion: '1.0',
+    coverageFrame: {
+      periods: ['2026-01', '2026-02', '2026-03'],
+      geographies: ['synthetic-zone-a', 'synthetic-zone-b', 'synthetic-zone-c']
+    },
+    rejectedCount: 2
+  });
+
+  assert.equal(report.inputRecordCount, 4);
+  assert.equal(report.validRecordCount, 2);
+  assert.equal(report.rejectedRecordCount, 2);
+  assert.equal(report.reportableRecordCount, 2);
+  assert.deepEqual(report.periodCounts, { '2026-01': 1, '2026-02': 1, '2026-03': 0 });
+  assert.deepEqual(report.geographyCounts, { 'synthetic-zone-a': 1, 'synthetic-zone-b': 1, 'synthetic-zone-c': 0 });
+  assert.equal(report.sourceByPeriodCounts['source-synthetic-fixture']['2026-03'], 0);
+  assert.equal(report.geographyByPeriodCounts['synthetic-zone-c']['2026-03'], 0);
+  assert.deepEqual(report.transactionTypeCounts, { asking: 1, completed_sale: 1 });
+  assert.equal(report.inputDigest, 'digest-synthetic');
+  assert.equal(report.limitation, 'Observed records are not automatically a representative sample of the Baku market.');
+  assert.deepEqual(records, before);
 });
