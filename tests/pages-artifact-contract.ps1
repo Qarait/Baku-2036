@@ -14,6 +14,7 @@ Assert-True (Test-Path -LiteralPath (Join-Path $root 'v2/index.html')) 'v2 snaps
 $ignorePath = Join-Path $root '.pagesignore'
 Assert-True (Test-Path -LiteralPath $ignorePath) '.pagesignore is missing'
 $ignore = [System.IO.File]::ReadAllText($ignorePath)
+Assert-True ($ignore -match '(?m)^research/$') '.pagesignore must exclude research/'
 
 $topLevelPermissions = [regex]::Match($workflow, '(?ms)^permissions:\r?\n(?<block>.*?)(?=^\S|\z)').Groups['block'].Value
 Assert-True ($topLevelPermissions -match '(?m)^  contents:\s+read\s*$') 'Pages workflow must retain read-only contents permission globally'
@@ -44,6 +45,13 @@ foreach ($entry in @('index.html', 'en/index.html', 'tr/index.html')) {
 $v3Path = Join-Path $root 'v3.js'
 $v3 = [System.IO.File]::ReadAllText($v3Path)
 Assert-True ($v3 -match "(?s)basemap:\s*\{\s*type:\s*'vector',\s*url:\s*PMTILES_URL,\s*attribution:") 'MapLibre basemap source must carry explicit attribution'
+
+foreach ($entry in @('index.html', 'en/index.html', 'tr/index.html', 'v3.js')) {
+  $entryPath = Join-Path $root $entry
+  $content = [System.IO.File]::ReadAllText($entryPath)
+  Assert-True ($content -notmatch [regex]::Escape('research/market-data')) "$entry must not import or fetch market-data research"
+  Assert-True ($content -notmatch [regex]::Escape('scripts/market-data')) "$entry must not import or fetch market-data scripts"
+}
 
 foreach ($entry in @('.github/', '.pagesignore', 'docs/', 'scripts/', 'tests/', 'v1/', 'v2/', 'package.json', 'package-lock.json', 'playwright.config.js', 'README.md', 'vendor/*-dev.mjs')) {
   Assert-True ($ignore -match [regex]::Escape($entry)) ".pagesignore must exclude $entry"

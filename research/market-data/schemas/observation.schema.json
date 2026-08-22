@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.synthetic.invalid/market-data/observation/1.0",
+  "title": "Synthetic market-data observation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "observationId",
+    "sourceId",
+    "rightsId",
+    "transactionType",
+    "observedAt",
+    "propertyType",
+    "price",
+    "area",
+    "location"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "1.0" },
+    "observationId": { "type": "string", "minLength": 1, "pattern": "\\S" },
+    "sourceId": { "type": "string", "minLength": 1, "pattern": "\\S" },
+    "sourceRecordId": { "type": "string", "minLength": 1, "pattern": "\\S" },
+    "rightsId": { "type": "string", "minLength": 1, "pattern": "\\S" },
+    "transactionType": { "enum": ["asking", "completed_sale"] },
+    "observedAt": { "type": "string", "format": "date" },
+    "eventDate": { "type": ["string", "null"], "format": "date" },
+    "propertyType": { "enum": ["apartment", "house", "land", "commercial", "other"] },
+    "price": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["amount", "currency", "basis"],
+      "properties": {
+        "amount": { "type": "number", "exclusiveMinimum": 0 },
+        "currency": { "enum": ["AZN", "USD", "EUR"] },
+        "basis": { "enum": ["total", "per_m2"] }
+      }
+    },
+    "area": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "unit", "measure"],
+      "properties": {
+        "value": { "type": "number", "exclusiveMinimum": 0 },
+        "unit": { "const": "m2" },
+        "measure": { "enum": ["gross", "net", "land"] }
+      }
+    },
+    "location": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["precision"],
+      "properties": {
+        "geography": { "type": "string", "minLength": 1, "pattern": "\\S" },
+        "district": { "type": "string", "minLength": 1, "pattern": "\\S" },
+        "zoneId": { "type": "string", "minLength": 1, "pattern": "\\S" },
+        "precision": { "enum": ["exact", "street", "district", "zone", "unknown"] }
+      }
+    },
+    "characteristics": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "rooms": { "type": "integer", "minimum": 0 },
+        "bedrooms": { "type": "integer", "minimum": 0 },
+        "bathrooms": { "type": "integer", "minimum": 0 },
+        "condition": { "enum": ["new", "good", "needs_repair", "unknown"] }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "transactionType": { "const": "completed_sale" } }, "required": ["transactionType"] },
+      "then": { "required": ["eventDate"], "properties": { "eventDate": { "type": "string", "format": "date" } } }
+    },
+    {
+      "if": { "properties": { "transactionType": { "const": "asking" } }, "required": ["transactionType"] },
+      "then": { "properties": { "eventDate": { "type": "null" } } }
+    }
+  ]
+}
