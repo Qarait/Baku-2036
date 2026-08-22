@@ -179,6 +179,24 @@ test('missing PMTiles reports a retryable map error instead of loading forever',
   page.__browserErrors = [];
 });
 
+test('mobile map reports visible progress while a basemap range is delayed', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  let delayFirstRange = true;
+  await page.route('**/assets/baku-absheron.pmtiles*', async route => {
+    if (delayFirstRange) {
+      delayFirstRange = false;
+      await new Promise(resolve => setTimeout(resolve, 8000));
+    }
+    await route.continue();
+  });
+  await page.goto('./?cache=e2e-map-visible-progress#lang=en');
+  await expect(page.locator('#v2Map canvas')).toBeVisible({ timeout: 10000 });
+  await expect(page.locator('#mapStatus')).toHaveAttribute('data-status', 'map-visible');
+  await expect(page.locator('#mapStatus')).not.toContainText('Loading map data');
+  await expect(page.locator('#mapStatus')).toContainText(/details/i);
+  await expect(page.locator('#mapStatus')).toContainText('Click a location', { timeout: 30000 });
+});
+
 test('PMTiles basemap failure reports an error instead of ready', async ({ page }) => {
   let failBasemap = true;
   await page.route('**/assets/baku-absheron.pmtiles*', route => failBasemap ? route.fulfill({ status: 503, body: 'temporary basemap failure' }) : route.continue());
