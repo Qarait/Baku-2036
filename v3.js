@@ -24,6 +24,8 @@
       kicker: 'SELECTED PLACE',
       emptyTitle: 'Tap a circle to see what’s coming',
       emptyIntro: 'Or tap anywhere to find out where you are.',
+      guidanceChooseLabel: 'Start here', guidanceChooseText: 'Search for a place or tap the map.',
+      guidanceSelectedLabel: 'Next', guidanceSelectedText: 'Review the evidence and main risk before comparing this place.',
       administrative: 'District', investment: 'Investment spot', nearestMetro: 'Nearest metro (straight line — walking is a bit longer)', centralBaku: 'Central Baku', airport: 'Airport', coordinates: 'Coordinates',
       noRayon: 'That’s the sea', noZone: 'No nearby spot', noMetro: 'No station nearby',
       rayonNote: 'District borders show official administrative geography. Investment spots are approximate, not property boundaries.',
@@ -42,6 +44,8 @@
       kicker: 'SE\u00c7\u0130LEN YER',
       emptyTitle: 'Bir daireye dokunarak ne olacağını görün',
       emptyIntro: 'Ya da nerede olduğunuzu öğrenmek için haritada herhangi bir yere dokunun.',
+      guidanceChooseLabel: 'Buradan başlayın', guidanceChooseText: 'Bir yer arayın veya haritaya dokunun.',
+      guidanceSelectedLabel: 'Sıradaki adım', guidanceSelectedText: 'Bu yeri karşılaştırmadan önce kanıtları ve ana riski inceleyin.',
       administrative: 'İlçe', investment: 'Yatırım noktası', nearestMetro: 'En yakın metro (kuş uçuşu — yürüyüş biraz daha uzun)', centralBaku: 'Bakü merkezi', airport: 'Havalimanı', coordinates: 'Koordinatlar',
       noRayon: 'Burası deniz', noZone: 'Yakında yatırım noktası yok', noMetro: 'Yakında istasyon yok',
       rayonNote: 'İlçe sınırları resmi idari coğrafyayı gösterir. Yatırım noktaları yaklaşık alanlardır; mülk sınırı değildir.',
@@ -441,6 +445,20 @@
   const $ = id => document.getElementById(id);
   const tr = () => copy[state.lang];
   const isMobileViewport = () => window.matchMedia('(max-width: 760px)').matches;
+  function renderNextAction() {
+    const host = $('nextAction');
+    if (!host) return;
+    if (!state.ready) {
+      host.hidden = true;
+      return;
+    }
+    const ui = tr();
+    const selected = Boolean(state.selected);
+    host.hidden = false;
+    host.dataset.state = selected ? 'selected' : 'choose';
+    $('nextActionLabel').textContent = selected ? ui.guidanceSelectedLabel : ui.guidanceChooseLabel;
+    $('nextActionText').textContent = selected ? ui.guidanceSelectedText : ui.guidanceChooseText;
+  }
   function setMapStatus(kind, message) {
     const host = $('mapStatus');
     if (!host) return;
@@ -942,6 +960,7 @@
     $('showDetails').textContent = u.showDetails;
     $('panelDetailsTitle').textContent = u.locationDetails;
     $('panelNote').textContent = u.rayonNote;
+    renderNextAction();
     $('rayonMetricLabel').textContent = u.administrative;
     $('zoneMetricLabel').textContent = u.investment;
     $('stationMetricLabel').textContent = u.nearestMetro;
@@ -1745,6 +1764,7 @@
     state.dataError = false;
     state.overlaysReady = false;
     state.ready = false;
+    renderNextAction();
     setLanguage(state.lang); setMapStatus('loading', tr().loading);
     try {
       const [data] = await Promise.all([loadData(), waitForMapRuntime()]);
