@@ -306,6 +306,41 @@ test('deep-linked zone refreshes the scenario tool with its selected output', as
   await expect(page.locator('#scenarioOutput')).not.toContainText('Start by choosing a place');
 });
 
+test('mobile scenario changes explain the delta and update the selected investment circle', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('./?cache=e2e-scenario-animation&testHooks=1#z=whitecity&y=2036&lang=en');
+  await waitForMap(page);
+  await page.locator('#accordion-scenarios .accordion-summary').click();
+  const before = await page.evaluate(() => window.__V3TestHooks.getLayerFeatures().investments.find(feature => feature.id === 'whitecity'));
+
+  await expect(page.locator('#scenarioResultValue')).toHaveText('140%');
+  await page.locator('#scenarioOil').selectOption('bad');
+  await expect(page.locator('#scenarioDelta')).toContainText('−30 percentage points');
+  await expect(page.locator('.scenario-modifier[data-scenario-group="oil"]')).toHaveClass(/is-changed/);
+  await expect(page.locator('#scenarioExplanation')).toContainText('Oil money');
+  await expect(page.locator('#scenarioExplanation')).toContainText('−30 percentage points');
+  await expect(page.locator('#scenarioResultValue')).toHaveText('110%');
+
+  const after = await page.evaluate(() => window.__V3TestHooks.getLayerFeatures().investments.find(feature => feature.id === 'whitecity'));
+  expect(after.radius).toBeLessThan(before.radius);
+});
+
+test('reduced motion keeps the scenario result final and announces only that final value', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('./?cache=e2e-scenario-reduced-motion#z=whitecity&y=2036&lang=en');
+  await waitForMap(page);
+  await page.locator('#accordion-scenarios .accordion-summary').click();
+  await page.locator('#scenarioOil').selectOption('bad');
+
+  await expect(page.locator('#scenarioResultValue')).toHaveText('110%');
+  await expect(page.locator('#scenarioResultValue')).toHaveAttribute('aria-hidden', 'true');
+  await expect(page.locator('#scenarioResultValue')).not.toHaveAttribute('data-animating');
+  await expect(page.locator('#scenarioOutput > span').first()).toHaveAttribute('aria-hidden', 'true');
+  await expect(page.locator('#scenarioOutput')).toHaveAttribute('aria-live', 'polite');
+  await expect(page.locator('#scenarioOutput .sr-only')).toContainText('White City / Khatai: 110%');
+});
+
 test('data freshness and year slider explanation are clear in both languages', async ({ page }) => {
   await page.goto('./?cache=e2e-clarity#z=whitecity&y=2026&lang=en');
   await waitForMap(page);
