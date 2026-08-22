@@ -42,6 +42,45 @@ test('root loads a rendered map and tour starts without browser errors', async (
   await expect(page.locator('#v2Map')).toHaveAttribute('aria-label', /Interactive Baku/);
 });
 
+test('contextual guidance follows readiness, selection, and clear states', async ({ page }) => {
+  await page.goto('./?cache=e2e-contextual-guidance#lang=en');
+  await expect(page.locator('#nextAction')).toBeHidden();
+  await waitForMap(page);
+
+  const guidance = page.locator('#nextAction');
+  await expect(guidance).toBeVisible();
+  await expect(guidance).toHaveAttribute('role', 'note');
+  await expect(guidance).not.toHaveAttribute('aria-live', /.+/);
+  await expect(guidance).toHaveAttribute('data-state', 'choose');
+  await expect(guidance).toContainText('Search for a place or tap the map.');
+
+  await page.evaluate(() => window.identifyLocation({ lng: 49.877, lat: 40.383 }, null));
+  await expect(guidance).toHaveAttribute('data-state', 'selected');
+  await expect(guidance).toContainText('Review the evidence and main risk');
+
+  await page.locator('#closeDetails').click();
+  await expect(guidance).toHaveAttribute('data-state', 'choose');
+  await expect(guidance).toContainText('Search for a place or tap the map.');
+});
+
+test('contextual guidance is localized and remains visible in the mobile concise panel', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('./?cache=e2e-contextual-guidance-mobile#z=whitecity&y=2030&lang=en');
+  await waitForMap(page);
+
+  const guidance = page.locator('#nextAction');
+  await expect(page.locator('#v2ZoneDrawer')).toHaveClass(/is-collapsed/);
+  await expect(guidance).toBeVisible();
+  await expect(guidance).toHaveAttribute('data-state', 'selected');
+  await expect(page.locator('#zoneQuickSummary')).toBeVisible();
+  await expect(page.locator('#showDetails')).toHaveText('Show details');
+
+  await page.locator('#langTr').evaluate(button => button.click());
+  await expect(guidance).toHaveAttribute('data-state', 'selected');
+  await expect(guidance).toContainText('kanıtları ve ana riski');
+  await expect(page.locator('#showDetails')).toHaveText('Ayrıntıları göster');
+});
+
 test('mobile intro exposes the how-to video before the map', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('./?cache=e2e-howto-top');

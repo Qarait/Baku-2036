@@ -56,6 +56,7 @@ test('WebKit keeps the bilingual drawer collapse flow usable', async ({ page }) 
   await page.goto('./?cache=webkit-drawer#z=whitecity&y=2030&lang=tr');
   await waitForMap(page);
   await expect(page.locator('#panelTitle')).toHaveText('White City / Xətai');
+  await expect(page.locator('#nextAction')).toContainText('Bu yeri karşılaştırmadan önce kanıtları ve ana riski inceleyin.');
   await page.locator('#showDetails').click();
   await expect(page.locator('#zoneDetailContent')).toBeVisible();
   await page.locator('#collapseDetails').click();
@@ -63,6 +64,7 @@ test('WebKit keeps the bilingual drawer collapse flow usable', async ({ page }) 
   await expect(page.locator('#showDetails')).toHaveText('Ayrıntıları göster');
   await page.locator('#showDetails').click();
   await expect(page.locator('#zoneBrief')).toBeVisible();
+  await expect(page.locator('#nextAction')).toContainText('Bu yeri karşılaştırmadan önce kanıtları ve ana riski inceleyin.');
   await page.locator('#langTr').focus();
   await expect(page.locator('body')).toHaveClass(/engaged/);
   await page.locator('#langEn').click();
