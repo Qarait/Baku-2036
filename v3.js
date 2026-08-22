@@ -435,7 +435,7 @@
 
   const state = {
     lang: 'en', year: 2026, admin: true, investments: true, metro: true, heat: false,
-    selected: null, data: null, map: null, ready: false, content: null, controlsInstalled: false, mapRuntimeTimer: null, drawerCollapsed: false, shortlist: {}, shortlistAmounts: {}, profile: null, plannerBudget: null, scenarios: { oil: 'norm', infra: 'on', cur: 'stable' }, openAccordion: null, timeTimer: null, engaged: false, cityStory: { active: false, paused: false, index: 0, timer: null }, tourIndex: 0, tourStops: ['whitecity', 'mohammadi', 'bilgah', 'sumgayit', 'hovsan'], scenarioAnimation: null, scenarioAnimationFrame: null
+    selected: null, data: null, map: null, mapReady: false, overlaysReady: false, ready: false, dataError: false, content: null, controlsInstalled: false, mapRuntimeTimer: null, drawerCollapsed: false, shortlist: {}, shortlistAmounts: {}, profile: null, plannerBudget: null, scenarios: { oil: 'norm', infra: 'on', cur: 'stable' }, openAccordion: null, timeTimer: null, engaged: false, cityStory: { active: false, paused: false, index: 0, timer: null }, tourIndex: 0, tourStops: ['whitecity', 'mohammadi', 'bilgah', 'sumgayit', 'hovsan'], scenarioAnimation: null, scenarioAnimationFrame: null
   };
 
   const $ = id => document.getElementById(id);
@@ -456,6 +456,8 @@
     }
   }
   function reportMapFailure() {
+    state.mapReady = false;
+    state.overlaysReady = false;
     state.ready = false;
     finishCityStory();
     setMapStatus('error', tr().error);
@@ -724,7 +726,8 @@
     updateSource('city-events', featureCollection(cityEventFeatures(state.year)));
   }
 
-  function createStyle(data) {
+  function createStyle(data = null) {
+    const empty = featureCollection([]);
     return {
       version: 8,
       name: 'Baku 2036 audience map',
@@ -735,8 +738,8 @@
           url: PMTILES_URL,
           attribution: '<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors</a> · processed by <a href="https://download.geofabrik.de/" target="_blank" rel="noopener">Geofabrik</a>'
         },
-        admin: { type: 'geojson', data: data.admin },
-        'admin-labels': { type: 'geojson', data: adminLabelFeatures(data.admin) },
+        admin: { type: 'geojson', data: data?.admin || empty },
+        'admin-labels': { type: 'geojson', data: adminLabelFeatures(data?.admin) },
         'investment-zones': { type: 'geojson', data: featureCollection(investmentFeatures()) },
         heat: { type: 'geojson', data: featureCollection(heatFeatures()) },
         'metro-lines': { type: 'geojson', data: featureCollection(metroLineFeatures()) },
@@ -1615,15 +1618,17 @@
     document.addEventListener('click', event => { if (!event.target.closest('.search-box') && !event.target.closest('.search-results')) $('searchResults').hidden = true; });
   }
 
-  function installMap(maplibregl, data) {
+  function installMap(maplibregl) {
     const runtimeReady = window.pmtiles && typeof window.pmtiles.Protocol === 'function' && maplibregl && typeof maplibregl.Map === 'function' && typeof maplibregl.NavigationControl === 'function' && typeof maplibregl.addProtocol === 'function';
     if (!runtimeReady || state.map) {
       if (!runtimeReady) reportMapFailure();
       return;
     }
+    state.mapReady = false;
+    state.overlaysReady = false;
     state.ready = false;
     const protocol = new window.pmtiles.Protocol(); maplibregl.addProtocol('pmtiles', protocol.tile);
-    const map = new maplibregl.Map({ container: 'v2Map', style: createStyle(data), center: [49.86, 40.42], zoom: 9.6, minZoom: 8, maxZoom: 15.4, dragRotate: false, pitchWithRotate: false, attributionControl: { compact: true } });
+    const map = new maplibregl.Map({ container: 'v2Map', style: createStyle(), center: [49.86, 40.42], zoom: 9.6, minZoom: 8, maxZoom: 15.4, dragRotate: false, pitchWithRotate: false, attributionControl: { compact: true } });
     state.map = map;
     let mapFailed = false;
     const isBasemapFailure = event => {
@@ -1647,17 +1652,69 @@
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-right');
     let mapVisible = false;
     map.on('render', () => {
-      if (mapFailed || state.ready || mapVisible) return;
+      if (mapFailed || state.ready || state.dataError || mapVisible) return;
       mapVisible = true;
       setMapStatus('map-visible', tr().mapVisible);
     });
     map.on('load', () => {
       if (mapFailed || state.map !== map) return;
-      state.ready = true; setMapStatus('ready', tr().ready); $('yearSelect').value = String(state.year);
-      updateLayers(); renderPanel();
+      state.mapReady = true;
       map.on('click', event => identifyLocation(event.lngLat, event.point));
       ['investment-zones', 'metro-stations', 'admin-fill', 'city-events-active', 'city-events-future'].forEach(layer => { map.on('mouseenter', layer, () => { map.getCanvas().style.cursor = 'pointer'; }); map.on('mouseleave', layer, () => { map.getCanvas().style.cursor = ''; }); });
-      if (state.hashZone) selectZone(state.hashZone, false); else map.fitBounds(BBOX, { padding: 50, duration: 0 });
+      if (state.data) installOverlayData();
+    });
+  }
+
+  function installOverlayData() {
+    if (!state.map || !state.mapReady || !state.data || state.overlaysReady) return;
+    updateSource('admin', state.data.admin);
+    updateSource('admin-labels', adminLabelFeatures(state.data.admin));
+    updateSource('investment-zones', featureCollection(investmentFeatures()));
+    updateSource('heat', featureCollection(heatFeatures()));
+    updateSource('metro-lines', featureCollection(metroLineFeatures()));
+    updateSource('metro-stations', featureCollection(metroStationFeatures()));
+    updateSource('city-events', featureCollection(cityEventFeatures(state.year)));
+    state.overlaysReady = true;
+    state.ready = true;
+    setMapStatus('ready', tr().ready);
+    $('yearSelect').value = String(state.year);
+    updateLayers();
+    renderPanel();
+    if (state.hashZone) selectZone(state.hashZone, false); else state.map.fitBounds(BBOX, { padding: 50, duration: 0 });
+  }
+
+  function waitForMapRuntime() {
+    const maplibregl = window.__V3MapLibre;
+    if (maplibregl) {
+      installMap(maplibregl);
+      return Promise.resolve();
+    }
+    return new Promise((resolve, reject) => {
+      let settled = false;
+      const finish = (error) => {
+        if (settled) return;
+        settled = true;
+        if (state.mapRuntimeTimer) clearTimeout(state.mapRuntimeTimer);
+        state.mapRuntimeTimer = null;
+        window.removeEventListener('v3-maplibre-ready', onMapLibreReady);
+        if (error) reject(error); else resolve();
+      };
+      const onMapLibreReady = () => {
+        if (window.__V3MapLibre) {
+          installMap(window.__V3MapLibre);
+          finish();
+        } else finish(Object.assign(new Error('MapLibre runtime unavailable'), { code: 'map-runtime' }));
+      };
+      window.addEventListener('v3-maplibre-ready', onMapLibreReady, { once: true });
+      state.mapRuntimeTimer = setTimeout(() => {
+        if (window.__V3MapLibre) {
+          installMap(window.__V3MapLibre);
+          finish();
+        } else {
+          reportMapFailure();
+          finish(Object.assign(new Error('MapLibre runtime unavailable'), { code: 'map-runtime' }));
+        }
+      }, 5000);
     });
   }
 
@@ -1667,39 +1724,36 @@
     validateMetroData(metro);
     validatePlacesData(places);
     hydrateZones(zonesData);
-    state.data = { admin, metro, places, zones: zonesData, content };
+    const data = { admin, metro, places, zones: zonesData, content };
     if (state.hashZone && !zones.some(zone => zone.id === state.hashZone)) { state.hashZone = null; updateHash(); }
-    return state.data;
+    return data;
+  }
+
+  function commitData(data) {
+    state.data = data;
+    renderDataFreshness();
+    loadLocalState();
+    renderAllContent();
+    installOverlayData();
   }
 
   async function boot() {
     if ($('skipMap')) $('skipMap').href = `${location.pathname}#v2ZoneDrawer`;
     readHash();
     if (!state.controlsInstalled) { installControls(); state.controlsInstalled = true; }
+    if (!state.map) { state.data = null; zones.length = 0; }
+    state.dataError = false;
+    state.overlaysReady = false;
+    state.ready = false;
     setLanguage(state.lang); setMapStatus('loading', tr().loading);
     try {
-      const data = await loadData();
-      renderDataFreshness();
-      loadLocalState();
-      renderAllContent();
-      const maplibregl = window.__V3MapLibre;
-      if (state.mapRuntimeTimer) clearTimeout(state.mapRuntimeTimer);
-      if (maplibregl) {
-        installMap(maplibregl, data);
-      } else {
-        const onMapLibreReady = () => {
-          if (state.mapRuntimeTimer) clearTimeout(state.mapRuntimeTimer);
-          state.mapRuntimeTimer = null;
-          installMap(window.__V3MapLibre, data);
-        };
-        window.addEventListener('v3-maplibre-ready', onMapLibreReady, { once: true });
-        state.mapRuntimeTimer = setTimeout(() => {
-          window.removeEventListener('v3-maplibre-ready', onMapLibreReady);
-          state.mapRuntimeTimer = null;
-          if (window.__V3MapLibre) installMap(window.__V3MapLibre, data); else reportMapFailure();
-        }, 5000);
-      }
-    } catch (error) { console.error(error); finishCityStory(); setMapStatus('error', ['zone-data-validation', 'data-validation'].includes(error?.code) ? tr().validation : tr().error); }
+      const [data] = await Promise.all([loadData(), waitForMapRuntime()]);
+      commitData(data);
+    } catch (error) {
+      if (error?.code === 'map-runtime') return;
+      state.dataError = true;
+      console.error(error); finishCityStory(); setMapStatus('error', ['zone-data-validation', 'data-validation'].includes(error?.code) ? tr().validation : tr().error);
+    }
   }
 
   window.distanceKm = distanceKm;

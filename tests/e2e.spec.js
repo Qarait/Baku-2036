@@ -197,6 +197,27 @@ test('mobile map reports visible progress while a basemap range is delayed', asy
   await expect(page.locator('#mapStatus')).toContainText('Click a location', { timeout: 30000 });
 });
 
+test('basemap becomes visible before overlay data finishes loading', async ({ page }) => {
+  let releaseZones;
+  let zonesRequestSeenResolve;
+  const zonesRequestSeen = new Promise(resolve => { zonesRequestSeenResolve = resolve; });
+  const zonesGate = new Promise(resolve => { releaseZones = resolve; });
+  await page.route('**/data/zones.json*', async route => {
+    zonesRequestSeenResolve();
+    await zonesGate;
+    await route.continue();
+  });
+  await page.goto('./?cache=e2e-progressive-overlays#lang=en');
+  await zonesRequestSeen;
+
+  await expect(page.locator('#v2Map canvas')).toBeVisible({ timeout: 10000 });
+  await expect(page.locator('#mapStatus')).toHaveAttribute('data-status', 'map-visible');
+  await expect(page.locator('#mapStatus')).toContainText('loading details');
+
+  releaseZones();
+  await expect(page.locator('#mapStatus')).toContainText('Click a location', { timeout: 30000 });
+});
+
 test('PMTiles basemap failure reports an error instead of ready', async ({ page }) => {
   let failBasemap = true;
   await page.route('**/assets/baku-absheron.pmtiles*', route => failBasemap ? route.fulfill({ status: 503, body: 'temporary basemap failure' }) : route.continue());
@@ -893,37 +914,37 @@ test('an empty zone payload surfaces localized validation copy and logs its diag
   page.__browserErrors = [];
 });
 
-test('malformed administrative data fails validation before map startup', async ({ page }) => {
+test('malformed administrative data fails validation without blocking basemap startup', async ({ page }) => {
   await page.route('**/data/admin-absheron-5dp.geojson*', route => route.fulfill({ json: { type: 'FeatureCollection', features: [{ type: 'Feature', geometry: null, properties: {} }] } }));
   await page.goto('./?cache=e2e-invalid-admin#lang=en');
   await expect(page.locator('#mapStatus')).toHaveClass(/error/);
   await expect(page.locator('#mapStatus')).toContainText(/validate the map data/i);
-  await expect(page.locator('#v2Map canvas')).toHaveCount(0);
+  await expect(page.locator('#v2Map canvas')).toBeVisible();
   await expect(page.locator('#retryData')).toBeVisible();
   page.__browserErrors = [];
 });
 
-test('malformed metro data fails validation before map startup', async ({ page }) => {
+test('malformed metro data fails validation without blocking basemap startup', async ({ page }) => {
   await page.route('**/data/metro.json*', route => route.fulfill({ json: { lines: [], stations: [] } }));
   await page.goto('./?cache=e2e-invalid-metro#lang=en');
   await expect(page.locator('#mapStatus')).toHaveClass(/error/);
   await expect(page.locator('#mapStatus')).toContainText(/validate the map data/i);
-  await expect(page.locator('#v2Map canvas')).toHaveCount(0);
+  await expect(page.locator('#v2Map canvas')).toBeVisible();
   await expect(page.locator('#retryData')).toBeVisible();
   page.__browserErrors = [];
 });
 
-test('malformed place data fails validation before map startup', async ({ page }) => {
+test('malformed place data fails validation without blocking basemap startup', async ({ page }) => {
   await page.route('**/data/places.json*', route => route.fulfill({ json: [{ id: 'broken-place', nameEn: 'Broken place', nameTr: 'Broken place', type: 'town', coords: ['not-a-number', 40.4], source: 'test' }] }));
   await page.goto('./?cache=e2e-invalid-places#lang=en');
   await expect(page.locator('#mapStatus')).toHaveClass(/error/);
   await expect(page.locator('#mapStatus')).toContainText(/validate the map data/i);
-  await expect(page.locator('#v2Map canvas')).toHaveCount(0);
+  await expect(page.locator('#v2Map canvas')).toBeVisible();
   await expect(page.locator('#retryData')).toBeVisible();
   page.__browserErrors = [];
 });
 
-test('unresolved qualitative factor references fail validation before map startup', async ({ page }) => {
+test('unresolved qualitative factor references fail validation without blocking basemap startup', async ({ page }) => {
   await page.route('**/data/zones.json*', async route => {
     const response = await route.fetch();
     const zones = await response.json();
@@ -933,11 +954,11 @@ test('unresolved qualitative factor references fail validation before map startu
   await page.goto('./?cache=e2e-invalid-factor-reference#lang=en');
   await expect(page.locator('#mapStatus')).toHaveClass(/error/);
   await expect(page.locator('#mapStatus')).toContainText(/validate the map data/i);
-  await expect(page.locator('#v2Map canvas')).toHaveCount(0);
+  await expect(page.locator('#v2Map canvas')).toBeVisible();
   page.__browserErrors = [];
 });
 
-test('duplicate qualitative evidence IDs fail validation before map startup', async ({ page }) => {
+test('duplicate qualitative evidence IDs fail validation without blocking basemap startup', async ({ page }) => {
   await page.route('**/data/zones.json*', async route => {
     const response = await route.fetch();
     const zones = await response.json();
@@ -947,11 +968,11 @@ test('duplicate qualitative evidence IDs fail validation before map startup', as
   await page.goto('./?cache=e2e-invalid-factor-evidence-id#lang=en');
   await expect(page.locator('#mapStatus')).toHaveClass(/error/);
   await expect(page.locator('#mapStatus')).toContainText(/validate the map data/i);
-  await expect(page.locator('#v2Map canvas')).toHaveCount(0);
+  await expect(page.locator('#v2Map canvas')).toBeVisible();
   page.__browserErrors = [];
 });
 
-test('invalid qualitative factor roles fail validation before map startup', async ({ page }) => {
+test('invalid qualitative factor roles fail validation without blocking basemap startup', async ({ page }) => {
   await page.route('**/data/zones.json*', async route => {
     const response = await route.fetch();
     const zones = await response.json();
@@ -961,7 +982,7 @@ test('invalid qualitative factor roles fail validation before map startup', asyn
   await page.goto('./?cache=e2e-invalid-factor-role#lang=en');
   await expect(page.locator('#mapStatus')).toHaveClass(/error/);
   await expect(page.locator('#mapStatus')).toContainText(/validate the map data/i);
-  await expect(page.locator('#v2Map canvas')).toHaveCount(0);
+  await expect(page.locator('#v2Map canvas')).toBeVisible();
   page.__browserErrors = [];
 });
 
