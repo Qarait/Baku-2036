@@ -166,6 +166,12 @@ button { cursor: pointer; }
 #scenarioBreakdown > p { margin: 0; }
 .scenario-modifier { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 12px; }
 .scenario-modifier strong { color: var(--navy); font-variant-numeric: tabular-nums; white-space: nowrap; }
+#scenarioResultValue { color: var(--navy); font-variant-numeric: tabular-nums; font-weight: 800; }
+#scenarioResultValue.is-animating { display: inline-block; min-width: 3ch; }
+.scenario-modifier.is-changed { border-bottom-color: var(--gold); color: var(--navy); animation: scenario-modifier-highlight .7s ease-out; }
+.scenario-delta { color: var(--navy); font-variant-numeric: tabular-nums; }
+.scenario-explanation { padding: 8px 10px; color: #5f4b1e; background: #fff8e8; border-left: 3px solid var(--gold); border-radius: 4px; font-size: 11px; line-height: 1.45; }
+@keyframes scenario-modifier-highlight { from { background: #f9e4a8; } to { background: transparent; } }
 .tool-result { margin-top: 13px; }
 .year-story { min-height: 76px; padding: 13px; color: var(--navy); background: #fffdf7; border-radius: 7px; font-size: 13px; line-height: 1.5; }
 .year-story strong { display: block; margin-bottom: 4px; color: var(--gold); font-size: 18px; }

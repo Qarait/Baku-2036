@@ -7,6 +7,7 @@
   const PMTILES_URL = 'pmtiles://assets/baku-absheron.pmtiles';
   const COLORS = { hot: '#bd5b2d', frontier: '#137b66', established: '#2e6b9e' };
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const SCENARIO_ANIMATION_DURATION = 420;
   const fixedLanguage = window.__BakuFixedLanguage === 'tr' || window.__BakuFixedLanguage === 'en' ? window.__BakuFixedLanguage : null;
 
   const copy = {
@@ -370,10 +371,71 @@
     return scenarioBreakdown(zone, state.scenarios).roundedGrowth;
   }
 
+  function formatScenarioPercent(value) {
+    return state.lang === 'tr' ? '%' + value : value + '%';
+  }
+
+  function formatScenarioDelta(value) {
+    const labels = atlasCopy().labels || {};
+    const unit = labels.scenarioPercentagePoints || (state.lang === 'tr' ? 'yüzde puan' : 'percentage points');
+    const number = Number(value) || 0;
+    const sign = number < 0 ? '−' : number > 0 ? '+' : '';
+    return sign + Math.abs(number) + ' ' + unit;
+  }
+
+  function replaceScenarioTokens(template, tokens) {
+    return Object.entries(tokens).reduce((text, [token, value]) => text.split('__' + token + '__').join(value), template);
+  }
+
+  function scenarioChangeExplanation(change) {
+    if (!change) return '';
+    const content = atlasCopy();
+    const labels = content.labels || {};
+    const ui = content.ui || {};
+    const template = labels.scenarioChangeExplanation || (state.lang === 'tr'
+      ? '__GROUP__ değeri __FROM__ seçeneğinden __TO__ seçeneğine değişti; örnek sonuç __DELTA__ oynadı. Başlangıç varsayımı ve kanıt defteri değişmedi.'
+      : '__GROUP__ changed from __FROM__ to __TO__; the illustrative result moved __DELTA__. The baseline and evidence ledger are unchanged.');
+    return replaceScenarioTokens(template, {
+      GROUP: scenarioGroupLabel(ui, change.group),
+      FROM: scenarioOptionLabel(ui, change.group, change.previousOption),
+      TO: scenarioOptionLabel(ui, change.group, change.nextOption),
+      DELTA: formatScenarioDelta(change.to - change.from)
+    });
+  }
+
+  function animateScenarioResult(change) {
+    if (state.scenarioAnimationFrame) cancelAnimationFrame(state.scenarioAnimationFrame);
+    state.scenarioAnimationFrame = null;
+    const result = $('scenarioResultValue');
+    if (!result || !change) return;
+    const finish = () => {
+      result.textContent = formatScenarioPercent(change.to);
+      result.classList.remove('is-animating');
+      result.removeAttribute('data-animating');
+    };
+    if (reducedMotion || change.from === change.to) {
+      finish();
+      return;
+    }
+    result.textContent = formatScenarioPercent(change.from);
+    result.classList.add('is-animating');
+    result.dataset.animating = 'true';
+    const startedAt = performance.now();
+    const frame = now => {
+      const progress = Math.min(1, (now - startedAt) / SCENARIO_ANIMATION_DURATION);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const value = Math.round(change.from + ((change.to - change.from) * eased));
+      result.textContent = formatScenarioPercent(value);
+      if (progress < 1 && result.isConnected) state.scenarioAnimationFrame = requestAnimationFrame(frame);
+      else { state.scenarioAnimationFrame = null; finish(); }
+    };
+    state.scenarioAnimationFrame = requestAnimationFrame(frame);
+  }
+
 
   const state = {
     lang: 'en', year: 2026, admin: true, investments: true, metro: true, heat: false,
-    selected: null, data: null, map: null, ready: false, content: null, controlsInstalled: false, mapRuntimeTimer: null, drawerCollapsed: false, shortlist: {}, shortlistAmounts: {}, profile: null, plannerBudget: null, scenarios: { oil: 'norm', infra: 'on', cur: 'stable' }, openAccordion: null, timeTimer: null, engaged: false, cityStory: { active: false, paused: false, index: 0, timer: null }, tourIndex: 0, tourStops: ['whitecity', 'mohammadi', 'bilgah', 'sumgayit', 'hovsan']
+    selected: null, data: null, map: null, ready: false, content: null, controlsInstalled: false, mapRuntimeTimer: null, drawerCollapsed: false, shortlist: {}, shortlistAmounts: {}, profile: null, plannerBudget: null, scenarios: { oil: 'norm', infra: 'on', cur: 'stable' }, openAccordion: null, timeTimer: null, engaged: false, cityStory: { active: false, paused: false, index: 0, timer: null }, tourIndex: 0, tourStops: ['whitecity', 'mohammadi', 'bilgah', 'sumgayit', 'hovsan'], scenarioAnimation: null, scenarioAnimationFrame: null
   };
 
   const $ = id => document.getElementById(id);
@@ -457,8 +519,10 @@
       tier: z.tier,
       color: COLORS[z.tier],
       growthPct: scenarioBaseGrowth(z),
+      scenarioGrowth: scenarioGrowth(z),
       yearProgress: progress,
-      radius: z.radius * (1 + progress * scenarioBaseGrowth(z) / 100),
+      radius: z.radius * (1 + progress * scenarioGrowth(z) / 100),
+      scenarioOpacity: Math.max(.28, Math.min(.65, .22 + scenarioGrowth(z) / 500)),
       dim: Boolean((profile && !profile.zones.includes(z.id)) || (budget !== null && budget < Number(z.mint || 0)))
     }));
   }
@@ -700,7 +764,7 @@
         { id: 'city-events-future', type: 'circle', source: 'city-events', filter: ['==', ['get', 'phase'], 'future'], paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, 4.2, 12, 6.8], 'circle-color': COLORS.hot, 'circle-opacity': .1, 'circle-stroke-color': COLORS.hot, 'circle-stroke-width': 1.4, 'circle-stroke-opacity': .42 } },
         { id: 'city-events-active', type: 'circle', source: 'city-events', filter: ['==', ['get', 'phase'], 'active'], paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, 4.6, 12, 7.2], 'circle-color': COLORS.hot, 'circle-opacity': .86, 'circle-stroke-color': '#fffdf8', 'circle-stroke-width': 1.2, 'circle-stroke-opacity': .95 } },
         { id: 'heat-layer', type: 'circle', source: 'heat', layout: { visibility: 'none' }, paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, ['*', ['get', 'radius'], .45], 11, ['get', 'radius'], 14, ['*', ['get', 'radius'], 1.25]], 'circle-color': ['get', 'color'], 'circle-opacity': .24, 'circle-blur': .82 } },
-        { id: 'investment-zones', type: 'circle', source: 'investment-zones', paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, ['*', ['get', 'radius'], .55], 11, ['get', 'radius'], 14, ['*', ['get', 'radius'], 1.45]], 'circle-color': ['get', 'color'], 'circle-opacity': ['case', ['get', 'dim'], .12, .48], 'circle-stroke-color': ['get', 'color'], 'circle-stroke-width': 1.5, 'circle-stroke-opacity': ['case', ['get', 'dim'], .28, .9] } },
+        { id: 'investment-zones', type: 'circle', source: 'investment-zones', paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, ['*', ['get', 'radius'], .55], 11, ['get', 'radius'], 14, ['*', ['get', 'radius'], 1.45]], 'circle-radius-transition': { duration: SCENARIO_ANIMATION_DURATION, delay: 0 }, 'circle-color': ['get', 'color'], 'circle-opacity': ['case', ['get', 'dim'], .12, ['get', 'scenarioOpacity']], 'circle-opacity-transition': { duration: SCENARIO_ANIMATION_DURATION, delay: 0 }, 'circle-stroke-color': ['get', 'color'], 'circle-stroke-width': 1.5, 'circle-stroke-opacity': ['case', ['get', 'dim'], .28, .9] } },
         { id: 'investment-labels', type: 'symbol', source: 'investment-zones', layout: { 'text-field': ['get', 'labelEn'], 'text-font': ['noto_sans_bold'], 'text-size': 10, 'text-anchor': 'top', 'text-offset': [0, 1.2], 'text-allow-overlap': false }, paint: { 'text-color': '#27333c', 'text-opacity': ['case', ['get', 'dim'], .28, 1], 'text-halo-color': '#fffdf8', 'text-halo-width': 2, 'text-halo-blur': ['case', ['get', 'dim'], .4, 0] } },
         { id: 'rings', type: 'line', source: 'rings', paint: { 'line-color': '#214a69', 'line-width': 1.2, 'line-dasharray': [2, 2], 'line-opacity': .72 } },
         { id: 'click-point', type: 'circle', source: 'click-point', paint: { 'circle-radius': 6, 'circle-color': '#fffdf8', 'circle-stroke-color': '#183b58', 'circle-stroke-width': 2 } },
@@ -1031,17 +1095,26 @@
     const current = state.scenarios;
     const selectedZone = state.selected?.zone?.zone;
     const breakdown = selectedZone ? scenarioBreakdown(selectedZone, current) : null;
-    const scenarioOutput = selectedZone
-      ? ((state.lang === 'tr' ? selectedZone.nameTr : selectedZone.nameEn) + ': ' + (state.lang === 'tr' ? '%' + scenarioGrowth(selectedZone) : scenarioGrowth(selectedZone) + '%') + ' ' + (labels.scenarioOutput || 'illustrative growth sensitivity'))
-      : labels.noData;
+    const scenarioName = selectedZone ? (state.lang === 'tr' ? selectedZone.nameTr : selectedZone.nameEn) : '';
+    const scenarioResult = selectedZone ? scenarioGrowth(selectedZone) : null;
+    const activeChange = state.scenarioAnimation && selectedZone && state.scenarioAnimation.zoneId === selectedZone.id ? state.scenarioAnimation : null;
+    const scenarioOutput = selectedZone ? scenarioName + ': ' + formatScenarioPercent(scenarioResult) + ' ' + (labels.scenarioOutput || 'illustrative growth sensitivity') : labels.noData;
+    const scenarioOutputHtml = selectedZone
+      ? '<span aria-hidden="true">' + escapeHtml(scenarioName) + ': <span id="scenarioResultValue" aria-hidden="true">' + escapeHtml(formatScenarioPercent(scenarioResult)) + '</span> ' + escapeHtml(labels.scenarioOutput || 'illustrative growth sensitivity') + '</span><span class="sr-only">' + escapeHtml(scenarioOutput) + '</span>'
+      : escapeHtml(scenarioOutput);
     const modifierRows = breakdown ? Object.entries(breakdown.modifiers).map(([group, item]) =>
-      '<div class="scenario-modifier"><span>' + escapeHtml(scenarioGroupLabel(ui, group)) + ': ' + escapeHtml(scenarioOptionLabel(ui, group, item.option)) + '</span><strong>×' + item.multiplier.toFixed(2) + '</strong></div>'
+      '<div class="scenario-modifier' + (activeChange?.group === group ? ' is-changed' : '') + '" data-scenario-group="' + escapeHtml(group) + '"><span>' + escapeHtml(scenarioGroupLabel(ui, group)) + ': ' + escapeHtml(scenarioOptionLabel(ui, group, item.option)) + '</span><strong>×' + item.multiplier.toFixed(2) + '</strong></div>'
     ).join('') : '';
+    const changeHtml = activeChange
+      ? '<p id="scenarioDelta" class="scenario-delta"><strong>' + escapeHtml(labels.scenarioDelta || (state.lang === 'tr' ? 'Değişim' : 'Change')) + ':</strong> ' + escapeHtml(formatScenarioDelta(activeChange.to - activeChange.from)) + '</p>' +
+        '<p id="scenarioExplanation" class="scenario-explanation">' + escapeHtml(scenarioChangeExplanation(activeChange)) + '</p>'
+      : '';
     const breakdownHtml = breakdown
       ? '<div id="scenarioBreakdown" data-scenario-base="' + breakdown.baseGrowth + '" data-scenario-result="' + breakdown.roundedGrowth + '">' +
         '<p><strong>' + escapeHtml(labels.editorialBaseline || 'Editorial scenario baseline') + ':</strong> ' + breakdown.baseGrowth + '%</p>' +
         '<div><strong>' + escapeHtml(labels.activeModifiers || 'Sensitivity modifiers') + '</strong>' + modifierRows + '</div>' +
         '<p><strong>' + escapeHtml(labels.calculatedResult || 'Illustrative sensitivity result') + ':</strong> ' + breakdown.roundedGrowth + '%</p>' +
+        changeHtml +
         '<p>' + escapeHtml(labels.roundingRule || 'Rounded to the nearest 5 percentage points') + '</p>' +
         '<div class="tool-note">' + escapeHtml(labels.scenarioMethodWarning || 'This calculation uses an editorial zone baseline and fixed sensitivity multipliers. It is not trained on property transactions and is not a valuation or forecast.') + '</div></div>'
       : '';
@@ -1049,7 +1122,7 @@
       '<label>' + escapeHtml(ui.scOil || 'Oil money') + '<select id="scenarioOil"><option value="norm"' + (current.oil === 'norm' ? ' selected' : '') + '>' + escapeHtml(ui.scNorm || 'Normal') + '</option><option value="bad"' + (current.oil === 'bad' ? ' selected' : '') + '>' + escapeHtml(ui.scBad || 'Bad years') + '</option><option value="good"' + (current.oil === 'good' ? ' selected' : '') + '>' + escapeHtml(ui.scGood || 'Boom years') + '</option></select></label>' +
       '<label>' + escapeHtml(ui.scInfra || 'Metro & roads') + '<select id="scenarioInfra"><option value="on"' + (current.infra === 'on' ? ' selected' : '') + '>' + escapeHtml(ui.scOn || 'Built on time') + '</option><option value="late"' + (current.infra === 'late' ? ' selected' : '') + '>' + escapeHtml(ui.scLate || 'Years late') + '</option></select></label>' +
       '<label>' + escapeHtml(ui.scCur || 'Manat') + '<select id="scenarioCurrency"><option value="stable"' + (current.cur === 'stable' ? ' selected' : '') + '>' + escapeHtml(ui.scStable || 'Stays stable') + '</option><option value="weak"' + (current.cur === 'weak' ? ' selected' : '') + '>' + escapeHtml(ui.scWeak || 'Loses value') + '</option></select></label></div>' +
-      '<div class="tool-card"><h3>' + escapeHtml(labels.sensitivity || 'Sensitivity, not a forecast') + '</h3><p id="scenarioOutput">' + escapeHtml(scenarioOutput) + '</p>' + breakdownHtml + '<div class="tool-note">' + escapeHtml(ui.scNoteWeak || labels.noAdvice) + '</div></div></div>';
+      '<div class="tool-card"><h3>' + escapeHtml(labels.sensitivity || 'Sensitivity, not a forecast') + '</h3><p id="scenarioOutput" aria-live="polite" aria-atomic="true">' + scenarioOutputHtml + '</p>' + breakdownHtml + '<div class="tool-note">' + escapeHtml(ui.scNoteWeak || labels.noAdvice) + '</div></div></div>';
   }
 
   function plannerBuyingText(zone, budget) {
@@ -1191,10 +1264,17 @@
 
   function setScenario(key, value) {
     if (!['oil', 'infra', 'cur'].includes(key)) return;
-    state.scenarios[key] = scenarioOption(key, value);
+    const nextOption = scenarioOption(key, value);
+    const previousOption = state.scenarios[key];
+    const zone = state.selected?.zone?.zone;
+    const before = zone ? scenarioBreakdown(zone, state.scenarios) : null;
+    state.scenarios[key] = nextOption;
+    const after = zone ? scenarioBreakdown(zone, state.scenarios) : null;
+    state.scenarioAnimation = zone && previousOption !== nextOption ? { zoneId: zone.id, group: key, previousOption, nextOption, from: before.roundedGrowth, to: after.roundedGrowth } : null;
     updateHash();
     renderAllContent();
     renderPanel();
+    animateScenarioResult(state.scenarioAnimation);
   }
 
   function stopTimeMachine() {
