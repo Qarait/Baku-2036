@@ -150,6 +150,7 @@
     ],
     "evidence": [
       {
+        "id": "whitecity.aiib-metro-y14",
         "status": "programmed",
         "source": "AIIB / Baku Metro expansion framework",
         "sourceDate": "2025-11-28",
@@ -162,6 +163,7 @@
         "investmentMeaningTr": "Bu gerçek bir ulaşım katalizörünü destekler; ancak mülk priminin oluşması teslimata ve istasyona erişime bağlıdır."
       },
       {
+        "id": "whitecity.atkins-white-city",
         "status": "operational",
         "source": "AtkinsRéalis / Baku White City project",
         "sourceDate": "2024-01-01",
@@ -172,6 +174,22 @@
         "url": "https://www.atkinsrealis.com/en/projects/baku-white-city",
         "claimTr": "White City büyük bir eski sanayi dönüşümü ve sahil mahallesi programıdır; East Quarter planlama alanı 220 hektardır.",
         "investmentMeaningTr": "Dönüşüm talebi destekleyebilir; ancak yeni konut arzı ve teslim kalitesi önemini korur."
+      }
+    ],
+    "scenarioFactors": [
+      {
+        "id": "transport-programmed",
+        "role": "dependency",
+        "evidenceIds": ["whitecity.aiib-metro-y14"],
+        "en": "An official plan or programme documents planned transport work; timing, delivery, and useful access remain dependencies.",
+        "tr": "Resmî bir plan veya program planlanan ulaşım çalışmasını belgeler; zamanlama, teslim ve işe yarar erişim hâlâ bağımlılıktır."
+      },
+      {
+        "id": "development-anchor",
+        "role": "support",
+        "evidenceIds": ["whitecity.atkins-white-city"],
+        "en": "A named regeneration or private development anchor is documented; reported plans or targets are not independent market forecasts.",
+        "tr": "Adı belirtilen bir yenileme veya özel gelişim odağı belgelenmiştir; bildirilen planlar veya hedefler bağımsız piyasa tahminleri değildir."
       }
     ]
   },
@@ -318,6 +336,7 @@
     ],
     "evidence": [
       {
+        "id": "yasamal.state-programme-purple-b4-b8",
         "status": "contracted",
         "source": "Presidential State Programme / official decree PDF",
         "sourceDate": "2025-01-30",
@@ -328,6 +347,15 @@
         "url": "https://static.president.az/upload/Files/2025/01/31/4f32a6bd6ffc6b39efcfb5153e868c88_5073315.pdf",
         "claimTr": "Devlet Programı, on yeni metro istasyonu arasında Mor Hat üzerindeki B4–B8 istasyonlarını sayar; tasarım, inşaat ve işletmeye alma 2025–2030 dönemine planlanmıştır.",
         "investmentMeaningTr": "Gerçek inşaat programı yalnızca harita üzerindeki bir fikirden daha güçlü kanıttır; açılış tarihi yine değişebilir."
+      }
+    ],
+    "scenarioFactors": [
+      {
+        "id": "transport-programmed",
+        "role": "dependency",
+        "evidenceIds": ["yasamal.state-programme-purple-b4-b8"],
+        "en": "An official plan or programme documents planned transport work; timing, delivery, and useful access remain dependencies.",
+        "tr": "Resmî bir plan veya program planlanan ulaşım çalışmasını belgeler; zamanlama, teslim ve işe yarar erişim hâlâ bağımlılıktır."
       }
     ]
   },
@@ -474,6 +502,7 @@
     ],
     "evidence": [
       {
+        "id": "narimanov.aqp-market-may-2026",
         "status": "operational",
         "source": "Azerbaijan Chamber of Appraisers market report",
         "sourceDate": "2026-05-01",
@@ -484,6 +513,15 @@
         "url": "https://aqp.gov.az/bazar-tehlili/may-2026",
         "claimTr": "Burası yerleşik bir merkezi piyasa bölgesidir; tarihli şehir geneli karşılaştırma yararlı bağlam sağlar, ancak bölgeye özel fiyat liderliğini kanıtlamaz.",
         "investmentMeaningTr": "Yerleşik talep kira ve yeniden satış kolaylığı sağlayabilir; erken aşamadaki koridorlar kadar yüksek artış beklenmemelidir."
+      }
+    ],
+    "scenarioFactors": [
+      {
+        "id": "market-context-only",
+        "role": "unknown",
+        "evidenceIds": ["narimanov.aqp-market-may-2026"],
+        "en": "The cited market source provides citywide context, not a zone-specific price lead or causal estimate.",
+        "tr": "Atıf yapılan piyasa kaynağı şehir geneli bağlam sağlar; bölgeye özgü fiyat liderliği veya nedensel tahmin sağlamaz."
       }
     ]
   },
@@ -600,6 +638,7 @@
     ],
     "evidence": [
       {
+        "id": "sabail.aqp-market-may-2026",
         "status": "operational",
         "source": "Azerbaijan Chamber of Appraisers market report",
         "sourceDate": "2026-05-01",
@@ -610,6 +649,15 @@
         "url": "https://aqp.gov.az/bazar-tehlili/may-2026",
         "claimTr": "Mayıs 2026 raporu daire, ticari mülk ve müstakil evler için tarihli Baku geneli piyasa karşılaştırması sunuyor.",
         "investmentMeaningTr": "Merkezdeki arz kıtlığı kira ve likiditeyi destekleyebilir; bu rakamı Sabail fiyatı saymadan önce yerel ilanlarla karşılaştırın."
+      }
+    ],
+    "scenarioFactors": [
+      {
+        "id": "market-context-only",
+        "role": "unknown",
+        "evidenceIds": ["sabail.aqp-market-may-2026"],
+        "en": "The cited market source provides citywide context, not a zone-specific price lead or causal estimate.",
+        "tr": "Atıf yapılan piyasa kaynağı şehir geneli bağlam sağlar; bölgeye özgü fiyat liderliği veya nedensel tahmin sağlamaz."
       }
     ]
   },
@@ -741,6 +789,7 @@
     ],
     "evidence": [
       {
+        "id": "khojasan.aiib-purple-depot",
         "status": "contracted",
         "source": "AIIB / Baku Metro expansion framework",
         "sourceDate": "2025-11-28",
@@ -751,6 +800,22 @@
         "url": "https://www.aiib.org/en/projects/details/2025/_download/Azerbaijan/Baku-Metro-ESMPF-281125-to-Disclose.pdf",
         "claimTr": "Çerçeve, Xocəsən'i devam eden geliştirme çalışmaları olan faal bir Mor Hat deposu olarak tanımlar; Mor Hat uzatması ayrı bir planlı programdır ve sonraki değer artışı tamamlanmamış işlere bağlıdır.",
         "investmentMeaningTr": "Mevcut erişim somuttur; sonraki değer artışı tamamlanmamış uzantıya bağlıdır."
+      }
+    ],
+    "scenarioFactors": [
+      {
+        "id": "transport-existing",
+        "role": "support",
+        "evidenceIds": ["khojasan.aiib-purple-depot"],
+        "en": "Existing transport access is documented here. The cited source does not measure a zone-level property premium.",
+        "tr": "Mevcut ulaşım erişimi burada belgelenmiştir. Atıf yapılan kaynak bölgeye özgü bir mülk primini ölçmez."
+      },
+      {
+        "id": "transport-programmed",
+        "role": "dependency",
+        "evidenceIds": ["khojasan.aiib-purple-depot"],
+        "en": "An official plan or programme documents planned transport work; timing, delivery, and useful access remain dependencies.",
+        "tr": "Resmî bir plan veya program planlanan ulaşım çalışmasını belgeler; zamanlama, teslim ve işe yarar erişim hâlâ bağımlılıktır."
       }
     ]
   },
@@ -884,6 +949,7 @@
     ],
     "evidence": [
       {
+        "id": "khirdalan.ady-absheron-rail",
         "status": "operational",
         "source": "ADY / Absheron Circular Railway routes",
         "sourceDate": "2026-01-01",
@@ -894,6 +960,15 @@
         "url": "https://ticket.ady.az/en/stations-and-stops/routes",
         "claimTr": "Khirdalan mevcut Abşeron Dairesel Demiryolu ağındadır; yol ve ekspres otobüs iyileştirmeleri yoğun banliyö koridorunu rahatlatmayı amaçlıyor.",
         "investmentMeaningTr": "Demiryolu ve yol erişimi kiracı havuzunu genişletebilir; yoğunluk ve tarım arazisi belgeleri parsel bazında kontrol edilmelidir."
+      }
+    ],
+    "scenarioFactors": [
+      {
+        "id": "transport-existing",
+        "role": "support",
+        "evidenceIds": ["khirdalan.ady-absheron-rail"],
+        "en": "Existing transport access is documented here. The cited source does not measure a zone-level property premium.",
+        "tr": "Mevcut ulaşım erişimi burada belgelenmiştir. Atıf yapılan kaynak bölgeye özgü bir mülk primini ölçmez."
       }
     ]
   },
@@ -1025,6 +1100,7 @@
     ],
     "evidence": [
       {
+        "id": "sumgayit.economic-zones-industrial-park",
         "status": "operational",
         "source": "Sumqayit Industrial Park / official economic zones data",
         "sourceDate": "2026-01-29",
@@ -1035,6 +1111,15 @@
         "url": "https://economiczones.gov.az/en/post/ssp-media-tour-29-01",
         "claimTr": "Sanayi parkı 39 yerleşik şirket, 5,6 milyar AZN üzeri yatırım ve 6.000’den fazla kalıcı iş bildiriyor.",
         "investmentMeaningTr": "Bu, ucuz sahil hikâyesinin ötesinde gerçek bir konut talebi temeli sağlar; sanayi komşuluğu ve kirlilik geçmişi kontrol edilmelidir."
+      }
+    ],
+    "scenarioFactors": [
+      {
+        "id": "employment-anchor",
+        "role": "support",
+        "evidenceIds": ["sumgayit.economic-zones-industrial-park"],
+        "en": "Current industrial, logistics, or jobs activity is documented; it does not automatically imply residential price growth.",
+        "tr": "Mevcut sanayi, lojistik veya istihdam faaliyeti belgelenmiştir; bu durum otomatik olarak konut fiyat artışı anlamına gelmez."
       }
     ]
   },
@@ -1151,6 +1236,7 @@
     ],
     "evidence": [
       {
+        "id": "novkhani.ayna-northern-corridor",
         "status": "operational",
         "source": "ADY and official northern road programme",
         "sourceDate": "2026-01-01",
@@ -1161,6 +1247,22 @@
         "url": "https://ayna.gov.az/az/news/baki-ve-abseron-yarimadasinda-movcud-neqliyyat-problemlerinin-koklu-helli-ucun-muhum-addimlar-atilir-1060",
         "claimTr": "Novkhani mevcut demiryolu erişimine sahip ve Pirshagi–Novkhani–Khirdalan–M4 kuzey yol iyileştirme koridorundadır.",
         "investmentMeaningTr": "Erişim bugünün avantajıdır; Sea Breeze etkisi ise garanti değil, analitik bir çıkarımdır."
+      }
+    ],
+    "scenarioFactors": [
+      {
+        "id": "transport-existing",
+        "role": "support",
+        "evidenceIds": ["novkhani.ayna-northern-corridor"],
+        "en": "Existing transport access is documented here. The cited source does not measure a zone-level property premium.",
+        "tr": "Mevcut ulaşım erişimi burada belgelenmiştir. Atıf yapılan kaynak bölgeye özgü bir mülk primini ölçmez."
+      },
+      {
+        "id": "transport-programmed",
+        "role": "dependency",
+        "evidenceIds": ["novkhani.ayna-northern-corridor"],
+        "en": "An official plan or programme documents planned transport work; timing, delivery, and useful access remain dependencies.",
+        "tr": "Resmî bir plan veya program planlanan ulaşım çalışmasını belgeler; zamanlama, teslim ve işe yarar erişim hâlâ bağımlılıktır."
       }
     ]
   },
@@ -1294,6 +1396,7 @@
     ],
     "evidence": [
       {
+        "id": "bilgah.sea-breeze-development",
         "status": "private-plan",
         "source": "Sea Breeze / official government project briefing",
         "sourceDate": "2025-07-01",
@@ -1306,6 +1409,7 @@
         "investmentMeaningTr": "Gerçek bir özel proje talep çekebilir; bildirilen hedefler bağımsız piyasa tahmini değildir."
       },
       {
+        "id": "bilgah.state-programme-tram",
         "status": "programmed",
         "source": "State transport programme",
         "sourceDate": "2025-01-30",
@@ -1316,6 +1420,22 @@
         "url": "https://static.president.az/upload/Files/2025/01/30/43f94b6c04a0a641801825e9b02009f6_8145345.pdf",
         "claimTr": "Sea Breeze–Pirshagi tramvay bağlantısı 2027–2029 ulaşım programında planlanan altyapı olarak yer alıyor.",
         "investmentMeaningTr": "Bu yararlı bir erişim sinyalidir; finanse edilmiş ve kesinleşmiş inşaat olarak görülmemelidir."
+      }
+    ],
+    "scenarioFactors": [
+      {
+        "id": "development-anchor",
+        "role": "support",
+        "evidenceIds": ["bilgah.sea-breeze-development"],
+        "en": "A named regeneration or private development anchor is documented; reported plans or targets are not independent market forecasts.",
+        "tr": "Adı belirtilen bir yenileme veya özel gelişim odağı belgelenmiştir; bildirilen planlar veya hedefler bağımsız piyasa tahminleri değildir."
+      },
+      {
+        "id": "transport-programmed",
+        "role": "dependency",
+        "evidenceIds": ["bilgah.state-programme-tram"],
+        "en": "An official plan or programme documents planned transport work; timing, delivery, and useful access remain dependencies.",
+        "tr": "Resmî bir plan veya program planlanan ulaşım çalışmasını belgeler; zamanlama, teslim ve işe yarar erişim hâlâ bağımlılıktır."
       }
     ]
   },
@@ -1447,6 +1567,7 @@
     ],
     "evidence": [
       {
+        "id": "mardakan.polycentric-plan",
         "status": "programmed",
         "source": "Baku Master Plan 2040 and transport planning",
         "sourceDate": "2025-01-01",
@@ -1457,6 +1578,22 @@
         "url": "https://arxkom.gov.az/en/bakinin-bas-plani?plan=coxmerkezli-seher-ve-demoqrafiya",
         "claimTr": "Mardakan resmî çok merkezli planda bölgesel merkez olarak tanımlanıyor; planlanan demiryolu restorasyonu dış koridorun erişim tezini güçlendiriyor.",
         "investmentMeaningTr": "Bölgesel merkez yönü ve demiryolu uzun vadeli talebi destekleyebilir; bu yakın vadeli dairesel metro taahhüdü değildir."
+      }
+    ],
+    "scenarioFactors": [
+      {
+        "id": "centre-plan-direction",
+        "role": "support",
+        "evidenceIds": ["mardakan.polycentric-plan"],
+        "en": "An official plan assigns a local-centre, regional-centre, or corridor role; implementation and local demand remain dependencies.",
+        "tr": "Resmî bir plan yerel merkez, bölgesel merkez veya koridor rolü tanımlar; uygulama ve yerel talep hâlâ bağımlılıktır."
+      },
+      {
+        "id": "transport-programmed",
+        "role": "dependency",
+        "evidenceIds": ["mardakan.polycentric-plan"],
+        "en": "An official plan or programme documents planned transport work; timing, delivery, and useful access remain dependencies.",
+        "tr": "Resmî bir plan veya program planlanan ulaşım çalışmasını belgeler; zamanlama, teslim ve işe yarar erişim hâlâ bağımlılıktır."
       }
     ]
   },
@@ -1590,6 +1727,7 @@
     ],
     "evidence": [
       {
+        "id": "airport.president-northern-corridor",
         "status": "operational",
         "source": "ADY / existing Absheron railway and official road opening",
         "sourceDate": "2024-11-01",
@@ -1600,6 +1738,15 @@
         "url": "https://president.az/az/articles/view/67223",
         "claimTr": "Havalimanı–Zabrat–Balakhany–Sabunchu koridorunda mevcut demiryolu ve kuzey yol ağı içinde kanıtlanmış bir yol katalizörü var.",
         "investmentMeaningTr": "Mevcut bağlantılar “havalimanı şehri” etiketinden daha güvenilirdir; lojistik ve hizmet artışı konuma bağlıdır."
+      }
+    ],
+    "scenarioFactors": [
+      {
+        "id": "transport-existing",
+        "role": "support",
+        "evidenceIds": ["airport.president-northern-corridor"],
+        "en": "Existing transport access is documented here. The cited source does not measure a zone-level property premium.",
+        "tr": "Mevcut ulaşım erişimi burada belgelenmiştir. Atıf yapılan kaynak bölgeye özgü bir mülk primini ölçmez."
       }
     ]
   },
@@ -1743,6 +1890,7 @@
     ],
     "evidence": [
       {
+        "id": "mohammadi.president-bogushor-pirshagi-road",
         "status": "operational",
         "source": "Office of the President / Böyükşor–Pirshagi road opening",
         "sourceDate": "2024-11-01",
@@ -1753,6 +1901,15 @@
         "url": "https://president.az/az/articles/view/67223",
         "claimTr": "Böyükşor–Pirshagi yolu Kasım 2024’te açıldı ve Mohammadi dâhil kuzey yerleşimlerinin içinden veya yakınından geçiyor.",
         "investmentMeaningTr": "Yol katalizörü doğrulanmıştır; değer artışı veya çevreye taşma ölçülmüş işlem sonucu değil, yatırım yorumudur."
+      }
+    ],
+    "scenarioFactors": [
+      {
+        "id": "transport-existing",
+        "role": "support",
+        "evidenceIds": ["mohammadi.president-bogushor-pirshagi-road"],
+        "en": "Existing transport access is documented here. The cited source does not measure a zone-level property premium.",
+        "tr": "Mevcut ulaşım erişimi burada belgelenmiştir. Atıf yapılan kaynak bölgeye özgü bir mülk primini ölçmez."
       }
     ]
   },
@@ -1884,6 +2041,7 @@
     ],
     "evidence": [
       {
+        "id": "hovsan.state-programme-rail",
         "status": "programmed",
         "source": "Presidential State Programme / official decree PDF",
         "sourceDate": "2025-01-30",
@@ -1894,6 +2052,15 @@
         "url": "https://static.president.az/upload/Files/2025/01/31/4f32a6bd6ffc6b39efcfb5153e868c88_5073315.pdf",
         "claimTr": "Devlet Programı, Yeni Suraxanı–Hövsan demiryolu hattının altyapı ve sinyalizasyon çalışmalarıyla birlikte 2026–2027'de restore edilmesini ve yolcu hizmetinin yeniden başlatılmasını planlıyor.",
         "investmentMeaningTr": "Pratik erişim tetikleyicisi demiryolu restorasyonudur; dairesel metro yakın vadeli temel senaryo sayılmamalıdır."
+      }
+    ],
+    "scenarioFactors": [
+      {
+        "id": "transport-programmed",
+        "role": "dependency",
+        "evidenceIds": ["hovsan.state-programme-rail"],
+        "en": "An official plan or programme documents planned transport work; timing, delivery, and useful access remain dependencies.",
+        "tr": "Resmî bir plan veya program planlanan ulaşım çalışmasını belgeler; zamanlama, teslim ve işe yarar erişim hâlâ bağımlılıktır."
       }
     ]
   },
@@ -2010,6 +2177,7 @@
     ],
     "evidence": [
       {
+        "id": "zikh.polycentric-transport-plan",
         "status": "programmed",
         "source": "Baku Master Plan 2040 and transport planning",
         "sourceDate": "2025-01-01",
@@ -2020,6 +2188,22 @@
         "url": "https://arxkom.gov.az/en/bakinin-bas-plani/plans/neqliyyat-sebekesi",
         "claimTr": "Zikh yerel merkez ve doğu koridoru planlama yönünde yer alıyor; dairesel metro vaadinden çok yol ve demiryolu bağlantıları önemlidir.",
         "investmentMeaningTr": "Daha iyi erişim ve yerel hizmetlerden faydalanabilir; sanayi komşuluğu sokak seçimini belirler."
+      }
+    ],
+    "scenarioFactors": [
+      {
+        "id": "centre-plan-direction",
+        "role": "support",
+        "evidenceIds": ["zikh.polycentric-transport-plan"],
+        "en": "An official plan assigns a local-centre, regional-centre, or corridor role; implementation and local demand remain dependencies.",
+        "tr": "Resmî bir plan yerel merkez, bölgesel merkez veya koridor rolü tanımlar; uygulama ve yerel talep hâlâ bağımlılıktır."
+      },
+      {
+        "id": "transport-programmed",
+        "role": "dependency",
+        "evidenceIds": ["zikh.polycentric-transport-plan"],
+        "en": "An official plan or programme documents planned transport work; timing, delivery, and useful access remain dependencies.",
+        "tr": "Resmî bir plan veya program planlanan ulaşım çalışmasını belgeler; zamanlama, teslim ve işe yarar erişim hâlâ bağımlılıktır."
       }
     ]
   },
@@ -2136,6 +2320,7 @@
     ],
     "evidence": [
       {
+        "id": "lokbatan.polycentric-plan",
         "status": "programmed",
         "source": "Baku Master Plan 2040 / transport network plan",
         "sourceDate": "2025-01-01",
@@ -2169,6 +2354,22 @@
         "status": "building",
         "en": "A new KFC is being built nearby. New food places bring more activity and help local prices rise.",
         "tr": "Yakında yeni bir KFC inşa ediliyor. Yeni yeme-içme yerleri hareketlilik getirir ve yerel fiyatları yükseltir."
+      }
+    ],
+    "scenarioFactors": [
+      {
+        "id": "centre-plan-direction",
+        "role": "support",
+        "evidenceIds": ["lokbatan.polycentric-plan"],
+        "en": "An official plan assigns a local-centre, regional-centre, or corridor role; implementation and local demand remain dependencies.",
+        "tr": "Resmî bir plan yerel merkez, bölgesel merkez veya koridor rolü tanımlar; uygulama ve yerel talep hâlâ bağımlılıktır."
+      },
+      {
+        "id": "transport-programmed",
+        "role": "dependency",
+        "evidenceIds": ["lokbatan.polycentric-plan"],
+        "en": "An official plan or programme documents planned transport work; timing, delivery, and useful access remain dependencies.",
+        "tr": "Resmî bir plan veya program planlanan ulaşım çalışmasını belgeler; zamanlama, teslim ve işe yarar erişim hâlâ bağımlılıktır."
       }
     ]
   },
@@ -2300,6 +2501,7 @@
     ],
     "evidence": [
       {
+        "id": "alat.port-of-baku-throughput",
         "status": "operational",
         "source": "Port of Baku",
         "sourceDate": "2025-01-01",
@@ -2312,6 +2514,7 @@
         "investmentMeaningTr": "Sanayi arazisi ve istihdam konuttan önce değer kazanabilir; bu hemen konut tezi değildir."
       },
       {
+        "id": "alat.afez-master-plan",
         "status": "private-plan",
         "source": "Alat Free Economic Zone",
         "sourceDate": "2026-01-01",
@@ -2322,6 +2525,15 @@
         "url": "https://afez.az/",
         "claimTr": "AFEZ 719 hektarlık ana plan alanına sahip ve güneş paneli üretimi gibi sanayi projeleri duyurdu.",
         "investmentMeaningTr": "Önce istihdam ve sanayi talebine bakın; daireleri olgun bir konut piyasası varmış gibi fiyatlamayın."
+      }
+    ],
+    "scenarioFactors": [
+      {
+        "id": "employment-anchor",
+        "role": "support",
+        "evidenceIds": ["alat.port-of-baku-throughput", "alat.afez-master-plan"],
+        "en": "Current industrial, logistics, or jobs activity is documented; it does not automatically imply residential price growth.",
+        "tr": "Mevcut sanayi, lojistik veya istihdam faaliyeti belgelenmiştir; bu durum otomatik olarak konut fiyat artışı anlamına gelmez."
       }
     ]
   }
