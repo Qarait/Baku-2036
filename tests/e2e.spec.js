@@ -73,12 +73,12 @@ test('contextual guidance is localized and remains visible in the mobile concise
   await expect(guidance).toBeVisible();
   await expect(guidance).toHaveAttribute('data-state', 'selected');
   await expect(page.locator('#zoneQuickSummary')).toBeVisible();
-  await expect(page.locator('#showDetails')).toHaveText('Show details');
+  await expect(page.locator('#showDetails')).toHaveText('Review evidence and risk');
 
   await page.locator('#langTr').evaluate(button => button.click());
   await expect(guidance).toHaveAttribute('data-state', 'selected');
   await expect(guidance).toContainText('kanıtları ve ana riski');
-  await expect(page.locator('#showDetails')).toHaveText('Ayrıntıları göster');
+  await expect(page.locator('#showDetails')).toHaveText('Kanıt ve riski incele');
 });
 
 test('mobile intro exposes the how-to video before the map', async ({ page }) => {
@@ -495,7 +495,7 @@ test('selected drawer can collapse, reopen, and close in both languages', async 
   await expect(page.locator('#v2ZoneDrawer')).toHaveClass(/is-collapsed/);
   await expect(page.locator('#zoneBrief')).toBeHidden();
   await expect(page.locator('#panelTitle')).toHaveText('White City / Xətai');
-  await expect(page.locator('#showDetails')).toHaveText('Ayrıntıları göster');
+  await expect(page.locator('#showDetails')).toHaveText('Kanıt ve riski incele');
   await page.locator('#showDetails').click();
   await expect(page.locator('#v2ZoneDrawer')).not.toHaveClass(/is-collapsed/);
   await expect(page.locator('#zoneBrief')).toBeVisible();
@@ -503,7 +503,7 @@ test('selected drawer can collapse, reopen, and close in both languages', async 
   await page.locator('#langEn').click();
   await expect(page.locator('#closeDetails')).toHaveText('Close');
   await page.locator('#collapseDetails').click();
-  await expect(page.locator('#showDetails')).toHaveText('Show details');
+  await expect(page.locator('#showDetails')).toHaveText('Review evidence and risk');
   await page.locator('#showDetails').click();
   await expect(page.locator('#zoneBrief')).toBeVisible();
   await page.locator('#closeDetails').click();
@@ -526,7 +526,7 @@ test('mobile selected place starts concise and can reveal full details', async (
   await expect(page.locator('#panelDetailsTitle')).toBeHidden();
   await expect(page.locator('#panelGrid')).toBeHidden();
   await expect(page.locator('#zoneDetailContent')).toBeHidden();
-  await expect(page.locator('#showDetails')).toHaveText('Show details');
+  await expect(page.locator('#showDetails')).toHaveText('Review evidence and risk');
   await expect(page.locator('#closeDetails')).toHaveText('Close');
 
   await page.locator('#showDetails').click();
@@ -1241,4 +1241,47 @@ test('mobile metadata remains readable without enlarging primary headings', asyn
     panelTitle: 22,
     drawerTitle: 19
   });
+});
+test('review action keeps the concise summary and evidence tied to the selected place', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('./?cache=e2e-release-b-handoff#z=whitecity&y=2030&lang=en');
+  await waitForMap(page);
+
+  const drawer = page.locator('#v2ZoneDrawer');
+  const review = page.locator('#showDetails');
+  await expect(drawer).toHaveAttribute('data-zone-id', 'whitecity');
+  await expect(page.locator('#zoneBrief')).toHaveAttribute('data-zone-id', 'whitecity');
+  await expect(page.locator('#zoneQuickSummary')).toHaveAttribute('data-zone-id', 'whitecity');
+  await expect(review).toHaveText('Review evidence and risk');
+  await expect(review).toHaveAttribute('aria-controls', 'zoneBrief');
+  await expect(review).toHaveAttribute('aria-expanded', 'false');
+  await expect(review).toHaveAttribute('aria-label', 'Review evidence and risk for White City / Khatai');
+  const reviewHeight = await review.evaluate(element => element.getBoundingClientRect().height);
+  expect(reviewHeight).toBeGreaterThanOrEqual(44);
+  const buttonAfterSummary = await page.evaluate(() => {
+    const summary = document.querySelector('#zoneBrief');
+    const button = document.querySelector('#showDetails');
+    return Boolean(summary && button && (summary.compareDocumentPosition(button) & Node.DOCUMENT_POSITION_FOLLOWING));
+  });
+  expect(buttonAfterSummary).toBe(true);
+
+  await review.click();
+  await expect(review).toBeHidden();
+  await expect(page.locator('#collapseDetails')).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.locator('#zoneDetailContent')).toHaveAttribute('data-zone-id', 'whitecity');
+  await expect(page.locator('#zoneDetailContent')).toContainText('What could go wrong?');
+  await expect(page.locator('.evidence-section')).toBeVisible();
+
+  const bilgahCoords = await page.evaluate(async () => {
+    const zones = await fetch('data/zones.json').then(response => response.json());
+    return zones.find(zone => zone.id === 'bilgah').coords;
+  });
+  await page.evaluate(coords => window.identifyLocation({ lng: coords[0], lat: coords[1] }, null), bilgahCoords);
+  await expect(drawer).toHaveAttribute('data-zone-id', 'bilgah');
+  await expect(page.locator('#zoneBrief')).toHaveAttribute('data-zone-id', 'bilgah');
+  await expect(page.locator('#zoneQuickSummary')).toHaveAttribute('data-zone-id', 'bilgah');
+  await expect(page.locator('#panelTitle')).toHaveText('Bilgah / Sea Breeze');
+
+  await page.locator('#showDetails').click();
+  await expect(page.locator('#zoneDetailContent')).toHaveAttribute('data-zone-id', 'bilgah');
 });

@@ -61,7 +61,7 @@ test('WebKit keeps the bilingual drawer collapse flow usable', async ({ page }) 
   await expect(page.locator('#zoneDetailContent')).toBeVisible();
   await page.locator('#collapseDetails').click();
   await expect(page.locator('#v2ZoneDrawer')).toHaveClass(/is-collapsed/);
-  await expect(page.locator('#showDetails')).toHaveText('Ayrıntıları göster');
+  await expect(page.locator('#showDetails')).toHaveText('Kanıt ve riski incele');
   await page.locator('#showDetails').click();
   await expect(page.locator('#zoneBrief')).toBeVisible();
   await expect(page.locator('#nextAction')).toContainText('Bu yeri karşılaştırmadan önce kanıtları ve ana riski inceleyin.');
