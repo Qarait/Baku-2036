@@ -93,10 +93,12 @@
         <div class="panel-head">
           <div class="panel-kicker" id="panelKicker">SELECTED PLACE</div>
           <div class="panel-head-actions">
+            <button type="button" id="emptyPanelToggle" class="panel-toggle panel-empty-toggle" aria-controls="panelContent" aria-expanded="true" hidden>Hide panel</button>
             <button type="button" id="collapseDetails" class="panel-toggle" aria-controls="zoneBrief" aria-expanded="true" hidden>Hide details</button>
             <button type="button" id="closeDetails" class="panel-close" hidden>Close</button>
           </div>
         </div>
+        <div id="panelContent" class="panel-content">
         <h2 id="panelTitle">Tap a circle to see what’s coming</h2>
         <p id="panelIntro">Or tap anywhere to find out where you are.</p>
         <div id="nextAction" class="next-action" data-state="choose" role="note" aria-labelledby="nextActionLabel" hidden>
@@ -116,16 +118,20 @@
         <div id="zoneBrief" class="zone-brief" hidden></div>
         <button type="button" id="showDetails" class="panel-toggle panel-review" aria-controls="zoneBrief" aria-expanded="false" hidden>Review evidence and risk</button>
         <button type="button" id="clearSelection" class="text-button" hidden>Clear selection</button>
+        </div>
       </aside>
     </main>
 
     <section id="v2HowTo" class="v2-howto" aria-labelledby="howToTitle"></section>
     <section id="v2Content" class="v2-content" aria-label="Baku 2036 tools">
+      <h2 id="tool-group-understand" class="tool-group-title" data-tool-group="understand">Understand</h2>
       <article id="accordion-time" class="v2-accordion"></article>
       <article id="accordion-scenarios" class="v2-accordion"></article>
+      <h2 id="tool-group-plan" class="tool-group-title" data-tool-group="plan">Plan</h2>
       <article id="accordion-planner" class="v2-accordion"></article>
-      <article id="accordion-deal" class="v2-accordion"></article>
       <article id="accordion-shortlist" class="v2-accordion"></article>
+      <h2 id="tool-group-verify" class="tool-group-title" data-tool-group="verify">Verify</h2>
+      <article id="accordion-deal" class="v2-accordion"></article>
       <article id="accordion-sources" class="v2-accordion"></article>
     </section>
   </div>
