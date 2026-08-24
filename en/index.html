@@ -93,8 +93,7 @@
         <div class="panel-head">
           <div class="panel-kicker" id="panelKicker">SELECTED PLACE</div>
           <div class="panel-head-actions">
-            <button type="button" id="collapseDetails" class="panel-toggle" hidden>Hide details</button>
-            <button type="button" id="showDetails" class="panel-toggle" hidden>Show details</button>
+            <button type="button" id="collapseDetails" class="panel-toggle" aria-controls="zoneBrief" aria-expanded="true" hidden>Hide details</button>
             <button type="button" id="closeDetails" class="panel-close" hidden>Close</button>
           </div>
         </div>
@@ -115,6 +114,7 @@
         </div>
         <p class="panel-note" id="panelNote">District borders show official administrative geography. Investment spots are approximate, not property boundaries.</p>
         <div id="zoneBrief" class="zone-brief" hidden></div>
+        <button type="button" id="showDetails" class="panel-toggle panel-review" aria-controls="zoneBrief" aria-expanded="false" hidden>Review evidence and risk</button>
         <button type="button" id="clearSelection" class="text-button" hidden>Clear selection</button>
       </aside>
     </main>
