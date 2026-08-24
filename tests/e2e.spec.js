@@ -1285,3 +1285,49 @@ test('review action keeps the concise summary and evidence tied to the selected 
   await page.locator('#showDetails').click();
   await expect(page.locator('#zoneDetailContent')).toHaveAttribute('data-zone-id', 'bilgah');
 });
+
+test('empty selected-place panel collapses and expands on desktop and mobile', async ({ page }) => {
+  for (const viewport of [{ width: 1280, height: 800 }, { width: 390, height: 844 }]) {
+    await page.setViewportSize(viewport);
+    await page.goto('./?cache=e2e-empty-panel-toggle');
+    await waitForMap(page);
+
+    const toggle = page.locator('#emptyPanelToggle');
+    await expect(toggle).toBeVisible();
+    await expect(toggle).toHaveAttribute('aria-controls', 'panelContent');
+    await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    await expect(page.locator('#panelContent')).toBeVisible();
+
+    await toggle.click();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    await expect(page.locator('#panelContent')).toBeHidden();
+    await expect(page.locator('#v2Map canvas')).toBeVisible();
+
+    await toggle.click();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    await expect(page.locator('#panelContent')).toBeVisible();
+  }
+});
+
+test('task groups keep the existing tools in Understand, Plan, Verify order', async ({ page }) => {
+  await page.goto('./?cache=e2e-task-groups&lang=en');
+  await waitForMap(page);
+
+  const expectedIds = [
+    'tool-group-understand', 'accordion-time', 'accordion-scenarios',
+    'tool-group-plan', 'accordion-planner', 'accordion-shortlist',
+    'tool-group-verify', 'accordion-deal', 'accordion-sources'
+  ];
+  await expect(page.locator('.tool-group-title')).toHaveCount(3);
+  await expect(page.locator('#tool-group-understand')).toHaveText('Understand');
+  await expect(page.locator('#tool-group-plan')).toHaveText('Plan');
+  await expect(page.locator('#tool-group-verify')).toHaveText('Verify');
+  expect(await page.locator('#v2Content > *').evaluateAll(elements => elements.map(element => element.id))).toEqual(expectedIds);
+
+  await engage(page);
+  await page.locator('#langTr').click();
+  await expect(page.locator('#tool-group-understand')).toHaveText('Anlayın');
+  await expect(page.locator('#tool-group-plan')).toHaveText('Planlayın');
+  await expect(page.locator('#tool-group-verify')).toHaveText('Doğrulayın');
+  expect(await page.locator('#v2Content > *').evaluateAll(elements => elements.map(element => element.id))).toEqual(expectedIds);
+});

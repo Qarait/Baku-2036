@@ -29,7 +29,7 @@
       administrative: 'District', investment: 'Investment spot', nearestMetro: 'Nearest metro (straight line — walking is a bit longer)', centralBaku: 'Central Baku', airport: 'Airport', coordinates: 'Coordinates',
       noRayon: 'That’s the sea', noZone: 'No nearby spot', noMetro: 'No station nearby',
       rayonNote: 'District borders show official administrative geography. Investment spots are approximate, not property boundaries.',
-      clear: 'Clear', closeDetails: 'Close', collapseDetails: 'Hide details', showDetails: 'Review evidence and risk', showDetailsFor: 'Review evidence and risk for', locationDetails: 'Location details', loading: 'Loading map data\u2026', mapVisible: 'Map is visible; loading details\u2026', ready: 'Click a location to identify its geography', error: 'We couldn\u2019t load the map data. Please refresh and try again.', validation: 'We couldn\u2019t validate the map data. Please refresh and try again.', retry: 'Retry', searchEmpty: 'No local place matched that search.'
+      clear: 'Clear', closeDetails: 'Close', collapseDetails: 'Hide details', hidePanel: 'Hide panel', showPanel: 'Show panel', showDetails: 'Review evidence and risk', showDetailsFor: 'Review evidence and risk for', locationDetails: 'Location details', loading: 'Loading map data\u2026', mapVisible: 'Map is visible; loading details\u2026', ready: 'Click a location to identify its geography', error: 'We couldn\u2019t load the map data. Please refresh and try again.', validation: 'We couldn\u2019t validate the map data. Please refresh and try again.', retry: 'Retry', searchEmpty: 'No local place matched that search.'
     },
     tr: {
       title: 'Bakü gayrimenkulünü anlayın',
@@ -49,7 +49,7 @@
       administrative: 'İlçe', investment: 'Yatırım noktası', nearestMetro: 'En yakın metro (kuş uçuşu — yürüyüş biraz daha uzun)', centralBaku: 'Bakü merkezi', airport: 'Havalimanı', coordinates: 'Koordinatlar',
       noRayon: 'Burası deniz', noZone: 'Yakında yatırım noktası yok', noMetro: 'Yakında istasyon yok',
       rayonNote: 'İlçe sınırları resmi idari coğrafyayı gösterir. Yatırım noktaları yaklaşık alanlardır; mülk sınırı değildir.',
-      clear: 'Temizle', closeDetails: 'Kapat', collapseDetails: 'Ayrıntıları gizle', showDetails: 'Kanıt ve riski incele', showDetailsFor: 'Kanıt ve riski incele:', locationDetails: 'Konum ayrıntıları', loading: 'Harita verileri y\u00fckleniyor\u2026', mapVisible: 'Harita görünür; ayrıntılar yükleniyor\u2026', ready: 'Co\u011frafyay\u0131 tan\u0131mlamak i\u00e7in bir yere t\u0131klay\u0131n', error: 'Harita verilerini y\u00fckleyemedik. L\u00fctfen sayfay\u0131 yenileyin ve tekrar deneyin.', validation: 'Harita verilerini do\u011frulayamad\u0131k. L\u00fctfen sayfay\u0131 yenileyin ve tekrar deneyin.', retry: 'Yeniden deneyin', searchEmpty: 'Yerel gazetteer e\u015fle\u015fme bulamad\u0131.'
+      clear: 'Temizle', closeDetails: 'Kapat', collapseDetails: 'Ayrıntıları gizle', hidePanel: 'Paneli gizle', showPanel: 'Paneli göster', showDetails: 'Kanıt ve riski incele', showDetailsFor: 'Kanıt ve riski incele:', locationDetails: 'Konum ayrıntıları', loading: 'Harita verileri y\u00fckleniyor\u2026', mapVisible: 'Harita görünür; ayrıntılar yükleniyor\u2026', ready: 'Co\u011frafyay\u0131 tan\u0131mlamak i\u00e7in bir yere t\u0131klay\u0131n', error: 'Harita verilerini y\u00fckleyemedik. L\u00fctfen sayfay\u0131 yenileyin ve tekrar deneyin.', validation: 'Harita verilerini do\u011frulayamad\u0131k. L\u00fctfen sayfay\u0131 yenileyin ve tekrar deneyin.', retry: 'Yeniden deneyin', searchEmpty: 'Yerel gazetteer e\u015fle\u015fme bulamad\u0131.'
     }
   };
   const zones = [];
@@ -439,7 +439,7 @@
 
   const state = {
     lang: 'en', year: 2026, admin: true, investments: true, metro: true, heat: false,
-    selected: null, data: null, map: null, mapReady: false, overlaysReady: false, ready: false, dataError: false, content: null, controlsInstalled: false, mapRuntimeTimer: null, drawerCollapsed: false, shortlist: {}, shortlistAmounts: {}, profile: null, plannerBudget: null, scenarios: { oil: 'norm', infra: 'on', cur: 'stable' }, openAccordion: null, timeTimer: null, engaged: false, cityStory: { active: false, paused: false, index: 0, timer: null }, tourIndex: 0, tourStops: ['whitecity', 'mohammadi', 'bilgah', 'sumgayit', 'hovsan'], scenarioAnimation: null, scenarioAnimationFrame: null
+    selected: null, data: null, map: null, mapReady: false, overlaysReady: false, ready: false, dataError: false, content: null, controlsInstalled: false, mapRuntimeTimer: null, drawerCollapsed: false, emptyPanelCollapsed: false, shortlist: {}, shortlistAmounts: {}, profile: null, plannerBudget: null, scenarios: { oil: 'norm', infra: 'on', cur: 'stable' }, openAccordion: null, timeTimer: null, engaged: false, cityStory: { active: false, paused: false, index: 0, timer: null }, tourIndex: 0, tourStops: ['whitecity', 'mohammadi', 'bilgah', 'sumgayit', 'hovsan'], scenarioAnimation: null, scenarioAnimationFrame: null
   };
 
   const $ = id => document.getElementById(id);
@@ -959,6 +959,9 @@
     $('closeDetails').textContent = u.closeDetails;
     $('collapseDetails').textContent = u.collapseDetails;
     $('showDetails').textContent = u.showDetails;
+    $('emptyPanelToggle').textContent = state.emptyPanelCollapsed ? u.showPanel : u.hidePanel;
+    $('emptyPanelToggle').setAttribute('aria-controls', 'panelContent');
+    $('emptyPanelToggle').setAttribute('aria-expanded', String(!state.emptyPanelCollapsed));
     $('collapseDetails').setAttribute('aria-controls', 'zoneBrief');
     $('showDetails').setAttribute('aria-controls', 'zoneBrief');
     $('panelDetailsTitle').textContent = u.locationDetails;
@@ -972,6 +975,9 @@
     $('coordinateMetricLabel').textContent = u.coordinates;
     if (!state.selected) {
       state.drawerCollapsed = false;
+      $('v2ZoneDrawer').classList.toggle('is-empty-collapsed', state.emptyPanelCollapsed);
+      $('emptyPanelToggle').hidden = false;
+      $('panelContent').hidden = state.emptyPanelCollapsed;
       $('v2ZoneDrawer').classList.remove('is-collapsed');
       delete $('v2ZoneDrawer').dataset.zoneId;
       $('panelTitle').textContent = u.emptyTitle;
@@ -988,6 +994,10 @@
       return;
     }
     const selected = state.selected;
+    state.emptyPanelCollapsed = false;
+    $('emptyPanelToggle').hidden = true;
+    $('panelContent').hidden = false;
+    $('v2ZoneDrawer').classList.remove('is-empty-collapsed');
     const adminName = selected.admin ? (state.lang === 'tr' ? (selected.admin.nameAz || selected.admin.nameEn) : selected.admin.nameEn) : u.noRayon;
     const zoneName = selected.zone?.zone ? (state.lang === 'tr' ? selected.zone.zone.nameTr : selected.zone.zone.nameEn) : u.noZone;
     const selectedZone = selected.zone?.zone || null;
@@ -1359,11 +1369,22 @@
     }));
   }
 
+  function renderToolGroupLabels() {
+    const labels = atlasCopy().labels || {};
+    const groups = {
+      understand: labels.toolUnderstand || 'Understand',
+      plan: labels.toolPlan || 'Plan',
+      verify: labels.toolVerify || 'Verify'
+    };
+    Object.entries(groups).forEach(([group, label]) => { const heading = document.querySelector('[data-tool-group="' + group + '"]'); if (heading) heading.textContent = label; });
+  }
+
   function renderAllContent() {
     const preserveAccordion = state.openAccordion || document.querySelector('.v2-accordion.open')?.id || null;
     renderHowTo();
     const content = atlasCopy();
     const sections = content.sections;
+    renderToolGroupLabels();
     const articles = [
       ['accordion-time', sections.time, renderTimeMachine()],
       ['accordion-scenarios', sections.scenarios, renderScenarios()],
@@ -1641,7 +1662,9 @@
     const clearSelection = () => { pauseCityStory(); state.selected = null; state.hashZone = null; renderPanel(); if (state.data) renderAllContent(); updateSelectionGeometry(); updateHash(); $('v2ZoneDrawer').focus({ preventScroll: true }); };
     const collapseDetails = () => { if (!state.selected) return; state.drawerCollapsed = true; renderPanel(); $('showDetails').focus({ preventScroll: true }); };
     const showDetails = () => { if (!state.selected) return; state.drawerCollapsed = false; renderPanel(); $('collapseDetails').focus({ preventScroll: true }); };
+    const toggleEmptyPanel = () => { if (state.selected) return; state.emptyPanelCollapsed = !state.emptyPanelCollapsed; renderPanel(); $('emptyPanelToggle').focus({ preventScroll: true }); };
     $('clearSelection').addEventListener('click', clearSelection); $('closeDetails').addEventListener('click', clearSelection); $('collapseDetails').addEventListener('click', collapseDetails); $('showDetails').addEventListener('click', showDetails);
+    $('emptyPanelToggle').addEventListener('click', toggleEmptyPanel);
     document.querySelectorAll('[data-action]').forEach(button => button.addEventListener('click', () => {
       if (!state.map) return;
       const action = button.dataset.action;
