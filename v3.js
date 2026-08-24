@@ -439,7 +439,7 @@
 
   const state = {
     lang: 'en', year: 2026, admin: true, investments: true, metro: true, heat: false,
-    selected: null, data: null, map: null, mapReady: false, overlaysReady: false, ready: false, dataError: false, content: null, controlsInstalled: false, mapRuntimeTimer: null, drawerCollapsed: false, emptyPanelCollapsed: false, shortlist: {}, shortlistAmounts: {}, profile: null, plannerBudget: null, scenarios: { oil: 'norm', infra: 'on', cur: 'stable' }, openAccordion: null, timeTimer: null, engaged: false, cityStory: { active: false, paused: false, index: 0, timer: null }, tourIndex: 0, tourStops: ['whitecity', 'mohammadi', 'bilgah', 'sumgayit', 'hovsan'], scenarioAnimation: null, scenarioAnimationFrame: null
+    selected: null, data: null, map: null, mapReady: false, overlaysReady: false, ready: false, dataError: false, content: null, controlsInstalled: false, mapRuntimeTimer: null, drawerCollapsed: false, emptyPanelCollapsed: false, shortlist: {}, shortlistAmounts: {}, profile: null, plannerBudget: null, scenarios: { oil: 'norm', infra: 'on', cur: 'stable' }, openAccordion: null, timeTimer: null, engaged: false, cityStory: { active: false, paused: false, index: 0, timer: null }, tourIndex: 0, tourStops: ['whitecity', 'mohammadi', 'bilgah', 'sumgayit', 'hovsan'], tourReturnFocusId: null, scenarioAnimation: null, scenarioAnimationFrame: null
   };
 
   const $ = id => document.getElementById(id);
@@ -1636,20 +1636,60 @@
     const name = zone ? (state.lang === 'tr' ? zone.nameTr : zone.nameEn) : '';
     const story = ui.tour?.[stopId] || '';
     const last = state.tourIndex >= state.tourStops.length - 1;
-    overlay.innerHTML = '<div class="tour-card"><div class="tour-kicker">' + escapeHtml(ui.tourStop || 'Stop') + ' ' + (state.tourIndex + 1) + ' / ' + state.tourStops.length + '</div><h2>' + escapeHtml(name) + '</h2><p>' + escapeHtml(story) + '</p><button type="button" class="primary-action" data-tour-next>' + escapeHtml(last ? (ui.tourEnd || 'Explore the map') : 'Next') + '</button><button type="button" class="tour-close" data-tour-close>' + escapeHtml(ui.tourExit || 'Close tour') + '</button></div>';
-    overlay.querySelector('[data-tour-next]')?.addEventListener('click', () => { if (last) finishTour(); else { state.tourIndex += 1; renderTourStop(); } });
+    overlay.innerHTML = '<div class="tour-card"><div class="tour-kicker">' + escapeHtml(ui.tourStop || 'Stop') + ' ' + (state.tourIndex + 1) + ' / ' + state.tourStops.length + '</div><h2 id="tourTitle">' + escapeHtml(name) + '</h2><p>' + escapeHtml(story) + '</p><button type="button" class="primary-action" data-tour-next>' + escapeHtml(last ? (ui.tourEnd || 'Explore the map') : 'Next') + '</button><button type="button" class="tour-close" data-tour-close>' + escapeHtml(ui.tourExit || 'Close tour') + '</button></div>';
+    const nextButton = overlay.querySelector('[data-tour-next]');
+    nextButton?.addEventListener('click', () => { if (last) finishTour(); else { state.tourIndex += 1; renderTourStop(); } });
     overlay.querySelector('[data-tour-close]')?.addEventListener('click', finishTour);
+    nextButton?.focus({ preventScroll: true });
+  }
+
+  function trapTourFocus(event) {
+    if (event.key !== 'Tab') return;
+    const overlay = $('tourOverlay');
+    if (!overlay) return;
+    const focusable = [...overlay.querySelectorAll('button:not([disabled])')];
+    if (!focusable.length) return;
+    const first = focusable[0]; const last = focusable[focusable.length - 1];
+    if (!overlay.contains(document.activeElement)) {
+      event.preventDefault();
+      first.focus({ preventScroll: true });
+      return;
+    }
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus({ preventScroll: true });
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus({ preventScroll: true });
+    }
   }
 
   function startTour() {
     if (!state.data) return;
+    state.tourReturnFocusId = document.activeElement?.id || 'zoneTourStart';
     stopTimeMachine(); finishCityStory(); setEngaged(true); state.tourIndex = 0;
     let overlay = $('tourOverlay');
-    if (!overlay) { overlay = document.createElement('div'); overlay.id = 'tourOverlay'; overlay.className = 'tour-overlay'; overlay.setAttribute('role', 'dialog'); overlay.setAttribute('aria-modal', 'true'); document.body.appendChild(overlay); }
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.id = 'tourOverlay';
+      overlay.className = 'tour-overlay';
+      overlay.setAttribute('role', 'dialog');
+      overlay.setAttribute('aria-modal', 'true');
+      overlay.setAttribute('aria-labelledby', 'tourTitle');
+      overlay.addEventListener('keydown', trapTourFocus);
+      document.body.appendChild(overlay);
+    }
     renderTourStop();
   }
 
-  function finishTour() { $('tourOverlay')?.remove(); if (state.map) state.map.resize(); }
+  function finishTour() {
+    const returnFocusId = state.tourReturnFocusId;
+    $('tourOverlay')?.remove();
+    state.tourReturnFocusId = null;
+    const returnTarget = returnFocusId ? $(returnFocusId) : null;
+    if (returnTarget) returnTarget.focus({ preventScroll: true });
+    if (state.map) state.map.resize();
+  }
 
   function installControls() {
     $('showMe')?.addEventListener('click', startCityStory); $('layersToggle')?.addEventListener('click', () => toggleLayerMenu());

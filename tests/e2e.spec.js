@@ -118,6 +118,30 @@ test('one-minute tour runs through its stops and exits', async ({ page }) => {
   await expect(page.locator('#tourOverlay')).toHaveCount(0);
 });
 
+test('tour modal contains keyboard focus and restores the launcher', async ({ page }) => {
+  await page.goto('./?cache=e2e-tour-keyboard');
+  await waitForMap(page);
+  await page.locator('#accordion-time .accordion-summary').click();
+  const launcher = page.locator('#zoneTourStart');
+  await launcher.click();
+
+  const dialog = page.getByRole('dialog');
+  await expect(dialog).toBeVisible();
+  await expect(dialog).toHaveAccessibleName(/White City/i);
+  const next = dialog.locator('[data-tour-next]');
+  const close = dialog.locator('[data-tour-close]');
+  await expect(next).toBeFocused();
+
+  await page.keyboard.press('Shift+Tab');
+  await expect(close).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(next).toBeFocused();
+
+  await page.keyboard.press('Escape');
+  await expect(dialog).toHaveCount(0);
+  await expect(launcher).toBeFocused();
+});
+
 test('Show me starts the Baku-wide city story', async ({ page }) => {
   await page.goto('./?cache=e2e-city-story');
   await waitForMap(page);
