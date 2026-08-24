@@ -15,6 +15,22 @@ test('WebKit loads the map without browser errors', async ({ page }) => {
   expect(errors).toEqual([]);
 });
 
+test('WebKit reveals essential controls after a real map tap', async ({ page }) => {
+  await page.goto('./?cache=webkit-map-engagement#y=2026&lang=en');
+  await waitForMap(page);
+  await expect(page.locator('body')).not.toHaveClass(/engaged/);
+
+  const map = page.locator('#v2Map canvas');
+  const box = await map.boundingBox();
+  await map.click({ position: { x: box.width / 2, y: box.height / 2 } });
+
+  await expect(page.locator('body')).toHaveClass(/engaged/);
+  await page.locator('#placeSearch').click();
+  await expect(page.locator('#placeSearch')).toBeFocused();
+  await page.locator('#layersToggle').click();
+  await expect(page.locator('#layerMenu')).toHaveClass(/open/);
+});
+
 test('WebKit loads both fixed language entry points without asset errors', async ({ page }) => {
   for (const entry of [
     { path: './en/', hash: '#lang=tr', lang: 'en', legend: 'District borders' },

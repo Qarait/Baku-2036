@@ -1717,7 +1717,7 @@
     map.on('load', () => {
       if (mapFailed || state.map !== map) return;
       state.mapReady = true;
-      map.on('click', event => identifyLocation(event.lngLat, event.point));
+      map.on('click', event => { setEngaged(true); identifyLocation(event.lngLat, event.point); });
       ['investment-zones', 'metro-stations', 'admin-fill', 'city-events-active', 'city-events-future'].forEach(layer => { map.on('mouseenter', layer, () => { map.getCanvas().style.cursor = 'pointer'; }); map.on('mouseleave', layer, () => { map.getCanvas().style.cursor = ''; }); });
       if (state.data) installOverlayData();
     });
