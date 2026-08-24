@@ -1100,6 +1100,23 @@ test('click-to-identify returns a district and metro distance', async ({ page })
   await expect(page.locator('#stationMetric')).toHaveText(/\d+(\.\d+)?\s*(m|km)/);
 });
 
+test('first map click reveals essential controls for pointer users', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('./?cache=e2e-map-engagement#y=2026&lang=en');
+  await waitForMap(page);
+  await expect(page.locator('body')).not.toHaveClass(/engaged/);
+
+  const map = page.locator('#v2Map canvas');
+  const box = await map.boundingBox();
+  await map.click({ position: { x: box.width / 2, y: box.height / 2 } });
+
+  await expect(page.locator('body')).toHaveClass(/engaged/);
+  await page.locator('#placeSearch').click();
+  await expect(page.locator('#placeSearch')).toBeFocused();
+  await page.locator('#layersToggle').click();
+  await expect(page.locator('#layerMenu')).toHaveClass(/open/);
+});
+
 test('nearest metro and year snapshots exclude future duplicate stations', async ({ page }) => {
   await page.goto('./?cache=e2e-metro-timeline#y=2026&lang=en');
   await waitForMap(page);
