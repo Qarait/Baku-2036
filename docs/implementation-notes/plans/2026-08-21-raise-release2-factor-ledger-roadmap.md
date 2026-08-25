@@ -1,6 +1,6 @@
 # RAISE-Inspired Baku 2036 Release 2 Factor-Ledger Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **Implementation note:** REQUIRED SUB-SKILL: Use the task-based implementation workflow (recommended) or the documented implementation workflow to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Add a validated qualitative factor ledger that connects approved zone reasoning to existing evidence without changing Release 1 calculations.
 
@@ -8,7 +8,7 @@
 
 **Tech Stack:** Static JSON, JavaScript rendering, PowerShell contract tests, Playwright, GitHub Actions, GitHub Pages.
 
-**Spec:** `docs/superpowers/specs/2026-08-21-raise-release2-factor-ledger-design.md`
+**Spec:** `docs/implementation-notes/specs/2026-08-21-raise-release2-factor-ledger-design.md`
 
 ## Global Constraints
 
@@ -19,12 +19,12 @@
 - Do not call asking prices completed sales or infer property-price movement from infrastructure evidence.
 - Do not add scraping, remote APIs, databases, analytics, tracking, machine learning, GWR, Monte Carlo, or new dependencies.
 - Preserve English/Turkish, fixed-language entry points, mobile layout, accessibility hooks, URL compatibility, and the Pages artifact boundary.
-- Work in an isolated `codex/` branch based on the latest `origin/preview` and deploy to `preview` only.
+- Work in an isolated `feature/` branch based on the latest `origin/preview` and deploy to `preview` only.
 - Do not stage `.playwright-cli/` or unrelated worktree files.
 
 ## Approval gate before implementation
 
-- [ ] Reviewer approves `docs/superpowers/specs/2026-08-21-raise-release2-factor-ledger-design.md`.
+- [ ] Reviewer approves `docs/implementation-notes/specs/2026-08-21-raise-release2-factor-ledger-design.md`.
 - [ ] Reviewer confirms each evidence ID, factor role, and zone mapping.
 - [ ] Reviewer approves the English/Turkish factor statements.
 - [ ] Reviewer confirms that `unknown` mappings remain visible and are not silently converted to support or risk.

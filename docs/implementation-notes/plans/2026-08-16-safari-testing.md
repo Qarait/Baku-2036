@@ -1,6 +1,6 @@
 # Safari Testing Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **Implementation note:** REQUIRED SUB-SKILL: Use the task-based implementation workflow (recommended) or the documented implementation workflow to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Add focused WebKit smoke coverage to the browser gates and document the remaining real-iPhone release check.
 
@@ -80,4 +80,4 @@ Run `npm test`, `npx playwright test --project=webkit`, all four static contract
 
 - [x] **Step 3: Commit**
 
-Run `git add playwright.config.js tests/webkit.spec.js .github/workflows/ci.yml .github/workflows/pages.yml docs/superpowers/specs/2026-08-16-safari-testing-design.md docs/superpowers/plans/2026-08-16-safari-testing.md docs/release/real-iphone-safari-checklist.md && git commit -m "Add WebKit Safari smoke coverage"`.
+Run `git add playwright.config.js tests/webkit.spec.js .github/workflows/ci.yml .github/workflows/pages.yml docs/implementation-notes/specs/2026-08-16-safari-testing-design.md docs/implementation-notes/plans/2026-08-16-safari-testing.md docs/release/real-iphone-safari-checklist.md && git commit -m "Add WebKit Safari smoke coverage"`.

@@ -1,6 +1,6 @@
 # Fixed Language Entry Points Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans (recommended). Steps use checkbox (`- [ ]`) syntax for tracking.
+> **Implementation note:** REQUIRED SUB-SKILL: Use the task-based implementation workflow (recommended) or the documented implementation workflow (recommended). Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Publish `/preview/en/` and `/preview/tr/` as separate fixed-language entry points generated from the shared Baku 2036 application.
 
@@ -210,7 +210,7 @@ Expected: all checks exit 0 and the generated pages reference root-shared resour
 ### Task 4: Full verification, commit, and preview deployment
 
 **Files:**
-- Modify: `docs/superpowers/plans/2026-08-16-fixed-language-entry-points.md`
+- Modify: `docs/implementation-notes/plans/2026-08-16-fixed-language-entry-points.md`
 - Modify: generated/source files from Tasks 1–3 as required by verification.
 
 - [x] **Step 1: Run the full browser suite**
@@ -241,7 +241,7 @@ git diff --check
 - [x] **Step 4: Commit the implementation**
 
 ```powershell
-git add .github/workflows/pages.yml scripts/serve-static.js scripts/build-language-entrypoints.js v3.js v3.css en/index.html tr/index.html tests/e2e.spec.js tests/webkit.spec.js tests/fixed-language-entrypoints-contract.ps1 docs/superpowers/plans/2026-08-16-fixed-language-entry-points.md
+git add .github/workflows/pages.yml scripts/serve-static.js scripts/build-language-entrypoints.js v3.js v3.css en/index.html tr/index.html tests/e2e.spec.js tests/webkit.spec.js tests/fixed-language-entrypoints-contract.ps1 docs/implementation-notes/plans/2026-08-16-fixed-language-entry-points.md
 git commit -m "Add fixed language entry points"
 ```
 

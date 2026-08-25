@@ -1,6 +1,6 @@
 # Move v2 to Git Archive Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **Implementation note:** REQUIRED SUB-SKILL: Use the task-based implementation workflow (recommended) or the documented implementation workflow to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Stop publishing the developer-only `/v2/` snapshot on GitHub Pages while preserving the exact snapshot in Git and keeping repository contracts and documentation accurate.
 
@@ -54,10 +54,10 @@ Add a `pwsh -File tests/pages-artifact-contract.ps1` step after generated langua
 ### Task 3: Record the new archive/deployment boundary
 
 **Files:**
-- Modify: `docs/superpowers/plans/2026-08-13-baku-v2-foundation.md`
-- Modify: `docs/superpowers/plans/2026-08-13-baku-v2-content-port.md`
-- Modify: `docs/superpowers/specs/2026-08-13-baku-v2-content-design.md`
-- Modify: `docs/superpowers/plans/2026-08-13-baku-v3-single-audience.md`
+- Modify: `docs/implementation-notes/plans/2026-08-13-baku-v2-foundation.md`
+- Modify: `docs/implementation-notes/plans/2026-08-13-baku-v2-content-port.md`
+- Modify: `docs/implementation-notes/specs/2026-08-13-baku-v2-content-design.md`
+- Modify: `docs/implementation-notes/plans/2026-08-13-baku-v3-single-audience.md`
 
 - [ ] **Step 1: Replace active `/v2/` Pages URL checks with repository-only archive wording**
 

@@ -1,6 +1,6 @@
 # Silent How-to Video Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **Implementation note:** REQUIRED SUB-SKILL: Use the task-based implementation workflow (recommended) or the documented implementation workflow to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Add a compact attachment that opens a localized page with an 18–20 second silent recording demonstrating the Baku 2036 website flow.
 
@@ -8,7 +8,7 @@
 
 **Tech Stack:** Static HTML, CSS, JavaScript, JSON, Node.js, Playwright Test, Playwright browser video recording.
 
-**Spec:** `docs/superpowers/specs/silent-how-to-video.md`
+**Spec:** `docs/implementation-notes/specs/silent-how-to-video.md`
 
 ## Global Constraints
 

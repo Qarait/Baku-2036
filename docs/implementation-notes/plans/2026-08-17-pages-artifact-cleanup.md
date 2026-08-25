@@ -1,6 +1,6 @@
 # Pages Artifact Cleanup Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **Implementation note:** REQUIRED SUB-SKILL: Use the documented implementation workflow to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Prevent development, testing, planning, and archived application files from entering the public GitHub Pages artifact while preserving all runtime site assets.
 
@@ -116,7 +116,7 @@ Expected: PASS, including the existing v2 archival assertions.
 ### Task 3: Verify artifact contents and deployment
 
 **Files:**
-- Modify: `docs/superpowers/plans/2026-08-17-pages-artifact-cleanup.md`
+- Modify: `docs/implementation-notes/plans/2026-08-17-pages-artifact-cleanup.md`
 
 - [x] **Step 1: Run local regression checks**
 
@@ -135,7 +135,7 @@ Expected: contract PASS, 41 Playwright tests PASS, and no diff errors.
 Commit with:
 
 ```bash
-git add .pagesignore .github/workflows/pages.yml tests/pages-artifact-contract.ps1 docs/superpowers/plans/2026-08-17-pages-artifact-cleanup.md
+git add .pagesignore .github/workflows/pages.yml tests/pages-artifact-contract.ps1 docs/implementation-notes/plans/2026-08-17-pages-artifact-cleanup.md
 git commit -m "Exclude development files from Pages artifacts"
 git push origin HEAD:preview
 ```

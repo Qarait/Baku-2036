@@ -1,6 +1,6 @@
 # Optional 3D Baku Map Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **Implementation note:** REQUIRED SUB-SKILL: Use the task-based implementation workflow (recommended) or the documented implementation workflow to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Add a polished optional MapLibre 3D mode using the existing geographic building tiles while preserving the current 2D default and all investment overlays.
 
@@ -145,7 +145,7 @@ Run `git diff --check`, `git diff --stat`, and `git status --short --branch`. Ex
 - [ ] **Step 1: Commit implementation and plan**
 
 ```powershell
-git add index.html maplibre-atlas.js tests/optional-3d-map-contract.ps1 docs/superpowers/plans/2026-08-13-optional-3d-map.md
+git add index.html maplibre-atlas.js tests/optional-3d-map-contract.ps1 docs/implementation-notes/plans/2026-08-13-optional-3d-map.md
 git commit -m "Add optional 3D Baku map view"
 ```
 

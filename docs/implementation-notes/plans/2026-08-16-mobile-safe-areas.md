@@ -1,6 +1,6 @@
 # Mobile Safe Areas Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans (recommended) to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **Implementation note:** REQUIRED SUB-SKILL: Use the task-based implementation workflow (recommended) or the documented implementation workflow (recommended) to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Protect edge-positioned Baku 2036 content from iPhone cutouts, rounded corners, and the home indicator.
 
@@ -66,4 +66,4 @@ Run `npm test`, all four static contracts, and `git diff --check`.
 
 - [x] **Step 2: Commit the change**
 
-Run `git add v3.css tests/v3-mobile-contract.ps1 docs/superpowers/specs/2026-08-16-mobile-safe-areas-design.md docs/superpowers/plans/2026-08-16-mobile-safe-areas.md && git commit -m "Protect mobile layout with safe areas"`.
+Run `git add v3.css tests/v3-mobile-contract.ps1 docs/implementation-notes/specs/2026-08-16-mobile-safe-areas-design.md docs/implementation-notes/plans/2026-08-16-mobile-safe-areas.md && git commit -m "Protect mobile layout with safe areas"`.

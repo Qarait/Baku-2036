@@ -1,6 +1,6 @@
 # Lokbatan Local Places Implementation Plan
 
-> **For agentic workers:** Execute inline with test-first verification.
+> **Implementation note:** Execute inline with test-first verification.
 
 **Goal:** Add a plain-language Lokbatan "New places nearby" block for ASAN xidmet, McDonald's, and KFC.
 

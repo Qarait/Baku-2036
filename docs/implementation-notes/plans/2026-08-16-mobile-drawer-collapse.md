@@ -1,6 +1,6 @@
 # Mobile Map Identification Drawer Collapse Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
+> **Implementation note:** REQUIRED SUB-SKILL: Use the documented implementation workflow to implement this plan task-by-task.
 
 **Goal:** Add bilingual Collapse, Show details, and Close behavior to the selected-place drawer while preserving map selection and mobile page flow.
 

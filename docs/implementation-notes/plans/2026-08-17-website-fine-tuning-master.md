@@ -1,6 +1,6 @@
 # Baku 2036 Website Fine-Tuning Master Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:writing-plans for each unimplemented subsystem, then superpowers:executing-plans with a verification checkpoint after every task. This document controls sequencing and release gates; it does not replace the subsystem-level TDD plans.
+> **Implementation note:** REQUIRED SUB-SKILL: Use the documented planning workflow for each unimplemented subsystem, then the documented implementation workflow with a verification checkpoint after every task. This document controls sequencing and release gates; it does not replace the subsystem-level TDD plans.
 
 **Goal:** Improve Baku 2036’s mobile usability, map-ready performance, data confidence, and release reliability without changing the live `main` release until preview evidence supports promotion.
 
@@ -16,7 +16,7 @@
 - English and Turkish remain separate entry points: `/en/` and `/tr/`.
 - v2 remains tracked in Git and excluded from the optimized preview subtree; it is removed from the live-root artifact only during an authorized `main` promotion.
 - Numeric projections must come from numeric data fields, never display prose.
-- No AI or model inference is introduced into financial or geographic calculations.
+- No automated inference is introduced into financial or geographic calculations.
 - Every implementation task adds or updates a regression test before changing behavior.
 - A physical-iPhone check is required for release; if no physical device is available, that gate is recorded as pending rather than passed.
 - Before/after performance comparisons use the same device, network profile, and run protocol; report three cold-cache and three warm-cache runs with medians and ranges.
@@ -48,7 +48,7 @@ Create a read-only Playwright measurement script that accepts a URL, browser eng
 **Files:**
 - Inspect; modify only after a demonstrated failure: `v3.css`, `v3.js`, `index.html`, `en/index.html`, `tr/index.html`
 - Test: `tests/webkit.spec.js`, `tests/e2e.spec.js`
-- Reference: `docs/superpowers/plans/2026-08-16-mobile-touch-targets.md`, `mobile-safe-areas.md`, `mobile-drawer-collapse.md`
+- Reference: `docs/implementation-notes/plans/2026-08-16-mobile-touch-targets.md`, `mobile-safe-areas.md`, `mobile-drawer-collapse.md`
 
 Run the existing touch-target, safe-area, drawer, and WebKit tests before changing CSS or JavaScript. Modify the implementation only if a test or physical-device check demonstrates a regression. Every interactive control covered by the existing mobile selector list must measure at least 44×44 CSS pixels; any excluded inline text link must be documented with its spacing rationale. Confirm the existing four-edge `env(safe-area-inset-*)` handling and drawer collapse/reopen/close behavior without trapping scroll or covering essential content. Test portrait, landscape, 390px width, and a real notched iPhone.
 
@@ -59,7 +59,7 @@ Run the existing touch-target, safe-area, drawer, and WebKit tests before changi
 **Files:**
 - Inspect; modify only after a demonstrated failure: `v3.css`
 - Test: `tests/webkit.spec.js`
-- Reference: `docs/superpowers/plans/2026-08-16-mobile-typography.md`
+- Reference: `docs/implementation-notes/plans/2026-08-16-mobile-typography.md`
 
 Run the existing targeted typography assertions and physical-device review before changing font sizes. Modify only labels, metadata, helper text, legend text, or compact controls that still fail the accepted typography design. Preserve the visual hierarchy of headings and map narrative text. Check Turkish diacritics, line wrapping, contrast, and text at 320px, 390px, and landscape widths.
 

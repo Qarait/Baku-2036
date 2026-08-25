@@ -1,6 +1,6 @@
 # RAISE-Inspired Baku 2036 Roadmap Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **Implementation note:** REQUIRED SUB-SKILL: Use the task-based implementation workflow (recommended) or the documented implementation workflow to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Deliver the first safe RAISE-inspired release by making Baku 2036's existing editorial scenario calculation fully inspectable and shareable, then stop at explicit evidence gates before qualitative scoring, market-data publication, or modelling.
 
@@ -8,7 +8,7 @@
 
 **Tech Stack:** Static HTML/CSS/JavaScript, JSON content, MapLibre GL, PMTiles, Playwright 1.62.1, PowerShell contract tests, GitHub Actions, GitHub Pages.
 
-**Spec:** `docs/superpowers/specs/2026-08-21-raise-inspired-baku-design.md`
+**Spec:** `docs/implementation-notes/specs/2026-08-21-raise-inspired-baku-design.md`
 
 ## Global Constraints
 
@@ -17,9 +17,9 @@
 - Preserve the exact modifier values: oil `norm=1`, `bad=0.8`, `good=1.15`; infrastructure `on=1`, `late=0.72`; currency `stable=1`, `weak=0.8`; rounding increment `5` percentage points.
 - Label `growthPct` as an editorial scenario assumption, not a forecast, valuation, expected return, or model estimate.
 - Do not add downside/base/upside ranges or zone-specific numerical weights in Release 1.
-- Do not add dependencies, a backend, database, analytics, tracking, remote APIs, AI, machine learning, GWR, Monte Carlo simulation, 3D, rezoning valuation, or drag-and-drop infrastructure.
+- Do not add dependencies, a backend, database, analytics, tracking, remote APIs, automated prediction, statistical learning, GWR, Monte Carlo simulation, 3D, rezoning valuation, or drag-and-drop infrastructure.
 - Preserve the map, formulas, EN/TR behavior, fixed-language entry points, mobile layout, accessibility hooks, existing hash compatibility, and Pages artifact boundaries.
-- Work in an isolated worktree on a `codex/` branch based on the latest `origin/preview`.
+- Work in an isolated worktree on a `feature/` branch based on the latest `origin/preview`.
 - Deploy to `preview` only after the pull-request check passes. Do not modify or merge to `main` without a separate explicit instruction.
 - Do not stage `.playwright-cli/` or unrelated worktree files.
 
@@ -32,8 +32,8 @@
 - `data/content.json`: owns bilingual labels and explanatory copy; it must not own executable multiplier values.
 - `tests/e2e.spec.js`: owns browser behavior, URL round-trip, old-link compatibility, fixed-language behavior, and bilingual rendering checks.
 - `tests/v3-single-audience-contract.ps1`: owns static Release 1 structural assertions that should fail before browser startup if required calculation/disclosure hooks disappear.
-- `docs/superpowers/specs/2026-08-21-raise-inspired-baku-design.md`: owns product boundaries and evidence gates.
-- `docs/superpowers/plans/2026-08-21-raise-inspired-baku-roadmap.md`: owns execution order and handoff rules.
+- `docs/implementation-notes/specs/2026-08-21-raise-inspired-baku-design.md`: owns product boundaries and evidence gates.
+- `docs/implementation-notes/plans/2026-08-21-raise-inspired-baku-roadmap.md`: owns execution order and handoff rules.
 
 ## Executor Stop Rules
 
@@ -630,7 +630,7 @@ Verify at 390×844 and desktop width:
 
 ```powershell
 git push -u origin HEAD
-gh pr create --repo Qarait/Baku-2036 --base preview --head codex/raise-inspired-roadmap --draft --title "Explain and share scenario calculations" --body "Release 1 only: exposes the existing editorial baseline and fixed modifiers, preserves scenarios in the URL, and adds bilingual methodology disclosure. No scenario values, formulas, dependencies, market data, or main deployment behavior changed."
+gh pr create --repo Qarait/Baku-2036 --base preview --head feature/raise-inspired-roadmap --draft --title "Explain and share scenario calculations" --body "Release 1 only: exposes the existing editorial baseline and fixed modifiers, preserves scenarios in the URL, and adds bilingual methodology disclosure. No scenario values, formulas, dependencies, market data, or main deployment behavior changed."
 ```
 
 - [ ] **Step 6: Wait for the required pull-request check**
