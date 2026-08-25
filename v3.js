@@ -1726,7 +1726,7 @@
     state.overlaysReady = false;
     state.ready = false;
     const protocol = new window.pmtiles.Protocol(); maplibregl.addProtocol('pmtiles', protocol.tile);
-    const map = new maplibregl.Map({ container: 'v2Map', style: createStyle(), center: [49.86, 40.42], zoom: 9.6, minZoom: 8, maxZoom: 15.4, dragRotate: false, pitchWithRotate: false, attributionControl: { compact: true } });
+    const map = new maplibregl.Map({ container: 'v2Map', style: createStyle(), center: [49.86, 40.42], zoom: 9.6, minZoom: 8, maxZoom: 15.4, dragRotate: false, pitchWithRotate: false, cooperativeGestures: isMobileViewport(), locale: state.lang === 'tr' ? { 'CooperativeGesturesHandler.MobileHelpText': 'Haritayı hareket ettirmek için iki parmağınızı kullanın' } : undefined, attributionControl: { compact: true } });
     state.map = map;
     let mapFailed = false;
     const isBasemapFailure = event => {
