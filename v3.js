@@ -18,7 +18,7 @@
       searchLabel: 'Search Baku and Absheron places', showMe: '\u25b6 Show me (1 minute)',
       year: 'Drag to see the future',
       dataChecked: 'Data checked', projectStatus: 'Project status checked', scenarioBaseline: 'Scenario baseline',
-      skip: 'Skip map',
+      skip: 'Skip map', layers: 'Layers',
       rayons: 'District borders', areas: 'Investment spots', metro: 'Metro', heat: 'Where prices rise fastest',
       rayonBoundary: 'District borders', approxArea: 'Investment spots', metroLegend: 'Mapped stations · Baku 2036 scenario routes (dashed until their scenario year)', evidenceLegend: 'How sure is this?', builtLegend: 'Already built', contractedLegend: 'Being built now', programmedLegend: 'Government plan', privateLegend: 'Company promise',
       kicker: 'SELECTED PLACE',
@@ -38,7 +38,7 @@
       searchLabel: 'Bak\u00fc ve Ab\u015feron yerlerini aray\u0131n', showMe: '\u25b6 Göster (1 dakika)',
       year: 'Geleceği görmek için sürükleyin',
       dataChecked: 'Veriler kontrol edildi', projectStatus: 'Proje durumu kontrol edildi', scenarioBaseline: 'Senaryo ba\u015flang\u0131c\u0131',
-      skip: 'Haritay\u0131 ge\u00e7',
+      skip: 'Haritay\u0131 ge\u00e7', layers: 'Katmanlar',
       rayons: 'İlçe sınırları', areas: 'Yatırım noktaları', metro: 'Metro', heat: 'Fiyatların en hızlı arttığı yerler',
       rayonBoundary: 'İlçe sınırları', approxArea: 'Yatırım noktaları', metroLegend: 'Haritalanan istasyonlar · Bakü 2036 senaryo hatları (senaryo yılına kadar kesik)', evidenceLegend: 'Ne kadar emin olabiliriz?', builtLegend: 'Zaten yapıldı', contractedLegend: 'Şimdi yapılıyor', programmedLegend: 'Devlet planı', privateLegend: 'Şirket sözü',
       kicker: 'SE\u00c7\u0130LEN YER',
@@ -1488,7 +1488,7 @@
     state.lang = lang;
     const u = tr();
     document.documentElement.lang = lang === 'tr' ? 'tr' : 'en';
-    $('appTitle').textContent = u.title; $('appSubtitle').textContent = u.subtitle; $('showMe').textContent = u.showMe || (state.lang === 'tr' ? '\u25b6 Göster (1 dakika)' : '\u25b6 Show me (1 minute)'); $('placeSearch').placeholder = u.search; $('searchLabel').textContent = u.searchLabel; $('yearLabel').textContent = u.year; $('skipMap').textContent = u.skip;
+    $('appTitle').textContent = u.title; $('appSubtitle').textContent = u.subtitle; $('showMe').textContent = u.showMe || (state.lang === 'tr' ? '\u25b6 Göster (1 dakika)' : '\u25b6 Show me (1 minute)'); $('placeSearch').placeholder = u.search; $('searchLabel').textContent = u.searchLabel; $('yearLabel').textContent = u.year; $('skipMap').textContent = u.skip; $('layersToggle').textContent = u.layers || (state.lang === 'tr' ? 'Katmanlar' : 'Layers');
     $('rayonLegend').textContent = u.rayonBoundary; $('areaLegend').textContent = u.approxArea; $('metroLegend').textContent = u.metroLegend;
     $('evidenceLegend').textContent = u.evidenceLegend; $('builtLegend').textContent = u.builtLegend; $('contractedLegend').textContent = u.contractedLegend; $('programmedLegend').textContent = u.programmedLegend; $('privateLegend').textContent = u.privateLegend;
     $('clearSelection').textContent = u.clear;
@@ -1534,7 +1534,7 @@
     state.engaged = Boolean(value);
     document.body.classList.toggle('engaged', state.engaged);
     document.querySelectorAll('.quiet-controls').forEach(element => element.classList.toggle('is-visible', state.engaged));
-    if (state.engaged && $('layerMenu')) $('layerMenu').hidden = false;
+
   }
 
   function toggleLayerMenu(force) {
@@ -1542,7 +1542,7 @@
     const button = $('layersToggle'); const menu = $('layerMenu');
     if (!button || !menu) return;
     const open = typeof force === 'boolean' ? force : !menu.classList.contains('open');
-    menu.classList.toggle('open', open); button.setAttribute('aria-expanded', String(open));
+    menu.classList.toggle('open', open); menu.hidden = !open; button.setAttribute('aria-expanded', String(open));
   }
 
   function cityStoryCheckpointIndex(year) {
