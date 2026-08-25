@@ -15,6 +15,20 @@ test('WebKit loads the map without browser errors', async ({ page }) => {
   expect(errors).toEqual([]);
 });
 
+test('WebKit allows page scrolling to start over the mobile map', async ({ page }) => {
+  await page.goto('./?cache=webkit-mobile-map-scroll#y=2026&lang=en');
+  await waitForMap(page);
+  const canvasContainer = page.locator('#v2Map .maplibregl-canvas-container');
+  await expect(canvasContainer).toHaveClass(/maplibregl-cooperative-gestures/);
+  await expect.poll(() => canvasContainer.evaluate(element => getComputedStyle(element).touchAction)).toBe('pan-x pan-y');
+  await page.evaluate(() => window.scrollTo(0, 0));
+  const mapBox = await page.locator('#v2Map').boundingBox();
+  expect(mapBox).not.toBeNull();
+  await page.mouse.move(mapBox.x + (mapBox.width / 2), mapBox.y + (mapBox.height / 2));
+  await page.mouse.wheel(0, 600);
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
+});
+
 test('WebKit reveals essential controls after a real map tap', async ({ page }) => {
   await page.goto('./?cache=webkit-map-engagement#y=2026&lang=en');
   await waitForMap(page);
