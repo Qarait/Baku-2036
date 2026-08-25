@@ -9,3 +9,4 @@
 OpenStreetMap data is © OpenStreetMap contributors and is used under the [ODbL](https://www.openstreetmap.org/copyright).
 
 - Zone evidence entries were checked on 2026-08-13 against the supplied official planning, transport, railway, market, industrial, and developer sources. Statuses distinguish operational, contracted, programmed, private-plan, and concept claims; investment meaning remains analytical.
+- `zones.json` `officialPlan` records link each zone to the ARXKOM Baku Master Plan 2040, with a role, implementation status, phase, horizon, source section, PDF pages, bilingual statement, caution, and review date. These records describe planning context only and must not be read as property-price forecasts.

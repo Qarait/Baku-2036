@@ -54,6 +54,9 @@ jobs:
       - name: Verify Pages artifact contract
         shell: pwsh
         run: pwsh -File tests/pages-artifact-contract.ps1
+      - name: Verify official-plan data contract
+        shell: pwsh
+        run: pwsh -File tests/official-plan-contract.ps1
       - name: Verify administrative GeoJSON derivative
         shell: pwsh
         run: pwsh -File tests/admin-geojson-contract.ps1

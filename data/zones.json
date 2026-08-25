@@ -191,7 +191,30 @@
         "en": "A named regeneration or private development anchor is documented; reported plans or targets are not independent market forecasts.",
         "tr": "Adı belirtilen bir yenileme veya özel gelişim odağı belgelenmiştir; bildirilen planlar veya hedefler bağımsız piyasa tahminleri değildir."
       }
-    ]
+    ],
+    "officialPlan": {
+      "planId": "baku-master-plan-2040",
+      "role": "district-context",
+      "status": "strategic-project",
+      "implementationPhase": "long-range",
+      "horizonYear": 2040,
+      "source": {
+        "sourceId": "arxkom.baku-master-plan-2040",
+        "publisher": "ARXKOM",
+        "url": "https://arxkom.gov.az/storage/files/files/shares/qayidish/bash%20plan/659ab50a15eb5.pdf",
+        "section": "Strategic projects: industrial-area regeneration and Hybrid Green Corridor",
+        "pages": [
+          211,
+          212,
+          213
+        ]
+      },
+      "checkedAt": "2026-08-25",
+      "en": "The official plan places White City in the wider central-Baku industrial-regeneration and green-corridor context; it is not a zone-specific price forecast.",
+      "tr": "Rəsmi plan Ağ Şəhəri mərkəzi Bakının sənaye ərazilərinin yenilənməsi və yaşıl dəhlizlər kontekstində göstərir; bu, zona üzrə qiymət proqnozu deyil.",
+      "cautionEn": "A plan context does not prove delivery, access or property-price growth.",
+      "cautionTr": "Plan konteksti icranı, əlçatanlığı və ya əmlak qiymət artımını sübut etmir."
+    }
   },
   {
     "id": "yasamal",
@@ -357,7 +380,28 @@
         "en": "An official plan or programme documents planned transport work; timing, delivery, and useful access remain dependencies.",
         "tr": "Resmî bir plan veya program planlanan ulaşım çalışmasını belgeler; zamanlama, teslim ve işe yarar erişim hâlâ bağımlılıktır."
       }
-    ]
+    ],
+    "officialPlan": {
+      "planId": "baku-master-plan-2040",
+      "role": "not-specified",
+      "status": "not-zone-specific",
+      "implementationPhase": "not-specified",
+      "horizonYear": 2040,
+      "source": {
+        "sourceId": "arxkom.baku-master-plan-2040",
+        "publisher": "ARXKOM",
+        "url": "https://arxkom.gov.az/storage/files/files/shares/qayidish/bash%20plan/659ab50a15eb5.pdf",
+        "section": "Polycentric city and demography; no zone-specific assignment identified in the reviewed pages",
+        "pages": [
+          55
+        ]
+      },
+      "checkedAt": "2026-08-25",
+      "en": "No zone-specific role or project assignment was identified in the reviewed official plan pages for Yasamal.",
+      "tr": "Yasamal üçün nəzərdən keçirilmiş rəsmi plan səhifələrində zona üzrə ayrıca rol və ya layihə təyinatı müəyyən edilmədi.",
+      "cautionEn": "Absence of a zone-specific entry is not evidence that nothing can change locally.",
+      "cautionTr": "Zona üzrə ayrıca qeydin olmaması yerli dəyişikliklərin olmayacağına dəlil deyil."
+    }
   },
   {
     "id": "narimanov",
@@ -523,7 +567,28 @@
         "en": "The cited market source provides citywide context, not a zone-specific price lead or causal estimate.",
         "tr": "Atıf yapılan piyasa kaynağı şehir geneli bağlam sağlar; bölgeye özgü fiyat liderliği veya nedensel tahmin sağlamaz."
       }
-    ]
+    ],
+    "officialPlan": {
+      "planId": "baku-master-plan-2040",
+      "role": "district-context",
+      "status": "strategic-project",
+      "implementationPhase": "long-range",
+      "horizonYear": 2040,
+      "source": {
+        "sourceId": "arxkom.baku-master-plan-2040",
+        "publisher": "ARXKOM",
+        "url": "https://arxkom.gov.az/storage/files/files/shares/qayidish/bash%20plan/659ab50a15eb5.pdf",
+        "section": "Strategic projects: regeneration of former industrial areas",
+        "pages": [
+          211
+        ]
+      },
+      "checkedAt": "2026-08-25",
+      "en": "The plan identifies former industrial areas across Narimanov, Nizami and Khatai as a wider regeneration context; it does not establish a Narimanov-wide price increase.",
+      "tr": "Plan Nərimanov, Nizami və Xətai boyunca keçmiş sənaye ərazilərini daha geniş yenilənmə kontekstində göstərir; Nərimanov üzrə ümumi qiymət artımı müəyyən etmir.",
+      "cautionEn": "A nearby regeneration direction is not proof that every part of the district benefits equally.",
+      "cautionTr": "Yaxınlıqdakı yenilənmə istiqaməti rayonun hər hissəsinin eyni dərəcədə faydalanacağını sübut etmir."
+    }
   },
   {
     "id": "sabail",
@@ -659,7 +724,30 @@
         "en": "The cited market source provides citywide context, not a zone-specific price lead or causal estimate.",
         "tr": "Atıf yapılan piyasa kaynağı şehir geneli bağlam sağlar; bölgeye özgü fiyat liderliği veya nedensel tahmin sağlamaz."
       }
-    ]
+    ],
+    "officialPlan": {
+      "planId": "baku-master-plan-2040",
+      "role": "urban-core",
+      "status": "planning-direction",
+      "implementationPhase": "long-range",
+      "horizonYear": 2040,
+      "source": {
+        "sourceId": "arxkom.baku-master-plan-2040",
+        "publisher": "ARXKOM",
+        "url": "https://arxkom.gov.az/storage/files/files/shares/qayidish/bash%20plan/659ab50a15eb5.pdf",
+        "section": "Central Planning District and special protection area",
+        "pages": [
+          75,
+          79,
+          80
+        ]
+      },
+      "checkedAt": "2026-08-25",
+      "en": "Sabail sits within the central-Baku planning context, including a Central Planning District and a special protection area.",
+      "tr": "Səbail Mərkəzi Planlaşdırma Rayonu və xüsusi mühafizə zonası daxil olmaqla mərkəzi Bakı planlaşdırma kontekstində yerləşir.",
+      "cautionEn": "Centrality and heritage controls can support demand but can also limit redevelopment options.",
+      "cautionTr": "Mərkəzilik və irs qaydaları tələbi dəstəkləyə bilər, lakin yenidənqurma imkanlarını məhdudlaşdıra da bilər."
+    }
   },
   {
     "id": "khojasan",
@@ -817,7 +905,29 @@
         "en": "An official plan or programme documents planned transport work; timing, delivery, and useful access remain dependencies.",
         "tr": "Resmî bir plan veya program planlanan ulaşım çalışmasını belgeler; zamanlama, teslim ve işe yarar erişim hâlâ bağımlılıktır."
       }
-    ]
+    ],
+    "officialPlan": {
+      "planId": "baku-master-plan-2040",
+      "role": "district-context",
+      "status": "first-priority",
+      "implementationPhase": "first-seven-years",
+      "horizonYear": 2040,
+      "source": {
+        "sourceId": "arxkom.baku-master-plan-2040",
+        "publisher": "ARXKOM",
+        "url": "https://arxkom.gov.az/storage/files/files/shares/qayidish/bash%20plan/659ab50a15eb5.pdf",
+        "section": "Baku Green Park; first-phase open spaces and water-resource management",
+        "pages": [
+          213,
+          216
+        ]
+      },
+      "checkedAt": "2026-08-25",
+      "en": "The plan proposes a large public park and lake-restoration context around Khojasan, with open-space and water-management work listed among early priorities.",
+      "tr": "Plan Xocahəsən ətrafında böyük ictimai park və gölün bərpası kontekstini, açıq məkan və su ehtiyatlarının idarə edilməsini ilkin prioritetlər arasında göstərir.",
+      "cautionEn": "The proposal is a planning direction; the source does not establish a completed park or guaranteed local uplift.",
+      "cautionTr": "Təklif planlaşdırma istiqamətidir; mənbə tamamlanmış parkı və ya zəmanətli yerli artımı təsdiq etmir."
+    }
   },
   {
     "id": "khirdalan",
@@ -970,7 +1080,29 @@
         "en": "Existing transport access is documented here. The cited source does not measure a zone-level property premium.",
         "tr": "Mevcut ulaşım erişimi burada belgelenmiştir. Atıf yapılan kaynak bölgeye özgü bir mülk primini ölçmez."
       }
-    ]
+    ],
+    "officialPlan": {
+      "planId": "baku-master-plan-2040",
+      "role": "local-centre",
+      "status": "planning-direction",
+      "implementationPhase": "long-range",
+      "horizonYear": 2040,
+      "source": {
+        "sourceId": "arxkom.baku-master-plan-2040",
+        "publisher": "ARXKOM",
+        "url": "https://arxkom.gov.az/storage/files/files/shares/qayidish/bash%20plan/659ab50a15eb5.pdf",
+        "section": "Polycentric city and demography; local centres",
+        "pages": [
+          55,
+          89
+        ]
+      },
+      "checkedAt": "2026-08-25",
+      "en": "Khirdalan is identified as a local centre and is marked as outside the administrative boundary of Baku in the plan centre hierarchy.",
+      "tr": "Xırdalan planın mərkəzlər iyerarxiyasında yerli mərkəz kimi göstərilir və Bakı inzibati sərhədlərindən kənarda qeyd olunur.",
+      "cautionEn": "The plan regional role does not prove that a particular parcel has services, title or transport access.",
+      "cautionTr": "Planın regional rolu konkret parselin xidmət, çıxarış və ya nəqliyyat əlçatanlığını sübut etmir."
+    }
   },
   {
     "id": "sumgayit",
@@ -1121,7 +1253,29 @@
         "en": "Current industrial, logistics, or jobs activity is documented; it does not automatically imply residential price growth.",
         "tr": "Mevcut sanayi, lojistik veya istihdam faaliyeti belgelenmiştir; bu durum otomatik olarak konut fiyat artışı anlamına gelmez."
       }
-    ]
+    ],
+    "officialPlan": {
+      "planId": "baku-master-plan-2040",
+      "role": "regional-centre",
+      "status": "planning-direction",
+      "implementationPhase": "long-range",
+      "horizonYear": 2040,
+      "source": {
+        "sourceId": "arxkom.baku-master-plan-2040",
+        "publisher": "ARXKOM",
+        "url": "https://arxkom.gov.az/storage/files/files/shares/qayidish/bash%20plan/659ab50a15eb5.pdf",
+        "section": "Polycentric city and demography; regional centres",
+        "pages": [
+          55,
+          89
+        ]
+      },
+      "checkedAt": "2026-08-25",
+      "en": "Sumgayit is identified as a regional centre connected to central Baku by existing or planned transport infrastructure.",
+      "tr": "Sumqayıt mövcud və ya planlaşdırılan nəqliyyat infrastrukturu ilə mərkəzi Bakıya bağlanan regional mərkəz kimi göstərilir.",
+      "cautionEn": "A regional-centre designation does not prove the timing or local effect of every planned connection.",
+      "cautionTr": "Regional mərkəz statusu hər planlaşdırılan bağlantının vaxtını və yerli təsirini sübut etmir."
+    }
   },
   {
     "id": "novkhani",
@@ -1264,7 +1418,28 @@
         "en": "An official plan or programme documents planned transport work; timing, delivery, and useful access remain dependencies.",
         "tr": "Resmî bir plan veya program planlanan ulaşım çalışmasını belgeler; zamanlama, teslim ve işe yarar erişim hâlâ bağımlılıktır."
       }
-    ]
+    ],
+    "officialPlan": {
+      "planId": "baku-master-plan-2040",
+      "role": "not-specified",
+      "status": "not-zone-specific",
+      "implementationPhase": "not-specified",
+      "horizonYear": 2040,
+      "source": {
+        "sourceId": "arxkom.baku-master-plan-2040",
+        "publisher": "ARXKOM",
+        "url": "https://arxkom.gov.az/storage/files/files/shares/qayidish/bash%20plan/659ab50a15eb5.pdf",
+        "section": "Polycentric city and demography; no zone-specific assignment identified in the reviewed pages",
+        "pages": [
+          55
+        ]
+      },
+      "checkedAt": "2026-08-25",
+      "en": "No zone-specific role or project assignment was identified in the reviewed official plan pages for Novkhani.",
+      "tr": "Novxanı üçün nəzərdən keçirilmiş rəsmi plan səhifələrində zona üzrə ayrıca rol və ya layihə təyinatı müəyyən edilmədi.",
+      "cautionEn": "Transport or private development evidence must be assessed separately from the citywide plan.",
+      "cautionTr": "Nəqliyyat və ya özəl inkişaf sübutları şəhər üzrə plandan ayrıca qiymətləndirilməlidir."
+    }
   },
   {
     "id": "bilgah",
@@ -1437,7 +1612,28 @@
         "en": "An official plan or programme documents planned transport work; timing, delivery, and useful access remain dependencies.",
         "tr": "Resmî bir plan veya program planlanan ulaşım çalışmasını belgeler; zamanlama, teslim ve işe yarar erişim hâlâ bağımlılıktır."
       }
-    ]
+    ],
+    "officialPlan": {
+      "planId": "baku-master-plan-2040",
+      "role": "not-specified",
+      "status": "not-zone-specific",
+      "implementationPhase": "not-specified",
+      "horizonYear": 2040,
+      "source": {
+        "sourceId": "arxkom.baku-master-plan-2040",
+        "publisher": "ARXKOM",
+        "url": "https://arxkom.gov.az/storage/files/files/shares/qayidish/bash%20plan/659ab50a15eb5.pdf",
+        "section": "Polycentric city and demography; no zone-specific assignment identified in the reviewed pages",
+        "pages": [
+          55
+        ]
+      },
+      "checkedAt": "2026-08-25",
+      "en": "No zone-specific role or project assignment was identified in the reviewed official plan pages for Bilgah.",
+      "tr": "Bilgəh üçün nəzərdən keçirilmiş rəsmi plan səhifələrində zona üzrə ayrıca rol və ya layihə təyinatı müəyyən edilmədi.",
+      "cautionEn": "Private development claims must not be presented as official-plan commitments.",
+      "cautionTr": "Özəl inkişaf iddiaları rəsmi plan öhdəliyi kimi təqdim edilməməlidir."
+    }
   },
   {
     "id": "mardakan",
@@ -1595,7 +1791,29 @@
         "en": "An official plan or programme documents planned transport work; timing, delivery, and useful access remain dependencies.",
         "tr": "Resmî bir plan veya program planlanan ulaşım çalışmasını belgeler; zamanlama, teslim ve işe yarar erişim hâlâ bağımlılıktır."
       }
-    ]
+    ],
+    "officialPlan": {
+      "planId": "baku-master-plan-2040",
+      "role": "regional-centre",
+      "status": "planning-direction",
+      "implementationPhase": "long-range",
+      "horizonYear": 2040,
+      "source": {
+        "sourceId": "arxkom.baku-master-plan-2040",
+        "publisher": "ARXKOM",
+        "url": "https://arxkom.gov.az/storage/files/files/shares/qayidish/bash%20plan/659ab50a15eb5.pdf",
+        "section": "Polycentric city and demography; regional centres",
+        "pages": [
+          55,
+          89
+        ]
+      },
+      "checkedAt": "2026-08-25",
+      "en": "Mardakan is identified as a regional centre intended to provide more self-sufficient services and connect to central Baku through transport infrastructure.",
+      "tr": "Mərdəkan daha özünütəmin edən xidmətlər göstərməsi və nəqliyyat infrastrukturu ilə mərkəzi Bakıya bağlanması nəzərdə tutulan regional mərkəz kimi göstərilir.",
+      "cautionEn": "The centre designation is a long-range planning direction, not a guaranteed construction schedule or price signal.",
+      "cautionTr": "Mərkəz statusu uzunmüddətli planlaşdırma istiqamətidir, zəmanətli tikinti qrafiki və ya qiymət siqnalı deyil."
+    }
   },
   {
     "id": "airport",
@@ -1748,7 +1966,29 @@
         "en": "Existing transport access is documented here. The cited source does not measure a zone-level property premium.",
         "tr": "Mevcut ulaşım erişimi burada belgelenmiştir. Atıf yapılan kaynak bölgeye özgü bir mülk primini ölçmez."
       }
-    ]
+    ],
+    "officialPlan": {
+      "planId": "baku-master-plan-2040",
+      "role": "district-context",
+      "status": "first-priority",
+      "implementationPhase": "first-seven-years",
+      "horizonYear": 2040,
+      "source": {
+        "sourceId": "arxkom.baku-master-plan-2040",
+        "publisher": "ARXKOM",
+        "url": "https://arxkom.gov.az/storage/files/files/shares/qayidish/bash%20plan/659ab50a15eb5.pdf",
+        "section": "Airport-area service development; first-phase development priorities",
+        "pages": [
+          65,
+          216
+        ]
+      },
+      "checkedAt": "2026-08-25",
+      "en": "The plan identifies new service-sector development near the international airport as an early development priority.",
+      "tr": "Plan beynəlxalq hava limanı yaxınlığında yeni xidmət sahələrinin inkişafını ilkin inkişaf prioriteti kimi göstərir.",
+      "cautionEn": "A citywide airport-area priority does not establish the value or legal status of an individual property.",
+      "cautionTr": "Şəhər üzrə hava limanı prioriteti konkret mülkün dəyərini və hüquqi statusunu müəyyən etmir."
+    }
   },
   {
     "id": "mohammadi",
@@ -1911,7 +2151,28 @@
         "en": "Existing transport access is documented here. The cited source does not measure a zone-level property premium.",
         "tr": "Mevcut ulaşım erişimi burada belgelenmiştir. Atıf yapılan kaynak bölgeye özgü bir mülk primini ölçmez."
       }
-    ]
+    ],
+    "officialPlan": {
+      "planId": "baku-master-plan-2040",
+      "role": "not-specified",
+      "status": "not-zone-specific",
+      "implementationPhase": "not-specified",
+      "horizonYear": 2040,
+      "source": {
+        "sourceId": "arxkom.baku-master-plan-2040",
+        "publisher": "ARXKOM",
+        "url": "https://arxkom.gov.az/storage/files/files/shares/qayidish/bash%20plan/659ab50a15eb5.pdf",
+        "section": "Polycentric city and demography; no zone-specific assignment identified in the reviewed pages",
+        "pages": [
+          55
+        ]
+      },
+      "checkedAt": "2026-08-25",
+      "en": "No zone-specific role or project assignment was identified in the reviewed official plan pages for Mohammadi.",
+      "tr": "Məhəmmədli üçün nəzərdən keçirilmiş rəsmi plan səhifələrində zona üzrə ayrıca rol və ya layihə təyinatı müəyyən edilmədi.",
+      "cautionEn": "The road evidence for this place must be kept separate from official-plan claims.",
+      "cautionTr": "Bu yer üzrə yol sübutu rəsmi plan iddialarından ayrı saxlanılmalıdır."
+    }
   },
   {
     "id": "hovsan",
@@ -2062,7 +2323,29 @@
         "en": "An official plan or programme documents planned transport work; timing, delivery, and useful access remain dependencies.",
         "tr": "Resmî bir plan veya program planlanan ulaşım çalışmasını belgeler; zamanlama, teslim ve işe yarar erişim hâlâ bağımlılıktır."
       }
-    ]
+    ],
+    "officialPlan": {
+      "planId": "baku-master-plan-2040",
+      "role": "local-centre",
+      "status": "planning-direction",
+      "implementationPhase": "long-range",
+      "horizonYear": 2040,
+      "source": {
+        "sourceId": "arxkom.baku-master-plan-2040",
+        "publisher": "ARXKOM",
+        "url": "https://arxkom.gov.az/storage/files/files/shares/qayidish/bash%20plan/659ab50a15eb5.pdf",
+        "section": "Polycentric city and demography; local centres",
+        "pages": [
+          55,
+          89
+        ]
+      },
+      "checkedAt": "2026-08-25",
+      "en": "Zigh/Hovsan is identified as a local-centre context at the edge of Central Baku, intended to be served by public transport and primary roads.",
+      "tr": "Zığ/Hövsan Mərkəzi Bakının kənarında ictimai nəqliyyat və əsas yollarla xidmət göstərilməsi nəzərdə tutulan yerli mərkəz kontekstidir.",
+      "cautionEn": "The local-centre designation does not prove that planned transport or services are already available.",
+      "cautionTr": "Yerli mərkəz statusu planlaşdırılan nəqliyyatın və xidmətlərin artıq mövcud olduğunu sübut etmir."
+    }
   },
   {
     "id": "zikh",
@@ -2205,7 +2488,29 @@
         "en": "An official plan or programme documents planned transport work; timing, delivery, and useful access remain dependencies.",
         "tr": "Resmî bir plan veya program planlanan ulaşım çalışmasını belgeler; zamanlama, teslim ve işe yarar erişim hâlâ bağımlılıktır."
       }
-    ]
+    ],
+    "officialPlan": {
+      "planId": "baku-master-plan-2040",
+      "role": "local-centre",
+      "status": "first-priority",
+      "implementationPhase": "first-seven-years",
+      "horizonYear": 2040,
+      "source": {
+        "sourceId": "arxkom.baku-master-plan-2040",
+        "publisher": "ARXKOM",
+        "url": "https://arxkom.gov.az/storage/files/files/shares/qayidish/bash%20plan/659ab50a15eb5.pdf",
+        "section": "Zigh lake/open-space and water-resource management priority",
+        "pages": [
+          55,
+          216
+        ]
+      },
+      "checkedAt": "2026-08-25",
+      "en": "Zigh/Hovsan is included in the local-centre hierarchy and the first-phase list for open spaces and water-resource management around Zigh and Khojasan lakes.",
+      "tr": "Zığ/Hövsan yerli mərkəzlər iyerarxiyasına və Zığ və Xocahəsən gölləri ətrafında açıq məkanlar və su ehtiyatlarının idarə edilməsi üzrə ilkin mərhələ siyahısına daxildir.",
+      "cautionEn": "The first-phase listing is not proof that every listed project is funded, contracted or complete.",
+      "cautionTr": "İlkin mərhələ siyahısı sadalanan hər layihənin maliyyələşdiyini, müqavilələndiyini və ya tamamlandığını sübut etmir."
+    }
   },
   {
     "id": "lokbatan",
@@ -2371,7 +2676,29 @@
         "en": "An official plan or programme documents planned transport work; timing, delivery, and useful access remain dependencies.",
         "tr": "Resmî bir plan veya program planlanan ulaşım çalışmasını belgeler; zamanlama, teslim ve işe yarar erişim hâlâ bağımlılıktır."
       }
-    ]
+    ],
+    "officialPlan": {
+      "planId": "baku-master-plan-2040",
+      "role": "local-centre",
+      "status": "planning-direction",
+      "implementationPhase": "long-range",
+      "horizonYear": 2040,
+      "source": {
+        "sourceId": "arxkom.baku-master-plan-2040",
+        "publisher": "ARXKOM",
+        "url": "https://arxkom.gov.az/storage/files/files/shares/qayidish/bash%20plan/659ab50a15eb5.pdf",
+        "section": "Polycentric city and demography; local centres and Green Park context",
+        "pages": [
+          55,
+          213
+        ]
+      },
+      "checkedAt": "2026-08-25",
+      "en": "Lokbatan is identified as a local centre; the plan also describes a possible long-term southward extension of the Khojasan green-park system toward Lokbatan and the Caspian.",
+      "tr": "Lökbatan yerli mərkəz kimi göstərilir; plan həmçinin Xocahəsən yaşıl park sisteminin uzunmüddətli perspektivdə Lökbatan və Xəzər istiqamətində genişlənə biləcəyini təsvir edir.",
+      "cautionEn": "The possible extension is long-range and does not establish a delivered park boundary or property premium.",
+      "cautionTr": "Mümkün genişlənmə uzunmüddətlidir və salınmış park sərhədini və ya əmlak primini müəyyən etmir."
+    }
   },
   {
     "id": "alat",
@@ -2531,10 +2858,35 @@
       {
         "id": "employment-anchor",
         "role": "support",
-        "evidenceIds": ["alat.port-of-baku-throughput", "alat.afez-master-plan"],
+        "evidenceIds": [
+          "alat.port-of-baku-throughput",
+          "alat.afez-master-plan"
+        ],
         "en": "Current industrial, logistics, or jobs activity is documented; it does not automatically imply residential price growth.",
         "tr": "Mevcut sanayi, lojistik veya istihdam faaliyeti belgelenmiştir; bu durum otomatik olarak konut fiyat artışı anlamına gelmez."
       }
-    ]
+    ],
+    "officialPlan": {
+      "planId": "baku-master-plan-2040",
+      "role": "regional-centre",
+      "status": "first-priority",
+      "implementationPhase": "first-seven-years",
+      "horizonYear": 2040,
+      "source": {
+        "sourceId": "arxkom.baku-master-plan-2040",
+        "publisher": "ARXKOM",
+        "url": "https://arxkom.gov.az/storage/files/files/shares/qayidish/bash%20plan/659ab50a15eb5.pdf",
+        "section": "Polycentric regional centre and Alat Free Economic Zone priority",
+        "pages": [
+          55,
+          216
+        ]
+      },
+      "checkedAt": "2026-08-25",
+      "en": "Alat is identified as a regional centre and is included in early priorities for the Free Economic Zone, new housing and coastal development.",
+      "tr": "Ələt regional mərkəz kimi göstərilir və Azad İqtisadi Zona, yeni yaşayış və sahilyanı inkişaf üzrə ilkin prioritetlərə daxildir.",
+      "cautionEn": "Economic-zone and housing plans depend on implementation, employment and supporting infrastructure; they are not direct price forecasts.",
+      "cautionTr": "İqtisadi zona və yaşayış planları icra, məşğulluq və dəstəkləyici infrastruktura bağlıdır; bunlar birbaşa qiymət proqnozu deyil."
+    }
   }
 ]
