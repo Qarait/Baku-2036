@@ -1401,11 +1401,11 @@ test('shortlist comparison shows the same seven decision facts for three places'
   await page.locator('#accordion-shortlist .accordion-summary').click();
   const comparison = page.locator('#shortlistComparison');
   await expect(comparison).toBeVisible();
-  await expect(comparison.locator('.comparison-place')).toHaveCount(3);
+  await expect(comparison.locator('.comparison-desktop .comparison-place')).toHaveCount(3);
   await expect(comparison).toContainText('White City / Khatai');
   await expect(comparison).toContainText('Yasamal (New Yasamal)');
   await expect(comparison).toContainText('Narimanov');
-  await expect(comparison.locator('[data-comparison-criterion]')).toHaveCount(7);
+  await expect(comparison.locator('.comparison-desktop [data-comparison-criterion]')).toHaveCount(7);
 });
 
 test('shortlist comparison becomes criterion-first without horizontal overflow on mobile', async ({ page }) => {
@@ -1420,4 +1420,17 @@ test('shortlist comparison becomes criterion-first without horizontal overflow o
   await expect(comparison.locator('.comparison-mobile')).toBeVisible();
   await expect(comparison.locator('.comparison-mobile [data-comparison-criterion]')).toHaveCount(7);
   await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1)).toBeTruthy();
+});
+
+test('shortlist comparison uses localized criteria in Turkish', async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('baku2036-v2-shortlist', JSON.stringify({ whitecity: true, yasamal: true, narimanov: true })));
+  await page.goto('./tr/?cache=e2e-shortlist-comparison-tr#lang=tr');
+  await waitForMap(page);
+  await page.locator('#accordion-shortlist .accordion-summary').click();
+  const comparison = page.locator('#shortlistComparison');
+  await expect(comparison).toBeVisible();
+  await expect(page.locator('#accordion-shortlist')).toContainText('Aynı bilgileri kayıtlı en fazla üç yer için karşılaştırın');
+  for (const label of ['Kaba giriş aralığı', 'Mülk türü', 'Ana fırsat', 'Ana risk', 'Kanıt durumu', 'Kritik bağımlılık', 'Senaryo duyarlılığı']) await expect(comparison).toContainText(label);
+  await expect(comparison).not.toContainText('Rough entry range');
+  await expect(comparison).not.toContainText('Main risk');
 });

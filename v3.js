@@ -1278,10 +1278,10 @@
     ];
   }
 
-  function comparisonPlaceHtml(zone) {
+  function comparisonPlaceHtml(zone, mobile = false) {
     const content = atlasCopy();
     const name = state.lang === 'tr' ? zone.nameTr : zone.nameEn;
-    return '<div class="comparison-place" data-zone-id="' + escapeHtml(zone.id) + '"><strong>' + escapeHtml(name) + '</strong><label><span class="sr-only">' + escapeHtml(content.labels.amount || 'Amount') + '</span><input type="number" min="0" placeholder="' + escapeHtml(content.labels.amount || 'Amount') + '" data-shortlist-amount="' + escapeHtml(zone.id) + '" value="' + (Number(state.shortlistAmounts[zone.id]) || '') + '"></label></div>';
+    return '<div class="' + (mobile ? 'comparison-mobile-place' : 'comparison-place') + '" data-zone-id="' + escapeHtml(zone.id) + '"><strong>' + escapeHtml(name) + '</strong><label><span class="sr-only">' + escapeHtml(content.labels.amount || 'Amount') + '</span><input type="number" min="0" placeholder="' + escapeHtml(content.labels.amount || 'Amount') + '" data-shortlist-amount="' + escapeHtml(zone.id) + '" value="' + (Number(state.shortlistAmounts[zone.id]) || '') + '"></label></div>';
   }
 
   function renderShortlist() {
@@ -1296,7 +1296,7 @@
     const total = ids.reduce((sum, id) => sum + (Number(state.shortlistAmounts[id]) || 0), 0);
     const comparisonZones = ids.slice(0, 3).map(id => zones.find(zone => zone.id === id));
     const fields = comparisonZones[0] ? comparisonFields(comparisonZones[0]).map(field => ({ key: field[0], label: field[1] })) : [];
-    const desktopHeader = '<div class="comparison-row comparison-header"><span class="comparison-label" aria-hidden="true"></span>' + comparisonZones.map(comparisonPlaceHtml).join('') + '</div>';
+    const desktopHeader = '<div class="comparison-row comparison-header"><span class="comparison-label" aria-hidden="true"></span>' + comparisonZones.map(zone => comparisonPlaceHtml(zone)).join('') + '</div>';
     const desktopRows = fields.map(field => '<div class="comparison-row" data-comparison-criterion="' + escapeHtml(field.key) + '"><strong class="comparison-label">' + escapeHtml(field.label) + '</strong>' + comparisonZones.map(zone => {
       const value = comparisonFields(zone).find(item => item[0] === field.key)?.[2] || '—';
       return '<div class="comparison-value" data-zone-id="' + escapeHtml(zone.id) + '">' + escapeHtml(value) + '</div>';
@@ -1307,9 +1307,9 @@
       return '<div class="comparison-value" data-zone-id="' + escapeHtml(zone.id) + '"><strong>' + escapeHtml(name) + '</strong><span>' + escapeHtml(value) + '</span></div>';
     }).join('') + '</div></section>').join('');
     const overflow = ids.length > comparisonZones.length
-      ? '<p class="comparison-overflow">' + escapeHtml(content.labels.comparisonOverflow || 'Showing the first three saved places; other saved places remain on your shortlist.') + '</p>'
+      ? '<p class="comparison-overflow">' + escapeHtml(content.labels.comparisonOverflow || (state.lang === 'tr' ? 'İlk üç kayıtlı yer gösteriliyor; diğer kayıtlı yerler kısa listenizde kalır.' : 'Showing the first three saved places; other saved places remain on your shortlist.')) + '</p>'
       : '';
-    article.dataset.shortlistBody = '<div class="tool-card"><p>' + escapeHtml(content.labels.saved || 'Saved on this device') + ' · ' + escapeHtml(content.labels.total || 'Total') + ': ' + escapeHtml(formatMoney(total)) + '</p><p class="comparison-intro">' + escapeHtml(content.labels.comparisonIntro || 'Compare the same facts across up to three saved places. No overall score or winner is calculated.') + '</p><div id="shortlistComparison" class="shortlist-comparison" style="--comparison-count:' + comparisonZones.length + '"><div class="comparison-desktop" role="table">' + desktopHeader + desktopRows + '</div><div class="comparison-mobile"><div class="comparison-mobile-places">' + comparisonZones.map(comparisonPlaceHtml).join('') + '</div>' + mobileRows + '</div></div>' + overflow + '<div class="tool-note">' + escapeHtml(content.labels.noAdvice || 'Not financial advice') + '</div></div>';
+    article.dataset.shortlistBody = '<div class="tool-card"><p>' + escapeHtml(content.labels.saved || 'Saved on this device') + ' · ' + escapeHtml(content.labels.total || 'Total') + ': ' + escapeHtml(formatMoney(total)) + '</p><p class="comparison-intro">' + escapeHtml(content.labels.comparisonIntro || (state.lang === 'tr' ? 'Aynı bilgileri kayıtlı en fazla üç yer için karşılaştırın. Genel puan veya kazanan hesaplanmaz.' : 'Compare the same facts across up to three saved places. No overall score or winner is calculated.')) + '</p><div id="shortlistComparison" class="shortlist-comparison" style="--comparison-count:' + comparisonZones.length + '"><div class="comparison-desktop" role="table">' + desktopHeader + desktopRows + '</div><div class="comparison-mobile"><div class="comparison-mobile-places">' + comparisonZones.map(zone => comparisonPlaceHtml(zone, true)).join('') + '</div>' + mobileRows + '</div></div>' + overflow + '<div class="tool-note">' + escapeHtml(content.labels.noAdvice || 'Not financial advice') + '</div></div>';
   }
 
   function evidenceLegend() {

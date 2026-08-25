@@ -125,3 +125,17 @@ test('WebKit keeps the 390px safe-area and touch layout usable', async ({ page }
   await page.setViewportSize({ width: 844, height: 390 });
   await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1)).toBeTruthy();
 });
+
+test('WebKit presents shortlist comparison by criterion without horizontal overflow', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.addInitScript(() => localStorage.setItem('baku2036-v2-shortlist', JSON.stringify({ whitecity: true, yasamal: true, narimanov: true })));
+  await page.goto('./?cache=webkit-shortlist-comparison#lang=en');
+  await waitForMap(page);
+  await page.locator('#accordion-shortlist .accordion-summary').click();
+  const comparison = page.locator('#shortlistComparison');
+  await expect(comparison).toBeVisible();
+  await expect(comparison.locator('.comparison-desktop')).toBeHidden();
+  await expect(comparison.locator('.comparison-mobile')).toBeVisible();
+  await expect(comparison.locator('.comparison-mobile [data-comparison-criterion]')).toHaveCount(7);
+  await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1)).toBeTruthy();
+});
