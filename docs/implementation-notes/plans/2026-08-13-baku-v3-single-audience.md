@@ -1,6 +1,6 @@
 # Baku single-audience release Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **Implementation note:** REQUIRED SUB-SKILL: Use the task-based implementation workflow (recommended) or the documented implementation workflow to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Publish a root audience release that consolidates the v2 map and v1 storytelling, uses one canonical zone JSON, speaks plainly in English and Turkish, and keeps the original at `/v1/`.
 

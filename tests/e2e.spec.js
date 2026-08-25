@@ -1434,3 +1434,24 @@ test('shortlist comparison uses localized criteria in Turkish', async ({ page })
   await expect(comparison).not.toContainText('Rough entry range');
   await expect(comparison).not.toContainText('Main risk');
 });
+
+test('layer controls stay collapsed behind one Layers toggle on desktop and mobile', async ({ page }) => {
+  for (const viewport of [{ width: 1280, height: 900 }, { width: 390, height: 844 }]) {
+    await page.setViewportSize(viewport);
+    await page.goto(`./?cache=e2e-collapsible-layers-${viewport.width}`);
+    await waitForMap(page);
+    await engage(page);
+    const toggle = page.locator('#layersToggle');
+    const menu = page.locator('#layerMenu');
+    await expect(toggle).toBeVisible();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    await expect(menu).toBeHidden();
+    await toggle.click();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    await expect(menu).toBeVisible();
+    await expect(menu.locator('.layer-button')).toHaveCount(4);
+    await toggle.click();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    await expect(menu).toBeHidden();
+  }
+});

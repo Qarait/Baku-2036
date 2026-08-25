@@ -1,6 +1,6 @@
 # Baku 2036 Fine-Tuning Phase One Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Each production change follows superpowers:test-driven-development.
+> **Implementation note:** REQUIRED SUB-SKILL: Use the documented implementation workflow to implement this plan task-by-task. Each production change follows test-first verification.
 
 **Goal:** Establish reproducible automated performance evidence, revalidate current mobile behavior, and remove the zone-validation and decision-output regression gaps on preview.
 
@@ -10,7 +10,7 @@
 
 ## Global Constraints
 
-- Work only on `agent/mobile-scroll-fix`; do not modify or deploy `main`.
+- Work only on `feature/mobile-scroll-fix`; do not modify or deploy `main`.
 - English and Turkish fixed entry points remain separate.
 - Existing 44px, safe-area, drawer, typography, and WebKit work is verification-only unless a test proves a regression.
 - `hydrateZones()` accepts any non-empty valid zone list; the current canonical file still has 16 zones.

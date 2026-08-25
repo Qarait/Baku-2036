@@ -1,6 +1,6 @@
 # Mobile Typography Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans (recommended) to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **Implementation note:** REQUIRED SUB-SKILL: Use the task-based implementation workflow (recommended) or the documented implementation workflow (recommended) to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Make small mobile metadata labels easier to read without globally enlarging the interface.
 
@@ -49,4 +49,4 @@ Run the focused test and headed 360px/390px tests. Expected: PASS without toolba
 - Verify: `v3.css`, `tests/e2e.spec.js`
 
 - [x] **Step 1: Run `npm test`, all four static contracts, and `git diff --check`.**
-- [x] **Step 2: Commit with `git add v3.css tests/e2e.spec.js docs/superpowers/specs/2026-08-16-mobile-typography-design.md docs/superpowers/plans/2026-08-16-mobile-typography.md && git commit -m "Improve targeted mobile typography"`.**
+- [x] **Step 2: Commit with `git add v3.css tests/e2e.spec.js docs/implementation-notes/specs/2026-08-16-mobile-typography-design.md docs/implementation-notes/plans/2026-08-16-mobile-typography.md && git commit -m "Improve targeted mobile typography"`.**

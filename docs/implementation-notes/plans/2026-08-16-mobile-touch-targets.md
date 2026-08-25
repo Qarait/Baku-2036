@@ -1,6 +1,6 @@
 # Mobile Touch Targets Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **Implementation note:** REQUIRED SUB-SKILL: Use the task-based implementation workflow (recommended) or the documented implementation workflow to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Ensure iPhone-sized layouts expose reliable 44px touch targets across the Baku 2036 map experience.
 
@@ -70,4 +70,4 @@ Run `npm test`, all four static contracts, and `git diff --check`.
 
 - [x] **Step 2: Commit the change**
 
-Run `git add v3.css tests/e2e.spec.js docs/superpowers/specs/2026-08-16-mobile-touch-targets-design.md docs/superpowers/plans/2026-08-16-mobile-touch-targets.md && git commit -m "Improve mobile touch targets"`.
+Run `git add v3.css tests/e2e.spec.js docs/implementation-notes/specs/2026-08-16-mobile-touch-targets-design.md docs/implementation-notes/plans/2026-08-16-mobile-touch-targets.md && git commit -m "Improve mobile touch targets"`.

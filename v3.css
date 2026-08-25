@@ -342,8 +342,8 @@ button { cursor: pointer; }
 .top-howto-video-link { display: flex; width: fit-content; margin-top: 8px; }
 .quiet-controls { opacity: 0; pointer-events: none; transition: opacity .2s ease; }
 body.engaged .quiet-controls, .quiet-controls.is-visible { opacity: 1; pointer-events: auto; }
-.layers-toggle { display: none; }
-.layer-menu { display: flex; align-items: center; gap: 5px; }
+.layers-toggle { display: inline-flex; min-width: 64px; }
+.layer-menu { display: none; align-items: center; gap: 5px; } .layer-menu.open { display: flex; }
 .city-story-host { position: absolute; z-index: 8; right: max(16px, env(safe-area-inset-right, 0px)); bottom: max(16px, env(safe-area-inset-bottom, 0px)); left: max(16px, env(safe-area-inset-left, 0px)); display: flex; justify-content: center; pointer-events: none; }
 .city-story { width: min(520px, calc(100vw - 32px)); margin: 0; padding: 13px; border: 1px solid rgba(183,131,39,.24); border-radius: 9px; background: #fffdf7; box-shadow: 0 8px 24px rgba(23,38,56,.18); pointer-events: auto; }
 .city-story-head { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }

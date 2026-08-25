@@ -1,6 +1,6 @@
 # MapLibre + PMTiles implementation plan
 
-> **For the implementing agent:** REQUIRED SUB-SKILL: Use test-driven development. Run each verification step after the smallest implementation slice.
+> **Implementation note:** REQUIRED SUB-SKILL: Use test-driven development. Run each verification step after the smallest implementation slice.
 
 **Goal:** Build a compact Baku/Absheron PMTiles basemap and migrate the atlas map to MapLibre while retaining all existing geographic overlays and interaction behavior.
 

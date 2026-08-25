@@ -1,6 +1,6 @@
 # Baku-2036 Map Accessibility and Mobile Controls Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **Implementation note:** REQUIRED SUB-SKILL: Use the task-based implementation workflow (recommended) or the documented implementation workflow to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Make the Baku-2036 map easier to use on phones and fully operable by keyboard and assistive technology.
 

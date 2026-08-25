@@ -1,6 +1,6 @@
 # Baku 2036 v2 Content Port Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **Implementation note:** REQUIRED SUB-SKILL: Use the task-based implementation workflow (recommended) or the documented implementation workflow to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Port v1’s narrative and decision tools into v2 while keeping the MapLibre map as the hero and making every secondary capability discoverable through simple collapsible sections.
 

@@ -1,6 +1,6 @@
 # Language Switch Visibility Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans (recommended) to implement this plan task-by-task.
+> **Implementation note:** REQUIRED SUB-SKILL: Use the task-based implementation workflow (recommended) or the documented implementation workflow (recommended) to implement this plan task-by-task.
 
 **Goal:** Keep the EN/TR language switch visible and usable before map engagement.
 
@@ -21,4 +21,4 @@
 **Files:** `playwright.config.js`, `tests/webkit.spec.js`, `tests/v3-mobile-contract.ps1`
 
 - [ ] Run `npm test`, headed mobile checks, all static contracts, and `git diff --check`.
-- [ ] Commit with `git add index.html tests/e2e.spec.js docs/superpowers/specs/2026-08-16-language-switch-visibility-design.md docs/superpowers/plans/2026-08-16-language-switch-visibility.md && git commit -m "Keep language switch visible"`.
+- [ ] Commit with `git add index.html tests/e2e.spec.js docs/implementation-notes/specs/2026-08-16-language-switch-visibility-design.md docs/implementation-notes/plans/2026-08-16-language-switch-visibility.md && git commit -m "Keep language switch visible"`.

@@ -1,7 +1,7 @@
 
 # Release 3 Governed Market-Data Foundation Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **Implementation note:** REQUIRED SUB-SKILL: Use the task-based implementation workflow (recommended) or the documented implementation workflow to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Build a private/offline, source-agnostic property-observation foundation with rights validation, non-destructive deduplication, missingness and coverage reports, while keeping raw market data out of the public site and Pages artifacts.
 
@@ -9,7 +9,7 @@
 
 **Tech Stack:** Node.js built-ins (`node:fs`, `node:path`, `node:crypto`, `node:test`), JSON Schema documents, PowerShell repository contracts, GitHub Pages exclusion manifest, and no new dependencies.
 
-**Spec:** `docs/superpowers/specs/2026-08-21-release3-governed-market-data-design.md`
+**Spec:** `docs/implementation-notes/specs/2026-08-21-release3-governed-market-data-design.md`
 
 ## Global Constraints
 
