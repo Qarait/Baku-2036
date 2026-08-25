@@ -381,3 +381,26 @@ body.engaged .quiet-controls, .quiet-controls.is-visible { opacity: 1; pointer-e
   .panel-toggle, .panel-close { min-height: 44px; }
   .v2-howto, .v2-content { width: calc(100% - 20px); }
 }
+ .comparison-intro, .comparison-overflow { margin: 8px 0 0; color: var(--muted); font-size: 10px; line-height: 1.45; }
+ .shortlist-comparison { min-width: 0; margin-top: 12px; }
+ .comparison-desktop { display: grid; gap: 6px; min-width: 0; overflow: hidden; }
+ .comparison-row { display: grid; grid-template-columns: minmax(110px, 1.1fr) repeat(var(--comparison-count), minmax(0, 1fr)); gap: 6px; align-items: stretch; min-width: 0; }
+ .comparison-row > * { min-width: 0; }
+ .comparison-row:not(.comparison-header) { padding: 8px; background: #fffdf7; border-radius: 5px; font-size: 10px; line-height: 1.4; }
+ .comparison-label { color: var(--navy); font-size: 10px; font-weight: 800; }
+ .comparison-value { min-width: 0; color: var(--muted); overflow-wrap: anywhere; }
+ .comparison-place { display: grid; gap: 6px; min-width: 0; padding: 9px; background: #f7f4e9; border-radius: 5px; }
+ .comparison-place strong { color: var(--navy); font-size: 11px; line-height: 1.25; overflow-wrap: anywhere; }
+ .comparison-place input { width: 100%; min-width: 0; min-height: 32px; padding: 5px 6px; border: 1px solid var(--line); border-radius: 4px; color: var(--ink); background: #fffdf7; font-size: 10px; }
+ .comparison-mobile { display: none; }
+ .comparison-criterion { padding: 10px; background: #fffdf7; border-radius: 6px; }
+ .comparison-criterion h4 { margin: 0 0 7px; color: var(--navy); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
+ .comparison-values { display: grid; gap: 6px; }
+ .comparison-mobile .comparison-value { display: grid; grid-template-columns: minmax(90px, .75fr) minmax(0, 1.25fr); gap: 8px; padding-top: 6px; border-top: 1px solid var(--line); line-height: 1.4; }
+ .comparison-mobile .comparison-value:first-child { padding-top: 0; border-top: 0; }
+ .comparison-mobile .comparison-value strong { min-width: 0; color: var(--navy); font-size: 10px; overflow-wrap: anywhere; }
+ .comparison-mobile .comparison-value span { min-width: 0; color: var(--muted); overflow-wrap: anywhere; }
+ @media (max-width: 760px) {
+   .comparison-desktop { display: none; }
+   .comparison-mobile { display: grid; gap: 8px; }
+   .comparison-mobile-places { display: grid; gap: 6px; }

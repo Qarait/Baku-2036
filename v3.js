@@ -1239,6 +1239,51 @@
     output.innerHTML = '<div class="year-story"><strong>' + escapeHtml(formatMoney(perM2) + ' / m²') + '</strong>' + escapeHtml(verdict) + '<br><small>' + escapeHtml((ui.dGrow || 'If the area grows as expected, this could be worth about') + ' ' + formatMoney(price * (1 + growth / 100)) + ' ' + (ui.dBy || 'by 2036.') + ' ' + (ui.dCaveat || 'Rough guide only.')) + '</small></div>';
   }
 
+  function comparisonPropertyType(zone) {
+    const labels = atlasCopy().labels || {};
+    return zone.kind === 'land'
+      ? (labels.comparisonLand || (state.lang === 'tr' ? 'Arazi / villa arsası' : 'Land / villa plot'))
+      : (labels.comparisonApartment || (state.lang === 'tr' ? 'Daire / yeni yapı' : 'Apartment / new-build'));
+  }
+
+  function comparisonDependency(zone) {
+    const labels = atlasCopy().labels || {};
+    const factors = Array.isArray(zone.scenarioFactors) ? zone.scenarioFactors.filter(factor => factor.role === 'dependency') : [];
+    return factors.length
+      ? factors.map(factor => state.lang === 'tr' ? (factor.tr || factor.en) : factor.en).join(' · ')
+      : (labels.comparisonNoDependency || (state.lang === 'tr' ? 'Kanıt defterinde adlandırılmış bağımlılık yok.' : 'No named dependency in the evidence ledger.'));
+  }
+
+  function comparisonSensitivity(zone) {
+    const labels = atlasCopy().labels || {};
+    const current = formatScenarioPercent(scenarioGrowth(zone));
+    const baseline = formatScenarioPercent(scenarioBaseGrowth(zone));
+    const output = labels.scenarioOutput || (state.lang === 'tr' ? 'örnek büyüme duyarlılığı' : 'illustrative growth sensitivity');
+    const baselineNote = current === baseline ? '' : ' · ' + (labels.comparisonBaseline || (state.lang === 'tr' ? 'başlangıç' : 'baseline')) + ' ' + baseline;
+    return current + ' ' + output + baselineNote;
+  }
+
+  function comparisonFields(zone) {
+    const content = atlasCopy();
+    const labels = content.labels || {};
+    const detail = zone[state.lang] || zone.en;
+    return [
+      ['entry', labels.comparisonEntry || (state.lang === 'tr' ? 'Kaba giriş aralığı' : 'Rough entry range'), detail.now || zone.entry || '—'],
+      ['type', labels.comparisonType || (state.lang === 'tr' ? 'Mülk türü' : 'Property type'), comparisonPropertyType(zone)],
+      ['opportunity', labels.comparisonOpportunity || (state.lang === 'tr' ? 'Ana fırsat' : 'Main opportunity'), detail.thesis || detail.act || '—'],
+      ['risk', labels.comparisonRisk || (state.lang === 'tr' ? 'Ana risk' : 'Main risk'), detail.risk || zone.risk || '—'],
+      ['evidence', labels.comparisonEvidence || (state.lang === 'tr' ? 'Kanıt durumu' : 'Evidence status'), zoneEvidenceStrength(zone)],
+      ['dependency', labels.comparisonDependency || (state.lang === 'tr' ? 'Kritik bağımlılık' : 'Critical dependency'), comparisonDependency(zone)],
+      ['sensitivity', labels.comparisonSensitivity || (state.lang === 'tr' ? 'Senaryo duyarlılığı' : 'Scenario sensitivity'), comparisonSensitivity(zone)]
+    ];
+  }
+
+  function comparisonPlaceHtml(zone) {
+    const content = atlasCopy();
+    const name = state.lang === 'tr' ? zone.nameTr : zone.nameEn;
+    return '<div class="comparison-place" data-zone-id="' + escapeHtml(zone.id) + '"><strong>' + escapeHtml(name) + '</strong><label><span class="sr-only">' + escapeHtml(content.labels.amount || 'Amount') + '</span><input type="number" min="0" placeholder="' + escapeHtml(content.labels.amount || 'Amount') + '" data-shortlist-amount="' + escapeHtml(zone.id) + '" value="' + (Number(state.shortlistAmounts[zone.id]) || '') + '"></label></div>';
+  }
+
   function renderShortlist() {
     const article = $('accordion-shortlist');
     if (!article) return;
@@ -1249,12 +1294,22 @@
       return;
     }
     const total = ids.reduce((sum, id) => sum + (Number(state.shortlistAmounts[id]) || 0), 0);
-    const rows = ids.map(id => {
-      const zone = zones.find(item => item.id === id);
-      const detail = zone[state.lang] || zone.en;
-      return '<div class="shortlist-row"><strong>' + escapeHtml(state.lang === 'tr' ? zone.nameTr : zone.nameEn) + '</strong><span>' + escapeHtml(detail.now || '—') + '</span><span>' + escapeHtml(detail.yield || '—') + '</span><label><span class="sr-only">' + escapeHtml(content.labels.amount || 'Amount') + '</span><input type="number" min="0" placeholder="' + escapeHtml(content.labels.amount || 'Amount') + '" data-shortlist-amount="' + zone.id + '" value="' + (Number(state.shortlistAmounts[id]) || '') + '"></label></div>';
-    }).join('');
-    article.dataset.shortlistBody = '<div class="tool-card"><p>' + escapeHtml(content.labels.saved || 'Saved on this device') + ' · ' + escapeHtml(content.labels.total || 'Total') + ': ' + escapeHtml(formatMoney(total)) + '</p><div class="shortlist-table">' + rows + '</div><div class="tool-note">' + escapeHtml(content.labels.noAdvice || 'Not financial advice') + '</div></div>';
+    const comparisonZones = ids.slice(0, 3).map(id => zones.find(zone => zone.id === id));
+    const fields = comparisonZones[0] ? comparisonFields(comparisonZones[0]).map(field => ({ key: field[0], label: field[1] })) : [];
+    const desktopHeader = '<div class="comparison-row comparison-header"><span class="comparison-label" aria-hidden="true"></span>' + comparisonZones.map(comparisonPlaceHtml).join('') + '</div>';
+    const desktopRows = fields.map(field => '<div class="comparison-row" data-comparison-criterion="' + escapeHtml(field.key) + '"><strong class="comparison-label">' + escapeHtml(field.label) + '</strong>' + comparisonZones.map(zone => {
+      const value = comparisonFields(zone).find(item => item[0] === field.key)?.[2] || '—';
+      return '<div class="comparison-value" data-zone-id="' + escapeHtml(zone.id) + '">' + escapeHtml(value) + '</div>';
+    }).join('') + '</div>').join('');
+    const mobileRows = fields.map(field => '<section class="comparison-criterion" data-comparison-criterion="' + escapeHtml(field.key) + '"><h4>' + escapeHtml(field.label) + '</h4><div class="comparison-values">' + comparisonZones.map(zone => {
+      const name = state.lang === 'tr' ? zone.nameTr : zone.nameEn;
+      const value = comparisonFields(zone).find(item => item[0] === field.key)?.[2] || '—';
+      return '<div class="comparison-value" data-zone-id="' + escapeHtml(zone.id) + '"><strong>' + escapeHtml(name) + '</strong><span>' + escapeHtml(value) + '</span></div>';
+    }).join('') + '</div></section>').join('');
+    const overflow = ids.length > comparisonZones.length
+      ? '<p class="comparison-overflow">' + escapeHtml(content.labels.comparisonOverflow || 'Showing the first three saved places; other saved places remain on your shortlist.') + '</p>'
+      : '';
+    article.dataset.shortlistBody = '<div class="tool-card"><p>' + escapeHtml(content.labels.saved || 'Saved on this device') + ' · ' + escapeHtml(content.labels.total || 'Total') + ': ' + escapeHtml(formatMoney(total)) + '</p><p class="comparison-intro">' + escapeHtml(content.labels.comparisonIntro || 'Compare the same facts across up to three saved places. No overall score or winner is calculated.') + '</p><div id="shortlistComparison" class="shortlist-comparison" style="--comparison-count:' + comparisonZones.length + '"><div class="comparison-desktop" role="table">' + desktopHeader + desktopRows + '</div><div class="comparison-mobile"><div class="comparison-mobile-places">' + comparisonZones.map(comparisonPlaceHtml).join('') + '</div>' + mobileRows + '</div></div>' + overflow + '<div class="tool-note">' + escapeHtml(content.labels.noAdvice || 'Not financial advice') + '</div></div>';
   }
 
   function evidenceLegend() {

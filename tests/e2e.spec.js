@@ -1394,3 +1394,30 @@ test('task groups keep the existing tools in Understand, Plan, Verify order', as
   await expect(page.locator('#tool-group-verify')).toHaveText('Doğrulayın');
   expect(await page.locator('#v2Content > *').evaluateAll(elements => elements.map(element => element.id))).toEqual(expectedIds);
 });
+test('shortlist comparison shows the same seven decision facts for three places', async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('baku2036-v2-shortlist', JSON.stringify({ whitecity: true, yasamal: true, narimanov: true })));
+  await page.goto('./?cache=e2e-shortlist-comparison#lang=en');
+  await waitForMap(page);
+  await page.locator('#accordion-shortlist .accordion-summary').click();
+  const comparison = page.locator('#shortlistComparison');
+  await expect(comparison).toBeVisible();
+  await expect(comparison.locator('.comparison-place')).toHaveCount(3);
+  await expect(comparison).toContainText('White City / Khatai');
+  await expect(comparison).toContainText('Yasamal (New Yasamal)');
+  await expect(comparison).toContainText('Narimanov');
+  await expect(comparison.locator('[data-comparison-criterion]')).toHaveCount(7);
+});
+
+test('shortlist comparison becomes criterion-first without horizontal overflow on mobile', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.addInitScript(() => localStorage.setItem('baku2036-v2-shortlist', JSON.stringify({ whitecity: true, yasamal: true, narimanov: true })));
+  await page.goto('./?cache=e2e-shortlist-comparison-mobile#lang=en');
+  await waitForMap(page);
+  await page.locator('#accordion-shortlist .accordion-summary').click();
+  const comparison = page.locator('#shortlistComparison');
+  await expect(comparison).toBeVisible();
+  await expect(comparison.locator('.comparison-desktop')).toBeHidden();
+  await expect(comparison.locator('.comparison-mobile')).toBeVisible();
+  await expect(comparison.locator('.comparison-mobile [data-comparison-criterion]')).toHaveCount(7);
+  await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1)).toBeTruthy();
+});
