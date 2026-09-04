@@ -1,0 +1,73 @@
+{
+  "generatedAt": "2026-08-17T12:50:02.418Z",
+  "url": "https://qarait.github.io/Baku-2036/preview/",
+  "browser": "chromium",
+  "cache": "cold",
+  "runs": [
+    {
+      "ttfbMs": 3293.399999999907,
+      "fcpMs": 3740,
+      "lcpMs": 3740,
+      "mapReadyMs": 11563.599999999627,
+      "adminContentLength": 962060,
+      "totalContentLength": 1717877,
+      "responseCount": 22
+    },
+    {
+      "ttfbMs": 405.8000000002794,
+      "fcpMs": 680,
+      "lcpMs": 680,
+      "mapReadyMs": 6584.700000000186,
+      "adminContentLength": 962060,
+      "totalContentLength": 1717877,
+      "responseCount": 22
+    },
+    {
+      "ttfbMs": 534.8000000002794,
+      "fcpMs": 904,
+      "lcpMs": 904,
+      "mapReadyMs": 9165.399999999907,
+      "adminContentLength": 962060,
+      "totalContentLength": 1717877,
+      "responseCount": 22
+    }
+  ],
+  "summaries": {
+    "ttfbMs": {
+      "count": 3,
+      "median": 534.8000000002794,
+      "min": 405.8000000002794,
+      "max": 3293.399999999907
+    },
+    "fcpMs": {
+      "count": 3,
+      "median": 904,
+      "min": 680,
+      "max": 3740
+    },
+    "lcpMs": {
+      "count": 3,
+      "median": 904,
+      "min": 680,
+      "max": 3740
+    },
+    "mapReadyMs": {
+      "count": 3,
+      "median": 9165.399999999907,
+      "min": 6584.700000000186,
+      "max": 11563.599999999627
+    },
+    "adminContentLength": {
+      "count": 3,
+      "median": 962060,
+      "min": 962060,
+      "max": 962060
+    },
+    "totalContentLength": {
+      "count": 3,
+      "median": 1717877,
+      "min": 1717877,
+      "max": 1717877
+    }
+  }
+}

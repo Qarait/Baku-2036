@@ -1,4 +1,19 @@
 {
+  "meta": {
+    "revision": "2026-08-14",
+    "checked": {
+      "en": {
+        "data": "August 2026",
+        "projectStatus": "August 2026",
+        "scenarioBaseline": "June 2025"
+      },
+      "tr": {
+        "data": "A\u011fustos 2026",
+        "projectStatus": "A\u011fustos 2026",
+        "scenarioBaseline": "Haziran 2025"
+      }
+    }
+  },
   "en": {
     "howTo": {
       "title": "How to use this map",
@@ -7,11 +22,36 @@
         "Tap a circle or search for a place.",
         "Read what is built, funded, or still only planned.",
         "Check the risks and due-diligence list before acting."
-      ]
+      ],
+      "video": {
+        "linkLabel": "Watch how to use the map · 20 sec",
+        "pageTitle": "How to use the map",
+        "pageIntro": "A short, silent screen recording of the website flow.",
+        "description": "Silent screen recording: search for a place, open its details, and move through the map tools.",
+        "back": "Back to the map",
+        "fallback": "Your browser cannot play this video."
+      }
+    },
+    "simulation": {
+      "checkpoints": {
+        "2026": "Start here: this is the 2026 picture.",
+        "2028": "Early changes become visible around roads and nearby projects.",
+        "2030": "A major checkpoint: new connections and visible projects give more areas a reason to watch.",
+        "2033": "The story spreads: planned connections and activity reach farther across the map.",
+        "2036": "2036 scenario: Baku is more connected, but each change has a different level of certainty."
+      },
+      "controls": {
+        "pause": "Pause",
+        "resume": "Continue",
+        "skip": "Skip",
+        "finish": "Explore the map",
+        "progress": "City story year"
+      }
     },
     "sections": {
       "time": {
-        "title": "Watch the decade: 2026?2036",
+        "yearSliderHint": "As you move forward, circles grow where this scenario sees more investment interest; that is not a guaranteed price rise.",
+        "title": "Watch the decade: 2026–2036",
         "description": "Move through the years and see when projects are meant to arrive. This is a story tool, not a promise.",
         "whatThisMeans": "A growing circle shows the atlas sensitivity scenario getting larger; it is not a guaranteed price path."
       },
@@ -27,8 +67,8 @@
       },
       "deal": {
         "title": "Check a real listing",
-        "description": "Enter an asking price and size for a plain-words comparison with the area?s rough range.",
-        "whatThisMeans": "A cheap result is a prompt to ask why?not a signal to buy."
+        "description": "Enter an asking price and size for a plain-words comparison with the area’s rough range.",
+        "whatThisMeans": "A cheap result is a prompt to ask why—not a signal to buy."
       },
       "shortlist": {
         "title": "Compare your shortlist",
@@ -37,13 +77,22 @@
       },
       "sources": {
         "title": "Sources and important warning",
-        "description": "Understand where the map comes from and what it can?and cannot?tell you.",
-        "whatThisMeans": "Rayon boundaries are geographic context. Investment circles are approximate areas, not property or exact investment borders."
+        "description": "Understand where the map comes from and what it can—and cannot—tell you.",
+        "whatThisMeans": "Rayon boundaries are geographic context. Investment circles are approximate areas, not property or exact investment borders.",
+        "scenarioMethodTitle": "How the scenario calculation works",
+        "scenarioMethodBody": "Each zone starts with an editorial growth assumption stored in the atlas data. The oil, infrastructure, and currency controls apply fixed sensitivity multipliers, and the result is rounded to the nearest 5 percentage points. Source evidence informs the area narrative but does not statistically derive the growth assumption. Baku 2036 is not trained on property transactions and does not provide a professional valuation or forecast."
       }
     },
     "labels": {
       "open": "Open",
       "close": "Close",
+      "scenarioInsight": "Where this comes from: public plans, transport, nearby projects and market signals. This is a scenario, not a promise.",
+      "currentPrice": "Current price",
+      "possibleUpside": "Possible upside under this scenario",
+      "mainRisk": "Main risk",
+      "evidenceStrength": "Evidence strength",
+      "sourceCount": "sources",
+      "locationDetails": "Location details",
       "learnMore": "What does this mean?",
       "built": "Built / underway",
       "funded": "Funded / committed",
@@ -64,7 +113,30 @@
       "infrastructure": "Infrastructure",
       "currency": "Currency",
       "price": "Asking price (USD)",
-      "size": "Size (m?)",
+      "size": "Size (m²)",
+      "scenarioOutput": "illustrative growth sensitivity",
+      "profile": "Buyer profile",
+      "noProfile": "No profile",
+      "howToRead": "How to read it",
+      "total": "Total",
+      "amount": "Amount",
+      "priceExample": "e.g. 85000",
+      "sizeExample": "e.g. 70",
+      "plannerBelowEntry": "Below rough entry point",
+      "editorialBaseline": "Editorial scenario baseline",
+      "activeModifiers": "Sensitivity modifiers",
+      "calculatedResult": "Illustrative sensitivity result",
+      "scenarioDelta": "Change",
+      "scenarioPercentagePoints": "percentage points",
+      "scenarioChangeExplanation": "__GROUP__ changed from __FROM__ to __TO__; the illustrative result moved __DELTA__. The baseline and evidence ledger are unchanged.",
+      "roundingRule": "Rounded to the nearest 5 percentage points",
+      "scenarioMethodWarning": "This calculation uses an editorial zone baseline and fixed sensitivity multipliers. It is not trained on property transactions and is not a valuation or forecast.",
+      "plannerAreaEstimate": "About __N__ m² at the rough midpoint",
+      "geography": "Geography",
+      "geographyNote": "Baku and Absheron rayon polygons, local PMTiles basemap, and the offline place gazetteer in data/.",
+      "projects": "Projects",
+      "projectsNote": "Built, funded, planned, and scenario-only labels are kept separate in the shared zone briefs. Planned lines and sensitivities must be verified before any purchase.",
+      "howToReadCircles": "How to read the circles",
       "check": "Check it",
       "noData": "Start by choosing a place on the map.",
       "saved": "Saved on this device",
@@ -92,9 +164,18 @@
       "privateLegend": "Private developer plan",
       "localPlaces": "New places nearby",
       "localOpen": "Open",
-      "localBuilding": "Being built"
+      "localBuilding": "Being built",
+      "factorLedger": "What supports or weakens this scenario?",
+      "factorSupport": "Support",
+      "factorRisk": "Risk",
+      "factorDependency": "Dependency",
+      "factorUnknown": "Evidence gap",
+      "factorEvidence": "Evidence",
+      "toolUnderstand": "Understand",
+      "toolPlan": "Plan",
+      "toolVerify": "Verify"
     },
-    "disclaimer": "Growth figures are illustrative scenario midpoints synthesized from public data — not forecasts and not financial advice. Verify title (çıxarış), cadastral rayon, and zoning at the state registry before any purchase. Base map © its respective publisher, used for personal analysis. Analysis: Claude + Aurelius, August 2026.",
+    "disclaimer": "Growth figures are illustrative scenario midpoints synthesized from public data — not forecasts and not financial advice. Verify title (çıxarış), cadastral rayon, and zoning at the state registry before any purchase. Base map © its respective publisher, used for personal analysis. Prepared from public sources, August 2026.",
     "ui": {
       "kicker": "Investment Memorandum · Interactive Atlas",
       "title": "Baku-<span>2036</span> — where value moves next",
@@ -115,7 +196,7 @@
       "emptyT": "Select a rayon or zone",
       "emptyB": "Click any circle on the map — or an edge arrow for Sumgayit, Bilgah, Mardakan and Alat — to see the concrete investments coming by 2036, the price story, and how to position.",
       "trayT": "Your shortlist — side by side",
-      "foot": "Growth figures are illustrative scenario midpoints synthesized from public data — not forecasts and not financial advice. Verify title (çıxarış), cadastral rayon, and zoning at the state registry before any purchase. Base map © its respective publisher, used for personal analysis. Analysis: Claude + Aurelius, August 2026.",
+      "foot": "Growth figures are illustrative scenario midpoints synthesized from public data — not forecasts and not financial advice. Verify title (çıxarış), cadastral rayon, and zoning at the state registry before any purchase. Base map © its respective publisher, used for personal analysis. Prepared from public sources, August 2026.",
       "entry": "Entry today",
       "scen": "2036 scenario",
       "yld": "Rental yield",
@@ -160,7 +241,7 @@
       "scLate": "Years late",
       "scStable": "Stays stable",
       "scWeak": "Loses value",
-      "scNoteWeak": "Note: if the manat weakens, prices in manat look higher but your money in dollars is worth less.",
+      "scNoteWeak": "The weak-manat setting applies a 20% illustrative USD-value adjustment; it is not an exchange-rate forecast.",
       "scAdj": "in your chosen world",
       "scBase": "if all goes as planned",
       "dealT": "Is this a good deal? — check a real listing",
@@ -203,6 +284,10 @@
       "budT": "My budget — what can I afford?",
       "budClr": "clear",
       "budNote": "Zones you can’t afford fade on the map. Click any bright zone to see exactly what your budget buys there.",
+      "plannerReachable": "What this budget reaches",
+      "plannerAboveBudget": "Profile matches above this budget",
+      "plannerAboveBudgetAny": "Other zones above this budget",
+      "plannerLandEstimate": "Roughly __N__ sot at a rough midpoint estimate; not a guaranteed purchasable plot",
       "planHint": "optional — who am I, what can I afford, what could it become",
       "tmTitle": "⏳ Time machine",
       "tmNew": "New this year:",
@@ -214,20 +299,20 @@
       "heatBtn": "💰 Value heat",
       "heatLeg": "warm = money grows fast by 2036 · cool = slow",
       "metroBtn": "🚇 Metro lines",
-      "metroLeg": "solid = running · dashed = planned (solidifies in the time machine)",
+      "metroLeg": "stations = mapped points · routes = Baku 2036 scenario geometry (dashed until the scenario year)",
       "view3dBtn": "3D view",
       "view2dBtn": "2D view",
       "zoomHint": "scroll or pinch to zoom · drag to move",
       "proofK": "It already happened",
       "proof": {
-        "mohammadi": "2024–25: the Beyukshor–Pirshagi road was built — and this village repriced more than anywhere in the district. Not theory. It happened.",
+        "mohammadi": "2024: the Beyukshor–Pirshagi road opened through nearby northern settlements. The access catalyst is verified; any property repricing here is an investment interpretation, not a measured result.",
         "whitecity": "2010s → today: oil-blackened land was cleaned and rebuilt into one of Baku’s priciest addresses. The same playbook is now running again — this time on the metro.",
-        "narimanov": "2025: prices here rose +20% in a single year — the fastest in the city. The renewal that drove it is still running."
+        "narimanov": "2025: Narimanov is an established central market with dated local price bands. The AQP report is useful context, not proof of a city-leading 20% rise; compare local listings before treating it as an outlier."
       },
       "tourEnd": "That’s the tour. Now explore yourself — click any circle, or press play on the time machine below.",
       "tour": {
         "whitecity": "This was the “Black City” — oil factories and soot. Now it’s cleaned, rebuilt, and the metro arrives in 2030. The safest big bet on the map.",
-        "mohammadi": "This was a quiet village. Then one road was built — and prices jumped more than anywhere in the district. Two more projects are on the way. (Rule one here: real title deed only.)",
+        "mohammadi": "This was a quiet village. The Beyukshor–Pirshagi road opened nearby — a verified access catalyst, while any price effect remains an investment interpretation. Two more projects are on the way. (Rule one here: real title deed only.)",
         "bilgah": "A world-class resort is rising on this shore, off the map’s top edge. Villages next to it get expensive one by one — you buy the neighbour, not the brand.",
         "sumgayit": "Jobs, a doubled railway, and a seafront — the only cheap place with all three. This is Baku’s future satellite city, up the north-west corridor.",
         "hovsan": "The sleeper. The cheapest coastline near the city, held back by fixable problems. After 2030, watch it wake up."
@@ -235,7 +320,7 @@
       "tmY": {
         "2026": "This is today. The metro tenders are signed and the cranes are already up. Press ▶ and watch what plans on paper do to prices on the ground. (Growing circle = growing value.)",
         "2027": "The construction premium begins: buyers move in before the trains do. The orange central zones heat up first — that’s how transit always works.",
-        "2028": "The new Baku–Sumgayit road opens. Watch land near its junctions repeat the Mohammadi trick: road first, price jump right after.",
+        "2028": "The new Baku–Sumgayit road opens. Watch land near its junctions, and check local evidence before assuming access will translate into a price rise.",
         "2029": "Jobs follow concrete: the airport city takes shape and the doubled railway turns Sumgayit into a real commute.",
         "2030": "The big one — the metro reaches White City. Premiums that formed on promises are now locked in by actual trains.",
         "2031": "The baton passes: the center slows down, and the cheap east — Hovsan, Zikh, the airport belt — starts to move.",
@@ -317,15 +402,15 @@
           40.47
         ],
         "y": 2025,
-        "en": "Beyukshor–Pirshagi road — DONE. This is what repriced Mohammadi.",
-        "tr": "Böyükşor–Pirşağı yolu — BİTTİ. Məhəmmədli’yi pahalandıran bu."
+        "en": "Beyukshor–Pirshagi road — DONE. Verified access catalyst near Mohammadi; its price effect is an investment hypothesis.",
+        "tr": "Böyükşor–Pirşağı yolu — BİTTİ. Məhəmmədli yakınında doğrulanmış ulaşım katalizörü; değer etkisi yatırım hipotezidir."
       },
       {
         "ll": [
-          49.807,
-          40.397
+          49.8282314,
+          40.3937251
         ],
-        "y": 2026,
+        "y": 2027,
         "en": "Metro B-4 station (Purple Line) opens",
         "tr": "Metro B-4 istasyonu (Mor Hat) açılıyor"
       },
@@ -420,10 +505,35 @@
         "Haritada bir daireye dokunun veya yer arayın.",
         "Neyin yapıldığını, finanse edildiğini ya da hâlâ plan olduğunu okuyun.",
         "İşlem yapmadan önce riskleri ve kontrol listesini inceleyin."
-      ]
+      ],
+      "video": {
+        "linkLabel": "Haritayı nasıl kullanacağınızı izle · 20 sn",
+        "pageTitle": "Harita nasıl kullanılır?",
+        "pageIntro": "Web sitesinin akışını gösteren kısa, sessiz bir ekran kaydı.",
+        "description": "Sessiz ekran kaydı: bir yer arayın, ayrıntılarını açın ve harita araçlarında ilerleyin.",
+        "back": "Haritaya dön",
+        "fallback": "Tarayıcınız bu videoyu oynatamıyor."
+      }
+    },
+    "simulation": {
+      "checkpoints": {
+        "2026": "Buradan başlayın: bu, 2026 yılının görünüşüdür.",
+        "2028": "Yollar ve yakındaki projeler çevresinde ilk değişiklikler görünür.",
+        "2030": "Büyük bir aşama: yeni bağlantılar ve görünür projeler daha fazla alanı izlemeye değer kılar.",
+        "2033": "Hikâye yayılır: planlanan bağlantılar ve hareketlilik haritanın daha uzağına ulaşır.",
+        "2036": "2036 senaryosu: Bakü daha çok bağlantıya sahip, ancak her değişikliğin kesinlik düzeyi farklı."
+      },
+      "controls": {
+        "pause": "Duraklat",
+        "resume": "Devam et",
+        "skip": "Atla",
+        "finish": "Haritayı keşfet",
+        "progress": "Şehir hikâyesi yılı"
+      }
     },
     "sections": {
       "time": {
+        "yearSliderHint": "\u0130lerledik\u00e7e, bu senaryoda yat\u0131r\u0131m ilgisinin artabilece\u011fi yerlerde daireler b\u00fcy\u00fcr; bu, fiyat art\u0131\u015f\u0131 garantisi de\u011fildir.",
         "title": "On yılı izleyin: 2026–2036",
         "description": "Yıllar arasında ilerleyin ve projelerin ne zaman gelmesinin beklendiğini görün. Bu bir hikâye aracıdır, vaat değildir.",
         "whatThisMeans": "Büyüyen daire, atlasın duyarlılık senaryosunda artışı gösterir; garanti edilmiş bir fiyat yolu değildir."
@@ -451,12 +561,21 @@
       "sources": {
         "title": "Kaynaklar ve önemli uyarı",
         "description": "Haritanın nereden geldiğini ve size ne söyleyip ne söyleyemeyeceğini anlayın.",
-        "whatThisMeans": "Rayon sınırları coğrafi bağlamdır. Yatırım daireleri yaklaşık alanları gösterir; mülk veya kesin yatırım sınırlarını göstermez."
+        "whatThisMeans": "Rayon sınırları coğrafi bağlamdır. Yatırım daireleri yaklaşık alanları gösterir; mülk veya kesin yatırım sınırlarını göstermez.",
+        "scenarioMethodTitle": "Senaryo hesaplaması nasıl çalışır?",
+        "scenarioMethodBody": "Her bölge, atlas verisinde kayıtlı editoryal bir büyüme varsayımıyla başlar. Petrol, altyapı ve döviz kontrolleri sabit duyarlılık çarpanları uygular; sonuç en yakın 5 yüzde puanına yuvarlanır. Kaynak kanıtları bölge anlatısını destekler, ancak büyüme varsayımını istatistiksel olarak üretmez. Baku 2036 gayrimenkul işlemleriyle eğitilmemiştir ve profesyonel değerleme veya tahmin sunmaz."
       }
     },
     "labels": {
       "open": "Aç",
       "close": "Kapat",
+      "scenarioInsight": "Bu rakamın kaynağı: kamu planları, ulaşım, yakındaki projeler ve piyasa göstergeleri. Bu bir senaryodur, garanti değildir.",
+      "currentPrice": "Bugünkü fiyat",
+      "possibleUpside": "Bu senaryoda olası artış",
+      "mainRisk": "Ana risk",
+      "evidenceStrength": "Kanıt gücü",
+      "sourceCount": "kaynak",
+      "locationDetails": "Konum ayrıntıları",
       "learnMore": "Bu ne anlama geliyor?",
       "built": "Yapıldı / sürüyor",
       "funded": "Finanse edildi / taahhüt edildi",
@@ -478,6 +597,29 @@
       "currency": "Para birimi",
       "price": "İstenen fiyat (USD)",
       "size": "Alan (m²)",
+      "scenarioOutput": "örnek büyüme duyarlılığı",
+      "profile": "Alıcı profili",
+      "noProfile": "Profil yok",
+      "howToRead": "Nasıl okunur?",
+      "total": "Toplam",
+      "amount": "Tutar",
+      "priceExample": "ör. 85000",
+      "sizeExample": "ör. 70",
+      "plannerBelowEntry": "Kaba giriş noktasının altında",
+      "editorialBaseline": "Editoryal senaryo başlangıcı",
+      "activeModifiers": "Duyarlılık çarpanları",
+      "calculatedResult": "Örnek duyarlılık sonucu",
+      "scenarioDelta": "Değişim",
+      "scenarioPercentagePoints": "yüzde puan",
+      "scenarioChangeExplanation": "__GROUP__ değeri __FROM__ seçeneğinden __TO__ seçeneğine değişti; örnek sonuç __DELTA__ oynadı. Başlangıç varsayımı ve kanıt defteri değişmedi.",
+      "roundingRule": "En yakın 5 yüzde puanına yuvarlanır",
+      "scenarioMethodWarning": "Bu hesaplama, editoryal bölge başlangıcını ve sabit duyarlılık çarpanlarını kullanır. Gayrimenkul işlemleriyle eğitilmiş değildir; değerleme veya tahmin değildir.",
+      "plannerAreaEstimate": "Kaba orta fiyat tahminiyle yaklaşık __N__ m²",
+      "geography": "Coğrafya",
+      "geographyNote": "Bakü ve Abşeron rayon poligonları, yerel PMTiles altlık haritası ve data/ içindeki çevrimdışı yer adları dizini.",
+      "projects": "Projeler",
+      "projectsNote": "Yapılmış, finanse edilmiş, planlanmış ve yalnızca senaryo olan etiketler ortak bölge özetlerinde ayrı tutulur. Planlanan hatlar ve duyarlılıklar satın almadan önce doğrulanmalıdır.",
+      "howToReadCircles": "Daireleri nasıl okumalı?",
       "check": "Kontrol et",
       "noData": "Haritada bir yer seçerek başlayın.",
       "saved": "Bu cihaza kaydedildi",
@@ -505,9 +647,18 @@
       "privateLegend": "Özel geliştirici planı",
       "localPlaces": "Yakında yeni yerler",
       "localOpen": "Açık",
-      "localBuilding": "İnşaat sürüyor"
+      "localBuilding": "İnşaat sürüyor",
+      "factorLedger": "Bu senaryoyu ne destekler veya zayıflatır?",
+      "factorSupport": "Destek",
+      "factorRisk": "Risk",
+      "factorDependency": "Bağımlılık",
+      "factorUnknown": "Kanıt boşluğu",
+      "factorEvidence": "Kanıt",
+      "toolUnderstand": "Anlayın",
+      "toolPlan": "Planlayın",
+      "toolVerify": "Doğrulayın"
     },
-    "disclaimer": "Büyüme rakamları kamuya açık verilerden sentezlenmiş örnek senaryo orta noktalarıdır — tahmin veya yatırım tavsiyesi değildir. Satın almadan önce tapu (çıxarış), kadastro rayonu ve imar durumunu devlet sicilinde doğrulayın. Altlık harita © ilgili yayıncısına aittir, kişisel analiz için kullanılmıştır. Analiz: Claude + Aurelius, Ağustos 2026.",
+    "disclaimer": "Büyüme rakamları kamuya açık verilerden sentezlenmiş örnek senaryo orta noktalarıdır — tahmin veya yatırım tavsiyesi değildir. Satın almadan önce tapu (çıxarış), kadastro rayonu ve imar durumunu devlet sicilinde doğrulayın. Altlık harita © ilgili yayıncısına aittir, kişisel analiz için kullanılmıştır. Kamuya açık kaynaklardan hazırlanmıştır, Ağustos 2026.",
     "ui": {
       "kicker": "Yatırım Rehberi · İnteraktif Atlas",
       "title": "Baku-<span>2036</span> — gayrimenkul öngörüsü",
@@ -528,7 +679,7 @@
       "emptyT": "Bir rayon veya bölge seçin",
       "emptyB": "Haritadaki herhangi bir daireye — veya Sumgayıt, Bilgəh, Mərdəkan ve Ələt için kenar oklarına — tıklayın; 2036’ya kadar gelecek somut yatırımları, fiyat hikâyesini ve nasıl konumlanacağınızı görün.",
       "trayT": "Kısa listeniz — yan yana karşılaştırma",
-      "foot": "Büyüme rakamları kamuya açık verilerden sentezlenmiş örnek senaryo orta noktalarıdır — tahmin veya yatırım tavsiyesi değildir. Satın almadan önce tapu (çıxarış), kadastro rayonu ve imar durumunu devlet sicilinde doğrulayın. Altlık harita © ilgili yayıncısına aittir, kişisel analiz için kullanılmıştır. Analiz: Claude + Aurelius, Ağustos 2026.",
+      "foot": "Büyüme rakamları kamuya açık verilerden sentezlenmiş örnek senaryo orta noktalarıdır — tahmin veya yatırım tavsiyesi değildir. Satın almadan önce tapu (çıxarış), kadastro rayonu ve imar durumunu devlet sicilinde doğrulayın. Altlık harita © ilgili yayıncısına aittir, kişisel analiz için kullanılmıştır. Kamuya açık kaynaklardan hazırlanmıştır, Ağustos 2026.",
       "entry": "Bugünkü giriş",
       "scen": "2036 senaryosu",
       "yld": "Kira getirisi",
@@ -573,7 +724,7 @@
       "scLate": "Yıllarca gecikir",
       "scStable": "Değerini korur",
       "scWeak": "Değer kaybeder",
-      "scNoteWeak": "Not: Manat zayıflarsa fiyatlar manat cinsinden yüksek görünür ama paranızın dolar karşılığı azalır.",
+      "scNoteWeak": "Zayıf manat ayarı, USD değer duyarlılığına örnek olarak %20 düzeltme uygular; bu bir döviz kuru tahmini değildir.",
       "scAdj": "seçtiğiniz dünyada",
       "scBase": "her şey planlandığı gibi giderse",
       "dealT": "Bu iyi bir fiyat mı? — gerçek bir ilanı kontrol edin",
@@ -616,6 +767,10 @@
       "budT": "Bütçem — neyi karşılayabilirim?",
       "budClr": "temizle",
       "budNote": "Bütçenizi aşan bölgeler haritada soluklaşır. Parlak kalan bir bölgeye tıklayın; bütçenizin orada tam olarak neyi aldığını görün.",
+      "plannerReachable": "Bu bütçeyle ulaşılabilenler",
+      "plannerAboveBudget": "Bütçenin üzerindeki profil eşleşmeleri",
+      "plannerAboveBudgetAny": "Bu bütçenin üzerindeki diğer bölgeler",
+      "plannerLandEstimate": "Yaklaşık __N__ sot; kaba orta fiyat tahmini, satın alınabilir parsel garantisi değildir",
       "planHint": "isteğe bağlı — ben kimim, neye gücüm yeter, param neye dönüşür",
       "tmTitle": "⏳ Zaman makinesi",
       "tmNew": "Bu yıl yeni:",
@@ -627,20 +782,20 @@
       "heatBtn": "💰 Değer ısısı",
       "heatLeg": "sıcak = para 2036’ya kadar hızlı büyür · soğuk = yavaş",
       "metroBtn": "🚇 Metro hatları",
-      "metroLeg": "düz çizgi = çalışıyor · kesik çizgi = planlanan (zaman makinesinde düzleşir)",
+      "metroLeg": "istasyonlar = haritalanan noktalar · hatlar = Bakü 2036 senaryo geometrisi (senaryo yılına kadar kesik)",
       "view3dBtn": "3B görünüm",
       "view2dBtn": "2B görünüm",
       "zoomHint": "yakınlaştırmak için kaydırın veya parmakla açın · gezmek için sürükleyin",
       "proofK": "Zaten oldu",
       "proof": {
-        "mohammadi": "2024–25: Böyükşor–Pirşağı yolu yapıldı — ve bu köy, ilçede her yerden çok pahalandı. Teori değil. Yaşandı.",
+        "mohammadi": "2024: Böyükşor–Pirşağı yolu kuzey yerleşimlerinin yakınından geçerek açıldı. Ulaşım katalizörü doğrulandı; buradaki değer artışı ölçülmüş bir sonuç değil, yatırım yorumudur.",
         "whitecity": "2010’lardan bugüne: petrol karası arazi temizlendi, yeniden yapıldı ve Bakü’nün en pahalı adreslerinden biri oldu. Aynı oyun şimdi yeniden oynanıyor — bu kez metroyla.",
-        "narimanov": "2025: buradaki fiyatlar tek yılda %20 arttı — şehrin en hızlısı. Bunu sağlayan yenileme hâlâ sürüyor."
+        "narimanov": "2025: Nərimanov yerleşik ve merkezi bir piyasa alanı; AQP raporu tarihli yerel fiyat bantları sunuyor. Bu, şehir lideri %20 artışı kanıtlamaz; bölgeyi aykırı saymadan önce yerel ilanları karşılaştırın."
       },
       "tourEnd": "Tur bitti. Şimdi kendiniz keşfedin — bir daireye tıklayın ya da aşağıdaki zaman makinesinde ▶ tuşuna basın.",
       "tour": {
         "whitecity": "Burası “Kara Şehir”di — petrol fabrikaları, is ve kir. Şimdi temizlendi, yeniden yapılıyor ve 2030’da metro geliyor. Haritadaki en güvenli büyük bahis.",
-        "mohammadi": "Burası sessiz bir köydü. Sonra tek bir yol yapıldı — fiyatlar ilçede herkesten çok sıçradı. Yolda iki proje daha var. (Buranın bir numaralı kuralı: sadece gerçek tapu.)",
+        "mohammadi": "Burası sessiz bir köydü. Böyükşor–Pirşağı yolu yakında açıldı — doğrulanmış bir ulaşım katalizörü; değer etkisi ise yatırım yorumudur. Yolda iki proje daha var. (Buranın bir numaralı kuralı: sadece gerçek tapu.)",
         "bilgah": "Bu kıyıda, haritanın üst kenarının hemen dışında dünya çapında bir tatil şehri yükseliyor. Yanındaki köyler tek tek pahalanıyor — markayı değil, komşuyu alırsınız.",
         "sumgayit": "İş, çiftlenmiş demiryolu ve deniz kıyısı — üçü birden olan tek ucuz yer. Burası Bakü’nün geleceğin uydu kenti, kuzeybatı koridorunun ucunda.",
         "hovsan": "Uyuyan dev. Şehre yakın en ucuz sahil; onu tutan sorunların hepsi çözülebilir. 2030’dan sonra uyanışını izleyin."
@@ -648,7 +803,7 @@
       "tmY": {
         "2026": "Bugün buradayız. Metro ihaleleri imzalandı, vinçler çoktan dikildi. ▶ tuşuna basın; kâğıttaki planların yerdeki fiyatlara ne yaptığını izleyin. (Büyüyen daire = büyüyen değer.)",
         "2027": "İnşaat primi başlıyor: alıcılar trenlerden önce geliyor. Önce turuncu merkez bölgeler ısınıyor — ulaşım yatırımı hep böyle çalışır.",
-        "2028": "Yeni Bakü–Sumgayıt yolu açılıyor. Kavşaklara yakın arsalar Məhəmmədli numarasını tekrarlıyor: önce yol, hemen ardından fiyat.",
+        "2028": "Yeni Bakü–Sumgayıt yolu açılıyor. Kavşaklara yakın arsaları izleyin; erişimin fiyat artışına dönüşeceğini varsaymadan önce yerel kanıtları kontrol edin.",
         "2029": "İş, betonu takip eder: havalimanı şehri şekilleniyor, çiftlenen demiryolu Sumgayıt’ı gerçek bir işe-gidiş mesafesine sokuyor.",
         "2030": "Büyük an — metro White City’ye ulaştı. Vaatle oluşan primler artık gerçek trenlerle kilitlendi.",
         "2031": "Bayrak el değiştiriyor: merkez yavaşlıyor, ucuz doğu — Hovsan, Zığ, havalimanı kuşağı — kıpırdamaya başlıyor.",
@@ -730,15 +885,15 @@
           40.47
         ],
         "y": 2025,
-        "en": "Beyukshor–Pirshagi road — DONE. This is what repriced Mohammadi.",
-        "tr": "Böyükşor–Pirşağı yolu — BİTTİ. Məhəmmədli’yi pahalandıran bu."
+        "en": "Beyukshor–Pirshagi road — DONE. Verified access catalyst near Mohammadi; its price effect is an investment hypothesis.",
+        "tr": "Böyükşor–Pirşağı yolu — BİTTİ. Məhəmmədli yakınında doğrulanmış ulaşım katalizörü; değer etkisi yatırım hipotezidir."
       },
       {
         "ll": [
-          49.807,
-          40.397
+          49.8282314,
+          40.3937251
         ],
-        "y": 2026,
+        "y": 2027,
         "en": "Metro B-4 station (Purple Line) opens",
         "tr": "Metro B-4 istasyonu (Mor Hat) açılıyor"
       },

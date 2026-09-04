@@ -1,6 +1,6 @@
 # Baku 2036 v2 data sources
 
-- `admin-absheron.geojson` is a filtered derivative of the official IDDA open-data GeoJSON “Regions of Azerbaijan”, created in April 2025 and updated in July 2025. It contains Baku city rayons plus Absheron, Khizi and Sumqayit context polygons.
+- `admin-absheron.geojson` is the canonical filtered derivative of the official IDDA open-data GeoJSON “Regions of Azerbaijan”, created in April 2025 and updated in July 2025. It contains Baku city rayons plus Absheron, Khizi and Sumqayit context polygons. `admin-absheron-5dp.geojson` is a deterministic five-decimal coordinate derivative of that file used by the optimized preview map; it preserves feature order, properties, and closed polygon topology within a maximum 1.5 m coordinate displacement.
 - `metro.json` uses built station and route geometry retrieved from OpenStreetMap via Overpass on 2026-08-13. Planned extensions are explicitly labeled as the Baku 2036 scenario layer and should be verified against official project documents before a purchase.
 - `places.json` is an offline gazetteer assembled from official Azerbaijan local-place points and OpenStreetMap place-name nodes retrieved on 2026-08-13, plus clearly labeled Baku 2036 atlas anchors. It is deliberately not a live geocoder.
 - `zones.json` and `content.json` are structured exports of the existing v1 atlas's zone briefs, due-diligence prompts, scenario labels, buyer profiles, and EN/TR interface copy. The export preserves the illustrative nature of the figures and does not alter the root v1 artifact.
@@ -9,3 +9,4 @@
 OpenStreetMap data is © OpenStreetMap contributors and is used under the [ODbL](https://www.openstreetmap.org/copyright).
 
 - Zone evidence entries were checked on 2026-08-13 against the supplied official planning, transport, railway, market, industrial, and developer sources. Statuses distinguish operational, contracted, programmed, private-plan, and concept claims; investment meaning remains analytical.
+- `zones.json` `officialPlan` records link each zone to the ARXKOM Baku Master Plan 2040, with a role, implementation status, phase, horizon, source section, PDF pages, bilingual statement, caution, and review date. These records describe planning context only and must not be read as property-price forecasts.

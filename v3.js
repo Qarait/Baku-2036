@@ -7,6 +7,8 @@
   const PMTILES_URL = 'pmtiles://assets/baku-absheron.pmtiles';
   const COLORS = { hot: '#bd5b2d', frontier: '#137b66', established: '#2e6b9e' };
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const SCENARIO_ANIMATION_DURATION = 420;
+  const fixedLanguage = window.__BakuFixedLanguage === 'tr' || window.__BakuFixedLanguage === 'en' ? window.__BakuFixedLanguage : null;
 
   const copy = {
     en: {
@@ -15,16 +17,19 @@
       search: 'Search a place\u2026',
       searchLabel: 'Search Baku and Absheron places', showMe: '\u25b6 Show me (1 minute)',
       year: 'Drag to see the future',
-      skip: 'Skip map',
+      dataChecked: 'Data checked', projectStatus: 'Project status checked', scenarioBaseline: 'Scenario baseline',
+      skip: 'Skip map', layers: 'Layers',
       rayons: 'District borders', areas: 'Investment spots', metro: 'Metro', heat: 'Where prices rise fastest',
-      rayonBoundary: 'District borders', approxArea: 'Investment spots', metroLegend: 'Metro: solid built / dashed planned', evidenceLegend: 'How sure is this?', builtLegend: 'Already built', contractedLegend: 'Being built now', programmedLegend: 'Government plan', privateLegend: 'Company promise',
-      kicker: 'MAP IDENTIFICATION',
+      rayonBoundary: 'District borders', approxArea: 'Investment spots', metroLegend: 'Mapped stations · Baku 2036 scenario routes (dashed until their scenario year)', evidenceLegend: 'How sure is this?', builtLegend: 'Already built', contractedLegend: 'Being built now', programmedLegend: 'Government plan', privateLegend: 'Company promise',
+      kicker: 'SELECTED PLACE',
       emptyTitle: 'Tap a circle to see what’s coming',
       emptyIntro: 'Or tap anywhere to find out where you are.',
+      guidanceChooseLabel: 'Start here', guidanceChooseText: 'Search for a place or tap the map.',
+      guidanceSelectedLabel: 'Next', guidanceSelectedText: 'Review the evidence and main risk before comparing this place.',
       administrative: 'District', investment: 'Investment spot', nearestMetro: 'Nearest metro (straight line — walking is a bit longer)', centralBaku: 'Central Baku', airport: 'Airport', coordinates: 'Coordinates',
       noRayon: 'That’s the sea', noZone: 'No nearby spot', noMetro: 'No station nearby',
       rayonNote: 'District borders show official administrative geography. Investment spots are approximate, not property boundaries.',
-      clear: 'Clear selection', loading: 'Loading map data\u2026', ready: 'Click a location to identify its geography', error: 'Map data could not be loaded', searchEmpty: 'No local place matched that search.'
+      clear: 'Clear', closeDetails: 'Close', collapseDetails: 'Hide details', hidePanel: 'Hide panel', showPanel: 'Show panel', showDetails: 'Review evidence and risk', showDetailsFor: 'Review evidence and risk for', locationDetails: 'Location details', loading: 'Loading map data\u2026', mapVisible: 'Map is visible; loading details\u2026', ready: 'Click a location to identify its geography', error: 'We couldn\u2019t load the map data. Please refresh and try again.', validation: 'We couldn\u2019t validate the map data. Please refresh and try again.', retry: 'Retry', searchEmpty: 'No local place matched that search.'
     },
     tr: {
       title: 'Bakü gayrimenkulünü anlayın',
@@ -32,35 +37,197 @@
       search: 'Bir yer aray\u0131n\u2026',
       searchLabel: 'Bak\u00fc ve Ab\u015feron yerlerini aray\u0131n', showMe: '\u25b6 Göster (1 dakika)',
       year: 'Geleceği görmek için sürükleyin',
-      skip: 'Haritay\u0131 ge\u00e7',
+      dataChecked: 'Veriler kontrol edildi', projectStatus: 'Proje durumu kontrol edildi', scenarioBaseline: 'Senaryo ba\u015flang\u0131c\u0131',
+      skip: 'Haritay\u0131 ge\u00e7', layers: 'Katmanlar',
       rayons: 'İlçe sınırları', areas: 'Yatırım noktaları', metro: 'Metro', heat: 'Fiyatların en hızlı arttığı yerler',
-      rayonBoundary: 'İlçe sınırları', approxArea: 'Yatırım noktaları', metroLegend: 'Metro: çalışan / planlanan hatlar', evidenceLegend: 'Ne kadar emin olabiliriz?', builtLegend: 'Zaten yapıldı', contractedLegend: 'Şimdi yapılıyor', programmedLegend: 'Devlet planı', privateLegend: 'Şirket sözü',
-      kicker: 'HAR\u0130TA TANIMLAMA',
+      rayonBoundary: 'İlçe sınırları', approxArea: 'Yatırım noktaları', metroLegend: 'Haritalanan istasyonlar · Bakü 2036 senaryo hatları (senaryo yılına kadar kesik)', evidenceLegend: 'Ne kadar emin olabiliriz?', builtLegend: 'Zaten yapıldı', contractedLegend: 'Şimdi yapılıyor', programmedLegend: 'Devlet planı', privateLegend: 'Şirket sözü',
+      kicker: 'SE\u00c7\u0130LEN YER',
       emptyTitle: 'Bir daireye dokunarak ne olacağını görün',
       emptyIntro: 'Ya da nerede olduğunuzu öğrenmek için haritada herhangi bir yere dokunun.',
+      guidanceChooseLabel: 'Buradan başlayın', guidanceChooseText: 'Bir yer arayın veya haritaya dokunun.',
+      guidanceSelectedLabel: 'Sıradaki adım', guidanceSelectedText: 'Bu yeri karşılaştırmadan önce kanıtları ve ana riski inceleyin.',
       administrative: 'İlçe', investment: 'Yatırım noktası', nearestMetro: 'En yakın metro (kuş uçuşu — yürüyüş biraz daha uzun)', centralBaku: 'Bakü merkezi', airport: 'Havalimanı', coordinates: 'Koordinatlar',
       noRayon: 'Burası deniz', noZone: 'Yakında yatırım noktası yok', noMetro: 'Yakında istasyon yok',
       rayonNote: 'İlçe sınırları resmi idari coğrafyayı gösterir. Yatırım noktaları yaklaşık alanlardır; mülk sınırı değildir.',
-      clear: 'Se\u00e7imi temizle', loading: 'Harita verileri y\u00fckleniyor\u2026', ready: 'Co\u011frafyay\u0131 tan\u0131mlamak i\u00e7in bir yere t\u0131klay\u0131n', error: 'Harita verileri y\u00fcklenemedi', searchEmpty: 'Yerel gazetteer e\u015fle\u015fme bulamad\u0131.'
+      clear: 'Temizle', closeDetails: 'Kapat', collapseDetails: 'Ayrıntıları gizle', hidePanel: 'Paneli gizle', showPanel: 'Paneli göster', showDetails: 'Kanıt ve riski incele', showDetailsFor: 'Kanıt ve riski incele:', locationDetails: 'Konum ayrıntıları', loading: 'Harita verileri y\u00fckleniyor\u2026', mapVisible: 'Harita görünür; ayrıntılar yükleniyor\u2026', ready: 'Co\u011frafyay\u0131 tan\u0131mlamak i\u00e7in bir yere t\u0131klay\u0131n', error: 'Harita verilerini y\u00fckleyemedik. L\u00fctfen sayfay\u0131 yenileyin ve tekrar deneyin.', validation: 'Harita verilerini do\u011frulayamad\u0131k. L\u00fctfen sayfay\u0131 yenileyin ve tekrar deneyin.', retry: 'Yeniden deneyin', searchEmpty: 'Yerel gazetteer e\u015fle\u015fme bulamad\u0131.'
     }
   };
   const zones = [];
 
-  function hydrateZones(atlasZones) {
-    if (!Array.isArray(atlasZones) || atlasZones.length !== 16) return;
-    zones.length = 0;
-    atlasZones.forEach(zone => {
-      zones.push({
-        ...zone,
-        tier: zone.tier === 'est' ? 'established' : (zone.tier === 'fr' ? 'frontier' : zone.tier),
-        coords: Array.isArray(zone.coords) ? zone.coords : [0, 0],
-        radius: Number(zone.radius) || 10
+  function zoneValidationError(message) {
+    const error = new Error('Zone data validation failed: ' + message);
+    error.code = 'zone-data-validation';
+    return error;
+  }
+
+  function validateScenarioFactors(atlasZones) {
+    const evidenceIds = new Set();
+    atlasZones.forEach((zone, zoneIndex) => {
+      if (!Array.isArray(zone.evidence) || !zone.evidence.length) throw zoneValidationError('zone ' + (zone.id || zoneIndex) + ' has no evidence');
+      zone.evidence.forEach((evidence, evidenceIndex) => {
+        const evidenceId = typeof evidence?.id === 'string' ? evidence.id.trim() : '';
+        if (!evidenceId) throw zoneValidationError('zone ' + (zone.id || zoneIndex) + ' evidence ' + evidenceIndex + ' has a missing id');
+        if (evidenceIds.has(evidenceId)) throw zoneValidationError('duplicate evidence id ' + evidenceId);
+        evidenceIds.add(evidenceId);
       });
+    });
+    const allowedRoles = new Set(['support', 'risk', 'dependency', 'unknown']);
+    atlasZones.forEach((zone, zoneIndex) => {
+      if (!Array.isArray(zone.scenarioFactors) || !zone.scenarioFactors.length) throw zoneValidationError('zone ' + (zone.id || zoneIndex) + ' has no scenarioFactors');
+      const factorIds = new Set();
+      zone.scenarioFactors.forEach((factor, factorIndex) => {
+        const factorId = typeof factor?.id === 'string' ? factor.id.trim() : '';
+        if (!factorId) throw zoneValidationError('zone ' + (zone.id || zoneIndex) + ' factor ' + factorIndex + ' has a missing id');
+        if (factorIds.has(factorId)) throw zoneValidationError('zone ' + zone.id + ' has duplicate factor id ' + factorId);
+        factorIds.add(factorId);
+        if (!allowedRoles.has(factor.role)) throw zoneValidationError('zone ' + zone.id + ' factor ' + factorId + ' has invalid role ' + factor.role);
+        if (!Array.isArray(factor.evidenceIds) || !factor.evidenceIds.length) throw zoneValidationError('zone ' + zone.id + ' factor ' + factorId + ' has no evidenceIds');
+        factor.evidenceIds.forEach(evidenceId => {
+          if (typeof evidenceId !== 'string' || !evidenceIds.has(evidenceId.trim())) throw zoneValidationError('zone ' + zone.id + ' factor ' + factorId + ' references unknown evidence ' + evidenceId);
+        });
+        if (typeof factor.en !== 'string' || !factor.en.trim()) throw zoneValidationError('zone ' + zone.id + ' factor ' + factorId + ' has no English statement');
+        if (typeof factor.tr !== 'string' || !factor.tr.trim()) throw zoneValidationError('zone ' + zone.id + ' factor ' + factorId + ' has no Turkish statement');
+      });
+    });
+  }
+
+  function hydrateZones(atlasZones) {
+    if (!Array.isArray(atlasZones)) throw zoneValidationError('expected an array');
+    if (!atlasZones.length) throw zoneValidationError('expected at least 1 zone; received 0');
+    validateScenarioFactors(atlasZones);
+    const ids = new Set();
+    const hydrated = atlasZones.map((zone, index) => {
+      const id = typeof zone?.id === 'string' ? zone.id.trim() : '';
+      if (!id) throw zoneValidationError('zone ' + index + ' has a missing id');
+      if (ids.has(id)) throw zoneValidationError('duplicate id ' + id);
+      ids.add(id);
+      const coords = zone.coords;
+      if (!Array.isArray(coords) || coords.length < 2 || !Number.isFinite(coords[0]) || !Number.isFinite(coords[1])) throw zoneValidationError('zone ' + id + ' has invalid coordinates');
+      if (!Number.isFinite(zone.growthPct)) throw zoneValidationError('zone ' + id + ' has invalid growthPct');
+      return {
+        ...zone,
+        id,
+        tier: zone.tier === 'est' ? 'established' : (zone.tier === 'fr' ? 'frontier' : zone.tier),
+        coords: [coords[0], coords[1]],
+        radius: Number(zone.radius) || 10
+      };
+    });
+    zones.length = 0;
+    zones.push(...hydrated);
+  }
+
+  function dataValidationError(dataset, message) {
+    const error = new Error(dataset + ' data validation failed: ' + message);
+    error.code = 'data-validation';
+    return error;
+  }
+
+  function isObject(value) {
+    return value !== null && typeof value === 'object' && !Array.isArray(value);
+  }
+
+  function validateCoordinatePair(coords, dataset, label) {
+    if (!Array.isArray(coords) || coords.length < 2 || typeof coords[0] !== 'number' || !Number.isFinite(coords[0]) || coords[0] < -180 || coords[0] > 180 || typeof coords[1] !== 'number' || !Number.isFinite(coords[1]) || coords[1] < -90 || coords[1] > 90) {
+      throw dataValidationError(dataset, label + ' has invalid coordinates');
+    }
+  }
+
+  function validateLineCoordinates(coords, dataset, label) {
+    if (!Array.isArray(coords) || coords.length < 2) throw dataValidationError(dataset, label + ' needs at least 2 coordinate pairs');
+    coords.forEach((pair, index) => validateCoordinatePair(pair, dataset, label + '[' + index + ']'));
+  }
+
+  function validateRing(ring, dataset, label) {
+    if (!Array.isArray(ring) || ring.length < 4) throw dataValidationError(dataset, label + ' needs at least 4 coordinates');
+    ring.forEach((pair, index) => validateCoordinatePair(pair, dataset, label + '[' + index + ']'));
+    const first = ring[0]; const last = ring[ring.length - 1];
+    if (first[0] !== last[0] || first[1] !== last[1]) throw dataValidationError(dataset, label + ' must be closed');
+  }
+
+  function validatePolygonCoordinates(coordinates, dataset, label) {
+    if (!Array.isArray(coordinates) || !coordinates.length) throw dataValidationError(dataset, label + ' needs at least 1 ring');
+    coordinates.forEach((ring, index) => validateRing(ring, dataset, label + '[' + index + ']'));
+  }
+
+  function validateAdminData(admin) {
+    const dataset = 'Administrative';
+    if (!isObject(admin) || admin.type !== 'FeatureCollection' || !Array.isArray(admin.features) || !admin.features.length) throw dataValidationError(dataset, 'expected a non-empty FeatureCollection');
+    admin.features.forEach((feature, index) => {
+      if (!isObject(feature) || feature.type !== 'Feature' || !isObject(feature.properties) || typeof feature.properties.nameEn !== 'string' || !feature.properties.nameEn.trim()) throw dataValidationError(dataset, 'feature ' + index + ' has invalid properties');
+      const geometry = feature.geometry;
+      if (!isObject(geometry) || !['Polygon', 'MultiPolygon'].includes(geometry.type) || !Array.isArray(geometry.coordinates) || !geometry.coordinates.length) throw dataValidationError(dataset, 'feature ' + index + ' has invalid geometry');
+      if (geometry.type === 'Polygon') validatePolygonCoordinates(geometry.coordinates, dataset, 'feature ' + index + '.coordinates');
+      else geometry.coordinates.forEach((polygon, polygonIndex) => validatePolygonCoordinates(polygon, dataset, 'feature ' + index + '.coordinates[' + polygonIndex + ']'));
+    });
+  }
+
+  function validateIdentifiedRecords(records, dataset, label, validator) {
+    if (!Array.isArray(records) || !records.length) throw dataValidationError(dataset, 'expected a non-empty ' + label + ' array');
+    const ids = new Set();
+    records.forEach((record, index) => {
+      if (!isObject(record) || typeof record.id !== 'string' || !record.id.trim()) throw dataValidationError(dataset, label + ' ' + index + ' has a missing id');
+      if (ids.has(record.id)) throw dataValidationError(dataset, 'duplicate ' + label + ' id ' + record.id);
+      ids.add(record.id);
+      validator(record, index);
+    });
+  }
+
+  function validateMetroData(metro) {
+    const dataset = 'Metro';
+    if (!isObject(metro)) throw dataValidationError(dataset, 'expected an object');
+    validateIdentifiedRecords(metro.lines, dataset, 'line', (line, index) => {
+      if (typeof line.line !== 'string' || typeof line.color !== 'string' || !['built', 'planned'].includes(line.status) || !Number.isInteger(line.builtYear)) throw dataValidationError(dataset, 'line ' + index + ' has invalid metadata');
+      validateLineCoordinates(line.coordinates, dataset, 'line ' + index + '.coordinates');
+    });
+    validateIdentifiedRecords(metro.stations, dataset, 'station', (station, index) => {
+      if (typeof station.nameEn !== 'string' || typeof station.nameTr !== 'string' || typeof station.line !== 'string' || typeof station.color !== 'string' || typeof station.source !== 'string' || !['built', 'planned'].includes(station.status) || !Number.isInteger(station.builtYear)) throw dataValidationError(dataset, 'station ' + index + ' has invalid metadata');
+      validateCoordinatePair(station.coords, dataset, 'station ' + index + '.coords');
+    });
+  }
+
+  function validatePlacesData(places) {
+    const dataset = 'Places';
+    validateIdentifiedRecords(places, dataset, 'place', (place, index) => {
+      if (typeof place.nameEn !== 'string' || typeof place.nameTr !== 'string' || typeof place.type !== 'string' || typeof place.source !== 'string') throw dataValidationError(dataset, 'place ' + index + ' has invalid metadata');
+      validateCoordinatePair(place.coords, dataset, 'place ' + index + '.coords');
     });
   }
 
   function atlasCopy() {
     return state.data?.content?.[state.lang] || { ui: copy[state.lang], labels: {} };
+  }
+
+  function activePlannerProfile() {
+    const profile = state.profile ? (atlasCopy().profiles || {})[state.profile] : null;
+    return profile && Array.isArray(profile.zones) ? profile : null;
+  }
+
+  function plannerBudgetValue() {
+    return state.plannerBudget == null ? 50000 : Number(state.plannerBudget) || 50000;
+  }
+
+  function plannerZones() {
+    const profile = activePlannerProfile();
+    return profile ? zones.filter(zone => profile.zones.includes(zone.id)) : zones;
+  }
+
+  function plannerReachableZones(budget) {
+    return plannerZones().filter(zone => Number(zone.mint || 0) <= budget);
+  }
+
+  function plannerOutOfReachZones(budget) {
+    return plannerZones().filter(zone => Number(zone.mint || 0) > budget);
+  }
+
+  function renderDataFreshness() {
+    const host = $('dataFreshness');
+    const meta = state.data?.content?.meta;
+    if (!host || !meta?.checked) return;
+    const dates = meta.checked[state.lang] || meta.checked.en;
+    const u = tr();
+    host.textContent = [u.dataChecked + ': ' + dates.data, u.projectStatus + ': ' + dates.projectStatus, u.scenarioBaseline + ': ' + dates.scenarioBaseline].join(' · ');
+    host.dataset.revision = meta.revision || '';
+    host.hidden = false;
   }
 
   function zoneTierLabel(zone) {
@@ -96,6 +263,32 @@
       '<div class="evidence-meta"><span>' + escapeHtml(item.source) + '</span><span>' + escapeHtml((labels.checked || 'Checked') + ' ' + item.checkedAt) + '</span><a href="' + escapeHtml(safeUrl(item)) + '" target="_blank" rel="noopener">' + escapeHtml(labels.readSource || 'Read source') + '</a></div>' +
       '</article>').join('');
     return '<div class="brief-section evidence-section"><div class="evidence-title-row"><h4>' + escapeHtml(tr().evidenceLegend || 'How sure is this?') + '</h4><span>' + escapeHtml(labels.evidenceHint || 'What is real, who says it, and what it may mean.') + '</span></div>' + cards + '</div>';
+  }
+
+  function renderScenarioFactors(zone) {
+    const labels = atlasCopy().labels || {};
+    const factors = Array.isArray(zone.scenarioFactors) ? zone.scenarioFactors : [];
+    if (!factors.length) return '';
+    const roleLabels = {
+      support: labels.factorSupport || (state.lang === 'tr' ? 'Destek' : 'Support'),
+      risk: labels.factorRisk || (state.lang === 'tr' ? 'Risk' : 'Risk'),
+      dependency: labels.factorDependency || (state.lang === 'tr' ? 'Bağımlılık' : 'Dependency'),
+      unknown: labels.factorUnknown || (state.lang === 'tr' ? 'Kanıt boşluğu' : 'Evidence gap')
+    };
+    const evidenceById = new Map(zones.flatMap(item => (Array.isArray(item.evidence) ? item.evidence : []).map(item => [item.id, item])));
+    const cards = factors.map(factor => {
+      const statement = state.lang === 'tr' ? (factor.tr || factor.en) : factor.en;
+      const evidenceLinks = factor.evidenceIds.map(evidenceId => evidenceById.get(evidenceId)).filter(Boolean).map(evidence => {
+        const url = /^https?:\/\//i.test(String(evidence.url || '')) ? evidence.url : '#';
+        return '<a href="' + escapeHtml(url) + '" target="_blank" rel="noopener">' + escapeHtml(evidence.source) + '</a>';
+      }).join(' · ');
+      return '<article class="factor-card factor-' + escapeHtml(factor.role) + '" data-factor-role="' + escapeHtml(factor.role) + '">' +
+        '<div class="factor-card-head"><span class="factor-role">' + escapeHtml(roleLabels[factor.role] || factor.role) + '</span></div>' +
+        '<p class="factor-statement">' + escapeHtml(statement) + '</p>' +
+        '<div class="factor-evidence"><span>' + escapeHtml(labels.factorEvidence || (state.lang === 'tr' ? 'Kanıt' : 'Evidence')) + '</span> ' + evidenceLinks + '</div>' +
+        '</article>';
+    }).join('');
+    return '<section id="factorLedger" class="brief-section factor-ledger" aria-labelledby="factorLedgerTitle"><div class="factor-ledger-title"><h4 id="factorLedgerTitle">' + escapeHtml(labels.factorLedger || (state.lang === 'tr' ? 'Bu senaryoyu ne destekler veya zayıflatır?' : 'What supports or weakens this scenario?')) + '</h4></div>' + cards + '</section>';
   }
 
   function localPlaceStatusLabel(status) {
@@ -135,27 +328,158 @@
     renderAllContent();
   }
 
+  const SCENARIO_MODIFIERS = Object.freeze({
+    oil: Object.freeze({ norm: 1, bad: 0.8, good: 1.15 }),
+    infra: Object.freeze({ on: 1, late: 0.72 }),
+    cur: Object.freeze({ stable: 1, weak: 0.8 })
+  });
+  const SCENARIO_ROUNDING_INCREMENT = 5;
+
   function scenarioBaseGrowth(zone) {
-    const projection = zone?.en?.proj || '';
-    const match = String(projection).match(/(\d+)\s*%/);
-    return match ? Number(match[1]) : (String(projection).includes('2') && String(projection).includes('\u00d7') ? 150 : 120);
+    const growthPct = Number(zone?.growthPct);
+    if (!Number.isFinite(growthPct)) throw new Error('Zone is missing numeric growthPct: ' + (zone?.id || 'unknown'));
+    return growthPct;
+  }
+
+  function scenarioProjection(zone, language = state.lang) {
+    const detail = zone?.[language] || zone?.en || {};
+    const prefix = language === 'tr' ? '%+' + scenarioBaseGrowth(zone) : '+' + scenarioBaseGrowth(zone) + '%';
+    const qualifier = String(detail.proj || '').trim();
+    return [prefix, qualifier].filter(Boolean).join(' ');
+  }
+
+  function scenarioOption(group, requested) {
+    const options = SCENARIO_MODIFIERS[group];
+    const fallback = group === 'oil' ? 'norm' : group === 'infra' ? 'on' : 'stable';
+    return Object.prototype.hasOwnProperty.call(options, requested) ? requested : fallback;
+  }
+
+  function scenarioBreakdown(zone, scenarios = {}) {
+    const baseGrowth = scenarioBaseGrowth(zone);
+    const selected = {
+      oil: scenarioOption('oil', scenarios.oil),
+      infra: scenarioOption('infra', scenarios.infra),
+      cur: scenarioOption('cur', scenarios.cur)
+    };
+    const modifiers = {
+      oil: { option: selected.oil, multiplier: SCENARIO_MODIFIERS.oil[selected.oil] },
+      infra: { option: selected.infra, multiplier: SCENARIO_MODIFIERS.infra[selected.infra] },
+      cur: { option: selected.cur, multiplier: SCENARIO_MODIFIERS.cur[selected.cur] }
+    };
+    const rawGrowth = baseGrowth * modifiers.oil.multiplier * modifiers.infra.multiplier * modifiers.cur.multiplier;
+    const roundedGrowth = Math.round(rawGrowth / SCENARIO_ROUNDING_INCREMENT) * SCENARIO_ROUNDING_INCREMENT;
+    return { baseGrowth, modifiers, rawGrowth, roundedGrowth, roundingIncrement: SCENARIO_ROUNDING_INCREMENT };
   }
 
   function scenarioGrowth(zone) {
-    const base = scenarioBaseGrowth(zone);
-    const oil = state.scenarios.oil === 'bad' ? .8 : state.scenarios.oil === 'good' ? 1.15 : 1;
-    const infra = state.scenarios.infra === 'late' ? .72 : 1;
-    return Math.round(base * oil * infra / 5) * 5;
+    return scenarioBreakdown(zone, state.scenarios).roundedGrowth;
+  }
+
+  function formatScenarioPercent(value) {
+    return state.lang === 'tr' ? '%' + value : value + '%';
+  }
+
+  function formatScenarioDelta(value) {
+    const labels = atlasCopy().labels || {};
+    const unit = labels.scenarioPercentagePoints || (state.lang === 'tr' ? 'yüzde puan' : 'percentage points');
+    const number = Number(value) || 0;
+    const sign = number < 0 ? '−' : number > 0 ? '+' : '';
+    return sign + Math.abs(number) + ' ' + unit;
+  }
+
+  function replaceScenarioTokens(template, tokens) {
+    return Object.entries(tokens).reduce((text, [token, value]) => text.split('__' + token + '__').join(value), template);
+  }
+
+  function scenarioChangeExplanation(change) {
+    if (!change) return '';
+    const content = atlasCopy();
+    const labels = content.labels || {};
+    const ui = content.ui || {};
+    const template = labels.scenarioChangeExplanation || (state.lang === 'tr'
+      ? '__GROUP__ değeri __FROM__ seçeneğinden __TO__ seçeneğine değişti; örnek sonuç __DELTA__ oynadı. Başlangıç varsayımı ve kanıt defteri değişmedi.'
+      : '__GROUP__ changed from __FROM__ to __TO__; the illustrative result moved __DELTA__. The baseline and evidence ledger are unchanged.');
+    return replaceScenarioTokens(template, {
+      GROUP: scenarioGroupLabel(ui, change.group),
+      FROM: scenarioOptionLabel(ui, change.group, change.previousOption),
+      TO: scenarioOptionLabel(ui, change.group, change.nextOption),
+      DELTA: formatScenarioDelta(change.to - change.from)
+    });
+  }
+
+  function animateScenarioResult(change) {
+    if (state.scenarioAnimationFrame) cancelAnimationFrame(state.scenarioAnimationFrame);
+    state.scenarioAnimationFrame = null;
+    const result = $('scenarioResultValue');
+    if (!result || !change) return;
+    const finish = () => {
+      result.textContent = formatScenarioPercent(change.to);
+      result.classList.remove('is-animating');
+      result.removeAttribute('data-animating');
+    };
+    if (reducedMotion || change.from === change.to) {
+      finish();
+      return;
+    }
+    result.textContent = formatScenarioPercent(change.from);
+    result.classList.add('is-animating');
+    result.dataset.animating = 'true';
+    const startedAt = performance.now();
+    const frame = now => {
+      const progress = Math.min(1, (now - startedAt) / SCENARIO_ANIMATION_DURATION);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const value = Math.round(change.from + ((change.to - change.from) * eased));
+      result.textContent = formatScenarioPercent(value);
+      if (progress < 1 && result.isConnected) state.scenarioAnimationFrame = requestAnimationFrame(frame);
+      else { state.scenarioAnimationFrame = null; finish(); }
+    };
+    state.scenarioAnimationFrame = requestAnimationFrame(frame);
   }
 
 
   const state = {
     lang: 'en', year: 2026, admin: true, investments: true, metro: true, heat: false,
-    selected: null, data: null, map: null, ready: false, content: null, shortlist: {}, shortlistAmounts: {}, scenarios: { oil: 'norm', infra: 'on', cur: 'stable' }, openAccordion: null, timeTimer: null, engaged: false, tourIndex: 0, tourStops: ['whitecity', 'mohammadi', 'bilgah', 'sumgayit', 'hovsan']
+    selected: null, data: null, map: null, mapReady: false, overlaysReady: false, ready: false, dataError: false, content: null, controlsInstalled: false, mapRuntimeTimer: null, drawerCollapsed: false, emptyPanelCollapsed: false, shortlist: {}, shortlistAmounts: {}, profile: null, plannerBudget: null, scenarios: { oil: 'norm', infra: 'on', cur: 'stable' }, openAccordion: null, timeTimer: null, engaged: false, cityStory: { active: false, paused: false, index: 0, timer: null }, tourIndex: 0, tourStops: ['whitecity', 'mohammadi', 'bilgah', 'sumgayit', 'hovsan'], tourReturnFocusId: null, scenarioAnimation: null, scenarioAnimationFrame: null
   };
 
   const $ = id => document.getElementById(id);
   const tr = () => copy[state.lang];
+  const isMobileViewport = () => window.matchMedia('(max-width: 760px)').matches;
+  function renderNextAction() {
+    const host = $('nextAction');
+    if (!host) return;
+    if (!state.ready) {
+      host.hidden = true;
+      return;
+    }
+    const ui = tr();
+    const selected = Boolean(state.selected);
+    host.hidden = false;
+    host.dataset.state = selected ? 'selected' : 'choose';
+    $('nextActionLabel').textContent = selected ? ui.guidanceSelectedLabel : ui.guidanceChooseLabel;
+    $('nextActionText').textContent = selected ? ui.guidanceSelectedText : ui.guidanceChooseText;
+  }
+  function setMapStatus(kind, message) {
+    const host = $('mapStatus');
+    if (!host) return;
+    host.classList.toggle('error', kind === 'error');
+    host.dataset.status = kind;
+    host.textContent = message;
+    if (kind === 'error') {
+      const retry = document.createElement('button');
+      retry.id = 'retryData'; retry.type = 'button'; retry.className = 'retry-data';
+      retry.textContent = tr().retry || (state.lang === 'tr' ? 'Yeniden deneyin' : 'Retry');
+      retry.addEventListener('click', boot);
+      host.append(' ', retry);
+    }
+  }
+  function reportMapFailure() {
+    state.mapReady = false;
+    state.overlaysReady = false;
+    state.ready = false;
+    finishCityStory();
+    setMapStatus('error', tr().error);
+  }
   const featureCollection = features => ({ type: 'FeatureCollection', features });
   const pointFeature = (coords, properties) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: coords }, properties: properties || {} });
   const lineFeature = (coords, properties) => ({ type: 'Feature', geometry: { type: 'LineString', coordinates: coords }, properties: properties || {} });
@@ -190,23 +514,182 @@
     return '#' + [f(0), f(8), f(4)].map(v => Math.round(255 * v).toString(16).padStart(2, '0')).join('');
   }
 
+  function yearProgress(year = state.year) {
+    return Math.max(0, Math.min(1, (Number(year) - 2026) / 10));
+  }
+
+  function growthRange() {
+    const values = zones.map(zone => scenarioBaseGrowth(zone));
+    return { min: Math.min(...values), max: Math.max(...values) };
+  }
+
+  function normalizedGrowth(zone) {
+    const { min, max } = growthRange();
+    if (max === min) return 1;
+    return Math.max(0, Math.min(1, (scenarioBaseGrowth(zone) - min) / (max - min)));
+  }
+
   function investmentFeatures() {
-    return zones.map(z => pointFeature(z.coords, { id: z.id, labelEn: z.nameEn.replace(/[\u2013\u2014]/g, '-'), tier: z.tier, color: COLORS[z.tier], radius: z.radius }));
-  }
-
-  function heatFeatures() {
-    return zones.map((z, index) => pointFeature(z.coords, { id: z.id, radius: z.radius * 3.5, color: hslToHex(28 + index * 4, 77, 51) }));
-  }
-
-  function metroLineFeatures() {
-    return (state.data?.metro.lines || []).map(line => lineFeature(line.coordinates, {
-      id: line.id, line: line.line, color: line.color, built: state.year >= line.builtYear, status: line.status
+    const profile = activePlannerProfile();
+    const budget = state.plannerBudget == null ? null : plannerBudgetValue();
+    const progress = yearProgress();
+    return zones.map(z => pointFeature(z.coords, {
+      id: z.id,
+      labelEn: z.nameEn.replace(/[\u2013\u2014]/g, '-'),
+      tier: z.tier,
+      color: COLORS[z.tier],
+      growthPct: scenarioBaseGrowth(z),
+      scenarioGrowth: scenarioGrowth(z),
+      yearProgress: progress,
+      radius: z.radius * (1 + progress * scenarioGrowth(z) / 100),
+      scenarioOpacity: Math.max(.28, Math.min(.65, .22 + scenarioGrowth(z) / 500)),
+      dim: Boolean((profile && !profile.zones.includes(z.id)) || (budget !== null && budget < Number(z.mint || 0)))
     }));
   }
 
+  function heatFeatures() {
+    return zones.map(z => {
+      const growthIndex = normalizedGrowth(z);
+      return pointFeature(z.coords, {
+        id: z.id,
+        growthPct: scenarioBaseGrowth(z),
+        growthIndex,
+        radius: 28 + growthIndex * 28,
+        color: hslToHex(210 - growthIndex * 180, 77, 51)
+      });
+    });
+  }
+
+  const CITY_STORY_YEARS = [2026, 2028, 2030, 2033, 2036];
+  const CITY_STORY_INTERVAL_MS = 12000;
+
+  function cityCheckpointYears() {
+    const checkpoints = atlasCopy().simulation?.checkpoints || {};
+    return CITY_STORY_YEARS.filter(year => checkpoints[String(year)]);
+  }
+
+  function cityEventProperties(event, year) {
+    return {
+      year: event.y,
+      phase: event.y <= year ? 'active' : 'future',
+      label: state.lang === 'tr' ? event.tr : event.en,
+      labelEn: event.en,
+      labelTr: event.tr
+    };
+  }
+
+  function cityEventFeatures(year) {
+    return (atlasCopy().events || []).map(event => ({
+      type: 'Feature',
+      geometry: { type: 'Point', coordinates: event.ll },
+      properties: cityEventProperties(event, year)
+    }));
+  }
+
+  function cityProjectEvidenceCounts() {
+    const snapshot = {
+      doneProjects: 0,
+      fundedProjects: 0,
+      plannedProjects: 0,
+      operationalEvidence: 0,
+      contractedEvidence: 0,
+      programmedEvidence: 0,
+      privatePlanEvidence: 0
+    };
+    for (const zone of state.data?.zones || []) {
+      for (const project of zone.inv || []) {
+        const status = project[2] || 'plan';
+        if (status === 'done') snapshot.doneProjects += 1;
+        else if (status === 'fund') snapshot.fundedProjects += 1;
+        else if (status === 'plan') snapshot.plannedProjects += 1;
+      }
+      for (const item of zone.evidence || []) {
+        if (item.status === 'operational') snapshot.operationalEvidence += 1;
+        else if (item.status === 'contracted') snapshot.contractedEvidence += 1;
+        else if (item.status === 'programmed') snapshot.programmedEvidence += 1;
+        else if (item.status === 'private-plan') snapshot.privatePlanEvidence += 1;
+      }
+    }
+    return snapshot;
+  }
+
+  function citySimulationSnapshot(year) {
+    const metro = state.data?.metro || { lines: [], stations: [] };
+    const lines = metro.lines || [];
+    const stations = metroStations();
+    const events = cityEventFeatures(year);
+    return {
+      year,
+      activeEvents: events.filter(feature => feature.properties.phase === 'active').length,
+      futureEvents: events.filter(feature => feature.properties.phase === 'future').length,
+      builtLines: lines.filter(line => year >= line.builtYear).length,
+      plannedLines: lines.filter(line => year < line.builtYear).length,
+      builtStations: stations.filter(station => year >= station.builtYear).length,
+      plannedStations: stations.filter(station => year < station.builtYear).length,
+      ...cityProjectEvidenceCounts()
+    };
+  }
+
+  function nearestCityEvent(coords) {
+    let nearest = null;
+    for (const event of atlasCopy().events || []) {
+      const distance = distanceKm(coords, event.ll);
+      if (!nearest || distance < nearest.distance) nearest = { event, distance };
+    }
+    return nearest ? { distance: nearest.distance, ...cityEventProperties(nearest.event, state.year) } : null;
+  }
+
+  function selectedCityEventLabel(event) {
+    if (!event) return '';
+    return state.lang === 'tr' ? (event.labelTr || event.label) : (event.labelEn || event.label);
+  }
+
+  function metroLineFeatures() {
+
+    return (state.data?.metro.lines || []).map(line => lineFeature(line.coordinates, {
+      id: line.id, line: line.line, color: line.color, built: state.year >= line.builtYear, status: line.status, source: line.source
+    }));
+  }
+
+  function metroStationNameKey(station) {
+    return String(station.nameEn || station.nameTr || '').trim().toLocaleLowerCase();
+  }
+
+  function metroStationKey(station) {
+    const name = metroStationNameKey(station);
+    const coords = (station.coords || []).map(value => Number(value).toFixed(6)).join(',');
+    return name + '|' + coords;
+  }
+
+  function isScenarioMetroRecord(station) {
+    return String(station.source || '').trim().toLocaleLowerCase() === 'baku 2036 scenario layer';
+  }
+
+  function isImportedMetroRecord(station) {
+    return /^openstreetmap\b/i.test(String(station.source || '').trim());
+  }
+
+  function metroStations() {
+    const stations = state.data?.metro?.stations || [];
+    const scenarioNames = new Set(stations.filter(isScenarioMetroRecord).map(metroStationNameKey));
+    const unique = new Map();
+    for (const station of stations) {
+      if (isImportedMetroRecord(station) && scenarioNames.has(metroStationNameKey(station))) continue;
+      const key = metroStationKey(station);
+      const existing = unique.get(key);
+      if (!existing || (station.status === 'planned' && existing.status !== 'planned')) unique.set(key, station);
+    }
+    return [...unique.values()];
+  }
+
+  function activeMetroStations(year = state.year) {
+    return metroStations().filter(station => Number(station.builtYear) <= year);
+  }
+
   function metroStationFeatures() {
-    return (state.data?.metro.stations || []).map(station => pointFeature(station.coords, {
-      id: station.id, label: state.lang === 'tr' ? station.nameTr : station.nameEn, line: station.line, color: station.color,
+    return metroStations().map(station => pointFeature(station.coords, {
+      id: station.id, label: state.lang === 'tr' ? station.nameTr : station.nameEn, line: isImportedMetroRecord(station) ? 'unclassified' : station.line,
+      color: isImportedMetroRecord(station) ? '#64748b' : station.color, source: station.source, lineVerified: !isImportedMetroRecord(station),
       built: state.year >= station.builtYear, status: station.status
     }));
   }
@@ -258,21 +741,28 @@
     updateSource('heat', featureCollection(heatFeatures()));
     updateSource('metro-lines', featureCollection(metroLineFeatures()));
     updateSource('metro-stations', featureCollection(metroStationFeatures()));
+    updateSource('city-events', featureCollection(cityEventFeatures(state.year)));
   }
 
-  function createStyle(data) {
+  function createStyle(data = null) {
+    const empty = featureCollection([]);
     return {
       version: 8,
       name: 'Baku 2036 audience map',
       glyphs: 'assets/glyphs/{fontstack}/{range}.pbf',
       sources: {
-        basemap: { type: 'vector', url: PMTILES_URL },
-        admin: { type: 'geojson', data: data.admin },
-        'admin-labels': { type: 'geojson', data: adminLabelFeatures(data.admin) },
+        basemap: {
+          type: 'vector',
+          url: PMTILES_URL,
+          attribution: '<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors</a> · processed by <a href="https://download.geofabrik.de/" target="_blank" rel="noopener">Geofabrik</a>'
+        },
+        admin: { type: 'geojson', data: data?.admin || empty },
+        'admin-labels': { type: 'geojson', data: adminLabelFeatures(data?.admin) },
         'investment-zones': { type: 'geojson', data: featureCollection(investmentFeatures()) },
         heat: { type: 'geojson', data: featureCollection(heatFeatures()) },
         'metro-lines': { type: 'geojson', data: featureCollection(metroLineFeatures()) },
         'metro-stations': { type: 'geojson', data: featureCollection(metroStationFeatures()) },
+        'city-events': { type: 'geojson', data: featureCollection(cityEventFeatures(state.year)) },
         rings: { type: 'geojson', data: featureCollection([]) },
         'click-point': { type: 'geojson', data: featureCollection([]) }
       },
@@ -292,9 +782,11 @@
         { id: 'metro-halo', type: 'line', source: 'metro-lines', paint: { 'line-color': '#fffdf8', 'line-width': 6, 'line-opacity': ['case', ['get', 'built'], .87, .42] } },
         { id: 'metro-lines', type: 'line', source: 'metro-lines', paint: { 'line-color': ['get', 'color'], 'line-width': ['case', ['get', 'built'], 3, 2.3], 'line-opacity': ['case', ['get', 'built'], 1, .65], 'line-dasharray': ['case', ['get', 'built'], ['literal', [1, 0]], ['literal', [2, 2]]] } },
         { id: 'metro-stations', type: 'circle', source: 'metro-stations', paint: { 'circle-radius': ['case', ['get', 'built'], 4, 3.2], 'circle-color': ['get', 'color'], 'circle-stroke-color': '#fffdf8', 'circle-stroke-width': 1.2, 'circle-opacity': ['case', ['get', 'built'], 1, .62] } },
+        { id: 'city-events-future', type: 'circle', source: 'city-events', filter: ['==', ['get', 'phase'], 'future'], paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, 4.2, 12, 6.8], 'circle-color': COLORS.hot, 'circle-opacity': .1, 'circle-stroke-color': COLORS.hot, 'circle-stroke-width': 1.4, 'circle-stroke-opacity': .42 } },
+        { id: 'city-events-active', type: 'circle', source: 'city-events', filter: ['==', ['get', 'phase'], 'active'], paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, 4.6, 12, 7.2], 'circle-color': COLORS.hot, 'circle-opacity': .86, 'circle-stroke-color': '#fffdf8', 'circle-stroke-width': 1.2, 'circle-stroke-opacity': .95 } },
         { id: 'heat-layer', type: 'circle', source: 'heat', layout: { visibility: 'none' }, paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, ['*', ['get', 'radius'], .45], 11, ['get', 'radius'], 14, ['*', ['get', 'radius'], 1.25]], 'circle-color': ['get', 'color'], 'circle-opacity': .24, 'circle-blur': .82 } },
-        { id: 'investment-zones', type: 'circle', source: 'investment-zones', paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, ['*', ['get', 'radius'], .55], 11, ['get', 'radius'], 14, ['*', ['get', 'radius'], 1.45]], 'circle-color': ['get', 'color'], 'circle-opacity': .48, 'circle-stroke-color': ['get', 'color'], 'circle-stroke-width': 1.5, 'circle-stroke-opacity': .9 } },
-        { id: 'investment-labels', type: 'symbol', source: 'investment-zones', layout: { 'text-field': ['get', 'labelEn'], 'text-font': ['noto_sans_bold'], 'text-size': 10, 'text-anchor': 'top', 'text-offset': [0, 1.2], 'text-allow-overlap': false }, paint: { 'text-color': '#27333c', 'text-halo-color': '#fffdf8', 'text-halo-width': 2 } },
+        { id: 'investment-zones', type: 'circle', source: 'investment-zones', paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, ['*', ['get', 'radius'], .55], 11, ['get', 'radius'], 14, ['*', ['get', 'radius'], 1.45]], 'circle-radius-transition': { duration: SCENARIO_ANIMATION_DURATION, delay: 0 }, 'circle-color': ['get', 'color'], 'circle-opacity': ['case', ['get', 'dim'], .12, ['get', 'scenarioOpacity']], 'circle-opacity-transition': { duration: SCENARIO_ANIMATION_DURATION, delay: 0 }, 'circle-stroke-color': ['get', 'color'], 'circle-stroke-width': 1.5, 'circle-stroke-opacity': ['case', ['get', 'dim'], .28, .9] } },
+        { id: 'investment-labels', type: 'symbol', source: 'investment-zones', layout: { 'text-field': ['get', 'labelEn'], 'text-font': ['noto_sans_bold'], 'text-size': 10, 'text-anchor': 'top', 'text-offset': [0, 1.2], 'text-allow-overlap': false }, paint: { 'text-color': '#27333c', 'text-opacity': ['case', ['get', 'dim'], .28, 1], 'text-halo-color': '#fffdf8', 'text-halo-width': 2, 'text-halo-blur': ['case', ['get', 'dim'], .4, 0] } },
         { id: 'rings', type: 'line', source: 'rings', paint: { 'line-color': '#214a69', 'line-width': 1.2, 'line-dasharray': [2, 2], 'line-opacity': .72 } },
         { id: 'click-point', type: 'circle', source: 'click-point', paint: { 'circle-radius': 6, 'circle-color': '#fffdf8', 'circle-stroke-color': '#183b58', 'circle-stroke-width': 2 } },
       ]
@@ -303,7 +795,7 @@
 
   function nearestStation(coords) {
     let nearest = null;
-    for (const station of state.data.metro.stations) {
+    for (const station of activeMetroStations()) {
       const distance = distanceKm(coords, station.coords);
       if (!nearest || distance < nearest.distance) nearest = { station, distance };
     }
@@ -341,19 +833,25 @@
     const feature = state.data.admin.features.find(candidate => pointInGeometry(point, candidate.geometry));
     return feature ? feature.properties : null;
   }
-  function identifyLocation(lngLat, point) {
+  function identifyLocation(lngLat, point, options = {}) {
     if (!state.ready) return;
+    pauseCityStory();
+    state.drawerCollapsed = false;
     const coords = [Number(lngLat.lng), Number(lngLat.lat)];
     const waterHit = point ? state.map.queryRenderedFeatures(point, { layers: ['water', 'ocean'] }).length > 0 : false;
-    const rendered = point ? state.map.queryRenderedFeatures(point, { layers: ['admin-fill', 'investment-zones', 'metro-stations'] }) : [];
+    const rendered = point ? state.map.queryRenderedFeatures(point, { layers: ['admin-fill', 'investment-zones', 'metro-stations', 'city-events-active', 'city-events-future'] }) : [];
     const adminFeature = rendered.find(f => f.layer.id === 'admin-fill');
     const zoneFeature = rendered.find(f => f.layer.id === 'investment-zones');
-    const stationFeature = rendered.find(f => f.layer.id === 'metro-stations');
+    const stationFeature = rendered.find(f => f.layer.id === 'metro-stations' && f.properties.built);
+    const cityEventFeature = rendered.find(f => f.layer.id === 'city-events-active' || f.layer.id === 'city-events-future');
     const byId = id => zones.find(z => z.id === id);
     const nearbyZone = zoneFeature ? { zone: byId(zoneFeature.properties.id), distance: distanceKm(coords, byId(zoneFeature.properties.id).coords) } : nearestZone(coords);
-    const station = stationFeature ? { station: state.data.metro.stations.find(s => s.id === stationFeature.properties.id), distance: 0 } : nearestStation(coords);
-    state.selected = { coords, admin: adminFeature?.properties || (waterHit ? null : findAdministrativeProperties(coords)), waterHit, zone: nearbyZone, station };
+    const station = stationFeature ? { station: metroStations().find(s => s.id === stationFeature.properties.id), distance: 0 } : nearestStation(coords);
+    const event = cityEventFeature ? cityEventFeature.properties : (options.includeNearbyEvent ? nearestCityEvent(coords) : null);
+    state.selected = { coords, admin: adminFeature?.properties || (waterHit ? null : findAdministrativeProperties(coords)), waterHit, zone: nearbyZone, station, event };
+    state.drawerCollapsed = isMobileViewport();
     renderPanel();
+    if (state.data) renderAllContent();
     updateSelectionGeometry();
     updateHash();
   }
@@ -361,6 +859,7 @@
   function selectZone(id, announce = true) {
     const zone = zones.find(z => z.id === id);
     if (!zone || !state.ready) return;
+    pauseCityStory();
     if (!state.map.getLayoutProperty('investment-zones', 'visibility') || state.map.getLayoutProperty('investment-zones', 'visibility') !== 'none') {
       state.map.flyTo({ center: zone.coords, zoom: Math.max(11, state.map.getZoom()), duration: reducedMotion ? 0 : 700, essential: true });
     }
@@ -384,13 +883,23 @@
 
   function formatDistance(value) { return value < 1 ? `${Math.round(value * 1000)} m` : `${value.toFixed(1)} km`; }
 
+  function zoneEvidenceStrength(zone) {
+    const labels = atlasCopy().labels || {};
+    const items = Array.isArray(zone.evidence) ? zone.evidence : [];
+    if (!items.length) return labels.noEvidence || (state.lang === 'tr' ? 'Kaynak yok' : 'No sources attached');
+    const confidence = items.every(item => item.confidence === 'high') ? 'high' : items.some(item => item.confidence === 'low') ? 'low' : 'medium';
+    const sourceWord = labels.sourceCount || (state.lang === 'tr' ? 'kaynak' : 'sources');
+    return items.length + ' ' + sourceWord + ' · ' + (labels[confidence] || confidence);
+  }
+
   function renderZoneDrawer(zoneId) {
     const host = $('zoneBrief');
     const zone = zones.find(item => item.id === zoneId);
     if (!host || !zone || !state.selected) {
-      if (host) { host.hidden = true; host.innerHTML = ''; }
+      if (host) { host.hidden = true; host.innerHTML = ''; delete host.dataset.zoneId; }
       return;
     }
+    host.dataset.zoneId = zone.id;
     const language = state.lang;
     const detail = zone[language] || zone.en;
     const labels = atlasCopy().labels || {};
@@ -404,20 +913,35 @@
       return '<label class="zone-check"><input type="checkbox" data-check-key="' + escapeHtml(key) + '"' + (checked ? ' checked' : '') + '><span>' + escapeHtml(item) + '</span></label>';
     }).join('');
     const starred = Boolean(state.shortlist[zone.id]);
-    host.innerHTML =
-      '<div class="brief-head"><h3>' + escapeHtml(state.lang === 'tr' ? zone.nameTr : zone.nameEn) + '</h3><span class="brief-tier">' + escapeHtml(zoneTierLabel(zone)) + '</span></div>' +
-      '<div class="brief-metrics"><div class="brief-metric"><small>' + escapeHtml(ui.entry || (state.lang === 'tr' ? 'Bug?nk? giri?' : 'Entry today')) + '</small><strong>' + escapeHtml(detail.now || '—') + '</strong></div>' +
-      '<div class="brief-metric"><small>' + escapeHtml(ui.scen || (state.lang === 'tr' ? '2036 senaryosu' : '2036 scenario')) + '</small><strong>' + escapeHtml(detail.proj || 'Illustrative') + '</strong></div>' +
+    const risk = detail.risk || zone.risk || (state.lang === 'tr' ? 'Ana risk belirtilmedi.' : 'Main risk not specified.');
+    const compactHtml =
+      '<div id="zoneQuickSummary" class="zone-quick-summary" data-zone-id="' + escapeHtml(zone.id) + '" aria-label="' + escapeHtml(labels.quickSummary || (state.lang === 'tr' ? 'Kısa özet' : 'Quick summary')) + '">' +
+        '<div class="quick-fact"><small>' + escapeHtml(labels.currentPrice || (state.lang === 'tr' ? 'Bugünkü fiyat' : 'Current price')) + '</small><strong>' + escapeHtml(detail.now || '—') + '</strong></div>' +
+        '<div class="quick-fact"><small>' + escapeHtml(labels.possibleUpside || (state.lang === 'tr' ? 'Bu senaryoda olası artış' : 'Possible upside under this scenario')) + '</small><strong>' + escapeHtml(scenarioProjection(zone, language)) + '</strong></div>' +
+        '<div class="quick-fact quick-fact-wide"><small>' + escapeHtml(labels.mainRisk || (state.lang === 'tr' ? 'Ana risk' : 'Main risk')) + '</small><p>' + escapeHtml(risk) + '</p></div>' +
+        '<div class="quick-fact"><small>' + escapeHtml(labels.evidenceStrength || (state.lang === 'tr' ? 'Kanıt gücü' : 'Evidence strength')) + '</small><strong>' + escapeHtml(zoneEvidenceStrength(zone)) + '</strong></div>' +
+      '</div>' +
+      '<p class="scenario-insight">' + escapeHtml(labels.scenarioInsight || (state.lang === 'tr' ? 'Bu rakamın kaynağı: kamu planları, ulaşım, yakındaki projeler ve piyasa göstergeleri. Bu bir senaryodur, garanti değildir.' : 'Where this comes from: public plans, transport, nearby projects and market signals. This is a scenario, not a promise.')) + '</p>';
+    const detailHtml =
+      '<div id="zoneDetailContent" class="zone-detail-content" data-zone-id="' + escapeHtml(zone.id) + '">' +
+      '<div class="brief-metrics"><div class="brief-metric"><small>' + escapeHtml(ui.entry || (state.lang === 'tr' ? 'Bugünkü giriş' : 'Entry today')) + '</small><strong>' + escapeHtml(detail.now || '—') + '</strong></div>' +
+      '<div class="brief-metric"><small>' + escapeHtml(ui.scen || (state.lang === 'tr' ? '2036 senaryosu' : '2036 scenario')) + '</small><strong>' + escapeHtml(scenarioProjection(zone, language)) + '</strong></div>' +
       '<div class="brief-metric"><small>' + escapeHtml(state.lang === 'tr' ? 'Kira getirisi' : 'Rental yield') + '</small><strong>' + escapeHtml(detail.yield || '—') + '</strong></div></div>' +
+      '<p class="scenario-insight">' + escapeHtml(labels.scenarioInsight || (state.lang === 'tr' ? 'Bu rakamın kaynağı: kamu planları, ulaşım, yakındaki projeler ve piyasa göstergeleri. Bu bir senaryodur, garanti değildir.' : 'Where this comes from: public plans, transport, nearby projects and market signals. This is a scenario, not a promise.')) + '</p>' +
       '<div class="brief-section"><h4>' + escapeHtml(labels.whatHappening || 'What is happening?') + '</h4><div class="brief-projects">' + projectHtml + '</div></div>' +
       renderLocalPlaces(zone) +
       renderEvidence(zone) +
+      renderScenarioFactors(zone) +
       '<div class="brief-section"><h4>' + escapeHtml(labels.whyMatters || 'Why this place matters') + '</h4><p>' + escapeHtml(detail.thesis || '') + '</p></div>' +
-      '<div class="brief-section"><h4>' + escapeHtml(labels.riskQuestion || 'What could go wrong?') + '</h4><p>' + escapeHtml(detail.risk || zone.risk || '') + '</p></div>' +
+      '<div class="brief-section"><h4>' + escapeHtml(labels.riskQuestion || 'What could go wrong?') + '</h4><p>' + escapeHtml(risk) + '</p></div>' +
       '<div class="brief-section"><h4>' + escapeHtml(labels.nextStep || 'A sensible next step') + '</h4><p>' + escapeHtml(detail.act || zone.act || '') + '</p></div>' +
       '<div class="brief-section"><h4>' + escapeHtml(labels.checklist || 'Before you buy here') + '</h4><div class="brief-checklist">' + checklistHtml + '</div></div>' +
       '<div class="drawer-actions"><button type="button" class="drawer-action' + (starred ? ' starred' : '') + '" data-zone-star="' + escapeHtml(zone.id) + '">' + escapeHtml(starred ? (labels.remove || 'Remove from shortlist') : (labels.add || 'Add to shortlist')) + '</button>' +
-      '<button type="button" class="drawer-action" data-open-tool="accordion-deal">' + escapeHtml(labels.check || 'Check a real listing') + '</button></div>';
+      '<button type="button" class="drawer-action" data-open-tool="accordion-deal">' + escapeHtml(labels.check || 'Check it') + '</button></div>' +
+      '</div>';
+    host.innerHTML =
+      '<div class="brief-head" data-zone-id="' + escapeHtml(zone.id) + '"><h3>' + escapeHtml(state.lang === 'tr' ? zone.nameTr : zone.nameEn) + '</h3><span class="brief-tier">' + escapeHtml(zoneTierLabel(zone)) + '</span></div>' +
+      (state.drawerCollapsed && isMobileViewport() ? compactHtml : detailHtml);
     host.hidden = false;
     host.querySelector('[data-zone-star]')?.addEventListener('click', event => toggleShortlist(event.currentTarget.dataset.zoneStar));
     host.querySelector('[data-open-tool]')?.addEventListener('click', event => {
@@ -432,7 +956,17 @@
   function renderPanel() {
     const u = tr();
     $('panelKicker').textContent = u.kicker;
+    $('closeDetails').textContent = u.closeDetails;
+    $('collapseDetails').textContent = u.collapseDetails;
+    $('showDetails').textContent = u.showDetails;
+    $('emptyPanelToggle').textContent = state.emptyPanelCollapsed ? u.showPanel : u.hidePanel;
+    $('emptyPanelToggle').setAttribute('aria-controls', 'panelContent');
+    $('emptyPanelToggle').setAttribute('aria-expanded', String(!state.emptyPanelCollapsed));
+    $('collapseDetails').setAttribute('aria-controls', 'zoneBrief');
+    $('showDetails').setAttribute('aria-controls', 'zoneBrief');
+    $('panelDetailsTitle').textContent = u.locationDetails;
     $('panelNote').textContent = u.rayonNote;
+    renderNextAction();
     $('rayonMetricLabel').textContent = u.administrative;
     $('zoneMetricLabel').textContent = u.investment;
     $('stationMetricLabel').textContent = u.nearestMetro;
@@ -440,29 +974,69 @@
     $('airportMetricLabel').textContent = u.airport;
     $('coordinateMetricLabel').textContent = u.coordinates;
     if (!state.selected) {
+      state.drawerCollapsed = false;
+      $('v2ZoneDrawer').classList.toggle('is-empty-collapsed', state.emptyPanelCollapsed);
+      $('emptyPanelToggle').hidden = false;
+      $('panelContent').hidden = state.emptyPanelCollapsed;
+      $('v2ZoneDrawer').classList.remove('is-collapsed');
+      delete $('v2ZoneDrawer').dataset.zoneId;
       $('panelTitle').textContent = u.emptyTitle;
       $('panelIntro').textContent = u.emptyIntro;
       $('panelGrid').hidden = true;
+      $('panelDetailsTitle').hidden = true;
       $('clearSelection').hidden = true;
+      $('collapseDetails').hidden = true;
+      $('showDetails').hidden = true;
+      $('closeDetails').hidden = true;
+      $('collapseDetails').setAttribute('aria-expanded', 'true');
+      $('showDetails').setAttribute('aria-expanded', 'false');
       renderZoneDrawer(null);
       return;
     }
     const selected = state.selected;
+    state.emptyPanelCollapsed = false;
+    $('emptyPanelToggle').hidden = true;
+    $('panelContent').hidden = false;
+    $('v2ZoneDrawer').classList.remove('is-empty-collapsed');
     const adminName = selected.admin ? (state.lang === 'tr' ? (selected.admin.nameAz || selected.admin.nameEn) : selected.admin.nameEn) : u.noRayon;
     const zoneName = selected.zone?.zone ? (state.lang === 'tr' ? selected.zone.zone.nameTr : selected.zone.zone.nameEn) : u.noZone;
+    const selectedZone = selected.zone?.zone || null;
+    if (selectedZone) {
+      $('v2ZoneDrawer').dataset.zoneId = selectedZone.id;
+      $('showDetails').setAttribute('aria-label', (u.showDetailsFor || u.showDetails) + ' ' + zoneName);
+    } else {
+      delete $('v2ZoneDrawer').dataset.zoneId;
+      $('showDetails').setAttribute('aria-label', u.showDetails);
+    }
     const station = selected.station?.station;
     const stationName = station ? (state.lang === 'tr' ? station.nameTr : station.nameEn) + ' · ' + formatDistance(selected.station.distance) : u.noMetro;
     $('panelTitle').textContent = zoneName;
-    $('panelIntro').textContent = adminName + ' · ' + state.year;
+    const eventLabel = selectedCityEventLabel(selected.event);
+    $('panelIntro').textContent = [adminName, state.year, eventLabel].filter(Boolean).join(' · ');
     $('rayonMetric').textContent = adminName;
     $('zoneMetric').textContent = selected.zone ? zoneName + ' · ' + formatDistance(selected.zone.distance) : u.noZone;
     $('stationMetric').textContent = stationName;
     $('centreMetric').textContent = formatDistance(distanceKm(selected.coords, CENTRE));
     $('airportMetric').textContent = formatDistance(distanceKm(selected.coords, AIRPORT));
     $('coordinateMetric').textContent = selected.coords[1].toFixed(4) + ', ' + selected.coords[0].toFixed(4);
+    $('panelDetailsTitle').hidden = false;
     $('panelGrid').hidden = false;
     $('clearSelection').hidden = false;
+    const collapsed = state.drawerCollapsed;
+    $('v2ZoneDrawer').classList.toggle('is-collapsed', collapsed);
+    $('panelIntro').hidden = collapsed;
+    $('panelDetailsTitle').hidden = collapsed;
+    $('panelGrid').hidden = collapsed;
+    $('panelNote').hidden = collapsed;
+    $('zoneBrief').hidden = collapsed && !isMobileViewport();
+    $('clearSelection').hidden = collapsed;
+    $('collapseDetails').hidden = collapsed;
+    $('showDetails').hidden = !collapsed;
+    $('collapseDetails').setAttribute('aria-expanded', String(!collapsed));
+    $('showDetails').setAttribute('aria-expanded', 'false');
+    $('closeDetails').hidden = false;
     renderZoneDrawer(selected.zone?.zone?.id);
+    $('zoneBrief').hidden = collapsed && !isMobileViewport();
   }
   function searchPlaces(query) {
     const needle = String(query || '').trim().toLocaleLowerCase();
@@ -512,6 +1086,15 @@
   function renderHowTo() {
     const how = atlasCopy().howTo;
     if (!$('v2HowTo') || !how) return;
+    const video = how.video || {};
+    const videoHref = 'how-to.html?lang=' + (state.lang === 'tr' ? 'tr' : 'en');
+    const videoLabel = video.linkLabel || (state.lang === 'tr' ? 'Haritayı nasıl kullanacağınızı izle' : 'Watch how to use the map');
+    const videoLink = $('howToVideoLink');
+    if (videoLink) {
+      videoLink.setAttribute('href', videoHref);
+      const videoLabelNode = $('howToVideoLabel');
+      if (videoLabelNode) videoLabelNode.textContent = videoLabel;
+    }
     $('v2HowTo').innerHTML = '<h2 id="howToTitle">' + escapeHtml(how.title) + '</h2><div><p>' + escapeHtml(how.intro) + '</p><div class="howto-steps">' +
       (how.steps || []).map((step, index) => '<div class="howto-step"><b>' + (index + 1) + '</b><span>' + escapeHtml(step) + '</span></div>').join('') + '</div></div>';
   }
@@ -520,50 +1103,121 @@
     const content = atlasCopy();
     const ui = content.ui || {};
     const story = ui.tmY?.[String(state.year)] || '';
-    return '<div class="tool-grid"><div class="tool-card"><h3>' + escapeHtml(ui.tmTitle || 'Time machine') + '</h3><p>' + escapeHtml(content.sections.time.whatThisMeans) + '</p><div class="year-track"><output id="timeYearOutput">' + state.year + '</output><input id="timeYear" type="range" min="2026" max="2036" step="1" value="' + state.year + '" aria-label="Timeline year"></div><div class="tool-actions"><button type="button" class="primary-action" id="timePlay">' + escapeHtml(content.labels.play || 'Play the decade') + '</button></div></div><div class="year-story" id="timeStory"><strong>' + state.year + '</strong>' + escapeHtml(story) + '</div></div>';
+    const playLabel = state.timeTimer ? (content.labels.pause || 'Pause') : (content.labels.play || 'Play the decade');
+    return '<div class="tool-grid"><div class="tool-card"><h3>' + escapeHtml(ui.tmTitle || 'Time machine') + '</h3><p>' + escapeHtml(content.sections.time.whatThisMeans) + '</p><div class="year-track"><output id="timeYearOutput">' + state.year + '</output><input id="timeYear" type="range" min="2026" max="2036" step="1" value="' + state.year + '" aria-label="Timeline year"></div><div class="tool-actions"><button type="button" class="primary-action" id="timePlay">' + escapeHtml(playLabel) + '</button><button type="button" class="secondary-action" id="zoneTourStart">' + escapeHtml(ui.tourBtn || '') + '</button></div></div><div class="year-story" id="timeStory"><strong>' + state.year + '</strong>' + escapeHtml(story) + '</div></div>';
+  }
+
+  function renderYearSliderHint() {
+    const input = $('timeYear');
+    const existing = input?.parentElement?.querySelector('.year-slider-hint');
+    if (!input || existing) return;
+    const text = atlasCopy().sections.time.yearSliderHint;
+    if (!text) return;
+    const hint = document.createElement('p');
+    hint.className = 'year-slider-hint';
+    hint.textContent = text;
+    input.parentElement.appendChild(hint);
+  }
+
+  function scenarioGroupLabel(ui, group) {
+    return group === 'oil' ? (ui.scOil || 'Oil money') : group === 'infra' ? (ui.scInfra || 'Metro & roads') : (ui.scCur || 'Manat');
+  }
+
+  function scenarioOptionLabel(ui, group, option) {
+    const keys = {
+      oil: { norm: 'scNorm', bad: 'scBad', good: 'scGood' },
+      infra: { on: 'scOn', late: 'scLate' },
+      cur: { stable: 'scStable', weak: 'scWeak' }
+    };
+    const fallbacks = {
+      norm: 'Normal', bad: 'Bad years', good: 'Boom years',
+      on: 'Built on time', late: 'Years late', stable: 'Stays stable', weak: 'Loses value'
+    };
+    return ui[keys[group][option]] || fallbacks[option];
   }
 
   function renderScenarios() {
     const content = atlasCopy();
+    const labels = content.labels || {};
     const ui = content.ui || {};
     const current = state.scenarios;
+    const selectedZone = state.selected?.zone?.zone;
+    const breakdown = selectedZone ? scenarioBreakdown(selectedZone, current) : null;
+    const scenarioName = selectedZone ? (state.lang === 'tr' ? selectedZone.nameTr : selectedZone.nameEn) : '';
+    const scenarioResult = selectedZone ? scenarioGrowth(selectedZone) : null;
+    const activeChange = state.scenarioAnimation && selectedZone && state.scenarioAnimation.zoneId === selectedZone.id ? state.scenarioAnimation : null;
+    const scenarioOutput = selectedZone ? scenarioName + ': ' + formatScenarioPercent(scenarioResult) + ' ' + (labels.scenarioOutput || 'illustrative growth sensitivity') : labels.noData;
+    const scenarioOutputHtml = selectedZone
+      ? '<span aria-hidden="true">' + escapeHtml(scenarioName) + ': <span id="scenarioResultValue" aria-hidden="true">' + escapeHtml(formatScenarioPercent(scenarioResult)) + '</span> ' + escapeHtml(labels.scenarioOutput || 'illustrative growth sensitivity') + '</span><span class="sr-only">' + escapeHtml(scenarioOutput) + '</span>'
+      : escapeHtml(scenarioOutput);
+    const modifierRows = breakdown ? Object.entries(breakdown.modifiers).map(([group, item]) =>
+      '<div class="scenario-modifier' + (activeChange?.group === group ? ' is-changed' : '') + '" data-scenario-group="' + escapeHtml(group) + '"><span>' + escapeHtml(scenarioGroupLabel(ui, group)) + ': ' + escapeHtml(scenarioOptionLabel(ui, group, item.option)) + '</span><strong>×' + item.multiplier.toFixed(2) + '</strong></div>'
+    ).join('') : '';
+    const changeHtml = activeChange
+      ? '<p id="scenarioDelta" class="scenario-delta"><strong>' + escapeHtml(labels.scenarioDelta || (state.lang === 'tr' ? 'Değişim' : 'Change')) + ':</strong> ' + escapeHtml(formatScenarioDelta(activeChange.to - activeChange.from)) + '</p>' +
+        '<p id="scenarioExplanation" class="scenario-explanation">' + escapeHtml(scenarioChangeExplanation(activeChange)) + '</p>'
+      : '';
+    const breakdownHtml = breakdown
+      ? '<div id="scenarioBreakdown" data-scenario-base="' + breakdown.baseGrowth + '" data-scenario-result="' + breakdown.roundedGrowth + '">' +
+        '<p><strong>' + escapeHtml(labels.editorialBaseline || 'Editorial scenario baseline') + ':</strong> ' + breakdown.baseGrowth + '%</p>' +
+        '<div><strong>' + escapeHtml(labels.activeModifiers || 'Sensitivity modifiers') + '</strong>' + modifierRows + '</div>' +
+        '<p><strong>' + escapeHtml(labels.calculatedResult || 'Illustrative sensitivity result') + ':</strong> ' + breakdown.roundedGrowth + '%</p>' +
+        changeHtml +
+        '<p>' + escapeHtml(labels.roundingRule || 'Rounded to the nearest 5 percentage points') + '</p>' +
+        '<div class="tool-note">' + escapeHtml(labels.scenarioMethodWarning || 'This calculation uses an editorial zone baseline and fixed sensitivity multipliers. It is not trained on property transactions and is not a valuation or forecast.') + '</div></div>'
+      : '';
     return '<div class="tool-grid"><div class="tool-card"><h3>' + escapeHtml(content.sections.scenarios.title) + '</h3><p>' + escapeHtml(content.sections.scenarios.whatThisMeans) + '</p>' +
       '<label>' + escapeHtml(ui.scOil || 'Oil money') + '<select id="scenarioOil"><option value="norm"' + (current.oil === 'norm' ? ' selected' : '') + '>' + escapeHtml(ui.scNorm || 'Normal') + '</option><option value="bad"' + (current.oil === 'bad' ? ' selected' : '') + '>' + escapeHtml(ui.scBad || 'Bad years') + '</option><option value="good"' + (current.oil === 'good' ? ' selected' : '') + '>' + escapeHtml(ui.scGood || 'Boom years') + '</option></select></label>' +
       '<label>' + escapeHtml(ui.scInfra || 'Metro & roads') + '<select id="scenarioInfra"><option value="on"' + (current.infra === 'on' ? ' selected' : '') + '>' + escapeHtml(ui.scOn || 'Built on time') + '</option><option value="late"' + (current.infra === 'late' ? ' selected' : '') + '>' + escapeHtml(ui.scLate || 'Years late') + '</option></select></label>' +
       '<label>' + escapeHtml(ui.scCur || 'Manat') + '<select id="scenarioCurrency"><option value="stable"' + (current.cur === 'stable' ? ' selected' : '') + '>' + escapeHtml(ui.scStable || 'Stays stable') + '</option><option value="weak"' + (current.cur === 'weak' ? ' selected' : '') + '>' + escapeHtml(ui.scWeak || 'Loses value') + '</option></select></label></div>' +
-      '<div class="tool-card"><h3>' + escapeHtml(content.labels.sensitivity || 'Sensitivity, not a forecast') + '</h3><p id="scenarioOutput">' + escapeHtml(state.selected?.zone?.zone ? ((state.lang === 'tr' ? state.selected.zone.zone.nameTr : state.selected.zone.zone.nameEn) + ': ' + scenarioGrowth(state.selected.zone.zone) + '% illustrative growth sensitivity') : content.labels.noData) + '</p><div class="tool-note">' + escapeHtml(ui.scNoteWeak || content.labels.noAdvice) + '</div></div></div>';
+      '<div class="tool-card"><h3>' + escapeHtml(labels.sensitivity || 'Sensitivity, not a forecast') + '</h3><p id="scenarioOutput" aria-live="polite" aria-atomic="true">' + scenarioOutputHtml + '</p>' + breakdownHtml + '<div class="tool-note">' + escapeHtml(ui.scNoteWeak || labels.noAdvice) + '</div></div></div>';
   }
 
   function plannerBuyingText(zone, budget) {
-    if (budget < Number(zone.mint || 0)) return 'Below rough entry point (' + formatMoney(zone.mint) + ')';
+    const content = atlasCopy();
+    const labels = content.labels || {};
+    if (budget < Number(zone.mint || 0)) return (labels.plannerBelowEntry || 'Below rough entry point') + ' (' + formatMoney(zone.mint) + ')';
     const range = zone.med || [500, 1000];
     const mid = (Number(range[0]) + Number(range[1])) / 2;
-    if (zone.kind === 'land') return 'Roughly ' + (budget / (mid * 100)).toFixed(1) + ' sot';
-    return 'About ' + Math.max(1, Math.round(budget / mid)) + ' m² at the rough midpoint';
+    if (zone.kind === 'land') {
+      const ui = atlasCopy().ui || {};
+      return String(ui.plannerLandEstimate || 'Roughly __N__ sot at a rough midpoint estimate; not a guaranteed purchasable plot').replace('__N__', (budget / (mid * 100)).toFixed(1));
+    }
+    return String(labels.plannerAreaEstimate || 'About __N__ m² at the rough midpoint').replace('__N__', Math.max(1, Math.round(budget / mid)));
   }
 
   function formatMoney(value) {
     return '$' + Math.round(Number(value) || 0).toLocaleString(state.lang === 'tr' ? 'tr-TR' : 'en-US');
   }
 
-  function plannerListHtml(budget) {
-    return zones.slice().sort((a, b) => Number(a.mint || 0) - Number(b.mint || 0)).map(zone => '<div class="zone-result"><strong>' + escapeHtml(state.lang === 'tr' ? zone.nameTr : zone.nameEn) + '</strong><small>' + escapeHtml(plannerBuyingText(zone, budget)) + '</small></div>').join('');
+  function plannerListHtml(budget, candidateZones = plannerReachableZones(budget)) {
+    return candidateZones.slice().sort((a, b) => Number(a.mint || 0) - Number(b.mint || 0)).map(zone => '<div class="zone-result"><strong>' + escapeHtml(state.lang === 'tr' ? zone.nameTr : zone.nameEn) + '</strong><small>' + escapeHtml(plannerBuyingText(zone, budget)) + '</small></div>').join('');
+  }
+
+  function plannerOutOfReachHtml(budget) {
+    const outOfReach = plannerOutOfReachZones(budget);
+    if (!outOfReach.length) return '';
+    const ui = atlasCopy().ui || {};
+    const title = state.profile ? (ui.plannerAboveBudget || 'Profile matches above this budget') : (ui.plannerAboveBudgetAny || 'Other zones above this budget');
+    return '<div id="plannerOutOfReach" class="planner-unreachable"><h4>' + escapeHtml(title) + '</h4><div class="zone-result-list">' + plannerListHtml(budget, outOfReach) + '</div></div>';
   }
 
   function renderPlanner() {
     const content = atlasCopy();
+    const labels = content.labels || {};
     const ui = content.ui || {};
-    const budget = Number(state.plannerBudget || 50000);
+    const budget = plannerBudgetValue();
     const profiles = content.profiles || {};
     const profileLabels = { safe: ui.pr1T || 'Safer and easier to rent', patient: ui.pr2T || 'Patient land buyer', summer: ui.pr3T || 'Summer and investment', rent: ui.pr4T || 'Monthly rental income' };
-    return '<div class="tool-grid"><div class="tool-card"><h3>' + escapeHtml(ui.planT || content.sections.planner.title) + '</h3><p>' + escapeHtml(ui.planL || content.sections.planner.description) + '</p><label>' + escapeHtml(content.labels.budget || 'My budget (USD)') + '<output id="budgetOutput">' + formatMoney(budget) + '</output><input id="budgetRange" type="range" min="5000" max="200000" step="5000" value="' + budget + '" aria-label="' + escapeHtml(content.labels.budget || 'My budget') + '"></label><label>Buyer profile<select id="profileSelect"><option value="">No profile</option>' + Object.keys(profiles).map(key => '<option value="' + key + '"' + (state.profile === key ? ' selected' : '') + '>' + escapeHtml(profileLabels[key]) + '</option>').join('') + '</select></label><p class="tool-note">' + escapeHtml(ui.budNote || content.sections.planner.whatThisMeans) + '</p></div><div class="tool-card"><h3>What this budget reaches</h3><div id="plannerResults" class="zone-result-list">' + plannerListHtml(budget) + '</div></div></div>';
+    return '<div class="tool-grid"><div class="tool-card"><h3>' + escapeHtml(ui.planT || content.sections.planner.title) + '</h3><p>' + escapeHtml(ui.planL || content.sections.planner.description) + '</p><label>' + escapeHtml(labels.budget || 'My budget (USD)') + '<output id="budgetOutput">' + formatMoney(budget) + '</output><input id="budgetRange" type="range" min="5000" max="200000" step="5000" value="' + budget + '" aria-label="' + escapeHtml(labels.budget || 'My budget') + '"></label><label>' + escapeHtml(labels.profile || 'Buyer profile') + '<select id="profileSelect"><option value="">' + escapeHtml(labels.noProfile || 'No profile') + '</option>' + Object.keys(profiles).map(key => '<option value="' + key + '"' + (state.profile === key ? ' selected' : '') + '>' + escapeHtml(profileLabels[key]) + '</option>').join('') + '</select></label><p class="tool-note">' + escapeHtml(ui.budNote || content.sections.planner.whatThisMeans) + '</p></div><div class="tool-card"><h3>' + escapeHtml(ui.plannerReachable || 'What this budget reaches') + '</h3><div id="plannerResults" class="zone-result-list">' + plannerListHtml(budget) + '</div><div id="plannerOutOfReachHost">' + plannerOutOfReachHtml(budget) + '</div></div></div>';
   }
 
   function renderDealChecker() {
     const content = atlasCopy();
+    const labels = content.labels || {};
     const ui = content.ui || {};
     const selectedId = state.selected?.zone?.zone?.id || zones[0]?.id;
-    return '<div class="tool-grid"><div class="tool-card"><h3>' + escapeHtml(ui.dealT || content.sections.deal.title) + '</h3><p>' + escapeHtml(ui.dealSub || content.sections.deal.description) + '</p><label>' + escapeHtml(ui.dZone || 'Area') + '<select id="dealZone">' + zones.map(zone => '<option value="' + zone.id + '"' + (zone.id === selectedId ? ' selected' : '') + '>' + escapeHtml(state.lang === 'tr' ? zone.nameTr : zone.nameEn) + '</option>').join('') + '</select></label><label>' + escapeHtml(content.labels.price || ui.dPrice || 'Asking price (USD)') + '<input id="dealPrice" type="number" min="0" inputmode="decimal" placeholder="e.g. 85000"></label><label>' + escapeHtml(content.labels.size || ui.dArea || 'Size (m²)') + '<input id="dealArea" type="number" min="1" inputmode="decimal" placeholder="e.g. 70"></label><div class="tool-actions"><button type="button" class="primary-action" id="dealCheck">' + escapeHtml(content.labels.check || ui.dGo || 'Check it') + '</button></div><div id="dealResult" class="tool-result" aria-live="polite"></div></div><div class="tool-card"><h3>How to read it</h3><p>' + escapeHtml(content.sections.deal.whatThisMeans) + '</p><div class="tool-note">' + escapeHtml(ui.dCaveat || content.labels.noAdvice) + '</div></div></div>';
+    return '<div class="tool-grid"><div class="tool-card"><h3>' + escapeHtml(ui.dealT || content.sections.deal.title) + '</h3><p>' + escapeHtml(ui.dealSub || content.sections.deal.description) + '</p><label>' + escapeHtml(ui.dZone || 'Area') + '<select id="dealZone">' + zones.map(zone => '<option value="' + zone.id + '"' + (zone.id === selectedId ? ' selected' : '') + '>' + escapeHtml(state.lang === 'tr' ? zone.nameTr : zone.nameEn) + '</option>').join('') + '</select></label><label>' + escapeHtml(labels.price || ui.dPrice || 'Asking price (USD)') + '<input id="dealPrice" type="number" min="0" inputmode="decimal" placeholder="' + escapeHtml(labels.priceExample || 'e.g. 85000') + '"></label><label>' + escapeHtml(labels.size || ui.dArea || 'Size (m²)') + '<input id="dealArea" type="number" min="1" inputmode="decimal" placeholder="' + escapeHtml(labels.sizeExample || 'e.g. 70') + '"></label><div class="tool-actions"><button type="button" class="primary-action" id="dealCheck">' + escapeHtml(labels.check || ui.dGo || 'Check it') + '</button></div><div id="dealResult" class="tool-result" aria-live="polite"></div></div><div class="tool-card"><h3>' + escapeHtml(labels.howToRead || 'How to read it') + '</h3><p>' + escapeHtml(content.sections.deal.whatThisMeans) + '</p><div class="tool-note">' + escapeHtml(ui.dCaveat || labels.noAdvice) + '</div></div></div>';
   }
 
   function checkDeal() {
@@ -585,6 +1239,51 @@
     output.innerHTML = '<div class="year-story"><strong>' + escapeHtml(formatMoney(perM2) + ' / m²') + '</strong>' + escapeHtml(verdict) + '<br><small>' + escapeHtml((ui.dGrow || 'If the area grows as expected, this could be worth about') + ' ' + formatMoney(price * (1 + growth / 100)) + ' ' + (ui.dBy || 'by 2036.') + ' ' + (ui.dCaveat || 'Rough guide only.')) + '</small></div>';
   }
 
+  function comparisonPropertyType(zone) {
+    const labels = atlasCopy().labels || {};
+    return zone.kind === 'land'
+      ? (labels.comparisonLand || (state.lang === 'tr' ? 'Arazi / villa arsası' : 'Land / villa plot'))
+      : (labels.comparisonApartment || (state.lang === 'tr' ? 'Daire / yeni yapı' : 'Apartment / new-build'));
+  }
+
+  function comparisonDependency(zone) {
+    const labels = atlasCopy().labels || {};
+    const factors = Array.isArray(zone.scenarioFactors) ? zone.scenarioFactors.filter(factor => factor.role === 'dependency') : [];
+    return factors.length
+      ? factors.map(factor => state.lang === 'tr' ? (factor.tr || factor.en) : factor.en).join(' · ')
+      : (labels.comparisonNoDependency || (state.lang === 'tr' ? 'Kanıt defterinde adlandırılmış bağımlılık yok.' : 'No named dependency in the evidence ledger.'));
+  }
+
+  function comparisonSensitivity(zone) {
+    const labels = atlasCopy().labels || {};
+    const current = formatScenarioPercent(scenarioGrowth(zone));
+    const baseline = formatScenarioPercent(scenarioBaseGrowth(zone));
+    const output = labels.scenarioOutput || (state.lang === 'tr' ? 'örnek büyüme duyarlılığı' : 'illustrative growth sensitivity');
+    const baselineNote = current === baseline ? '' : ' · ' + (labels.comparisonBaseline || (state.lang === 'tr' ? 'başlangıç' : 'baseline')) + ' ' + baseline;
+    return current + ' ' + output + baselineNote;
+  }
+
+  function comparisonFields(zone) {
+    const content = atlasCopy();
+    const labels = content.labels || {};
+    const detail = zone[state.lang] || zone.en;
+    return [
+      ['entry', labels.comparisonEntry || (state.lang === 'tr' ? 'Kaba giriş aralığı' : 'Rough entry range'), detail.now || zone.entry || '—'],
+      ['type', labels.comparisonType || (state.lang === 'tr' ? 'Mülk türü' : 'Property type'), comparisonPropertyType(zone)],
+      ['opportunity', labels.comparisonOpportunity || (state.lang === 'tr' ? 'Ana fırsat' : 'Main opportunity'), detail.thesis || detail.act || '—'],
+      ['risk', labels.comparisonRisk || (state.lang === 'tr' ? 'Ana risk' : 'Main risk'), detail.risk || zone.risk || '—'],
+      ['evidence', labels.comparisonEvidence || (state.lang === 'tr' ? 'Kanıt durumu' : 'Evidence status'), zoneEvidenceStrength(zone)],
+      ['dependency', labels.comparisonDependency || (state.lang === 'tr' ? 'Kritik bağımlılık' : 'Critical dependency'), comparisonDependency(zone)],
+      ['sensitivity', labels.comparisonSensitivity || (state.lang === 'tr' ? 'Senaryo duyarlılığı' : 'Scenario sensitivity'), comparisonSensitivity(zone)]
+    ];
+  }
+
+  function comparisonPlaceHtml(zone, mobile = false) {
+    const content = atlasCopy();
+    const name = state.lang === 'tr' ? zone.nameTr : zone.nameEn;
+    return '<div class="' + (mobile ? 'comparison-mobile-place' : 'comparison-place') + '" data-zone-id="' + escapeHtml(zone.id) + '"><strong>' + escapeHtml(name) + '</strong><label><span class="sr-only">' + escapeHtml(content.labels.amount || 'Amount') + '</span><input type="number" min="0" placeholder="' + escapeHtml(content.labels.amount || 'Amount') + '" data-shortlist-amount="' + escapeHtml(zone.id) + '" value="' + (Number(state.shortlistAmounts[zone.id]) || '') + '"></label></div>';
+  }
+
   function renderShortlist() {
     const article = $('accordion-shortlist');
     if (!article) return;
@@ -595,12 +1294,22 @@
       return;
     }
     const total = ids.reduce((sum, id) => sum + (Number(state.shortlistAmounts[id]) || 0), 0);
-    const rows = ids.map(id => {
-      const zone = zones.find(item => item.id === id);
-      const detail = zone[state.lang] || zone.en;
-      return '<div class="shortlist-row"><strong>' + escapeHtml(state.lang === 'tr' ? zone.nameTr : zone.nameEn) + '</strong><span>' + escapeHtml(detail.now || '—') + '</span><span>' + escapeHtml(detail.yield || '—') + '</span><label><span class="sr-only">Amount</span><input type="number" min="0" placeholder="Amount" data-shortlist-amount="' + zone.id + '" value="' + (Number(state.shortlistAmounts[id]) || '') + '"></label></div>';
-    }).join('');
-    article.dataset.shortlistBody = '<div class="tool-card"><p>' + escapeHtml(content.labels.saved || 'Saved on this device') + ' · Total: ' + escapeHtml(formatMoney(total)) + '</p><div class="shortlist-table">' + rows + '</div><div class="tool-note">' + escapeHtml(content.labels.noAdvice || 'Not financial advice') + '</div></div>';
+    const comparisonZones = ids.slice(0, 3).map(id => zones.find(zone => zone.id === id));
+    const fields = comparisonZones[0] ? comparisonFields(comparisonZones[0]).map(field => ({ key: field[0], label: field[1] })) : [];
+    const desktopHeader = '<div class="comparison-row comparison-header"><span class="comparison-label" aria-hidden="true"></span>' + comparisonZones.map(zone => comparisonPlaceHtml(zone)).join('') + '</div>';
+    const desktopRows = fields.map(field => '<div class="comparison-row" data-comparison-criterion="' + escapeHtml(field.key) + '"><strong class="comparison-label">' + escapeHtml(field.label) + '</strong>' + comparisonZones.map(zone => {
+      const value = comparisonFields(zone).find(item => item[0] === field.key)?.[2] || '—';
+      return '<div class="comparison-value" data-zone-id="' + escapeHtml(zone.id) + '">' + escapeHtml(value) + '</div>';
+    }).join('') + '</div>').join('');
+    const mobileRows = fields.map(field => '<section class="comparison-criterion" data-comparison-criterion="' + escapeHtml(field.key) + '"><h4>' + escapeHtml(field.label) + '</h4><div class="comparison-values">' + comparisonZones.map(zone => {
+      const name = state.lang === 'tr' ? zone.nameTr : zone.nameEn;
+      const value = comparisonFields(zone).find(item => item[0] === field.key)?.[2] || '—';
+      return '<div class="comparison-value" data-zone-id="' + escapeHtml(zone.id) + '"><strong>' + escapeHtml(name) + '</strong><span>' + escapeHtml(value) + '</span></div>';
+    }).join('') + '</div></section>').join('');
+    const overflow = ids.length > comparisonZones.length
+      ? '<p class="comparison-overflow">' + escapeHtml(content.labels.comparisonOverflow || (state.lang === 'tr' ? 'İlk üç kayıtlı yer gösteriliyor; diğer kayıtlı yerler kısa listenizde kalır.' : 'Showing the first three saved places; other saved places remain on your shortlist.')) + '</p>'
+      : '';
+    article.dataset.shortlistBody = '<div class="tool-card"><p>' + escapeHtml(content.labels.saved || 'Saved on this device') + ' · ' + escapeHtml(content.labels.total || 'Total') + ': ' + escapeHtml(formatMoney(total)) + '</p><p class="comparison-intro">' + escapeHtml(content.labels.comparisonIntro || (state.lang === 'tr' ? 'Aynı bilgileri kayıtlı en fazla üç yer için karşılaştırın. Genel puan veya kazanan hesaplanmaz.' : 'Compare the same facts across up to three saved places. No overall score or winner is calculated.')) + '</p><div id="shortlistComparison" class="shortlist-comparison" style="--comparison-count:' + comparisonZones.length + '"><div class="comparison-desktop" role="table">' + desktopHeader + desktopRows + '</div><div class="comparison-mobile"><div class="comparison-mobile-places">' + comparisonZones.map(zone => comparisonPlaceHtml(zone, true)).join('') + '</div>' + mobileRows + '</div></div>' + overflow + '<div class="tool-note">' + escapeHtml(content.labels.noAdvice || 'Not financial advice') + '</div></div>';
   }
 
   function evidenceLegend() {
@@ -610,7 +1319,10 @@
 
   function renderSources() {
     const content = atlasCopy();
-    return '<div class="source-list">' + evidenceLegend() + '<p><strong>Geography:</strong> ' + escapeHtml('Baku and Absheron rayon polygons, local PMTiles basemap, and the offline place gazetteer in data/.') + '</p><p><strong>Projects:</strong> ' + escapeHtml('Built, funded, planned, and scenario-only labels are kept separate in the shared zone briefs. Planned lines and sensitivities must be verified before any purchase.') + '</p><p><strong>How to read the circles:</strong> ' + escapeHtml(content.sections.sources.whatThisMeans) + '</p><div class="disclaimer-box">' + escapeHtml(content.disclaimer) + '</div></div>';
+    const labels = content.labels || {};
+    const sourceSection = content.sections.sources || {};
+    const methodology = '<section class="scenario-methodology"><h3>' + escapeHtml(sourceSection.scenarioMethodTitle || 'How the scenario calculation works') + '</h3><p>' + escapeHtml(sourceSection.scenarioMethodBody || 'Each zone starts with an editorial growth assumption. Fixed sensitivity multipliers are applied and rounded to the nearest 5 percentage points. This is not a valuation or forecast.') + '</p></section>';
+    return '<div class="source-list">' + evidenceLegend() + '<p><strong>' + escapeHtml(labels.geography || 'Geography') + ':</strong> ' + escapeHtml(labels.geographyNote || 'Baku and Absheron rayon polygons, local PMTiles basemap, and the offline place gazetteer in data/.') + '</p><p><strong>' + escapeHtml(labels.projects || 'Projects') + ':</strong> ' + escapeHtml(labels.projectsNote || 'Built, funded, planned, and scenario-only labels are kept separate in the shared zone briefs. Planned lines and sensitivities must be verified before any purchase.') + '</p><p><strong>' + escapeHtml(labels.howToReadCircles || 'How to read the circles') + ':</strong> ' + escapeHtml(sourceSection.whatThisMeans) + '</p>' + methodology + '<div class="disclaimer-box">' + escapeHtml(content.disclaimer) + '</div></div>';
   }
 
   function setAccordion(sectionId, forceOpen = false) {
@@ -625,9 +1337,12 @@
   }
 
   function updatePlannerResults() {
-    const budget = Number(state.plannerBudget || 50000);
+    const budget = plannerBudgetValue();
     if ($('budgetOutput')) $('budgetOutput').textContent = formatMoney(budget);
+    if ($('budgetRange')) $('budgetRange').value = String(budget);
     if ($('plannerResults')) $('plannerResults').innerHTML = plannerListHtml(budget);
+    if ($('plannerOutOfReachHost')) $('plannerOutOfReachHost').innerHTML = plannerOutOfReachHtml(budget);
+    updateLayers();
   }
 
   function setBudget(value) {
@@ -636,38 +1351,70 @@
     updatePlannerResults();
   }
 
+  function setProfile(value) {
+    const profiles = atlasCopy().profiles || {};
+    const profile = value ? profiles[value] : null;
+    if (value && (!profile || !Array.isArray(profile.zones))) return;
+    state.profile = value || null;
+    state.plannerBudget = profile ? Math.max(5000, Math.min(200000, Number(profile.bud) || 50000)) : null;
+    if (profile) {
+      profile.zones.forEach(id => { state.shortlist[id] = true; });
+      writeLocalObject('baku2036-v2-shortlist', state.shortlist);
+    }
+    updatePlannerResults();
+    renderShortlist();
+  }
+
   function setScenario(key, value) {
     if (!['oil', 'infra', 'cur'].includes(key)) return;
-    state.scenarios[key] = value;
+    const nextOption = scenarioOption(key, value);
+    const previousOption = state.scenarios[key];
+    const zone = state.selected?.zone?.zone;
+    const before = zone ? scenarioBreakdown(zone, state.scenarios) : null;
+    state.scenarios[key] = nextOption;
+    const after = zone ? scenarioBreakdown(zone, state.scenarios) : null;
+    state.scenarioAnimation = zone && previousOption !== nextOption ? { zoneId: zone.id, group: key, previousOption, nextOption, from: before.roundedGrowth, to: after.roundedGrowth } : null;
+    updateHash();
     renderAllContent();
     renderPanel();
+    animateScenarioResult(state.scenarioAnimation);
+  }
+
+  function stopTimeMachine() {
+    if (state.timeTimer) {
+      clearInterval(state.timeTimer);
+      state.timeTimer = null;
+    }
+    const button = $('timePlay');
+    if (button) button.textContent = atlasCopy().labels.play || 'Play the decade';
   }
 
   function toggleTimeMachine() {
     const button = $('timePlay');
     if (state.timeTimer) {
-      clearInterval(state.timeTimer);
-      state.timeTimer = null;
-      if (button) button.textContent = atlasCopy().labels.play || 'Play the decade';
+      stopTimeMachine();
       return;
     }
+    finishCityStory();
+    finishTour();
     if (button) button.textContent = atlasCopy().labels.pause || 'Pause';
     state.timeTimer = setInterval(() => {
       const next = state.year >= 2036 ? 2026 : state.year + 1;
       setYear(next);
-      if (next === 2026 && state.timeTimer) { clearInterval(state.timeTimer); state.timeTimer = null; }
+      if (next === 2026) stopTimeMachine();
     }, reducedMotion ? 1100 : 760);
   }
 
   function wireContent() {
     document.querySelectorAll('.accordion-summary').forEach(button => button.addEventListener('click', () => setAccordion(button.closest('.v2-accordion').id)));
-    $('timeYear')?.addEventListener('input', event => setYear(event.target.value));
+    $('timeYear')?.addEventListener('input', event => { stopTimeMachine(); pauseCityStory(); setYear(event.target.value); });
     $('timePlay')?.addEventListener('click', toggleTimeMachine);
+    $('zoneTourStart')?.addEventListener('click', startTour);
     $('scenarioOil')?.addEventListener('change', event => setScenario('oil', event.target.value));
     $('scenarioInfra')?.addEventListener('change', event => setScenario('infra', event.target.value));
     $('scenarioCurrency')?.addEventListener('change', event => setScenario('cur', event.target.value));
     $('budgetRange')?.addEventListener('input', event => setBudget(event.target.value));
-    $('profileSelect')?.addEventListener('change', event => { state.profile = event.target.value || null; updatePlannerResults(); });
+    $('profileSelect')?.addEventListener('change', event => setProfile(event.target.value));
     $('dealCheck')?.addEventListener('click', checkDeal);
     document.querySelectorAll('[data-shortlist-amount]').forEach(input => input.addEventListener('change', event => {
       state.shortlistAmounts[event.currentTarget.dataset.shortlistAmount] = Number(event.currentTarget.value) || 0;
@@ -677,11 +1424,22 @@
     }));
   }
 
+  function renderToolGroupLabels() {
+    const labels = atlasCopy().labels || {};
+    const groups = {
+      understand: labels.toolUnderstand || 'Understand',
+      plan: labels.toolPlan || 'Plan',
+      verify: labels.toolVerify || 'Verify'
+    };
+    Object.entries(groups).forEach(([group, label]) => { const heading = document.querySelector('[data-tool-group="' + group + '"]'); if (heading) heading.textContent = label; });
+  }
+
   function renderAllContent() {
     const preserveAccordion = state.openAccordion || document.querySelector('.v2-accordion.open')?.id || null;
     renderHowTo();
     const content = atlasCopy();
     const sections = content.sections;
+    renderToolGroupLabels();
     const articles = [
       ['accordion-time', sections.time, renderTimeMachine()],
       ['accordion-scenarios', sections.scenarios, renderScenarios()],
@@ -696,6 +1454,7 @@
       const article = $(item[0]);
       if (article) article.innerHTML = accordionShell(item[0], item[1], item[2]);
     });
+    renderYearSliderHint();
     wireContent();
     if (preserveAccordion) setAccordion(preserveAccordion, true);
   }
@@ -703,28 +1462,37 @@
     const params = new URLSearchParams();
     if (state.selected?.zone?.zone?.id) params.set('z', state.selected.zone.zone.id); else if (state.hashZone) params.set('z', state.hashZone);
     params.set('y', String(state.year)); params.set('lang', state.lang); params.set('heat', state.heat ? '1' : '0'); params.set('metro', state.metro ? '1' : '0');
+    params.set('oil', scenarioOption('oil', state.scenarios.oil));
+    params.set('infra', scenarioOption('infra', state.scenarios.infra));
+    params.set('cur', scenarioOption('cur', state.scenarios.cur));
     history.replaceState(null, '', `${location.pathname}${location.search}#${params.toString()}`);
   }
 
   function readHash() {
     const raw = location.hash.replace(/^#/, '');
     const params = new URLSearchParams(raw);
-    if (params.get('lang') === 'tr' || params.get('lang') === 'en') state.lang = params.get('lang');
+    if (fixedLanguage) state.lang = fixedLanguage;
+    else if (params.get('lang') === 'tr' || params.get('lang') === 'en') state.lang = params.get('lang');
     const year = Number(params.get('y')); if (Number.isInteger(year) && year >= 2026 && year <= 2036) state.year = year;
     if (params.get('heat') === '1' || params.get('heat') === '0') state.heat = params.get('heat') === '1';
     if (params.get('metro') === '1' || params.get('metro') === '0') state.metro = params.get('metro') === '1';
+    state.scenarios.oil = scenarioOption('oil', params.get('oil'));
+    state.scenarios.infra = scenarioOption('infra', params.get('infra'));
+    state.scenarios.cur = scenarioOption('cur', params.get('cur'));
     const zoneId = params.get('z'); if (zoneId) state.hashZone = zoneId;
   }
 
   function setLanguage(lang) {
+    if (fixedLanguage) lang = fixedLanguage;
     if (!copy[lang]) return;
     state.lang = lang;
     const u = tr();
     document.documentElement.lang = lang === 'tr' ? 'tr' : 'en';
-    $('appTitle').textContent = u.title; $('appSubtitle').textContent = u.subtitle; $('showMe').textContent = u.showMe || (state.lang === 'tr' ? '\u25b6 Göster (1 dakika)' : '\u25b6 Show me (1 minute)'); $('placeSearch').placeholder = u.search; $('searchLabel').textContent = u.searchLabel; $('yearLabel').textContent = u.year; $('skipMap').textContent = u.skip;
+    $('appTitle').textContent = u.title; $('appSubtitle').textContent = u.subtitle; $('showMe').textContent = u.showMe || (state.lang === 'tr' ? '\u25b6 Göster (1 dakika)' : '\u25b6 Show me (1 minute)'); $('placeSearch').placeholder = u.search; $('searchLabel').textContent = u.searchLabel; $('yearLabel').textContent = u.year; $('skipMap').textContent = u.skip; $('layersToggle').textContent = u.layers || (state.lang === 'tr' ? 'Katmanlar' : 'Layers');
     $('rayonLegend').textContent = u.rayonBoundary; $('areaLegend').textContent = u.approxArea; $('metroLegend').textContent = u.metroLegend;
     $('evidenceLegend').textContent = u.evidenceLegend; $('builtLegend').textContent = u.builtLegend; $('contractedLegend').textContent = u.contractedLegend; $('programmedLegend').textContent = u.programmedLegend; $('privateLegend').textContent = u.privateLegend;
-    $('clearSelection').textContent = u.clear; $('langEn').classList.toggle('active', lang === 'en'); $('langTr').classList.toggle('active', lang === 'tr');
+    $('clearSelection').textContent = u.clear;
+    $('langEn')?.classList.toggle('active', lang === 'en'); $('langTr')?.classList.toggle('active', lang === 'tr');
     document.querySelector('[data-layer="admin"]').textContent = u.rayons; document.querySelector('[data-layer="investments"]').textContent = u.areas; document.querySelector('[data-layer="metro"]').textContent = u.metro; document.querySelector('[data-layer="heat"]').textContent = u.heat;
     document.querySelectorAll('[data-layer]').forEach(button => {
       const active = Boolean(state[button.dataset.layer]);
@@ -732,7 +1500,11 @@
       button.setAttribute('aria-pressed', String(active));
     });
     if (state.ready) { updateLayers(); renderPanel(); }
+    if ($('mapStatus')?.dataset.status === 'map-visible') setMapStatus('map-visible', u.mapVisible);
     if (state.data) renderAllContent();
+    if (state.cityStory.active) renderCityStory();
+    if ($('tourOverlay')) renderTourStop();
+    renderDataFreshness();
     updateHash();
   }
 
@@ -742,6 +1514,11 @@
     if ($('timeYear')) $('timeYear').value = String(value);
     if ($('timeYearOutput')) $('timeYearOutput').textContent = String(value);
     if ($('timeStory')) $('timeStory').innerHTML = '<strong>' + value + '</strong>' + escapeHtml(atlasCopy().ui?.tmY?.[String(value)] || '');
+    if (state.cityStory.active) {
+      const checkpointIndex = cityStoryCheckpointIndex(value);
+      if (checkpointIndex >= 0) state.cityStory.index = checkpointIndex;
+      renderCityStory();
+    }
     updateHash();
   }
 
@@ -757,7 +1534,7 @@
     state.engaged = Boolean(value);
     document.body.classList.toggle('engaged', state.engaged);
     document.querySelectorAll('.quiet-controls').forEach(element => element.classList.toggle('is-visible', state.engaged));
-    if (state.engaged && $('layerMenu')) $('layerMenu').hidden = false;
+
   }
 
   function toggleLayerMenu(force) {
@@ -765,7 +1542,146 @@
     const button = $('layersToggle'); const menu = $('layerMenu');
     if (!button || !menu) return;
     const open = typeof force === 'boolean' ? force : !menu.classList.contains('open');
-    menu.classList.toggle('open', open); button.setAttribute('aria-expanded', String(open));
+    menu.classList.toggle('open', open); menu.hidden = !open; button.setAttribute('aria-expanded', String(open));
+  }
+
+  function cityStoryCheckpointIndex(year) {
+    const years = cityCheckpointYears();
+    if (!years.length) return -1;
+    let index = 0;
+    for (let i = 0; i < years.length; i += 1) {
+      if (years[i] <= year) index = i;
+    }
+    return index;
+  }
+
+  function cityStoryCaption(year) {
+    const years = cityCheckpointYears();
+    if (!years.length) return '';
+    const checkpointYear = years[Math.max(0, cityStoryCheckpointIndex(year))];
+    return atlasCopy().simulation?.checkpoints?.[String(checkpointYear)] || '';
+  }
+
+  function cityStoryProjectSummaryText(snapshot) {
+    const labels = atlasCopy().labels || {};
+    return (labels.whatHappening || 'What is happening?') + ': ' + [
+      snapshot.doneProjects + ' ' + statusLabel('done'),
+      snapshot.fundedProjects + ' ' + statusLabel('fund'),
+      snapshot.plannedProjects + ' ' + statusLabel('plan')
+    ].join(' · ');
+  }
+
+  function cityStoryEvidenceSummaryText(snapshot) {
+    return (tr().evidenceLegend || 'How sure is this?') + ': ' + [
+      snapshot.operationalEvidence + ' ' + evidenceStatusLabel('operational'),
+      snapshot.contractedEvidence + ' ' + evidenceStatusLabel('contracted'),
+      snapshot.programmedEvidence + ' ' + evidenceStatusLabel('programmed'),
+      snapshot.privatePlanEvidence + ' ' + evidenceStatusLabel('private-plan')
+    ].join(' · ');
+  }
+
+  function renderCityStory() {
+    const host = $('cityStoryHost');
+    if (!host) return;
+    if (!state.cityStory.active) {
+      host.innerHTML = '';
+      return;
+    }
+    const controls = atlasCopy().simulation?.controls || {};
+    const snapshot = citySimulationSnapshot(state.year);
+    host.innerHTML = "<section id='cityStory' class='city-story' role='region' aria-live='polite' aria-label='" + escapeHtml(controls.progress || 'City story year') + "'" +
+      " data-year='" + snapshot.year + "'" +
+      " data-active-events='" + snapshot.activeEvents + "'" +
+      " data-future-events='" + snapshot.futureEvents + "'" +
+      " data-built-lines='" + snapshot.builtLines + "'" +
+      " data-planned-lines='" + snapshot.plannedLines + "'" +
+      " data-built-stations='" + snapshot.builtStations + "'" +
+      " data-planned-stations='" + snapshot.plannedStations + "'" +
+      " data-done-projects='" + snapshot.doneProjects + "'" +
+      " data-funded-projects='" + snapshot.fundedProjects + "'" +
+      " data-planned-projects='" + snapshot.plannedProjects + "'" +
+      " data-operational-evidence='" + snapshot.operationalEvidence + "'" +
+      " data-contracted-evidence='" + snapshot.contractedEvidence + "'" +
+      " data-programmed-evidence='" + snapshot.programmedEvidence + "'" +
+      " data-private-plan-evidence='" + snapshot.privatePlanEvidence + "'>" +
+      "<div class='city-story-head'><span class='city-story-kicker'>" + escapeHtml(controls.progress || 'City story year') + "</span><strong class='city-story-year'>" + snapshot.year + "</strong></div>" +
+      "<p id='cityStoryCaption'>" + escapeHtml(cityStoryCaption(snapshot.year)) + "</p>" +
+      "<p class='city-story-summary' id='cityStoryProjectSummary'>" + escapeHtml(cityStoryProjectSummaryText(snapshot)) + "</p>" +
+      "<p class='city-story-summary' id='cityStoryEvidenceSummary'>" + escapeHtml(cityStoryEvidenceSummaryText(snapshot)) + "</p>" +
+      "<div class='city-story-actions'><button type='button' class='secondary-action' id='cityStoryPause' aria-pressed='" + String(!state.cityStory.paused) + "'>" + escapeHtml((state.cityStory.paused ? controls.resume : controls.pause) || '') + "</button><button type='button' class='secondary-action' id='cityStorySkip'>" + escapeHtml(controls.skip || '') + "</button><button type='button' class='primary-action' id='cityStoryFinish'>" + escapeHtml(controls.finish || '') + "</button></div>" +
+      "</section>";
+    $('cityStoryPause')?.addEventListener('click', () => state.cityStory.paused ? resumeCityStory() : pauseCityStory());
+    $('cityStorySkip')?.addEventListener('click', skipCityStory);
+    $('cityStoryFinish')?.addEventListener('click', finishCityStory);
+  }
+
+  function clearCityStoryTimer() {
+    if (state.cityStory.timer) {
+      clearTimeout(state.cityStory.timer);
+      state.cityStory.timer = null;
+    }
+  }
+
+  function scheduleCityStoryTimer() {
+    clearCityStoryTimer();
+    if (!state.cityStory.active || state.cityStory.paused) return;
+    const years = cityCheckpointYears();
+    if (state.cityStory.index >= years.length - 1) return;
+    state.cityStory.timer = setTimeout(() => {
+      state.cityStory.timer = null;
+      skipCityStory();
+    }, CITY_STORY_INTERVAL_MS);
+  }
+
+  function startCityStory() {
+    if (!state.data) return;
+    stopTimeMachine();
+    finishTour();
+    finishCityStory();
+    setEngaged(true);
+    const years = cityCheckpointYears();
+    state.cityStory.active = years.length > 0;
+    state.cityStory.paused = false;
+    state.cityStory.index = Math.max(0, cityStoryCheckpointIndex(state.year));
+    if (years.length) {
+      setYear(years[state.cityStory.index]);
+      renderCityStory();
+      scheduleCityStoryTimer();
+    }
+  }
+
+  function pauseCityStory() {
+    if (!state.cityStory.active) return;
+    clearCityStoryTimer();
+    state.cityStory.paused = true;
+    renderCityStory();
+  }
+
+  function resumeCityStory() {
+    if (!state.cityStory.active) return;
+    state.cityStory.paused = false;
+    scheduleCityStoryTimer();
+    renderCityStory();
+  }
+
+  function skipCityStory() {
+    const years = cityCheckpointYears();
+    if (!years.length) return;
+    clearCityStoryTimer();
+    state.cityStory.index = Math.min(state.cityStory.index + 1, years.length - 1);
+    setYear(years[state.cityStory.index]);
+    state.cityStory.paused = state.cityStory.index >= years.length - 1;
+    renderCityStory();
+    scheduleCityStoryTimer();
+  }
+
+  function finishCityStory() {
+    clearCityStoryTimer();
+    state.cityStory.active = false;
+    state.cityStory.paused = false;
+    state.cityStory.index = 0;
+    renderCityStory();
+    if (state.map) state.map.resize();
   }
 
   function renderTourStop() {
@@ -775,30 +1691,75 @@
     const name = zone ? (state.lang === 'tr' ? zone.nameTr : zone.nameEn) : '';
     const story = ui.tour?.[stopId] || '';
     const last = state.tourIndex >= state.tourStops.length - 1;
-    overlay.innerHTML = '<div class="tour-card"><div class="tour-kicker">' + escapeHtml(ui.tourStop || 'Stop') + ' ' + (state.tourIndex + 1) + ' / ' + state.tourStops.length + '</div><h2>' + escapeHtml(name) + '</h2><p>' + escapeHtml(story) + '</p><button type="button" class="primary-action" data-tour-next>' + escapeHtml(last ? (ui.tourEnd || 'Explore the map') : 'Next') + '</button><button type="button" class="tour-close" data-tour-close>' + escapeHtml(ui.tourExit || 'Close tour') + '</button></div>';
-    overlay.querySelector('[data-tour-next]')?.addEventListener('click', () => { if (last) finishTour(); else { state.tourIndex += 1; renderTourStop(); } });
+    overlay.innerHTML = '<div class="tour-card"><div class="tour-kicker">' + escapeHtml(ui.tourStop || 'Stop') + ' ' + (state.tourIndex + 1) + ' / ' + state.tourStops.length + '</div><h2 id="tourTitle">' + escapeHtml(name) + '</h2><p>' + escapeHtml(story) + '</p><button type="button" class="primary-action" data-tour-next>' + escapeHtml(last ? (ui.tourEnd || 'Explore the map') : 'Next') + '</button><button type="button" class="tour-close" data-tour-close>' + escapeHtml(ui.tourExit || 'Close tour') + '</button></div>';
+    const nextButton = overlay.querySelector('[data-tour-next]');
+    nextButton?.addEventListener('click', () => { if (last) finishTour(); else { state.tourIndex += 1; renderTourStop(); } });
     overlay.querySelector('[data-tour-close]')?.addEventListener('click', finishTour);
+    nextButton?.focus({ preventScroll: true });
+  }
+
+  function trapTourFocus(event) {
+    if (event.key !== 'Tab') return;
+    const overlay = $('tourOverlay');
+    if (!overlay) return;
+    const focusable = [...overlay.querySelectorAll('button:not([disabled])')];
+    if (!focusable.length) return;
+    const first = focusable[0]; const last = focusable[focusable.length - 1];
+    if (!overlay.contains(document.activeElement)) {
+      event.preventDefault();
+      first.focus({ preventScroll: true });
+      return;
+    }
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus({ preventScroll: true });
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus({ preventScroll: true });
+    }
   }
 
   function startTour() {
     if (!state.data) return;
-    setEngaged(true); state.tourIndex = 0;
+    state.tourReturnFocusId = document.activeElement?.id || 'zoneTourStart';
+    stopTimeMachine(); finishCityStory(); setEngaged(true); state.tourIndex = 0;
     let overlay = $('tourOverlay');
-    if (!overlay) { overlay = document.createElement('div'); overlay.id = 'tourOverlay'; overlay.className = 'tour-overlay'; overlay.setAttribute('role', 'dialog'); overlay.setAttribute('aria-modal', 'true'); document.body.appendChild(overlay); }
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.id = 'tourOverlay';
+      overlay.className = 'tour-overlay';
+      overlay.setAttribute('role', 'dialog');
+      overlay.setAttribute('aria-modal', 'true');
+      overlay.setAttribute('aria-labelledby', 'tourTitle');
+      overlay.addEventListener('keydown', trapTourFocus);
+      document.body.appendChild(overlay);
+    }
     renderTourStop();
   }
 
-  function finishTour() { $('tourOverlay')?.remove(); if (state.map) state.map.resize(); }
+  function finishTour() {
+    const returnFocusId = state.tourReturnFocusId;
+    $('tourOverlay')?.remove();
+    state.tourReturnFocusId = null;
+    const returnTarget = returnFocusId ? $(returnFocusId) : null;
+    if (returnTarget) returnTarget.focus({ preventScroll: true });
+    if (state.map) state.map.resize();
+  }
 
   function installControls() {
-    $('showMe')?.addEventListener('click', startTour); $('layersToggle')?.addEventListener('click', () => toggleLayerMenu());
-    document.addEventListener('keydown', event => { if (event.key === 'Escape') { toggleLayerMenu(false); finishTour(); } });
+    $('showMe')?.addEventListener('click', startCityStory); $('layersToggle')?.addEventListener('click', () => toggleLayerMenu());
+    document.addEventListener('keydown', event => { if (event.key === 'Escape') { toggleLayerMenu(false); finishCityStory(); finishTour(); } });
     document.querySelectorAll('.quiet-controls').forEach(element => element.addEventListener('focusin', () => setEngaged(true)));
-    $('langEn').addEventListener('click', () => { setEngaged(true); setLanguage('en'); }); $('langTr').addEventListener('click', () => { setEngaged(true); setLanguage('tr'); });
-    $('yearSelect').addEventListener('focus', () => setEngaged(true)); $('yearSelect').addEventListener('change', event => { setEngaged(true); setYear(event.target.value); });
-    $('placeSearch').addEventListener('focus', () => setEngaged(true)); $('placeSearch').addEventListener('input', event => renderSearchResults(event.target.value));
+    $('langEn')?.addEventListener('click', () => { setEngaged(true); setLanguage('en'); }); $('langTr')?.addEventListener('click', () => { setEngaged(true); setLanguage('tr'); });
+    $('yearSelect').addEventListener('focus', () => setEngaged(true)); $('yearSelect').addEventListener('change', event => { setEngaged(true); stopTimeMachine(); pauseCityStory(); setYear(event.target.value); });
+    $('placeSearch').addEventListener('focus', () => setEngaged(true)); $('placeSearch').addEventListener('input', event => { pauseCityStory(); renderSearchResults(event.target.value); });
     $('placeSearch').addEventListener('keydown', event => { if (event.key === 'Escape') { $('searchResults').hidden = true; event.target.blur(); } if (event.key === 'Enter') { const first = searchPlaces(event.target.value)[0]; if (first) choosePlace(first); } });
-    $('clearSelection').addEventListener('click', () => { state.selected = null; state.hashZone = null; renderPanel(); updateSelectionGeometry(); updateHash(); });
+    const clearSelection = () => { pauseCityStory(); state.selected = null; state.hashZone = null; renderPanel(); if (state.data) renderAllContent(); updateSelectionGeometry(); updateHash(); $('v2ZoneDrawer').focus({ preventScroll: true }); };
+    const collapseDetails = () => { if (!state.selected) return; state.drawerCollapsed = true; renderPanel(); $('showDetails').focus({ preventScroll: true }); };
+    const showDetails = () => { if (!state.selected) return; state.drawerCollapsed = false; renderPanel(); $('collapseDetails').focus({ preventScroll: true }); };
+    const toggleEmptyPanel = () => { if (state.selected) return; state.emptyPanelCollapsed = !state.emptyPanelCollapsed; renderPanel(); $('emptyPanelToggle').focus({ preventScroll: true }); };
+    $('clearSelection').addEventListener('click', clearSelection); $('closeDetails').addEventListener('click', clearSelection); $('collapseDetails').addEventListener('click', collapseDetails); $('showDetails').addEventListener('click', showDetails);
+    $('emptyPanelToggle').addEventListener('click', toggleEmptyPanel);
     document.querySelectorAll('[data-action]').forEach(button => button.addEventListener('click', () => {
       if (!state.map) return;
       const action = button.dataset.action;
@@ -810,38 +1771,143 @@
     document.addEventListener('click', event => { if (!event.target.closest('.search-box') && !event.target.closest('.search-results')) $('searchResults').hidden = true; });
   }
 
-  function installMap(maplibregl, data) {
-    if (!window.pmtiles || !maplibregl || state.map) return;
+  function installMap(maplibregl) {
+    const runtimeReady = window.pmtiles && typeof window.pmtiles.Protocol === 'function' && maplibregl && typeof maplibregl.Map === 'function' && typeof maplibregl.NavigationControl === 'function' && typeof maplibregl.addProtocol === 'function';
+    if (!runtimeReady || state.map) {
+      if (!runtimeReady) reportMapFailure();
+      return;
+    }
+    state.mapReady = false;
+    state.overlaysReady = false;
+    state.ready = false;
     const protocol = new window.pmtiles.Protocol(); maplibregl.addProtocol('pmtiles', protocol.tile);
-    state.map = new maplibregl.Map({ container: 'v2Map', style: createStyle(data), center: [49.86, 40.42], zoom: 9.6, minZoom: 8, maxZoom: 15.4, dragRotate: false, pitchWithRotate: false, attributionControl: { compact: true } });
-    state.map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-right');
-    state.map.on('load', () => {
-      state.ready = true; $('mapStatus').textContent = tr().ready; $('mapStatus').classList.remove('error'); $('yearSelect').value = String(state.year);
-      updateLayers(); renderPanel();
-      state.map.on('click', event => identifyLocation(event.lngLat, event.point));
-      ['investment-zones', 'metro-stations', 'admin-fill'].forEach(layer => { state.map.on('mouseenter', layer, () => { state.map.getCanvas().style.cursor = 'pointer'; }); state.map.on('mouseleave', layer, () => { state.map.getCanvas().style.cursor = ''; }); });
-      if (state.hashZone) selectZone(state.hashZone, false); else state.map.fitBounds(BBOX, { padding: 50, duration: 0 });
+    const map = new maplibregl.Map({ container: 'v2Map', style: createStyle(), center: [49.86, 40.42], zoom: 9.6, minZoom: 8, maxZoom: 15.4, dragRotate: false, pitchWithRotate: false, cooperativeGestures: isMobileViewport(), locale: state.lang === 'tr' ? { 'CooperativeGesturesHandler.MobileHelpText': 'Haritayı hareket ettirmek için iki parmağınızı kullanın' } : undefined, attributionControl: { compact: true } });
+    state.map = map;
+    let mapFailed = false;
+    const isBasemapFailure = event => {
+      const detail = event?.error || event;
+      const status = Number(detail?.status || detail?.statusCode);
+      const sourceId = event?.sourceId || event?.source?.id || detail?.sourceId;
+      const message = String(detail?.message || detail || '').toLowerCase();
+      return sourceId === 'basemap' || status >= 500 || /pmtiles|baku-absheron|bad response code|range request/.test(message);
+    };
+    const handleMapFailure = event => {
+      if (mapFailed || state.map !== map) return;
+      mapFailed = true;
+      state.map = null;
+      reportMapFailure();
+      if (event?.error) console.warn('Baku v2 map error', event.error);
+      try { map.remove(); } catch (error) { console.warn('Baku v2 map cleanup failed', error); }
+    };
+    map.on('error', event => {
+      if (!state.ready || isBasemapFailure(event)) handleMapFailure(event);
     });
-    state.map.on('error', event => { if (event?.error) console.warn('Baku v2 map error', event.error); });
+    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-right');
+    let mapVisible = false;
+    map.on('render', () => {
+      if (mapFailed || state.ready || state.dataError || mapVisible) return;
+      mapVisible = true;
+      setMapStatus('map-visible', tr().mapVisible);
+    });
+    map.on('load', () => {
+      if (mapFailed || state.map !== map) return;
+      state.mapReady = true;
+      map.on('click', event => { setEngaged(true); identifyLocation(event.lngLat, event.point); });
+      ['investment-zones', 'metro-stations', 'admin-fill', 'city-events-active', 'city-events-future'].forEach(layer => { map.on('mouseenter', layer, () => { map.getCanvas().style.cursor = 'pointer'; }); map.on('mouseleave', layer, () => { map.getCanvas().style.cursor = ''; }); });
+      if (state.data) installOverlayData();
+    });
+  }
+
+  function installOverlayData() {
+    if (!state.map || !state.mapReady || !state.data || state.overlaysReady) return;
+    updateSource('admin', state.data.admin);
+    updateSource('admin-labels', adminLabelFeatures(state.data.admin));
+    updateSource('investment-zones', featureCollection(investmentFeatures()));
+    updateSource('heat', featureCollection(heatFeatures()));
+    updateSource('metro-lines', featureCollection(metroLineFeatures()));
+    updateSource('metro-stations', featureCollection(metroStationFeatures()));
+    updateSource('city-events', featureCollection(cityEventFeatures(state.year)));
+    state.overlaysReady = true;
+    state.ready = true;
+    setMapStatus('ready', tr().ready);
+    $('yearSelect').value = String(state.year);
+    updateLayers();
+    renderPanel();
+    if (state.hashZone) selectZone(state.hashZone, false); else state.map.fitBounds(BBOX, { padding: 50, duration: 0 });
+  }
+
+  function waitForMapRuntime() {
+    const maplibregl = window.__V3MapLibre;
+    if (maplibregl) {
+      installMap(maplibregl);
+      return Promise.resolve();
+    }
+    return new Promise((resolve, reject) => {
+      let settled = false;
+      const finish = (error) => {
+        if (settled) return;
+        settled = true;
+        if (state.mapRuntimeTimer) clearTimeout(state.mapRuntimeTimer);
+        state.mapRuntimeTimer = null;
+        window.removeEventListener('v3-maplibre-ready', onMapLibreReady);
+        if (error) reject(error); else resolve();
+      };
+      const onMapLibreReady = () => {
+        if (window.__V3MapLibre) {
+          installMap(window.__V3MapLibre);
+          finish();
+        } else finish(Object.assign(new Error('MapLibre runtime unavailable'), { code: 'map-runtime' }));
+      };
+      window.addEventListener('v3-maplibre-ready', onMapLibreReady, { once: true });
+      state.mapRuntimeTimer = setTimeout(() => {
+        if (window.__V3MapLibre) {
+          installMap(window.__V3MapLibre);
+          finish();
+        } else {
+          reportMapFailure();
+          finish(Object.assign(new Error('MapLibre runtime unavailable'), { code: 'map-runtime' }));
+        }
+      }, 5000);
+    });
   }
 
   async function loadData() {
-    const [admin, metro, places, zonesData, content] = await Promise.all(['data/admin-absheron.geojson', 'data/metro.json', 'data/places.json', 'data/zones.json?rev=b35a571', 'data/content.json?rev=b35a571'].map(path => fetch(path).then(response => { if (!response.ok) throw new Error(path); return response.json(); })));
-    state.data = { admin, metro, places, zones: zonesData, content };
+    const [admin, metro, places, zonesData, content] = await Promise.all(['data/admin-absheron-5dp.geojson', 'data/metro.json', 'data/places.json', 'data/zones.json?rev=b35a571', 'data/content.json?rev=b35a571'].map(path => fetch(path).then(response => { if (!response.ok) throw new Error(path); return response.json(); })));
+    validateAdminData(admin);
+    validateMetroData(metro);
+    validatePlacesData(places);
     hydrateZones(zonesData);
+    const data = { admin, metro, places, zones: zonesData, content };
     if (state.hashZone && !zones.some(zone => zone.id === state.hashZone)) { state.hashZone = null; updateHash(); }
-    return state.data;
+    return data;
+  }
+
+  function commitData(data) {
+    state.data = data;
+    renderDataFreshness();
+    loadLocalState();
+    renderAllContent();
+    installOverlayData();
   }
 
   async function boot() {
-    readHash(); installControls(); setLanguage(state.lang); $('mapStatus').textContent = tr().loading;
+    if ($('skipMap')) $('skipMap').href = `${location.pathname}#v2ZoneDrawer`;
+    readHash();
+    if (!state.controlsInstalled) { installControls(); state.controlsInstalled = true; }
+    if (!state.map) { state.data = null; zones.length = 0; }
+    state.dataError = false;
+    state.overlaysReady = false;
+    state.ready = false;
+    renderNextAction();
+    setLanguage(state.lang); setMapStatus('loading', tr().loading);
     try {
-      const data = await loadData();
-      loadLocalState();
-      renderAllContent();
-      const maplibregl = window.__V3MapLibre;
-      if (maplibregl) installMap(maplibregl, data); else window.addEventListener('v3-maplibre-ready', () => installMap(window.__V3MapLibre, data), { once: true });
-    } catch (error) { console.error(error); $('mapStatus').textContent = tr().error; $('mapStatus').classList.add('error'); }
+      const [data] = await Promise.all([loadData(), waitForMapRuntime()]);
+      commitData(data);
+    } catch (error) {
+      if (error?.code === 'map-runtime') return;
+      state.dataError = true;
+      console.error(error); finishCityStory(); setMapStatus('error', ['zone-data-validation', 'data-validation'].includes(error?.code) ? tr().validation : tr().error);
+    }
   }
 
   window.distanceKm = distanceKm;
@@ -852,5 +1918,24 @@
   window.setLang = setLanguage;
   window.startTour = startTour;
   window.toggleLayerMenu = toggleLayerMenu;
+  if (new URLSearchParams(location.search).get('testHooks') === '1') {
+    window.__V3TestHooks = {
+      getLayerFeatures: () => ({
+        investments: investmentFeatures().map(feature => feature.properties),
+        heat: heatFeatures().map(feature => feature.properties)
+      }),
+      getMetroFeatures: (year = state.year) => ({
+        stations: metroStationFeatures().map(feature => feature.properties),
+        activeStations: activeMetroStations(year).map(station => ({ id: station.id, nameEn: station.nameEn, builtYear: station.builtYear, source: station.source, line: station.line, color: station.color })),
+        lines: metroLineFeatures().map(feature => feature.properties),
+        story: citySimulationSnapshot(year)
+      }),
+      getScenarioBreakdown: (zoneId, scenarios) => {
+        const zone = zones.find(item => item.id === zoneId);
+        if (!zone) throw new Error('Unknown zone: ' + zoneId);
+        return scenarioBreakdown(zone, scenarios);
+      }
+    };
+  }
   boot();
 })();

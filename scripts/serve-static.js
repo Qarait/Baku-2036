@@ -15,6 +15,7 @@ const contentTypes = {
   '.pbf': 'application/x-protobuf',
   '.pmtiles': 'application/octet-stream',
   '.svg': 'image/svg+xml',
+  '.webm': 'video/webm',
   '.woff2': 'font/woff2'
 };
 
@@ -22,6 +23,11 @@ function safeFilePath(requestPath) {
   const decoded = decodeURIComponent(requestPath.split('?')[0]);
   const relative = decoded === '/' ? 'index.html' : decoded.replace(/^\/+/, '');
   const filePath = path.resolve(root, relative);
+  if (filePath !== root && filePath.startsWith(root + path.sep)) {
+    try {
+      if (fs.statSync(filePath).isDirectory()) return path.join(filePath, 'index.html');
+    } catch {}
+  }
   return filePath === root || filePath.startsWith(root + path.sep) ? filePath : null;
 }
 

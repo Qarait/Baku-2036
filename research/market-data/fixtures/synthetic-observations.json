@@ -1,0 +1,72 @@
+[
+  {
+    "schemaVersion": "1.0",
+    "observationId": "synthetic-observation-001",
+    "sourceId": "synthetic-source-fixture",
+    "sourceRecordId": "synthetic-record-001",
+    "rightsId": "synthetic-rights-fixture",
+    "transactionType": "asking",
+    "observedAt": "2026-01-15",
+    "propertyType": "apartment",
+    "price": { "amount": 101000, "currency": "AZN", "basis": "total" },
+    "area": { "value": 71, "unit": "m2", "measure": "gross" },
+    "location": { "geography": "synthetic-zone-alpha", "precision": "zone" },
+    "characteristics": { "bedrooms": 2, "condition": "unknown" }
+  },
+  {
+    "schemaVersion": "1.0",
+    "observationId": "synthetic-observation-002",
+    "sourceId": "synthetic-source-fixture",
+    "sourceRecordId": "synthetic-record-002",
+    "rightsId": "synthetic-rights-fixture",
+    "transactionType": "asking",
+    "observedAt": "2026-02-20",
+    "propertyType": "house",
+    "price": { "amount": 202000, "currency": "USD", "basis": "total" },
+    "area": { "value": 143, "unit": "m2", "measure": "net" },
+    "location": { "geography": "synthetic-zone-beta", "precision": "zone" },
+    "characteristics": { "bedrooms": 3, "condition": "good" }
+  },
+  {
+    "schemaVersion": "1.0",
+    "observationId": "synthetic-observation-003",
+    "sourceId": "synthetic-source-fixture",
+    "sourceRecordId": "synthetic-record-003",
+    "rightsId": "synthetic-rights-fixture",
+    "transactionType": "completed_sale",
+    "observedAt": "2026-03-01",
+    "eventDate": "2026-02-28",
+    "propertyType": "commercial",
+    "price": { "amount": 303000, "currency": "EUR", "basis": "per_m2" },
+    "area": { "value": 87, "unit": "m2", "measure": "gross" },
+    "location": { "geography": "synthetic-zone-gamma", "precision": "zone" },
+    "characteristics": { "rooms": 4, "condition": "new" }
+  },
+  {
+    "schemaVersion": "1.0",
+    "observationId": "synthetic-observation-004",
+    "sourceId": "synthetic-source-fixture",
+    "sourceRecordId": "synthetic-record-001",
+    "rightsId": "synthetic-rights-fixture",
+    "transactionType": "asking",
+    "observedAt": "2026-01-16",
+    "propertyType": "apartment",
+    "price": { "amount": 101000, "currency": "AZN", "basis": "total" },
+    "area": { "value": 71, "unit": "m2", "measure": "gross" },
+    "location": { "geography": "synthetic-zone-alpha", "precision": "zone" },
+    "characteristics": { "bedrooms": 2, "condition": "unknown" }
+  },
+  {
+    "schemaVersion": "1.0",
+    "observationId": "synthetic-observation-005",
+    "sourceId": "synthetic-source-fixture",
+    "sourceRecordId": "synthetic-record-005",
+    "rightsId": "synthetic-rights-fixture",
+    "transactionType": "asking",
+    "observedAt": "2026-04-10",
+    "propertyType": "other",
+    "price": { "amount": 505000, "currency": "AZN", "basis": "total" },
+    "area": { "value": 55, "unit": "m2", "measure": "gross" },
+    "location": { "precision": "unknown" }
+  }
+]

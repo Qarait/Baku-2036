@@ -10,9 +10,10 @@
       40.383
     ],
     "radius": 15,
+    "growthPct": 140,
     "en": {
       "now": "$2,500–4,000/m² new-build",
-      "proj": "+140% scenario",
+      "proj": "scenario",
       "yield": "5–7% gross",
       "vol": "Medium",
       "inv": [
@@ -43,13 +44,13 @@
     },
     "tr": {
       "now": "2.500–4.000 $/m² (yeni yapı)",
-      "proj": "%+140 senaryo",
+      "proj": "senaryo",
       "yield": "%5–7 brüt",
       "vol": "Medium",
       "inv": [
         [
           "2026",
-          "Yeşil Hat Y14–Y17 istasyonları ihaleye çıkıyor; projeler tamamlandı",
+          "Yeşil Hat Y14–Y17 istasyonları resmî genişleme programında; tasarım çalışmaları sürüyor ve açılış yaklaşık 2030 için hedefleniyor",
           "fund"
         ],
         [
@@ -149,18 +150,20 @@
     ],
     "evidence": [
       {
+        "id": "whitecity.aiib-metro-y14",
         "status": "programmed",
-        "source": "Baku Metro / official development programme",
-        "sourceDate": "2025-01-01",
+        "source": "AIIB / Baku Metro expansion framework",
+        "sourceDate": "2025-11-28",
         "checkedAt": "2026-08-13",
         "confidence": "high",
-        "claim": "The official programme includes four Green Line stations, Y14–Y17, in the White City/Khatai corridor; design work is active and opening is targeted around 2030.",
+        "claim": "The expansion framework documents four Green Line stations from Khatai toward Hazi Aslanov and identifies Y14 in White City/Khatai; construction timing remains subject to the project schedule.",
         "investmentMeaning": "This supports a real transport catalyst, but the property premium still depends on delivery and station access.",
-        "url": "https://metro.gov.az/az/page/xetlerimiz/konseptual-sxem",
-        "claimTr": "Resmî program White City/Xətai koridorunda dört Yeşil Hat istasyonu Y14–Y17 içeriyor; tasarım çalışmaları sürüyor ve açılış 2030 civarında hedefleniyor.",
+        "url": "https://www.aiib.org/en/projects/details/2025/_download/Azerbaijan/Baku-Metro-ESMPF-281125-to-Disclose.pdf",
+        "claimTr": "Genişleme çerçevesi Xətai'den Həzi Aslanov'a uzanan dört Yeşil Hat istasyonunu belgeler ve Y14'ü Ağ Şəhər/Xətai'de tanımlar; inşaat takvimi proje planına bağlıdır.",
         "investmentMeaningTr": "Bu gerçek bir ulaşım katalizörünü destekler; ancak mülk priminin oluşması teslimata ve istasyona erişime bağlıdır."
       },
       {
+        "id": "whitecity.atkins-white-city",
         "status": "operational",
         "source": "AtkinsRéalis / Baku White City project",
         "sourceDate": "2024-01-01",
@@ -172,7 +175,46 @@
         "claimTr": "White City büyük bir eski sanayi dönüşümü ve sahil mahallesi programıdır; East Quarter planlama alanı 220 hektardır.",
         "investmentMeaningTr": "Dönüşüm talebi destekleyebilir; ancak yeni konut arzı ve teslim kalitesi önemini korur."
       }
-    ]
+    ],
+    "scenarioFactors": [
+      {
+        "id": "transport-programmed",
+        "role": "dependency",
+        "evidenceIds": ["whitecity.aiib-metro-y14"],
+        "en": "An official plan or programme documents planned transport work; timing, delivery, and useful access remain dependencies.",
+        "tr": "Resmî bir plan veya program planlanan ulaşım çalışmasını belgeler; zamanlama, teslim ve işe yarar erişim hâlâ bağımlılıktır."
+      },
+      {
+        "id": "development-anchor",
+        "role": "support",
+        "evidenceIds": ["whitecity.atkins-white-city"],
+        "en": "A named regeneration or private development anchor is documented; reported plans or targets are not independent market forecasts.",
+        "tr": "Adı belirtilen bir yenileme veya özel gelişim odağı belgelenmiştir; bildirilen planlar veya hedefler bağımsız piyasa tahminleri değildir."
+      }
+    ],
+    "officialPlan": {
+      "planId": "baku-master-plan-2040",
+      "role": "district-context",
+      "status": "strategic-project",
+      "implementationPhase": "long-range",
+      "horizonYear": 2040,
+      "source": {
+        "sourceId": "arxkom.baku-master-plan-2040",
+        "publisher": "ARXKOM",
+        "url": "https://arxkom.gov.az/storage/files/files/shares/qayidish/bash%20plan/659ab50a15eb5.pdf",
+        "section": "Strategic projects: industrial-area regeneration and Hybrid Green Corridor",
+        "pages": [
+          211,
+          212,
+          213
+        ]
+      },
+      "checkedAt": "2026-08-25",
+      "en": "The official plan places White City in the wider central-Baku industrial-regeneration and green-corridor context; it is not a zone-specific price forecast.",
+      "tr": "Rəsmi plan Ağ Şəhəri mərkəzi Bakının sənaye ərazilərinin yenilənməsi və yaşıl dəhlizlər kontekstində göstərir; bu, zona üzrə qiymət proqnozu deyil.",
+      "cautionEn": "A plan context does not prove delivery, access or property-price growth.",
+      "cautionTr": "Plan konteksti icranı, əlçatanlığı və ya əmlak qiymət artımını sübut etmir."
+    }
   },
   {
     "id": "yasamal",
@@ -185,9 +227,10 @@
       40.389
     ],
     "radius": 13,
+    "growthPct": 130,
     "en": {
       "now": "$1,500–2,500/m²",
-      "proj": "+130% scenario",
+      "proj": "scenario",
       "yield": "6–8% gross",
       "vol": "Medium",
       "inv": [
@@ -218,7 +261,7 @@
     },
     "tr": {
       "now": "1.500–2.500 $/m²",
-      "proj": "%+130 senaryo",
+      "proj": "senaryo",
       "yield": "%6–8 brüt",
       "vol": "Medium",
       "inv": [
@@ -316,18 +359,49 @@
     ],
     "evidence": [
       {
+        "id": "yasamal.state-programme-purple-b4-b8",
         "status": "contracted",
-        "source": "Baku Metro / station design contract",
-        "sourceDate": "2025-01-01",
+        "source": "Presidential State Programme / official decree PDF",
+        "sourceDate": "2025-01-30",
         "checkedAt": "2026-08-13",
         "confidence": "high",
-        "claim": "Purple Line B-04 construction and design work are documented as active metro development.",
+        "claim": "The State Programme includes Purple Line stations B4–B8 among ten new metro stations, with design, construction and commissioning scheduled within 2025–2030.",
         "investmentMeaning": "A real construction programme is stronger evidence than a map-only concept, but opening timing can still move.",
-        "url": "https://www.metro.gov.az/az/building/4480/yeni-metro-stansiyalarinin-tikintisi-ile-bagli-layihelendirilme-islerine-start-verilib",
-        "claimTr": "Mor Hat B-04 için inşaat ve tasarım çalışmalarının aktif olduğu belgelenmiştir.",
+        "url": "https://static.president.az/upload/Files/2025/01/31/4f32a6bd6ffc6b39efcfb5153e868c88_5073315.pdf",
+        "claimTr": "Devlet Programı, on yeni metro istasyonu arasında Mor Hat üzerindeki B4–B8 istasyonlarını sayar; tasarım, inşaat ve işletmeye alma 2025–2030 dönemine planlanmıştır.",
         "investmentMeaningTr": "Gerçek inşaat programı yalnızca harita üzerindeki bir fikirden daha güçlü kanıttır; açılış tarihi yine değişebilir."
       }
-    ]
+    ],
+    "scenarioFactors": [
+      {
+        "id": "transport-programmed",
+        "role": "dependency",
+        "evidenceIds": ["yasamal.state-programme-purple-b4-b8"],
+        "en": "An official plan or programme documents planned transport work; timing, delivery, and useful access remain dependencies.",
+        "tr": "Resmî bir plan veya program planlanan ulaşım çalışmasını belgeler; zamanlama, teslim ve işe yarar erişim hâlâ bağımlılıktır."
+      }
+    ],
+    "officialPlan": {
+      "planId": "baku-master-plan-2040",
+      "role": "not-specified",
+      "status": "not-zone-specific",
+      "implementationPhase": "not-specified",
+      "horizonYear": 2040,
+      "source": {
+        "sourceId": "arxkom.baku-master-plan-2040",
+        "publisher": "ARXKOM",
+        "url": "https://arxkom.gov.az/storage/files/files/shares/qayidish/bash%20plan/659ab50a15eb5.pdf",
+        "section": "Polycentric city and demography; no zone-specific assignment identified in the reviewed pages",
+        "pages": [
+          55
+        ]
+      },
+      "checkedAt": "2026-08-25",
+      "en": "No zone-specific role or project assignment was identified in the reviewed official plan pages for Yasamal.",
+      "tr": "Yasamal üçün nəzərdən keçirilmiş rəsmi plan səhifələrində zona üzrə ayrıca rol və ya layihə təyinatı müəyyən edilmədi.",
+      "cautionEn": "Absence of a zone-specific entry is not evidence that nothing can change locally.",
+      "cautionTr": "Zona üzrə ayrıca qeydin olmaması yerli dəyişikliklərin olmayacağına dəlil deyil."
+    }
   },
   {
     "id": "narimanov",
@@ -340,9 +414,10 @@
       40.404
     ],
     "radius": 13,
+    "growthPct": 125,
     "en": {
       "now": "~$3,200/m² (5,525 AZN)",
-      "proj": "+125% scenario",
+      "proj": "scenario",
       "yield": "6–8% gross",
       "vol": "Medium",
       "inv": [
@@ -367,19 +442,19 @@
           "plan"
         ]
       ],
-      "thesis": "The strongest first-half-of-decade compounder: center adjacency, deep rental demand, and active renewal. Commercial property here led the entire city in 2025.",
+      "thesis": "The strongest first-half-of-decade compounder: center adjacency, deep rental demand, and active renewal make it an established, liquid market. The AQP report provides dated context, not proof that commercial property led the city in 2025.",
       "risk": "Momentum names mean revert; by ~2030 most of the redevelopment premium is likely captured, so late entries buy the mature district at frontier expectations.",
       "act": "Buy soon and reassess around 2030; commercial units on renewal streets outperform residential here."
     },
     "tr": {
       "now": "~3.200 $/m² (5.525 AZN)",
-      "proj": "%+125 senaryo",
+      "proj": "senaryo",
       "yield": "%6–8 brüt",
       "vol": "Medium",
       "inv": [
         [
           "2025",
-          "Şehrin en hızlı yükseleni: ticari fiyatlarda yıllık %+20",
+          "Talebi yüksek, yerleşik bir bölge; desteklenmeyen en hızlı yükselen iddiası yerine tarihli piyasa karşılaştırmaları kullanılmalı",
           "done"
         ],
         [
@@ -398,7 +473,7 @@
           "plan"
         ]
       ],
-      "thesis": "2025’te şehirde en hızlı pahalanan bölge buydu (%20). Merkeze bitişik, kiracı bulmak çok kolay, eski binalar hızla yenileniyor. Önümüzdeki 4–5 yılın en güçlü bölgelerinden.",
+      "thesis": "Merkeze bitişikliği, güçlü kiracı talebi ve yenilenme potansiyeli bu bölgeyi öne çıkarıyor. AQP raporu tarihli piyasa bağlamı sunuyor; şehir lideri %20 artışı kanıtlamıyor.",
       "risk": "Hızlı çıkan bir gün yavaşlar. 2030 civarında bu yükselişin büyük kısmı bitmiş olabilir; geç girenin eline büyüme değil, sadece pahalı bir daire kalır.",
       "act": "Alacaksanız erken alın, 2030 civarında durumu yeniden değerlendirin. Burada dükkan, daireden daha çok kazandırır."
     },
@@ -471,6 +546,7 @@
     ],
     "evidence": [
       {
+        "id": "narimanov.aqp-market-may-2026",
         "status": "operational",
         "source": "Azerbaijan Chamber of Appraisers market report",
         "sourceDate": "2026-05-01",
@@ -482,7 +558,37 @@
         "claimTr": "Burası yerleşik bir merkezi piyasa bölgesidir; tarihli şehir geneli karşılaştırma yararlı bağlam sağlar, ancak bölgeye özel fiyat liderliğini kanıtlamaz.",
         "investmentMeaningTr": "Yerleşik talep kira ve yeniden satış kolaylığı sağlayabilir; erken aşamadaki koridorlar kadar yüksek artış beklenmemelidir."
       }
-    ]
+    ],
+    "scenarioFactors": [
+      {
+        "id": "market-context-only",
+        "role": "unknown",
+        "evidenceIds": ["narimanov.aqp-market-may-2026"],
+        "en": "The cited market source provides citywide context, not a zone-specific price lead or causal estimate.",
+        "tr": "Atıf yapılan piyasa kaynağı şehir geneli bağlam sağlar; bölgeye özgü fiyat liderliği veya nedensel tahmin sağlamaz."
+      }
+    ],
+    "officialPlan": {
+      "planId": "baku-master-plan-2040",
+      "role": "district-context",
+      "status": "strategic-project",
+      "implementationPhase": "long-range",
+      "horizonYear": 2040,
+      "source": {
+        "sourceId": "arxkom.baku-master-plan-2040",
+        "publisher": "ARXKOM",
+        "url": "https://arxkom.gov.az/storage/files/files/shares/qayidish/bash%20plan/659ab50a15eb5.pdf",
+        "section": "Strategic projects: regeneration of former industrial areas",
+        "pages": [
+          211
+        ]
+      },
+      "checkedAt": "2026-08-25",
+      "en": "The plan identifies former industrial areas across Narimanov, Nizami and Khatai as a wider regeneration context; it does not establish a Narimanov-wide price increase.",
+      "tr": "Plan Nərimanov, Nizami və Xətai boyunca keçmiş sənaye ərazilərini daha geniş yenilənmə kontekstində göstərir; Nərimanov üzrə ümumi qiymət artımı müəyyən etmir.",
+      "cautionEn": "A nearby regeneration direction is not proof that every part of the district benefits equally.",
+      "cautionTr": "Yaxınlıqdakı yenilənmə istiqaməti rayonun hər hissəsinin eyni dərəcədə faydalanacağını sübut etmir."
+    }
   },
   {
     "id": "sabail",
@@ -495,9 +601,10 @@
       40.36
     ],
     "radius": 11,
+    "growthPct": 80,
     "en": {
       "now": "~$4,700/m² (8,012 AZN) — city ceiling",
-      "proj": "+80% scenario",
+      "proj": "scenario",
       "yield": "6–9% gross",
       "vol": "Low",
       "inv": [
@@ -518,7 +625,7 @@
     },
     "tr": {
       "now": "~4.700 $/m² (8.012 AZN) — şehir tavanı",
-      "proj": "%+80 senaryo",
+      "proj": "senaryo",
       "yield": "%6–9 brüt",
       "vol": "Low",
       "inv": [
@@ -596,6 +703,7 @@
     ],
     "evidence": [
       {
+        "id": "sabail.aqp-market-may-2026",
         "status": "operational",
         "source": "Azerbaijan Chamber of Appraisers market report",
         "sourceDate": "2026-05-01",
@@ -607,7 +715,39 @@
         "claimTr": "Mayıs 2026 raporu daire, ticari mülk ve müstakil evler için tarihli Baku geneli piyasa karşılaştırması sunuyor.",
         "investmentMeaningTr": "Merkezdeki arz kıtlığı kira ve likiditeyi destekleyebilir; bu rakamı Sabail fiyatı saymadan önce yerel ilanlarla karşılaştırın."
       }
-    ]
+    ],
+    "scenarioFactors": [
+      {
+        "id": "market-context-only",
+        "role": "unknown",
+        "evidenceIds": ["sabail.aqp-market-may-2026"],
+        "en": "The cited market source provides citywide context, not a zone-specific price lead or causal estimate.",
+        "tr": "Atıf yapılan piyasa kaynağı şehir geneli bağlam sağlar; bölgeye özgü fiyat liderliği veya nedensel tahmin sağlamaz."
+      }
+    ],
+    "officialPlan": {
+      "planId": "baku-master-plan-2040",
+      "role": "urban-core",
+      "status": "planning-direction",
+      "implementationPhase": "long-range",
+      "horizonYear": 2040,
+      "source": {
+        "sourceId": "arxkom.baku-master-plan-2040",
+        "publisher": "ARXKOM",
+        "url": "https://arxkom.gov.az/storage/files/files/shares/qayidish/bash%20plan/659ab50a15eb5.pdf",
+        "section": "Central Planning District and special protection area",
+        "pages": [
+          75,
+          79,
+          80
+        ]
+      },
+      "checkedAt": "2026-08-25",
+      "en": "Sabail sits within the central-Baku planning context, including a Central Planning District and a special protection area.",
+      "tr": "Səbail Mərkəzi Planlaşdırma Rayonu və xüsusi mühafizə zonası daxil olmaqla mərkəzi Bakı planlaşdırma kontekstində yerləşir.",
+      "cautionEn": "Centrality and heritage controls can support demand but can also limit redevelopment options.",
+      "cautionTr": "Mərkəzilik və irs qaydaları tələbi dəstəkləyə bilər, lakin yenidənqurma imkanlarını məhdudlaşdıra da bilər."
+    }
   },
   {
     "id": "khojasan",
@@ -620,9 +760,10 @@
       40.416
     ],
     "radius": 11,
+    "growthPct": 110,
     "en": {
       "now": "~$1,100/m²",
-      "proj": "+110% scenario",
+      "proj": "scenario",
       "yield": "7–9% gross",
       "vol": "Medium-high",
       "inv": [
@@ -648,13 +789,13 @@
     },
     "tr": {
       "now": "~1.100 $/m²",
-      "proj": "%+110 senaryo",
+      "proj": "senaryo",
       "yield": "%7–9 brüt",
       "vol": "Medium-high",
       "inv": [
         [
           "2025–26",
-          "Mor Hat’ta Xocəsən deposu ve son durak çalışmaları tamamlanıyor",
+          "Mor Hat’ta Xocəsən deposu ve son durak çalışmaları tamamlandı",
           "fund"
         ],
         [
@@ -736,18 +877,57 @@
     ],
     "evidence": [
       {
+        "id": "khojasan.aiib-purple-depot",
         "status": "contracted",
-        "source": "Baku Metro / station design contract",
-        "sourceDate": "2025-01-01",
+        "source": "AIIB / Baku Metro expansion framework",
+        "sourceDate": "2025-11-28",
         "checkedAt": "2026-08-13",
         "confidence": "high",
-        "claim": "The Khojasan depot and station are operating, while Purple Line B-04 remains under construction/design development.",
+        "claim": "The framework describes Khojasan as an operational Purple Line depot with ongoing development; the Purple Line extension remains a separate planned programme, so further uplift depends on unfinished works.",
         "investmentMeaning": "Existing access is tangible; the next uplift depends on the unfinished extension rather than a guaranteed 2025–26 completion.",
-        "url": "https://www.metro.gov.az/az/building/4480/yeni-metro-stansiyalarinin-tikintisi-ile-bagli-layihelendirilme-islerine-start-verilib",
-        "claimTr": "Khojasan deposu ve istasyonu çalışıyor; Mor Hat B-04 ise hâlâ inşaat ve tasarım geliştirme aşamasında.",
+        "url": "https://www.aiib.org/en/projects/details/2025/_download/Azerbaijan/Baku-Metro-ESMPF-281125-to-Disclose.pdf",
+        "claimTr": "Çerçeve, Xocəsən'i devam eden geliştirme çalışmaları olan faal bir Mor Hat deposu olarak tanımlar; Mor Hat uzatması ayrı bir planlı programdır ve sonraki değer artışı tamamlanmamış işlere bağlıdır.",
         "investmentMeaningTr": "Mevcut erişim somuttur; sonraki değer artışı tamamlanmamış uzantıya bağlıdır."
       }
-    ]
+    ],
+    "scenarioFactors": [
+      {
+        "id": "transport-existing",
+        "role": "support",
+        "evidenceIds": ["khojasan.aiib-purple-depot"],
+        "en": "Existing transport access is documented here. The cited source does not measure a zone-level property premium.",
+        "tr": "Mevcut ulaşım erişimi burada belgelenmiştir. Atıf yapılan kaynak bölgeye özgü bir mülk primini ölçmez."
+      },
+      {
+        "id": "transport-programmed",
+        "role": "dependency",
+        "evidenceIds": ["khojasan.aiib-purple-depot"],
+        "en": "An official plan or programme documents planned transport work; timing, delivery, and useful access remain dependencies.",
+        "tr": "Resmî bir plan veya program planlanan ulaşım çalışmasını belgeler; zamanlama, teslim ve işe yarar erişim hâlâ bağımlılıktır."
+      }
+    ],
+    "officialPlan": {
+      "planId": "baku-master-plan-2040",
+      "role": "district-context",
+      "status": "first-priority",
+      "implementationPhase": "first-seven-years",
+      "horizonYear": 2040,
+      "source": {
+        "sourceId": "arxkom.baku-master-plan-2040",
+        "publisher": "ARXKOM",
+        "url": "https://arxkom.gov.az/storage/files/files/shares/qayidish/bash%20plan/659ab50a15eb5.pdf",
+        "section": "Baku Green Park; first-phase open spaces and water-resource management",
+        "pages": [
+          213,
+          216
+        ]
+      },
+      "checkedAt": "2026-08-25",
+      "en": "The plan proposes a large public park and lake-restoration context around Khojasan, with open-space and water-management work listed among early priorities.",
+      "tr": "Plan Xocahəsən ətrafında böyük ictimai park və gölün bərpası kontekstini, açıq məkan və su ehtiyatlarının idarə edilməsini ilkin prioritetlər arasında göstərir.",
+      "cautionEn": "The proposal is a planning direction; the source does not establish a completed park or guaranteed local uplift.",
+      "cautionTr": "Təklif planlaşdırma istiqamətidir; mənbə tamamlanmış parkı və ya zəmanətli yerli artımı təsdiq etmir."
+    }
   },
   {
     "id": "khirdalan",
@@ -760,9 +940,10 @@
       40.455
     ],
     "radius": 11,
+    "growthPct": 130,
     "en": {
       "now": "$400–700/m² new-build",
-      "proj": "+130% land / towers lag",
+      "proj": "land / towers lag",
       "yield": "8–10% gross",
       "vol": "High",
       "inv": [
@@ -788,7 +969,7 @@
     },
     "tr": {
       "now": "400–700 $/m² (yeni yapı)",
-      "proj": "arsa %+130 / kuleler geride",
+      "proj": "arsa / kuleler geride",
       "yield": "%8–10 brüt",
       "vol": "High",
       "inv": [
@@ -878,6 +1059,7 @@
     ],
     "evidence": [
       {
+        "id": "khirdalan.ady-absheron-rail",
         "status": "operational",
         "source": "ADY / Absheron Circular Railway routes",
         "sourceDate": "2026-01-01",
@@ -889,7 +1071,38 @@
         "claimTr": "Khirdalan mevcut Abşeron Dairesel Demiryolu ağındadır; yol ve ekspres otobüs iyileştirmeleri yoğun banliyö koridorunu rahatlatmayı amaçlıyor.",
         "investmentMeaningTr": "Demiryolu ve yol erişimi kiracı havuzunu genişletebilir; yoğunluk ve tarım arazisi belgeleri parsel bazında kontrol edilmelidir."
       }
-    ]
+    ],
+    "scenarioFactors": [
+      {
+        "id": "transport-existing",
+        "role": "support",
+        "evidenceIds": ["khirdalan.ady-absheron-rail"],
+        "en": "Existing transport access is documented here. The cited source does not measure a zone-level property premium.",
+        "tr": "Mevcut ulaşım erişimi burada belgelenmiştir. Atıf yapılan kaynak bölgeye özgü bir mülk primini ölçmez."
+      }
+    ],
+    "officialPlan": {
+      "planId": "baku-master-plan-2040",
+      "role": "local-centre",
+      "status": "planning-direction",
+      "implementationPhase": "long-range",
+      "horizonYear": 2040,
+      "source": {
+        "sourceId": "arxkom.baku-master-plan-2040",
+        "publisher": "ARXKOM",
+        "url": "https://arxkom.gov.az/storage/files/files/shares/qayidish/bash%20plan/659ab50a15eb5.pdf",
+        "section": "Polycentric city and demography; local centres",
+        "pages": [
+          55,
+          89
+        ]
+      },
+      "checkedAt": "2026-08-25",
+      "en": "Khirdalan is identified as a local centre and is marked as outside the administrative boundary of Baku in the plan centre hierarchy.",
+      "tr": "Xırdalan planın mərkəzlər iyerarxiyasında yerli mərkəz kimi göstərilir və Bakı inzibati sərhədlərindən kənarda qeyd olunur.",
+      "cautionEn": "The plan regional role does not prove that a particular parcel has services, title or transport access.",
+      "cautionTr": "Planın regional rolu konkret parselin xidmət, çıxarış və ya nəqliyyat əlçatanlığını sübut etmir."
+    }
   },
   {
     "id": "sumgayit",
@@ -902,9 +1115,10 @@
       40.589
     ],
     "radius": 14,
+    "growthPct": 140,
     "en": {
       "now": "$410–650/m² ($530–650 at Sahil Park)",
-      "proj": "+140% scenario",
+      "proj": "scenario",
       "yield": "8–10% gross",
       "vol": "Medium",
       "inv": [
@@ -930,7 +1144,7 @@
     },
     "tr": {
       "now": "410–650 $/m² (Sahil Park’ta 530–650 $)",
-      "proj": "%+140 senaryo",
+      "proj": "senaryo",
       "yield": "%8–10 brüt",
       "vol": "Medium",
       "inv": [
@@ -1018,6 +1232,7 @@
     ],
     "evidence": [
       {
+        "id": "sumgayit.economic-zones-industrial-park",
         "status": "operational",
         "source": "Sumqayit Industrial Park / official economic zones data",
         "sourceDate": "2026-01-29",
@@ -1029,7 +1244,38 @@
         "claimTr": "Sanayi parkı 39 yerleşik şirket, 5,6 milyar AZN üzeri yatırım ve 6.000’den fazla kalıcı iş bildiriyor.",
         "investmentMeaningTr": "Bu, ucuz sahil hikâyesinin ötesinde gerçek bir konut talebi temeli sağlar; sanayi komşuluğu ve kirlilik geçmişi kontrol edilmelidir."
       }
-    ]
+    ],
+    "scenarioFactors": [
+      {
+        "id": "employment-anchor",
+        "role": "support",
+        "evidenceIds": ["sumgayit.economic-zones-industrial-park"],
+        "en": "Current industrial, logistics, or jobs activity is documented; it does not automatically imply residential price growth.",
+        "tr": "Mevcut sanayi, lojistik veya istihdam faaliyeti belgelenmiştir; bu durum otomatik olarak konut fiyat artışı anlamına gelmez."
+      }
+    ],
+    "officialPlan": {
+      "planId": "baku-master-plan-2040",
+      "role": "regional-centre",
+      "status": "planning-direction",
+      "implementationPhase": "long-range",
+      "horizonYear": 2040,
+      "source": {
+        "sourceId": "arxkom.baku-master-plan-2040",
+        "publisher": "ARXKOM",
+        "url": "https://arxkom.gov.az/storage/files/files/shares/qayidish/bash%20plan/659ab50a15eb5.pdf",
+        "section": "Polycentric city and demography; regional centres",
+        "pages": [
+          55,
+          89
+        ]
+      },
+      "checkedAt": "2026-08-25",
+      "en": "Sumgayit is identified as a regional centre connected to central Baku by existing or planned transport infrastructure.",
+      "tr": "Sumqayıt mövcud və ya planlaşdırılan nəqliyyat infrastrukturu ilə mərkəzi Bakıya bağlanan regional mərkəz kimi göstərilir.",
+      "cautionEn": "A regional-centre designation does not prove the timing or local effect of every planned connection.",
+      "cautionTr": "Regional mərkəz statusu hər planlaşdırılan bağlantının vaxtını və yerli təsirini sübut etmir."
+    }
   },
   {
     "id": "novkhani",
@@ -1042,9 +1288,10 @@
       40.52
     ],
     "radius": 9,
+    "growthPct": 100,
     "en": {
       "now": "~$800–1,200 near water",
-      "proj": "+100% scenario",
+      "proj": "scenario",
       "yield": "seasonal",
       "vol": "Medium",
       "inv": [
@@ -1065,7 +1312,7 @@
     },
     "tr": {
       "now": "su kenarında ~800–1.200 $",
-      "proj": "%+100 senaryo",
+      "proj": "senaryo",
       "yield": "mevsimsel",
       "vol": "Medium",
       "inv": [
@@ -1143,6 +1390,7 @@
     ],
     "evidence": [
       {
+        "id": "novkhani.ayna-northern-corridor",
         "status": "operational",
         "source": "ADY and official northern road programme",
         "sourceDate": "2026-01-01",
@@ -1154,7 +1402,44 @@
         "claimTr": "Novkhani mevcut demiryolu erişimine sahip ve Pirshagi–Novkhani–Khirdalan–M4 kuzey yol iyileştirme koridorundadır.",
         "investmentMeaningTr": "Erişim bugünün avantajıdır; Sea Breeze etkisi ise garanti değil, analitik bir çıkarımdır."
       }
-    ]
+    ],
+    "scenarioFactors": [
+      {
+        "id": "transport-existing",
+        "role": "support",
+        "evidenceIds": ["novkhani.ayna-northern-corridor"],
+        "en": "Existing transport access is documented here. The cited source does not measure a zone-level property premium.",
+        "tr": "Mevcut ulaşım erişimi burada belgelenmiştir. Atıf yapılan kaynak bölgeye özgü bir mülk primini ölçmez."
+      },
+      {
+        "id": "transport-programmed",
+        "role": "dependency",
+        "evidenceIds": ["novkhani.ayna-northern-corridor"],
+        "en": "An official plan or programme documents planned transport work; timing, delivery, and useful access remain dependencies.",
+        "tr": "Resmî bir plan veya program planlanan ulaşım çalışmasını belgeler; zamanlama, teslim ve işe yarar erişim hâlâ bağımlılıktır."
+      }
+    ],
+    "officialPlan": {
+      "planId": "baku-master-plan-2040",
+      "role": "not-specified",
+      "status": "not-zone-specific",
+      "implementationPhase": "not-specified",
+      "horizonYear": 2040,
+      "source": {
+        "sourceId": "arxkom.baku-master-plan-2040",
+        "publisher": "ARXKOM",
+        "url": "https://arxkom.gov.az/storage/files/files/shares/qayidish/bash%20plan/659ab50a15eb5.pdf",
+        "section": "Polycentric city and demography; no zone-specific assignment identified in the reviewed pages",
+        "pages": [
+          55
+        ]
+      },
+      "checkedAt": "2026-08-25",
+      "en": "No zone-specific role or project assignment was identified in the reviewed official plan pages for Novkhani.",
+      "tr": "Novxanı üçün nəzərdən keçirilmiş rəsmi plan səhifələrində zona üzrə ayrıca rol və ya layihə təyinatı müəyyən edilmədi.",
+      "cautionEn": "Transport or private development evidence must be assessed separately from the citywide plan.",
+      "cautionTr": "Nəqliyyat və ya özəl inkişaf sübutları şəhər üzrə plandan ayrıca qiymətləndirilməlidir."
+    }
   },
   {
     "id": "bilgah",
@@ -1167,9 +1452,10 @@
       40.56
     ],
     "radius": 16,
+    "growthPct": 150,
     "en": {
       "now": "~$1,000–1,800 near shore",
-      "proj": "+150% scenario",
+      "proj": "scenario",
       "yield": "5–8% (resort lets)",
       "vol": "High (oil-linked)",
       "inv": [
@@ -1195,7 +1481,7 @@
     },
     "tr": {
       "now": "kıyıya yakın ~1.000–1.800 $",
-      "proj": "%+150 senaryo",
+      "proj": "senaryo",
       "yield": "%5–8 (tatil kiralama)",
       "vol": "High (oil-linked)",
       "inv": [
@@ -1285,6 +1571,7 @@
     ],
     "evidence": [
       {
+        "id": "bilgah.sea-breeze-development",
         "status": "private-plan",
         "source": "Sea Breeze / official government project briefing",
         "sourceDate": "2025-07-01",
@@ -1297,6 +1584,7 @@
         "investmentMeaningTr": "Gerçek bir özel proje talep çekebilir; bildirilen hedefler bağımsız piyasa tahmini değildir."
       },
       {
+        "id": "bilgah.state-programme-tram",
         "status": "programmed",
         "source": "State transport programme",
         "sourceDate": "2025-01-30",
@@ -1308,7 +1596,44 @@
         "claimTr": "Sea Breeze–Pirshagi tramvay bağlantısı 2027–2029 ulaşım programında planlanan altyapı olarak yer alıyor.",
         "investmentMeaningTr": "Bu yararlı bir erişim sinyalidir; finanse edilmiş ve kesinleşmiş inşaat olarak görülmemelidir."
       }
-    ]
+    ],
+    "scenarioFactors": [
+      {
+        "id": "development-anchor",
+        "role": "support",
+        "evidenceIds": ["bilgah.sea-breeze-development"],
+        "en": "A named regeneration or private development anchor is documented; reported plans or targets are not independent market forecasts.",
+        "tr": "Adı belirtilen bir yenileme veya özel gelişim odağı belgelenmiştir; bildirilen planlar veya hedefler bağımsız piyasa tahminleri değildir."
+      },
+      {
+        "id": "transport-programmed",
+        "role": "dependency",
+        "evidenceIds": ["bilgah.state-programme-tram"],
+        "en": "An official plan or programme documents planned transport work; timing, delivery, and useful access remain dependencies.",
+        "tr": "Resmî bir plan veya program planlanan ulaşım çalışmasını belgeler; zamanlama, teslim ve işe yarar erişim hâlâ bağımlılıktır."
+      }
+    ],
+    "officialPlan": {
+      "planId": "baku-master-plan-2040",
+      "role": "not-specified",
+      "status": "not-zone-specific",
+      "implementationPhase": "not-specified",
+      "horizonYear": 2040,
+      "source": {
+        "sourceId": "arxkom.baku-master-plan-2040",
+        "publisher": "ARXKOM",
+        "url": "https://arxkom.gov.az/storage/files/files/shares/qayidish/bash%20plan/659ab50a15eb5.pdf",
+        "section": "Polycentric city and demography; no zone-specific assignment identified in the reviewed pages",
+        "pages": [
+          55
+        ]
+      },
+      "checkedAt": "2026-08-25",
+      "en": "No zone-specific role or project assignment was identified in the reviewed official plan pages for Bilgah.",
+      "tr": "Bilgəh üçün nəzərdən keçirilmiş rəsmi plan səhifələrində zona üzrə ayrıca rol və ya layihə təyinatı müəyyən edilmədi.",
+      "cautionEn": "Private development claims must not be presented as official-plan commitments.",
+      "cautionTr": "Özəl inkişaf iddiaları rəsmi plan öhdəliyi kimi təqdim edilməməlidir."
+    }
   },
   {
     "id": "mardakan",
@@ -1321,9 +1646,10 @@
       40.505
     ],
     "radius": 16,
+    "growthPct": 125,
     "en": {
       "now": "~$800–1,400; villa land varies",
-      "proj": "+125% scenario (land-led)",
+      "proj": "scenario (land-led)",
       "yield": "5–7%",
       "vol": "Medium",
       "inv": [
@@ -1349,7 +1675,7 @@
     },
     "tr": {
       "now": "~800–1.400 $; villa arsası değişken",
-      "proj": "%+125 senaryo (arsa öncülüğünde)",
+      "proj": "senaryo (arsa öncülüğünde)",
       "yield": "%5–7",
       "vol": "Medium",
       "inv": [
@@ -1360,12 +1686,12 @@
         ],
         [
           "2027–34",
-          "54 istasyona doğru demiryolu genişlemesi KD’ye hizmet ediyor; havalimanı kenti komşuluğu",
+          "Planlanan demiryolu restorasyonu ve bölgesel merkez yönelimi, kuzeydoğuya erişim durumunu güçlendiriyor",
           "plan"
         ],
         [
           "2030’lar",
-          "Çevre metro hattı (takvim tutarsa) burayı gerçek bir kent düğümüne çeviriyor",
+          "Çevre metro hattı konsepti uzun vadeli; yakın vadeli bir taahhüt olarak kullanılmamalı",
           "plan"
         ]
       ],
@@ -1437,6 +1763,7 @@
     ],
     "evidence": [
       {
+        "id": "mardakan.polycentric-plan",
         "status": "programmed",
         "source": "Baku Master Plan 2040 and transport planning",
         "sourceDate": "2025-01-01",
@@ -1448,7 +1775,45 @@
         "claimTr": "Mardakan resmî çok merkezli planda bölgesel merkez olarak tanımlanıyor; planlanan demiryolu restorasyonu dış koridorun erişim tezini güçlendiriyor.",
         "investmentMeaningTr": "Bölgesel merkez yönü ve demiryolu uzun vadeli talebi destekleyebilir; bu yakın vadeli dairesel metro taahhüdü değildir."
       }
-    ]
+    ],
+    "scenarioFactors": [
+      {
+        "id": "centre-plan-direction",
+        "role": "support",
+        "evidenceIds": ["mardakan.polycentric-plan"],
+        "en": "An official plan assigns a local-centre, regional-centre, or corridor role; implementation and local demand remain dependencies.",
+        "tr": "Resmî bir plan yerel merkez, bölgesel merkez veya koridor rolü tanımlar; uygulama ve yerel talep hâlâ bağımlılıktır."
+      },
+      {
+        "id": "transport-programmed",
+        "role": "dependency",
+        "evidenceIds": ["mardakan.polycentric-plan"],
+        "en": "An official plan or programme documents planned transport work; timing, delivery, and useful access remain dependencies.",
+        "tr": "Resmî bir plan veya program planlanan ulaşım çalışmasını belgeler; zamanlama, teslim ve işe yarar erişim hâlâ bağımlılıktır."
+      }
+    ],
+    "officialPlan": {
+      "planId": "baku-master-plan-2040",
+      "role": "regional-centre",
+      "status": "planning-direction",
+      "implementationPhase": "long-range",
+      "horizonYear": 2040,
+      "source": {
+        "sourceId": "arxkom.baku-master-plan-2040",
+        "publisher": "ARXKOM",
+        "url": "https://arxkom.gov.az/storage/files/files/shares/qayidish/bash%20plan/659ab50a15eb5.pdf",
+        "section": "Polycentric city and demography; regional centres",
+        "pages": [
+          55,
+          89
+        ]
+      },
+      "checkedAt": "2026-08-25",
+      "en": "Mardakan is identified as a regional centre intended to provide more self-sufficient services and connect to central Baku through transport infrastructure.",
+      "tr": "Mərdəkan daha özünütəmin edən xidmətlər göstərməsi və nəqliyyat infrastrukturu ilə mərkəzi Bakıya bağlanması nəzərdə tutulan regional mərkəz kimi göstərilir.",
+      "cautionEn": "The centre designation is a long-range planning direction, not a guaranteed construction schedule or price signal.",
+      "cautionTr": "Mərkəz statusu uzunmüddətli planlaşdırma istiqamətidir, zəmanətli tikinti qrafiki və ya qiymət siqnalı deyil."
+    }
   },
   {
     "id": "airport",
@@ -1461,15 +1826,16 @@
       40.47
     ],
     "radius": 12,
+    "growthPct": 120,
     "en": {
       "now": "$400–600/m²",
-      "proj": "+120% if remediated",
+      "proj": "if remediated",
       "yield": "7–9%",
       "vol": "Very high",
       "inv": [
         [
           "2024–25",
-          "Beyukshor–Pirshagi highway delivered — Mohammadi repriced sharply (the proof case)",
+          "Beyukshor–Pirshagi highway delivered — a verified access catalyst near Mohammadi; any price effect is not measured in the cited source",
           "done"
         ],
         [
@@ -1483,24 +1849,24 @@
           "plan"
         ]
       ],
-      "thesis": "The dark horse: an HBU rewrite of semi-industrial land replaying White City’s stigma-reversal playbook. Remediated parcels jump discontinuously; the Mohammadi episode showed how violently this zone reprices off one road.",
+      "thesis": "The dark horse: an HBU rewrite of semi-industrial land replaying White City’s stigma-reversal playbook. Remediated parcels may jump discontinuously; Mohammadi is a nearby access case, but the cited road source does not measure a property-price effect.",
       "risk": "Remediation is slow and uneven; unremediated land stays discounted indefinitely. Monitor cleanup certificates, not listings.",
       "act": "Elevated, titled parcels away from lake margins and known contamination; verify cadastral rayon (parcels here straddle boundaries)."
     },
     "tr": {
       "now": "400–600 $/m²",
-      "proj": "ıslah edilirse %+120",
+      "proj": "ıslah edilirse",
       "yield": "%7–9",
       "vol": "Very high",
       "inv": [
         [
           "2024–25",
-          "Böyükşor–Pirşağı yolu tamamlandı — Məhəmmədli sert biçimde yeniden fiyatlandı (kanıt vakası)",
+          "Böyükşor–Pirşağı yolu tamamlandı — Məhəmmədli yakınında doğrulanmış ulaşım katalizörü; kaynakta değer etkisi ölçülmedi",
           "done"
         ],
         [
           "2026–31",
-          "Sabunçu \"havalimanı kenti\" konsepti: GYD çevresinde lojistik, konaklama, hizmetler",
+          "Havalimanı yanındaki lojistik ve hizmetler bir planlama yorumudur; taahhüt edilmiş bir ‘havalimanı kenti’ projesi değildir",
           "plan"
         ],
         [
@@ -1509,7 +1875,7 @@
           "plan"
         ]
       ],
-      "thesis": "Sürpriz aday. Havalimanının çevresi \"havalimanı şehri\" olacak ve eski petrol arazileri temizlendikçe değer sıçrıyor — White City’de olan burada tekrar edebilir. Kanıt mı? Yandaki Məhəmmədli köyü: tek bir yol yapıldı, fiyatlar fırladı.",
+      "thesis": "Sürpriz aday. Havalimanı çevresinde eski petrol arazileri temizlendikçe White City’deki dönüşüm tekrarlanabilir. Yakındaki Məhəmmədli doğrulanmış bir ulaşım örneğidir; ancak kaynakta mülk fiyatı etkisi ölçülmemiştir.",
       "risk": "Temizlik (ıslah) yavaş ve düzensiz gidiyor. Temizlenmeyen arsa yıllarca ucuz kalır. İlanlara değil, resmî temizlik belgelerine bakın.",
       "act": "Yüksek yerde, göl kenarından ve bilinen kirli alanlardan uzak, tapulu arsa. Arsanın resmen hangi rayonda kayıtlı olduğunu mutlaka doğrulatın."
     },
@@ -1517,7 +1883,7 @@
     "inv": [
       [
         "2024–25",
-        "Beyukshor–Pirshagi highway delivered — Mohammadi repriced sharply (the proof case)",
+        "Beyukshor–Pirshagi highway delivered — a verified access catalyst near Mohammadi; any price effect is not measured in the cited source",
         "done"
       ],
       [
@@ -1579,6 +1945,7 @@
     ],
     "evidence": [
       {
+        "id": "airport.president-northern-corridor",
         "status": "operational",
         "source": "ADY / existing Absheron railway and official road opening",
         "sourceDate": "2024-11-01",
@@ -1590,7 +1957,38 @@
         "claimTr": "Havalimanı–Zabrat–Balakhany–Sabunchu koridorunda mevcut demiryolu ve kuzey yol ağı içinde kanıtlanmış bir yol katalizörü var.",
         "investmentMeaningTr": "Mevcut bağlantılar “havalimanı şehri” etiketinden daha güvenilirdir; lojistik ve hizmet artışı konuma bağlıdır."
       }
-    ]
+    ],
+    "scenarioFactors": [
+      {
+        "id": "transport-existing",
+        "role": "support",
+        "evidenceIds": ["airport.president-northern-corridor"],
+        "en": "Existing transport access is documented here. The cited source does not measure a zone-level property premium.",
+        "tr": "Mevcut ulaşım erişimi burada belgelenmiştir. Atıf yapılan kaynak bölgeye özgü bir mülk primini ölçmez."
+      }
+    ],
+    "officialPlan": {
+      "planId": "baku-master-plan-2040",
+      "role": "district-context",
+      "status": "first-priority",
+      "implementationPhase": "first-seven-years",
+      "horizonYear": 2040,
+      "source": {
+        "sourceId": "arxkom.baku-master-plan-2040",
+        "publisher": "ARXKOM",
+        "url": "https://arxkom.gov.az/storage/files/files/shares/qayidish/bash%20plan/659ab50a15eb5.pdf",
+        "section": "Airport-area service development; first-phase development priorities",
+        "pages": [
+          65,
+          216
+        ]
+      },
+      "checkedAt": "2026-08-25",
+      "en": "The plan identifies new service-sector development near the international airport as an early development priority.",
+      "tr": "Plan beynəlxalq hava limanı yaxınlığında yeni xidmət sahələrinin inkişafını ilkin inkişaf prioriteti kimi göstərir.",
+      "cautionEn": "A citywide airport-area priority does not establish the value or legal status of an individual property.",
+      "cautionTr": "Şəhər üzrə hava limanı prioriteti konkret mülkün dəyərini və hüquqi statusunu müəyyən etmir."
+    }
   },
   {
     "id": "mohammadi",
@@ -1603,9 +2001,10 @@
       40.495
     ],
     "radius": 12,
+    "growthPct": 150,
     "en": {
       "now": "~$20–25/m² peripheral land; houses 55–77k AZN",
-      "proj": "2–3× land scenario",
+      "proj": "land scenario (2–3× range)",
       "yield": "n/a (land)",
       "vol": "Very high",
       "inv": [
@@ -1625,19 +2024,19 @@
           "plan"
         ]
       ],
-      "thesis": "The live natural experiment: one completed road already repriced it, and two more catalysts (airport city, north-coast axis) are still ahead at a $20–25/m² entry. Village-to-commuter-belt transitions are where the largest percentage gains live.",
+      "thesis": "The live natural experiment: one completed road is a verified access catalyst, but its property-price effect is not measured in the cited source. Two more catalysts (airport city, north-coast axis) are still ahead at a $20–25/m² entry.",
       "risk": "Rule one is documentation: much local land carries municipal-only papers. Beyukshor Lake pollution discounts the southern margins; broker froth inflates asking prices; the settlement straddles Absheron/Sabunchu rayon lines.",
       "act": "Full-çıxarış land only, elevated northern side, within ~1km of the highway or Kurdakhani road, bought from the owner with registry verification. Patient 5–10 year hold."
     },
     "tr": {
       "now": "çeper arsa ~20–25 $/m²; evler 55–77 bin AZN",
-      "proj": "arsada 2–3× senaryo",
+      "proj": "arsada senaryo (2–3× aralık)",
       "yield": "— (arsa)",
       "vol": "Very high",
       "inv": [
         [
           "2024–25",
-          "Böyükşor–Pirşağı yolu yerleşimin yanından tamamlandı — ilçedeki en sert yeniden fiyatlama; Balaxanı, Zabrat ve Digah’a taşma",
+          "Böyükşor–Pirşağı yolu tamamlandı; yakın yerleşimlere taşma, analitik bir yorumdur",
           "done"
         ],
         [
@@ -1651,7 +2050,7 @@
           "plan"
         ]
       ],
-      "thesis": "Canlı kanıt: yeni yol yapıldı, fiyatlar hemen fırladı. Ve daha bitmedi — yanına havalimanı şehri geliyor, kuzey sahil yolunun da üstünde. Giriş hâlâ çok ucuz (arsa ~20–25 $/m²). Bir köy şehir kenarına dönüşürken en büyük kazançlar işte o arada yaşanır.",
+      "thesis": "Canlı örnek: yeni yol doğrulanmış bir ulaşım katalizörüdür, ancak kaynakta mülk fiyatı etkisi ölçülmemiştir. Yanına havalimanı şehri ve kuzey sahil yolu katalizörleri geliyor; giriş hâlâ çok ucuz (arsa ~20–25 $/m²).",
       "risk": "BİR NUMARALI KURAL: TAPU. Buradaki arazilerin çoğunda sadece belediye kâğıdı var — o kâğıt sizi korumaz. Göl (Böyükşor) tarafı kirli, uzak durun. Emlakçılar fiyat şişiriyor; pazarlıkta gerçek tapulu satışları ölçü alın. Köy iki rayonun sınırında — kaydın hangisinde olduğu önemli.",
       "act": "Sadece tam tapulu (çıxarışlı) arsa. Köyün yüksek, kuzey tarafı. Yola 1 km’den yakın. Satıcıyla birlikte devlet sicilinde (ASAN) doğrulatın. 5–10 yıl bekleyebilecek parayla girin."
     },
@@ -1731,6 +2130,7 @@
     ],
     "evidence": [
       {
+        "id": "mohammadi.president-bogushor-pirshagi-road",
         "status": "operational",
         "source": "Office of the President / Böyükşor–Pirshagi road opening",
         "sourceDate": "2024-11-01",
@@ -1742,7 +2142,37 @@
         "claimTr": "Böyükşor–Pirshagi yolu Kasım 2024’te açıldı ve Mohammadi dâhil kuzey yerleşimlerinin içinden veya yakınından geçiyor.",
         "investmentMeaningTr": "Yol katalizörü doğrulanmıştır; değer artışı veya çevreye taşma ölçülmüş işlem sonucu değil, yatırım yorumudur."
       }
-    ]
+    ],
+    "scenarioFactors": [
+      {
+        "id": "transport-existing",
+        "role": "support",
+        "evidenceIds": ["mohammadi.president-bogushor-pirshagi-road"],
+        "en": "Existing transport access is documented here. The cited source does not measure a zone-level property premium.",
+        "tr": "Mevcut ulaşım erişimi burada belgelenmiştir. Atıf yapılan kaynak bölgeye özgü bir mülk primini ölçmez."
+      }
+    ],
+    "officialPlan": {
+      "planId": "baku-master-plan-2040",
+      "role": "not-specified",
+      "status": "not-zone-specific",
+      "implementationPhase": "not-specified",
+      "horizonYear": 2040,
+      "source": {
+        "sourceId": "arxkom.baku-master-plan-2040",
+        "publisher": "ARXKOM",
+        "url": "https://arxkom.gov.az/storage/files/files/shares/qayidish/bash%20plan/659ab50a15eb5.pdf",
+        "section": "Polycentric city and demography; no zone-specific assignment identified in the reviewed pages",
+        "pages": [
+          55
+        ]
+      },
+      "checkedAt": "2026-08-25",
+      "en": "No zone-specific role or project assignment was identified in the reviewed official plan pages for Mohammadi.",
+      "tr": "Məhəmmədli üçün nəzərdən keçirilmiş rəsmi plan səhifələrində zona üzrə ayrıca rol və ya layihə təyinatı müəyyən edilmədi.",
+      "cautionEn": "The road evidence for this place must be kept separate from official-plan claims.",
+      "cautionTr": "Bu yer üzrə yol sübutu rəsmi plan iddialarından ayrı saxlanılmalıdır."
+    }
   },
   {
     "id": "hovsan",
@@ -1755,9 +2185,10 @@
       40.374
     ],
     "radius": 12,
+    "growthPct": 130,
     "en": {
       "now": "$500–800/m² — cheapest coast within 25km",
-      "proj": "+130% post-2030",
+      "proj": "post-2030",
       "yield": "7–9%",
       "vol": "High",
       "inv": [
@@ -1783,7 +2214,7 @@
     },
     "tr": {
       "now": "500–800 $/m² — 25 km içindeki en ucuz kıyı",
-      "proj": "2030 sonrası %+130",
+      "proj": "2030 sonrası",
       "yield": "%7–9",
       "vol": "High",
       "inv": [
@@ -1799,7 +2230,7 @@
         ],
         [
           "2030’lar",
-          "Çevre hattı istasyonunun teyidi giriş tetikleyicisidir",
+          "Demiryolu restorasyonu veya yol programının teyidi, pratik giriş tetikleyicisidir",
           "plan"
         ]
       ],
@@ -1871,18 +2302,50 @@
     ],
     "evidence": [
       {
+        "id": "hovsan.state-programme-rail",
         "status": "programmed",
-        "source": "AYNA / state transport programme",
-        "sourceDate": "2026-01-01",
+        "source": "Presidential State Programme / official decree PDF",
+        "sourceDate": "2025-01-30",
         "checkedAt": "2026-08-13",
         "confidence": "high",
-        "claim": "Yeni Surakhani–Hovsan railway restoration and related road/transport improvements are part of the public programme direction.",
+        "claim": "The State Programme schedules restoration of the Yeni Surakhani–Hovsan railway line for 2026–2027, including infrastructure and signalling works and the return of passenger service.",
         "investmentMeaning": "Rail restoration is the practical access trigger; a circular metro should not be treated as the near-term base case.",
-        "url": "https://ayna.gov.az/az/news/baki-seherinde-ve-etraf-erazilerde-neqliyyat-infrastrukturunun-tekmillesdirilmesine-dair-2025-2030-cu-iller-ucun-dovlet-proqraminin-2025-ci-il-uzre-icrasina-hesr-olunan-dairevi-masa-1006",
-        "claimTr": "Yeni Surakhani–Hovsan demiryolu restorasyonu ve bağlantılı yol/ulaşım iyileştirmeleri kamu programının yönü içinde yer alıyor.",
+        "url": "https://static.president.az/upload/Files/2025/01/31/4f32a6bd6ffc6b39efcfb5153e868c88_5073315.pdf",
+        "claimTr": "Devlet Programı, Yeni Suraxanı–Hövsan demiryolu hattının altyapı ve sinyalizasyon çalışmalarıyla birlikte 2026–2027'de restore edilmesini ve yolcu hizmetinin yeniden başlatılmasını planlıyor.",
         "investmentMeaningTr": "Pratik erişim tetikleyicisi demiryolu restorasyonudur; dairesel metro yakın vadeli temel senaryo sayılmamalıdır."
       }
-    ]
+    ],
+    "scenarioFactors": [
+      {
+        "id": "transport-programmed",
+        "role": "dependency",
+        "evidenceIds": ["hovsan.state-programme-rail"],
+        "en": "An official plan or programme documents planned transport work; timing, delivery, and useful access remain dependencies.",
+        "tr": "Resmî bir plan veya program planlanan ulaşım çalışmasını belgeler; zamanlama, teslim ve işe yarar erişim hâlâ bağımlılıktır."
+      }
+    ],
+    "officialPlan": {
+      "planId": "baku-master-plan-2040",
+      "role": "local-centre",
+      "status": "planning-direction",
+      "implementationPhase": "long-range",
+      "horizonYear": 2040,
+      "source": {
+        "sourceId": "arxkom.baku-master-plan-2040",
+        "publisher": "ARXKOM",
+        "url": "https://arxkom.gov.az/storage/files/files/shares/qayidish/bash%20plan/659ab50a15eb5.pdf",
+        "section": "Polycentric city and demography; local centres",
+        "pages": [
+          55,
+          89
+        ]
+      },
+      "checkedAt": "2026-08-25",
+      "en": "Zigh/Hovsan is identified as a local-centre context at the edge of Central Baku, intended to be served by public transport and primary roads.",
+      "tr": "Zığ/Hövsan Mərkəzi Bakının kənarında ictimai nəqliyyat və əsas yollarla xidmət göstərilməsi nəzərdə tutulan yerli mərkəz kontekstidir.",
+      "cautionEn": "The local-centre designation does not prove that planned transport or services are already available.",
+      "cautionTr": "Yerli mərkəz statusu planlaşdırılan nəqliyyatın və xidmətlərin artıq mövcud olduğunu sübut etmir."
+    }
   },
   {
     "id": "zikh",
@@ -1895,6 +2358,7 @@
       40.353
     ],
     "radius": 9,
+    "growthPct": 130,
     "en": {
       "now": "$500–700/m²",
       "proj": "tracks Hovsan",
@@ -1924,7 +2388,7 @@
       "inv": [
         [
           "2026–30",
-          "Merkez Bakü’den lojistik göçü Zığ koridorundan geçiyor",
+          "Doğu kıyısındaki lojistik ve bağlantı iyileştirmeleri bir tezdir; ölçülmüş bir göç rakamı değildir",
           "done"
         ],
         [
@@ -1996,6 +2460,7 @@
     ],
     "evidence": [
       {
+        "id": "zikh.polycentric-transport-plan",
         "status": "programmed",
         "source": "Baku Master Plan 2040 and transport planning",
         "sourceDate": "2025-01-01",
@@ -2007,7 +2472,45 @@
         "claimTr": "Zikh yerel merkez ve doğu koridoru planlama yönünde yer alıyor; dairesel metro vaadinden çok yol ve demiryolu bağlantıları önemlidir.",
         "investmentMeaningTr": "Daha iyi erişim ve yerel hizmetlerden faydalanabilir; sanayi komşuluğu sokak seçimini belirler."
       }
-    ]
+    ],
+    "scenarioFactors": [
+      {
+        "id": "centre-plan-direction",
+        "role": "support",
+        "evidenceIds": ["zikh.polycentric-transport-plan"],
+        "en": "An official plan assigns a local-centre, regional-centre, or corridor role; implementation and local demand remain dependencies.",
+        "tr": "Resmî bir plan yerel merkez, bölgesel merkez veya koridor rolü tanımlar; uygulama ve yerel talep hâlâ bağımlılıktır."
+      },
+      {
+        "id": "transport-programmed",
+        "role": "dependency",
+        "evidenceIds": ["zikh.polycentric-transport-plan"],
+        "en": "An official plan or programme documents planned transport work; timing, delivery, and useful access remain dependencies.",
+        "tr": "Resmî bir plan veya program planlanan ulaşım çalışmasını belgeler; zamanlama, teslim ve işe yarar erişim hâlâ bağımlılıktır."
+      }
+    ],
+    "officialPlan": {
+      "planId": "baku-master-plan-2040",
+      "role": "local-centre",
+      "status": "first-priority",
+      "implementationPhase": "first-seven-years",
+      "horizonYear": 2040,
+      "source": {
+        "sourceId": "arxkom.baku-master-plan-2040",
+        "publisher": "ARXKOM",
+        "url": "https://arxkom.gov.az/storage/files/files/shares/qayidish/bash%20plan/659ab50a15eb5.pdf",
+        "section": "Zigh lake/open-space and water-resource management priority",
+        "pages": [
+          55,
+          216
+        ]
+      },
+      "checkedAt": "2026-08-25",
+      "en": "Zigh/Hovsan is included in the local-centre hierarchy and the first-phase list for open spaces and water-resource management around Zigh and Khojasan lakes.",
+      "tr": "Zığ/Hövsan yerli mərkəzlər iyerarxiyasına və Zığ və Xocahəsən gölləri ətrafında açıq məkanlar və su ehtiyatlarının idarə edilməsi üzrə ilkin mərhələ siyahısına daxildir.",
+      "cautionEn": "The first-phase listing is not proof that every listed project is funded, contracted or complete.",
+      "cautionTr": "İlkin mərhələ siyahısı sadalanan hər layihənin maliyyələşdiyini, müqavilələndiyini və ya tamamlandığını sübut etmir."
+    }
   },
   {
     "id": "lokbatan",
@@ -2020,9 +2523,10 @@
       40.325
     ],
     "radius": 9,
+    "growthPct": 80,
     "en": {
       "now": "~$400/m²",
-      "proj": "+80% scenario",
+      "proj": "scenario",
       "yield": "8–10%",
       "vol": "Low-medium",
       "inv": [
@@ -2043,7 +2547,7 @@
     },
     "tr": {
       "now": "~400 $/m²",
-      "proj": "%+80 senaryo",
+      "proj": "senaryo",
       "yield": "%8–10",
       "vol": "Low-medium",
       "inv": [
@@ -2121,6 +2625,7 @@
     ],
     "evidence": [
       {
+        "id": "lokbatan.polycentric-plan",
         "status": "programmed",
         "source": "Baku Master Plan 2040 / transport network plan",
         "sourceDate": "2025-01-01",
@@ -2155,7 +2660,45 @@
         "en": "A new KFC is being built nearby. New food places bring more activity and help local prices rise.",
         "tr": "Yakında yeni bir KFC inşa ediliyor. Yeni yeme-içme yerleri hareketlilik getirir ve yerel fiyatları yükseltir."
       }
-    ]
+    ],
+    "scenarioFactors": [
+      {
+        "id": "centre-plan-direction",
+        "role": "support",
+        "evidenceIds": ["lokbatan.polycentric-plan"],
+        "en": "An official plan assigns a local-centre, regional-centre, or corridor role; implementation and local demand remain dependencies.",
+        "tr": "Resmî bir plan yerel merkez, bölgesel merkez veya koridor rolü tanımlar; uygulama ve yerel talep hâlâ bağımlılıktır."
+      },
+      {
+        "id": "transport-programmed",
+        "role": "dependency",
+        "evidenceIds": ["lokbatan.polycentric-plan"],
+        "en": "An official plan or programme documents planned transport work; timing, delivery, and useful access remain dependencies.",
+        "tr": "Resmî bir plan veya program planlanan ulaşım çalışmasını belgeler; zamanlama, teslim ve işe yarar erişim hâlâ bağımlılıktır."
+      }
+    ],
+    "officialPlan": {
+      "planId": "baku-master-plan-2040",
+      "role": "local-centre",
+      "status": "planning-direction",
+      "implementationPhase": "long-range",
+      "horizonYear": 2040,
+      "source": {
+        "sourceId": "arxkom.baku-master-plan-2040",
+        "publisher": "ARXKOM",
+        "url": "https://arxkom.gov.az/storage/files/files/shares/qayidish/bash%20plan/659ab50a15eb5.pdf",
+        "section": "Polycentric city and demography; local centres and Green Park context",
+        "pages": [
+          55,
+          213
+        ]
+      },
+      "checkedAt": "2026-08-25",
+      "en": "Lokbatan is identified as a local centre; the plan also describes a possible long-term southward extension of the Khojasan green-park system toward Lokbatan and the Caspian.",
+      "tr": "Lökbatan yerli mərkəz kimi göstərilir; plan həmçinin Xocahəsən yaşıl park sisteminin uzunmüddətli perspektivdə Lökbatan və Xəzər istiqamətində genişlənə biləcəyini təsvir edir.",
+      "cautionEn": "The possible extension is long-range and does not establish a delivered park boundary or property premium.",
+      "cautionTr": "Mümkün genişlənmə uzunmüddətlidir və salınmış park sərhədini və ya əmlak primini müəyyən etmir."
+    }
   },
   {
     "id": "alat",
@@ -2168,6 +2711,7 @@
       39.945
     ],
     "radius": 11,
+    "growthPct": 120,
     "en": {
       "now": "~$300/m² and below",
       "proj": "land-banking; housing lags",
@@ -2284,6 +2828,7 @@
     ],
     "evidence": [
       {
+        "id": "alat.port-of-baku-throughput",
         "status": "operational",
         "source": "Port of Baku",
         "sourceDate": "2025-01-01",
@@ -2296,6 +2841,7 @@
         "investmentMeaningTr": "Sanayi arazisi ve istihdam konuttan önce değer kazanabilir; bu hemen konut tezi değildir."
       },
       {
+        "id": "alat.afez-master-plan",
         "status": "private-plan",
         "source": "Alat Free Economic Zone",
         "sourceDate": "2026-01-01",
@@ -2307,6 +2853,40 @@
         "claimTr": "AFEZ 719 hektarlık ana plan alanına sahip ve güneş paneli üretimi gibi sanayi projeleri duyurdu.",
         "investmentMeaningTr": "Önce istihdam ve sanayi talebine bakın; daireleri olgun bir konut piyasası varmış gibi fiyatlamayın."
       }
-    ]
+    ],
+    "scenarioFactors": [
+      {
+        "id": "employment-anchor",
+        "role": "support",
+        "evidenceIds": [
+          "alat.port-of-baku-throughput",
+          "alat.afez-master-plan"
+        ],
+        "en": "Current industrial, logistics, or jobs activity is documented; it does not automatically imply residential price growth.",
+        "tr": "Mevcut sanayi, lojistik veya istihdam faaliyeti belgelenmiştir; bu durum otomatik olarak konut fiyat artışı anlamına gelmez."
+      }
+    ],
+    "officialPlan": {
+      "planId": "baku-master-plan-2040",
+      "role": "regional-centre",
+      "status": "first-priority",
+      "implementationPhase": "first-seven-years",
+      "horizonYear": 2040,
+      "source": {
+        "sourceId": "arxkom.baku-master-plan-2040",
+        "publisher": "ARXKOM",
+        "url": "https://arxkom.gov.az/storage/files/files/shares/qayidish/bash%20plan/659ab50a15eb5.pdf",
+        "section": "Polycentric regional centre and Alat Free Economic Zone priority",
+        "pages": [
+          55,
+          216
+        ]
+      },
+      "checkedAt": "2026-08-25",
+      "en": "Alat is identified as a regional centre and is included in early priorities for the Free Economic Zone, new housing and coastal development.",
+      "tr": "Ələt regional mərkəz kimi göstərilir və Azad İqtisadi Zona, yeni yaşayış və sahilyanı inkişaf üzrə ilkin prioritetlərə daxildir.",
+      "cautionEn": "Economic-zone and housing plans depend on implementation, employment and supporting infrastructure; they are not direct price forecasts.",
+      "cautionTr": "İqtisadi zona və yaşayış planları icra, məşğulluq və dəstəkləyici infrastruktura bağlıdır; bunlar birbaşa qiymət proqnozu deyil."
+    }
   }
 ]

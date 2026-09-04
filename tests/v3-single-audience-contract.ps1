@@ -28,4 +28,16 @@ Assert-True (-not ($v2Script -match 'const zones\s*=\s*\[\s*\[')) 'v2.js must no
 Assert-True (-not ($html -match '(?i)BAKU\s*2036\s*/\s*V[12]|data-first investment map')) 'root must not expose a versioned technical heading'
 $hashBlock = [regex]::Match($script, 'function updateHash\(\)\s*\{(?s).*?\n  \}').Value
 Assert-True ($hashBlock -match 'state\.hashZone') 'hash serialization must preserve the requested zone before selection'
+foreach ($token in @('SCENARIO_MODIFIERS', 'scenarioBreakdown', 'scenario-methodology', 'data-scenario-base', 'data-scenario-result')) {
+  if ($script -notmatch [regex]::Escape($token)) { throw "Missing scenario transparency token: $token" }
+}
+
+$content = Get-Content -LiteralPath (Join-Path $root 'data\content.json') -Raw | ConvertFrom-Json
+foreach ($lang in @('en', 'tr')) {
+  foreach ($key in @('scenarioMethodTitle', 'scenarioMethodBody')) {
+    if ([string]::IsNullOrWhiteSpace([string]$content.$lang.sections.sources.$key)) {
+      throw "Missing $lang sources methodology key: $key"
+    }
+  }
+}
 Write-Output 'PASS: v3 single-audience contract'

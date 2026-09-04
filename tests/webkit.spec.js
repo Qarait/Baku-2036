@@ -1,0 +1,141 @@
+const { test, expect } = require('@playwright/test');
+
+async function waitForMap(page) {
+  await expect(page.locator('#v2Map canvas')).toBeVisible({ timeout: 30000 });
+  await expect(page.locator('#mapStatus')).toHaveText(/Click a location|Coğrafyayı/, { timeout: 30000 });
+}
+
+test('WebKit loads the map without browser errors', async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', error => errors.push(`pageerror: ${error.message}`));
+  page.on('console', message => { if (message.type() === 'error') errors.push(`console: ${message.text()}`); });
+  page.on('response', response => { if (response.status() >= 400) errors.push(`http ${response.status()}: ${response.url()}`); });
+  await page.goto('./?cache=webkit-map#lang=en');
+  await waitForMap(page);
+  expect(errors).toEqual([]);
+});
+
+test('WebKit allows page scrolling to start over the mobile map', async ({ page }) => {
+  await page.goto('./?cache=webkit-mobile-map-scroll#y=2026&lang=en');
+  await waitForMap(page);
+  const canvasContainer = page.locator('#v2Map .maplibregl-canvas-container');
+  await expect(canvasContainer).toHaveClass(/maplibregl-cooperative-gestures/);
+  await expect.poll(() => canvasContainer.evaluate(element => getComputedStyle(element).touchAction)).toBe('pan-x pan-y');
+  await page.evaluate(() => window.scrollTo(0, 0));
+  const mapBox = await page.locator('#v2Map').boundingBox();
+  expect(mapBox).not.toBeNull();
+  await page.mouse.move(mapBox.x + (mapBox.width / 2), mapBox.y + (mapBox.height / 2));
+  await page.mouse.wheel(0, 600);
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
+});
+
+test('WebKit reveals essential controls after a real map tap', async ({ page }) => {
+  await page.goto('./?cache=webkit-map-engagement#y=2026&lang=en');
+  await waitForMap(page);
+  await expect(page.locator('body')).not.toHaveClass(/engaged/);
+
+  const map = page.locator('#v2Map canvas');
+  const box = await map.boundingBox();
+  await map.click({ position: { x: box.width / 2, y: box.height / 2 } });
+
+  await expect(page.locator('body')).toHaveClass(/engaged/);
+  await page.locator('#placeSearch').click();
+  await expect(page.locator('#placeSearch')).toBeFocused();
+  await page.locator('#layersToggle').click();
+  await expect(page.locator('#layerMenu')).toHaveClass(/open/);
+});
+
+test('WebKit loads both fixed language entry points without asset errors', async ({ page }) => {
+  for (const entry of [
+    { path: './en/', hash: '#lang=tr', lang: 'en', legend: 'District borders' },
+    { path: './tr/', hash: '#lang=en', lang: 'tr', legend: 'İlçe sınırları' }
+  ]) {
+    const errors = [];
+    page.on('response', response => {
+      if (response.status() >= 400) errors.push(`${response.status()}: ${response.url()}`);
+    });
+    await page.goto(`${entry.path}?cache=webkit-fixed-${entry.lang}${entry.hash}`);
+    await waitForMap(page);
+    await expect(page.locator('html')).toHaveAttribute('lang', entry.lang);
+    await expect(page.locator('#rayonLegend')).toHaveText(entry.legend);
+    await expect(page.locator('.language-switch')).toHaveCount(0);
+    expect(errors).toEqual([]);
+  }
+});
+
+test('WebKit loads the silent how-to walkthrough in both languages', async ({ page }) => {
+  for (const entry of [
+    { path: './how-to.html?lang=en', lang: 'en', title: 'How to use the map' },
+    { path: './how-to.html?lang=tr', lang: 'tr', title: 'Harita nasıl kullanılır?' }
+  ]) {
+    const errors = [];
+    page.on('response', response => {
+      if (response.status() >= 400) errors.push(`${response.status()}: ${response.url()}`);
+    });
+    await page.goto(`${entry.path}&cache=webkit-howto-${entry.lang}`, { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('html')).toHaveAttribute('lang', entry.lang);
+    await expect(page.locator('#howToPageTitle')).toHaveText(entry.title);
+    await expect(page.locator('#howToVideo')).toBeVisible();
+    await expect.poll(() => page.locator('#howToVideo').evaluate(video => video.canPlayType('video/webm'))).toMatch(/probably|maybe/);
+    await expect(page.locator('#howToVideo')).not.toHaveAttribute('autoplay', '');
+    expect(errors).toEqual([]);
+  }
+});
+
+test('WebKit keeps the bilingual drawer collapse flow usable', async ({ page }) => {
+  await page.goto('./?cache=webkit-drawer#z=whitecity&y=2030&lang=tr');
+  await waitForMap(page);
+  await expect(page.locator('#panelTitle')).toHaveText('White City / Xətai');
+  await expect(page.locator('#nextAction')).toContainText('Bu yeri karşılaştırmadan önce kanıtları ve ana riski inceleyin.');
+  await page.locator('#showDetails').click();
+  await expect(page.locator('#zoneDetailContent')).toBeVisible();
+  await page.locator('#collapseDetails').click();
+  await expect(page.locator('#v2ZoneDrawer')).toHaveClass(/is-collapsed/);
+  await expect(page.locator('#showDetails')).toHaveText('Kanıt ve riski incele');
+  await page.locator('#showDetails').click();
+  await expect(page.locator('#zoneBrief')).toBeVisible();
+  await expect(page.locator('#nextAction')).toContainText('Bu yeri karşılaştırmadan önce kanıtları ve ana riski inceleyin.');
+  await page.locator('#langTr').focus();
+  await expect(page.locator('body')).toHaveClass(/engaged/);
+  await page.locator('#langEn').click();
+  await expect(page.locator('#closeDetails')).toHaveText('Close');
+  await page.locator('#closeDetails').click();
+  await expect(page.locator('#panelTitle')).toHaveText('Tap a circle to see what’s coming');
+});
+
+test('WebKit keeps the 390px safe-area and touch layout usable', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('./?cache=webkit-mobile#z=whitecity&y=2026&lang=en');
+  await waitForMap(page);
+  await page.locator('#layersToggle').evaluate(element => element.click());
+  await expect(page.locator('#layerMenu')).toHaveClass(/open/);
+  const viewport = await page.locator('meta[name="viewport"]').getAttribute('content');
+  expect(viewport).toContain('viewport-fit=cover');
+  const selectors = [
+    '.search-box', '#langEn', '#langTr', '.map-button:not(.layer-button):not(#layersToggle)', '#layersToggle',
+    '.layer-menu .layer-button', '#collapseDetails', '#closeDetails', '.drawer-action', '#clearSelection', '.howto-video-link'
+  ];
+  const sizes = await page.locator(selectors.join(', ')).evaluateAll(elements => elements
+    .filter(element => !element.hidden && element.offsetParent !== null && getComputedStyle(element).display !== 'none' && getComputedStyle(element).visibility !== 'hidden')
+    .map(element => {
+      const box = element.getBoundingClientRect();
+      return { id: element.id || element.className, width: Math.round(box.width), height: Math.round(box.height) };
+    }));
+  expect(sizes.filter(size => size.width < 44 || size.height < 44)).toEqual([]);
+  await page.setViewportSize({ width: 844, height: 390 });
+  await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1)).toBeTruthy();
+});
+
+test('WebKit presents shortlist comparison by criterion without horizontal overflow', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.addInitScript(() => localStorage.setItem('baku2036-v2-shortlist', JSON.stringify({ whitecity: true, yasamal: true, narimanov: true })));
+  await page.goto('./?cache=webkit-shortlist-comparison#lang=en');
+  await waitForMap(page);
+  await page.locator('#accordion-shortlist .accordion-summary').click();
+  const comparison = page.locator('#shortlistComparison');
+  await expect(comparison).toBeVisible();
+  await expect(comparison.locator('.comparison-desktop')).toBeHidden();
+  await expect(comparison.locator('.comparison-mobile')).toBeVisible();
+  await expect(comparison.locator('.comparison-mobile [data-comparison-criterion]')).toHaveCount(7);
+  await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1)).toBeTruthy();
+});

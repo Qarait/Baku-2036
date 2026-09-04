@@ -7,8 +7,6 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: pages
@@ -28,8 +26,8 @@ jobs:
           cache: npm
       - name: Install dependencies
         run: npm ci
-      - name: Install Chromium
-        run: npx playwright install --with-deps chromium
+      - name: Install Chromium and WebKit
+        run: npx playwright install --with-deps chromium webkit
       - name: Run browser smoke tests
         run: npm test
 
@@ -37,6 +35,10 @@ jobs:
     name: Publish Pages artifact
     needs: smoke
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -45,19 +47,35 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Verify generated language entry points
+        run: |
+          node scripts/build-language-entrypoints.js
+          git diff --exit-code -- en/index.html tr/index.html
+      - name: Verify Pages artifact contract
+        shell: pwsh
+        run: pwsh -File tests/pages-artifact-contract.ps1
+      - name: Verify official-plan data contract
+        shell: pwsh
+        run: pwsh -File tests/official-plan-contract.ps1
+      - name: Verify administrative GeoJSON derivative
+        shell: pwsh
+        run: pwsh -File tests/admin-geojson-contract.ps1
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Build preview artifact
         if: github.ref_name == 'preview'
         run: |
+          mkdir -p .pages-main
           mkdir -p dist/preview
-          git archive origin/main | tar -x -C dist
-          rsync -a --exclude='.git' --exclude='dist' --exclude='node_modules' --exclude='test-results' --exclude='playwright-report' ./ dist/preview/
+          git archive origin/main | tar -x -C .pages-main
+          rsync -a --delete --exclude-from=.pagesignore .pages-main/ dist/
+          rsync -a --delete --exclude-from=.pagesignore ./ dist/preview/
+          rm -rf .pages-main
       - name: Build live artifact
         if: github.ref_name == 'main'
         run: |
           mkdir dist
-          rsync -a --exclude='.git' --exclude='dist' --exclude='node_modules' --exclude='test-results' --exclude='playwright-report' ./ dist/
+          rsync -a --delete --exclude-from=.pagesignore ./ dist/
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:

@@ -1,3 +1,6 @@
 node_modules/
 playwright-report/
 test-results/
+research/market-data/raw/
+research/market-data/private/
+research/market-data/generated/

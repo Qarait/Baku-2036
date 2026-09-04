@@ -1,7 +1,7 @@
 const { test, expect } = require('@playwright/test');
 
 const dataFiles = [
-  'admin-absheron.geojson',
+  'admin-absheron-5dp.geojson',
   'metro.json',
   'places.json',
   'zones.json',
@@ -37,15 +37,80 @@ test('root loads a rendered map and tour starts without browser errors', async (
   await page.goto('./?cache=e2e-root');
   await waitForMap(page);
   await page.getByRole('button', { name: '▶ Show me (1 minute)' }).click();
-  await expect(page.locator('#tourOverlay')).toBeVisible();
+  await expect(page.locator('#cityStory')).toBeVisible();
   await expect(page).toHaveTitle(/understand property geography/);
   await expect(page.locator('#v2Map')).toHaveAttribute('aria-label', /Interactive Baku/);
+});
+
+test('contextual guidance follows readiness, selection, and clear states', async ({ page }) => {
+  await page.goto('./?cache=e2e-contextual-guidance#lang=en');
+  await expect(page.locator('#nextAction')).toBeHidden();
+  await waitForMap(page);
+
+  const guidance = page.locator('#nextAction');
+  await expect(guidance).toBeVisible();
+  await expect(guidance).toHaveAttribute('role', 'note');
+  await expect(guidance).not.toHaveAttribute('aria-live', /.+/);
+  await expect(guidance).toHaveAttribute('data-state', 'choose');
+  await expect(guidance).toContainText('Search for a place or tap the map.');
+
+  await page.evaluate(() => window.identifyLocation({ lng: 49.877, lat: 40.383 }, null));
+  await expect(guidance).toHaveAttribute('data-state', 'selected');
+  await expect(guidance).toContainText('Review the evidence and main risk');
+
+  await page.locator('#closeDetails').click();
+  await expect(guidance).toHaveAttribute('data-state', 'choose');
+  await expect(guidance).toContainText('Search for a place or tap the map.');
+});
+
+test('contextual guidance is localized and remains visible in the mobile concise panel', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('./?cache=e2e-contextual-guidance-mobile#z=whitecity&y=2030&lang=en');
+  await waitForMap(page);
+
+  const guidance = page.locator('#nextAction');
+  await expect(page.locator('#v2ZoneDrawer')).toHaveClass(/is-collapsed/);
+  await expect(guidance).toBeVisible();
+  await expect(guidance).toHaveAttribute('data-state', 'selected');
+  await expect(page.locator('#zoneQuickSummary')).toBeVisible();
+  await expect(page.locator('#showDetails')).toHaveText('Review evidence and risk');
+
+  await page.locator('#langTr').evaluate(button => button.click());
+  await expect(guidance).toHaveAttribute('data-state', 'selected');
+  await expect(guidance).toContainText('kanıtları ve ana riski');
+  await expect(page.locator('#showDetails')).toHaveText('Kanıt ve riski incele');
+});
+
+test('mobile intro exposes the how-to video before the map', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('./?cache=e2e-howto-top');
+  await waitForMap(page);
+  const link = page.locator('.brand #howToVideoLink');
+  await expect(link).toBeVisible();
+  const positions = await page.evaluate(() => {
+    const linkBox = document.querySelector('.brand #howToVideoLink')?.getBoundingClientRect();
+    const mapBox = document.querySelector('#v2Map')?.getBoundingClientRect();
+    return { linkBottom: linkBox?.bottom || 0, mapTop: mapBox?.top || 0 };
+  });
+  expect(positions.linkBottom).toBeLessThanOrEqual(positions.mapTop);
+});
+
+test('basemap attribution is visible and links to the OSM copyright page', async ({ page }) => {
+  await page.goto('./?cache=e2e-attribution');
+  await waitForMap(page);
+  const control = page.locator('.maplibregl-ctrl-attrib-inner');
+  await expect(control).toContainText('OpenStreetMap contributors');
+  await expect(control.locator('a[href="https://www.openstreetmap.org/copyright"]')).toHaveCount(1);
+  await expect(page.locator('#attributionNote')).toContainText('Geofabrik');
+  await expect(page.locator('#attributionNote a[href="https://www.openstreetmap.org/copyright"]')).toHaveCount(1);
 });
 
 test('one-minute tour runs through its stops and exits', async ({ page }) => {
   await page.goto('./?cache=e2e-tour');
   await waitForMap(page);
-  await page.getByRole('button', { name: '▶ Show me (1 minute)' }).click();
+  await page.locator('#accordion-time .accordion-summary').click();
+  await expect(page.locator('#zoneTourStart')).toBeVisible();
+  await page.locator('#zoneTourStart').click();
   await expect(page.locator('#tourOverlay')).toBeVisible();
   for (let stop = 0; stop < 5; stop += 1) {
     await page.locator('#tourOverlay [data-tour-next]').click();
@@ -53,6 +118,238 @@ test('one-minute tour runs through its stops and exits', async ({ page }) => {
   await expect(page.locator('#tourOverlay')).toHaveCount(0);
 });
 
+test('tour modal contains keyboard focus and restores the launcher', async ({ page }) => {
+  await page.goto('./?cache=e2e-tour-keyboard');
+  await waitForMap(page);
+  await page.locator('#accordion-time .accordion-summary').click();
+  const launcher = page.locator('#zoneTourStart');
+  await launcher.click();
+
+  const dialog = page.getByRole('dialog');
+  await expect(dialog).toBeVisible();
+  await expect(dialog).toHaveAccessibleName(/White City/i);
+  const next = dialog.locator('[data-tour-next]');
+  const close = dialog.locator('[data-tour-close]');
+  await expect(next).toBeFocused();
+
+  await page.keyboard.press('Shift+Tab');
+  await expect(close).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(next).toBeFocused();
+
+  await page.keyboard.press('Escape');
+  await expect(dialog).toHaveCount(0);
+  await expect(launcher).toBeFocused();
+});
+
+test('Show me starts the Baku-wide city story', async ({ page }) => {
+  await page.goto('./?cache=e2e-city-story');
+  await waitForMap(page);
+  await page.getByRole('button', { name: '▶ Show me (1 minute)' }).click();
+  await expect(page.locator('#cityStory')).toBeVisible();
+  await expect(page.locator('#cityStory')).toHaveAttribute('data-year', '2026');
+  await expect(page.locator('#cityStoryCaption')).toContainText('Start here');
+});
+
+test('city story can pause, continue, skip, and finish', async ({ page }) => {
+  await page.goto('./?cache=e2e-city-controls');
+  await waitForMap(page);
+  await page.getByRole('button', { name: '▶ Show me (1 minute)' }).click();
+  await page.locator('#cityStoryPause').click();
+  await expect(page.locator('#cityStoryPause')).toHaveText('Continue');
+  await page.locator('#cityStoryPause').click();
+  await expect(page.locator('#cityStoryPause')).toHaveText('Pause');
+  await page.locator('#cityStorySkip').click();
+  await expect(page.locator('#cityStory')).toHaveAttribute('data-year', '2028');
+  await page.locator('#cityStoryFinish').click();
+  await expect(page.locator('#cityStory')).toHaveCount(0);
+  await expect(page.locator('#yearSelect')).toHaveValue('2028');
+});
+
+test('dragging the year updates the city story caption and map snapshot', async ({ page }) => {
+  await page.goto('./?cache=e2e-city-manual#y=2026&lang=en');
+  await waitForMap(page);
+  await page.getByRole('button', { name: '▶ Show me (1 minute)' }).click();
+  await page.locator('#yearSelect').selectOption('2033');
+  await expect(page.locator('#cityStory')).toHaveAttribute('data-year', '2033');
+  await expect(page.locator('#cityStoryCaption')).toContainText('story spreads');
+});
+
+test('city story controls and caption switch to Turkish', async ({ page }) => {
+  await page.goto('./?cache=e2e-city-tr#y=2026&lang=en');
+  await waitForMap(page);
+  await page.getByRole('button', { name: '▶ Show me (1 minute)' }).click();
+  await page.locator('#langTr').click();
+  await expect(page.locator('#cityStoryPause')).toHaveText('Duraklat');
+  await expect(page.locator('#cityStoryCaption')).toContainText('Buradan başlayın');
+});
+
+test('time machine wraps from 2036 and resets its button to Play', async ({ page }) => {
+  await page.goto('./?cache=e2e-time-wrap#y=2036&lang=en');
+  await waitForMap(page);
+  await page.locator('#accordion-time .accordion-summary').click();
+  await expect(page.locator('#timeYear')).toHaveValue('2036');
+  await page.locator('#timePlay').click();
+  await expect(page.locator('#timeYear')).toHaveValue('2026', { timeout: 5000 });
+  await expect(page.locator('#timePlay')).toHaveText('Play the decade');
+});
+
+test('time machine, city story, and tour playback cannot run concurrently', async ({ page }) => {
+  await page.goto('./?cache=e2e-playback-exclusive#y=2026&lang=en');
+  await waitForMap(page);
+  await page.getByRole('button', { name: '▶ Show me (1 minute)' }).click();
+  await expect(page.locator('#cityStory')).toBeVisible();
+  await page.locator('#accordion-time .accordion-summary').click();
+  await page.locator('#timePlay').click();
+  await expect(page.locator('#cityStory')).toHaveCount(0);
+  await expect(page.locator('#timePlay')).toHaveText('Pause');
+  await page.locator('#zoneTourStart').click();
+  await expect(page.locator('#tourOverlay')).toBeVisible();
+  await expect(page.locator('#timePlay')).toHaveText('Play the decade');
+});
+
+test('city simulation data failure is visible and retryable', async ({ page }) => {
+  let failContent = true;
+  await page.route('**/data/content.json*', route => failContent ? route.fulfill({ status: 503, body: 'temporary failure' }) : route.continue());
+  await page.goto('./?cache=e2e-city-error#lang=en');
+  await expect(page.locator('#mapStatus')).toHaveClass(/error/);
+  await expect(page.locator('#mapStatus')).toContainText('couldn’t load');
+  await expect(page.locator('#mapStatus')).toContainText('refresh');
+  await expect(page.locator('#retryData')).toBeVisible();
+  failContent = false;
+  await page.locator('#retryData').click();
+  await expect(page.locator('#mapStatus')).toContainText('Click a location', { timeout: 30000 });
+  page.__browserErrors = [];
+});
+
+test('missing MapLibre reports a retryable map error instead of loading forever', async ({ page }) => {
+  await page.route('**/vendor/maplibre-gl.mjs', route => route.fulfill({ status: 200, contentType: 'text/javascript', body: 'throw new Error("simulated missing MapLibre");' }));
+  await page.goto('./?cache=e2e-maplibre-missing#lang=en');
+  await expect(page.locator('#mapStatus')).toHaveClass(/error/, { timeout: 15000 });
+  await expect(page.locator('#mapStatus')).toContainText('couldn’t load');
+  await expect(page.locator('#retryData')).toBeVisible();
+  await expect(page.locator('#mapStatus')).not.toContainText('Loading map data');
+  page.__browserErrors = [];
+});
+
+test('missing PMTiles reports a retryable map error instead of loading forever', async ({ page }) => {
+  await page.route('**/vendor/pmtiles.js', route => route.fulfill({ status: 200, contentType: 'text/javascript', body: '' }));
+  await page.goto('./?cache=e2e-pmtiles-missing#lang=en');
+  await expect(page.locator('#mapStatus')).toHaveClass(/error/, { timeout: 15000 });
+  await expect(page.locator('#mapStatus')).toContainText('couldn’t load');
+  await expect(page.locator('#retryData')).toBeVisible();
+  await expect(page.locator('#mapStatus')).not.toContainText('Loading map data');
+  page.__browserErrors = [];
+});
+
+test('mobile map reports visible progress while a basemap range is delayed', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  let delayFirstRange = true;
+  await page.route('**/assets/baku-absheron.pmtiles*', async route => {
+    if (delayFirstRange) {
+      delayFirstRange = false;
+      await new Promise(resolve => setTimeout(resolve, 8000));
+    }
+    await route.continue();
+  });
+  await page.goto('./?cache=e2e-map-visible-progress#lang=en');
+  await expect(page.locator('#v2Map canvas')).toBeVisible({ timeout: 10000 });
+  await expect(page.locator('#mapStatus')).toHaveAttribute('data-status', 'map-visible');
+  await expect(page.locator('#mapStatus')).not.toContainText('Loading map data');
+  await expect(page.locator('#mapStatus')).toContainText(/details/i);
+  await expect(page.locator('#mapStatus')).toContainText('Click a location', { timeout: 30000 });
+});
+
+test('basemap becomes visible before overlay data finishes loading', async ({ page }) => {
+  let releaseZones;
+  let zonesRequestSeenResolve;
+  const zonesRequestSeen = new Promise(resolve => { zonesRequestSeenResolve = resolve; });
+  const zonesGate = new Promise(resolve => { releaseZones = resolve; });
+  await page.route('**/data/zones.json*', async route => {
+    zonesRequestSeenResolve();
+    await zonesGate;
+    await route.continue();
+  });
+  await page.goto('./?cache=e2e-progressive-overlays#lang=en');
+  await zonesRequestSeen;
+
+  await expect(page.locator('#v2Map canvas')).toBeVisible({ timeout: 10000 });
+  await expect(page.locator('#mapStatus')).toHaveAttribute('data-status', 'map-visible');
+  await expect(page.locator('#mapStatus')).toContainText('loading details');
+
+  releaseZones();
+  await expect(page.locator('#mapStatus')).toContainText('Click a location', { timeout: 30000 });
+});
+
+test('PMTiles basemap failure reports an error instead of ready', async ({ page }) => {
+  let failBasemap = true;
+  await page.route('**/assets/baku-absheron.pmtiles*', route => failBasemap ? route.fulfill({ status: 503, body: 'temporary basemap failure' }) : route.continue());
+  await page.goto('./?cache=e2e-pmtiles-failure#lang=en');
+  await expect(page.locator('#mapStatus')).toHaveClass(/error/, { timeout: 30000 });
+  await expect(page.locator('#mapStatus')).toContainText('couldn’t load');
+  await expect(page.locator('#retryData')).toBeVisible();
+  await expect(page.locator('#mapStatus')).not.toContainText('Click a location');
+  failBasemap = false;
+  page.__browserErrors = [];
+  await page.locator('#retryData').click();
+  await expect(page.locator('#mapStatus')).toContainText('Click a location', { timeout: 30000 });
+});
+
+test('deep-linked zone remains selectable after the city story finishes', async ({ page }) => {
+  await page.goto('./?cache=e2e-city-regression#z=whitecity&y=2030&lang=tr');
+  await waitForMap(page);
+  await page.getByRole('button', { name: '▶ Göster (1 dakika)' }).click();
+  await page.locator('#cityStoryFinish').click();
+  await expect(page.locator('#panelTitle')).toHaveText('White City / Xətai');
+  await expect(page.locator('#yearSelect')).toHaveValue('2030');
+  await expect(page.locator('#rayonLegend')).toHaveText('İlçe sınırları');
+});
+
+test('city snapshot changes with the selected year', async ({ page }) => {
+  await page.goto('./?cache=e2e-city-snapshot#y=2026&lang=en');
+  await waitForMap(page);
+  await page.getByRole('button', { name: '▶ Show me (1 minute)' }).click();
+  const story = page.locator('#cityStory');
+  await expect(story).toHaveAttribute('data-year', '2026');
+  const firstActive = await story.getAttribute('data-active-events');
+  const firstFuture = await story.getAttribute('data-future-events');
+  const firstBuiltLines = await story.getAttribute('data-built-lines');
+  const firstPlannedLines = await story.getAttribute('data-planned-lines');
+  await page.locator('#cityStorySkip').click();
+  await page.locator('#cityStorySkip').click();
+  await expect(story).toHaveAttribute('data-year', '2030');
+  const laterActive = await story.getAttribute('data-active-events');
+  const laterFuture = await story.getAttribute('data-future-events');
+  const laterBuiltLines = await story.getAttribute('data-built-lines');
+  const laterPlannedLines = await story.getAttribute('data-planned-lines');
+  expect(laterActive).not.toBe(firstActive);
+  expect(laterFuture).not.toBe(firstFuture);
+  expect(laterBuiltLines).not.toBe(firstBuiltLines);
+  expect(laterPlannedLines).not.toBe(firstPlannedLines);
+  await expect(page.locator('#cityStoryCaption')).not.toBeEmpty();
+});
+
+test('city event selection shows a localized event label in the panel', async ({ page }) => {
+  await page.goto('./?cache=e2e-city-event#y=2026&lang=en');
+  await waitForMap(page);
+  await page.evaluate(() => window.identifyLocation({ lng: 49.807, lat: 40.397 }, null, { includeNearbyEvent: true }));
+  await expect(page.locator('#panelIntro')).toContainText('opens');
+  await engage(page);
+  await page.locator('#langTr').click();
+  await expect(page.locator('#panelIntro')).toContainText('açılıyor');
+});
+
+test('city snapshot includes project and evidence status counts', async ({ page }) => {
+  await page.goto('./?cache=e2e-city-snapshot-status#y=2026&lang=en');
+  await waitForMap(page);
+  await page.getByRole('button', { name: '▶ Show me (1 minute)' }).click();
+  const story = page.locator('#cityStory');
+  await expect(story).toHaveAttribute('data-funded-projects', /[1-9]\d*/);
+  await expect(story).toHaveAttribute('data-planned-projects', /[1-9]\d*/);
+  await expect(story).toHaveAttribute('data-programmed-evidence', /[1-9]\d*/);
+  await expect(page.locator('#cityStoryProjectSummary')).toContainText('Planned');
+  await expect(page.locator('#cityStoryEvidenceSummary')).toContainText('Government plan');
+});
 test('year control advances the selected map year', async ({ page }) => {
   await page.goto('./?cache=e2e-year#z=whitecity&y=2026&lang=en');
   await waitForMap(page);
@@ -62,6 +359,95 @@ test('year control advances the selected map year', async ({ page }) => {
   await expect(page.locator('#panelIntro')).toContainText('2030');
 });
 
+test('growth layers use price growth and year progress', async ({ page }) => {
+  await page.goto('./?cache=e2e-growth-layer&testHooks=1#y=2026&lang=en');
+  await waitForMap(page);
+
+  const atBaseline = await page.evaluate(() => window.__V3TestHooks.getLayerFeatures());
+  const baselineInvestment = id => atBaseline.investments.find(feature => feature.id === id);
+  const baselineHeat = id => atBaseline.heat.find(feature => feature.id === id);
+
+  expect(baselineInvestment('whitecity')).toMatchObject({ growthPct: 140, radius: 15, yearProgress: 0 });
+  expect(baselineHeat('bilgah').growthPct).toBe(150);
+  expect(baselineHeat('bilgah').radius).toBeGreaterThan(baselineHeat('sabail').radius);
+  expect(baselineHeat('bilgah').color).not.toBe(baselineHeat('sabail').color);
+
+  await page.locator('#yearSelect').selectOption('2036');
+  const at2036 = await page.evaluate(() => window.__V3TestHooks.getLayerFeatures());
+  const futureInvestment = id => at2036.investments.find(feature => feature.id === id);
+
+  expect(futureInvestment('whitecity').yearProgress).toBe(1);
+  expect(futureInvestment('whitecity').radius).toBeGreaterThan(baselineInvestment('whitecity').radius);
+  expect(futureInvestment('bilgah').radius / baselineInvestment('bilgah').radius)
+    .toBeGreaterThan(futureInvestment('sabail').radius / baselineInvestment('sabail').radius);
+});
+
+test('deep-linked zone refreshes the scenario tool with its selected output', async ({ page }) => {
+  await page.goto('./?cache=e2e-scenario-selection#z=whitecity&y=2026&lang=en');
+  await waitForMap(page);
+  await page.locator('#accordion-scenarios .accordion-summary').click();
+  await expect(page.locator('#scenarioOutput')).toContainText('White City');
+  await expect(page.locator('#scenarioOutput')).not.toContainText('Start by choosing a place');
+});
+
+test('mobile scenario changes explain the delta and update the selected investment circle', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('./?cache=e2e-scenario-animation&testHooks=1#z=whitecity&y=2036&lang=en');
+  await waitForMap(page);
+  await page.locator('#accordion-scenarios .accordion-summary').click();
+  const before = await page.evaluate(() => window.__V3TestHooks.getLayerFeatures().investments.find(feature => feature.id === 'whitecity'));
+
+  await expect(page.locator('#scenarioResultValue')).toHaveText('140%');
+  await page.locator('#scenarioOil').selectOption('bad');
+  await expect(page.locator('#scenarioDelta')).toContainText('−30 percentage points');
+  await expect(page.locator('.scenario-modifier[data-scenario-group="oil"]')).toHaveClass(/is-changed/);
+  await expect(page.locator('#scenarioExplanation')).toContainText('Oil money');
+  await expect(page.locator('#scenarioExplanation')).toContainText('−30 percentage points');
+  await expect(page.locator('#scenarioResultValue')).toHaveText('110%');
+
+  const after = await page.evaluate(() => window.__V3TestHooks.getLayerFeatures().investments.find(feature => feature.id === 'whitecity'));
+  expect(after.radius).toBeLessThan(before.radius);
+});
+
+test('reduced motion keeps the scenario result final and announces only that final value', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('./?cache=e2e-scenario-reduced-motion#z=whitecity&y=2036&lang=en');
+  await waitForMap(page);
+  await page.locator('#accordion-scenarios .accordion-summary').click();
+  await page.locator('#scenarioOil').selectOption('bad');
+
+  await expect(page.locator('#scenarioResultValue')).toHaveText('110%');
+  await expect(page.locator('#scenarioResultValue')).toHaveAttribute('aria-hidden', 'true');
+  await expect(page.locator('#scenarioResultValue')).not.toHaveAttribute('data-animating');
+  await expect(page.locator('#scenarioOutput > span').first()).toHaveAttribute('aria-hidden', 'true');
+  await expect(page.locator('#scenarioOutput')).toHaveAttribute('aria-live', 'polite');
+  await expect(page.locator('#scenarioOutput .sr-only')).toContainText('White City / Khatai: 110%');
+});
+
+test('data freshness and year slider explanation are clear in both languages', async ({ page }) => {
+  await page.goto('./?cache=e2e-clarity#z=whitecity&y=2026&lang=en');
+  await waitForMap(page);
+  await expect(page.locator('#dataFreshness')).toContainText('Data checked');
+  await expect(page.locator('#dataFreshness')).toContainText('Scenario baseline');
+  await page.locator('#accordion-time .accordion-summary').click();
+  await expect(page.locator('.year-slider-hint')).toContainText('circles grow');
+  await engage(page);
+  await page.locator('#langTr').click();
+  await expect(page.locator('#dataFreshness')).toContainText('Veriler');
+  await expect(page.locator('.year-slider-hint')).toContainText('daireler');
+});
+
+test('clear JSON-load error message tells visitors to refresh', async ({ page }) => {
+  await page.route('**/data/zones.json?rev=b35a571', route => route.fulfill({ status: 503, body: 'temporary failure' }));
+  await page.goto('./?cache=e2e-data-error#lang=en');
+  await expect(page.locator('#mapStatus')).toHaveClass(/error/);
+  await expect(page.locator('#mapStatus')).toContainText('couldn’t load');
+  await expect(page.locator('#mapStatus')).toContainText('refresh');
+  await page.goto('./?cache=e2e-data-error-tr#lang=tr');
+  await expect(page.locator('#mapStatus')).toContainText('yenileyin');
+  page.__browserErrors = [];
+});
 test('zone selection shows JSON-backed content and proof cards', async ({ page }) => {
   await page.goto('./?cache=e2e-zone#z=whitecity&y=2026&lang=en');
   await waitForMap(page);
@@ -69,6 +455,120 @@ test('zone selection shows JSON-backed content and proof cards', async ({ page }
   await expect(page.locator('#zoneBrief')).toContainText('$2,500–4,000/m² new-build');
   await expect(page.locator('#zoneBrief')).toContainText('+140% scenario');
   await expect(page.locator('#zoneBrief')).toContainText('How sure is this?');
+  await expect(page.locator('#zoneBrief')).toContainText('Where this comes from:');
+});
+
+test('zone details show evidence-linked qualitative factors without changing scenario output', async ({ page }) => {
+  await page.goto('./?cache=e2e-release2-factors#z=whitecity&y=2026&lang=en');
+  await waitForMap(page);
+  const scenarioOutputBefore = await page.locator('#scenarioOutput').textContent();
+  if (await page.locator('#showDetails').isVisible()) await page.locator('#showDetails').click();
+
+  await expect(page.locator('#factorLedger')).toContainText('What supports or weakens this scenario?');
+  await expect(page.locator('.factor-card[data-factor-role="dependency"]')).toContainText('AIIB / Baku Metro expansion framework');
+  await expect(page.locator('.factor-card[data-factor-role="support"]')).toContainText('AtkinsRéalis / Baku White City project');
+  await expect(page.locator('#scenarioOutput')).toHaveText(scenarioOutputBefore);
+
+  await engage(page);
+  await page.locator('#langTr').click();
+  await expect(page.locator('#factorLedger')).toContainText('Bu senaryoyu ne destekler veya zayıflatır?');
+  await expect(page.locator('.factor-card[data-factor-role="dependency"]')).toContainText('Resmî bir plan veya program');
+  await expect(page.locator('.factor-card[data-factor-role="support"]')).toContainText('Adı belirtilen bir yenileme');
+});
+
+test('market-context factors stay visibly unknown instead of implying a local price lead', async ({ page }) => {
+  for (const zoneId of ['narimanov', 'sabail']) {
+    await page.goto(`./?cache=e2e-release2-unknown-${zoneId}#z=${zoneId}&y=2026&lang=en`);
+    await waitForMap(page);
+    await expect(page.locator('#factorLedger')).toContainText('Evidence gap');
+    await expect(page.locator('.factor-card[data-factor-role="unknown"]')).toContainText('citywide context');
+    await expect(page.locator('.factor-card[data-factor-role="unknown"]')).not.toContainText('fastest-rising');
+  }
+});
+
+test('fixed Turkish entry point renders the factor ledger in Turkish', async ({ page }) => {
+  await page.goto('./tr/?cache=e2e-release2-fixed-tr#z=whitecity&y=2026');
+  await waitForMap(page);
+  await expect(page.locator('html')).toHaveAttribute('lang', 'tr');
+  await expect(page.locator('#factorLedger')).toContainText('Bu senaryoyu ne destekler veya zayıflatır?');
+  await expect(page.locator('.factor-card[data-factor-role="dependency"]')).toContainText('Resmî bir plan veya program');
+});
+
+test('zone details can be closed and reopened', async ({ page }) => {
+  await page.goto('./?cache=e2e-zone-close#z=whitecity&y=2026&lang=en');
+  await waitForMap(page);
+  await expect(page.locator('#closeDetails')).toBeVisible();
+  await expect(page.locator('#closeDetails')).toHaveText('Close');
+  await page.locator('#closeDetails').click();
+  await expect(page.locator('#zoneBrief')).toBeHidden();
+  await expect(page.locator('#panelGrid')).toBeHidden();
+  await expect(page.locator('#closeDetails')).toBeHidden();
+  await expect(page.locator('#panelTitle')).toHaveText('Tap a circle to see what’s coming');
+  await page.goto('./?cache=e2e-zone-reopen#z=whitecity&y=2026&lang=en');
+  await waitForMap(page);
+  await expect(page.locator('#zoneBrief')).toBeVisible();
+  await expect(page.locator('#closeDetails')).toHaveText('Close');
+});
+
+test('selected drawer can collapse, reopen, and close in both languages', async ({ page }) => {
+  await page.goto('./?cache=e2e-drawer-collapse#z=whitecity&y=2030&lang=tr');
+  await waitForMap(page);
+  await expect(page.locator('#panelTitle')).toHaveText('White City / Xətai');
+  await expect(page.locator('#closeDetails')).toHaveText('Kapat');
+  await page.locator('#collapseDetails').click();
+  await expect(page.locator('#v2ZoneDrawer')).toHaveClass(/is-collapsed/);
+  await expect(page.locator('#zoneBrief')).toBeHidden();
+  await expect(page.locator('#panelTitle')).toHaveText('White City / Xətai');
+  await expect(page.locator('#showDetails')).toHaveText('Kanıt ve riski incele');
+  await page.locator('#showDetails').click();
+  await expect(page.locator('#v2ZoneDrawer')).not.toHaveClass(/is-collapsed/);
+  await expect(page.locator('#zoneBrief')).toBeVisible();
+  await engage(page);
+  await page.locator('#langEn').click();
+  await expect(page.locator('#closeDetails')).toHaveText('Close');
+  await page.locator('#collapseDetails').click();
+  await expect(page.locator('#showDetails')).toHaveText('Review evidence and risk');
+  await page.locator('#showDetails').click();
+  await expect(page.locator('#zoneBrief')).toBeVisible();
+  await page.locator('#closeDetails').click();
+  await expect(page.locator('#panelTitle')).toHaveText('Tap a circle to see what’s coming');
+});
+
+test('mobile selected place starts concise and can reveal full details', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('./?cache=e2e-mobile-summary#z=whitecity&y=2030&lang=en');
+  await waitForMap(page);
+
+  await expect(page.locator('#v2ZoneDrawer')).toHaveClass(/is-collapsed/);
+  await expect(page.locator('#zoneQuickSummary')).toBeVisible();
+  await expect(page.locator('#zoneQuickSummary')).toContainText('Current price');
+  await expect(page.locator('#zoneQuickSummary')).toContainText('$2,500–4,000/m² new-build');
+  await expect(page.locator('#zoneQuickSummary')).toContainText('Possible upside under this scenario');
+  await expect(page.locator('#zoneQuickSummary')).toContainText('+140%');
+  await expect(page.locator('#zoneQuickSummary')).toContainText('Main risk');
+  await expect(page.locator('#zoneQuickSummary')).toContainText('Evidence strength');
+  await expect(page.locator('#panelDetailsTitle')).toBeHidden();
+  await expect(page.locator('#panelGrid')).toBeHidden();
+  await expect(page.locator('#zoneDetailContent')).toBeHidden();
+  await expect(page.locator('#showDetails')).toHaveText('Review evidence and risk');
+  await expect(page.locator('#closeDetails')).toHaveText('Close');
+
+  await page.locator('#showDetails').click();
+  await expect(page.locator('#v2ZoneDrawer')).not.toHaveClass(/is-collapsed/);
+  await expect(page.locator('#panelDetailsTitle')).toHaveText('Location details');
+  await expect(page.locator('#panelGrid .metric')).toHaveCount(6);
+  await expect(page.locator('#zoneDetailContent')).toBeVisible();
+  await expect(page.locator('.evidence-section')).toBeVisible();
+  await expect(page.locator('#zoneDetailContent')).toContainText('What could go wrong?');
+});
+
+test('zone source insight switches to Turkish', async ({ page }) => {
+  await page.goto('./?cache=e2e-zone-insight#z=whitecity&y=2026&lang=en');
+  await waitForMap(page);
+  await engage(page);
+  await page.locator('#langTr').click();
+  await expect(page.locator('#zoneBrief')).toContainText('Bu rakamın kaynağı:');
+  await expect(page.locator('#zoneBrief')).toContainText('garanti değildir');
 });
 
 test('EN and TR switch visible map language', async ({ page }) => {
@@ -80,6 +580,116 @@ test('EN and TR switch visible map language', async ({ page }) => {
   await expect(page.locator('#stationMetricLabel')).toContainText('kuş uçuşu');
   await page.locator('#langEn').click();
   await expect(page.locator('#rayonLegend')).toHaveText('District borders');
+});
+
+test('fixed language entry points stay separated', async ({ page }) => {
+  await page.goto('./en/?cache=e2e-fixed-en#lang=tr');
+  await waitForMap(page);
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+  await expect(page.locator('#rayonLegend')).toHaveText('District borders');
+  await expect(page.locator('.language-switch')).toHaveCount(0);
+  await expect(page.locator('#howToVideoLink')).toHaveAttribute('href', 'how-to.html?lang=en');
+  await expect(page.locator('#howToVideoLink').evaluate(link => link.href)).resolves.toMatch(/\/how-to\.html\?lang=en$/);
+
+  await page.goto('./tr/?cache=e2e-fixed-tr#lang=en');
+  await waitForMap(page);
+  await expect(page.locator('html')).toHaveAttribute('lang', 'tr');
+  await expect(page.locator('#rayonLegend')).toHaveText('İlçe sınırları');
+  await expect(page.locator('.language-switch')).toHaveCount(0);
+  await expect(page.locator('#howToVideoLink')).toHaveAttribute('href', 'how-to.html?lang=tr');
+  await expect(page.locator('#howToVideoLink').evaluate(link => link.href)).resolves.toMatch(/\/how-to\.html\?lang=tr$/);
+});
+
+test('Turkish tools keep planner, scenario, shortlist, and source copy localized', async ({ page }) => {
+  await page.goto('./tr/?cache=e2e-turkish-tools#z=whitecity&y=2026');
+  await waitForMap(page);
+
+  await page.locator('#accordion-scenarios .accordion-summary').click();
+  const scenarios = page.locator('#accordion-scenarios');
+  await expect(scenarios).toContainText('örnek büyüme duyarlılığı');
+  await expect(scenarios).not.toContainText('illustrative growth sensitivity');
+
+  await page.locator('#accordion-planner .accordion-summary').click();
+  const planner = page.locator('#accordion-planner');
+  await expect(planner).toContainText('Alıcı profili');
+  await expect(planner).toContainText('Bu bütçeyle ulaşılabilenler');
+  await expect(planner).not.toContainText('Buyer profile');
+  await expect(planner).not.toContainText('About ');
+  await expect(planner).not.toContainText('Below rough entry point');
+
+  await page.locator('#accordion-deal .accordion-summary').click();
+  await expect(page.locator('#accordion-deal')).toContainText('Nasıl okunur?');
+  await expect(page.locator('#accordion-deal')).not.toContainText('How to read it');
+
+  await page.locator('#zoneBrief [data-zone-star]').click();
+  await page.locator('#accordion-shortlist .accordion-summary').click();
+  const shortlist = page.locator('#accordion-shortlist');
+  await expect(shortlist).toContainText('Toplam');
+  await expect(shortlist).toContainText('Tutar');
+  await expect(shortlist).not.toContainText('Total:');
+  await expect(shortlist).not.toContainText('Amount');
+
+  await page.locator('#accordion-sources .accordion-summary').click();
+  const sources = page.locator('#accordion-sources');
+  await expect(sources).toContainText('Coğrafya');
+  await expect(sources).toContainText('Projeler');
+  await expect(sources).toContainText('Daireleri nasıl okumalı?');
+  await expect(sources).not.toContainText('Geography');
+  await expect(sources).not.toContainText('How to read the circles');
+});
+
+test('Turkish investment timelines preserve the meaning of their English counterparts', async ({ request }) => {
+  const response = await request.get('./data/zones.json');
+  const zones = await response.json();
+  const byId = Object.fromEntries(zones.map(zone => [zone.id, zone]));
+  expect(byId.whitecity.tr.inv[0][1]).toBe('Yeşil Hat Y14–Y17 istasyonları resmî genişleme programında; tasarım çalışmaları sürüyor ve açılış yaklaşık 2030 için hedefleniyor');
+  expect(byId.mardakan.tr.inv[1][1]).toBe('Planlanan demiryolu restorasyonu ve bölgesel merkez yönelimi, kuzeydoğuya erişim durumunu güçlendiriyor');
+  expect(byId.mardakan.tr.inv[2][1]).toBe('Çevre metro hattı konsepti uzun vadeli; yakın vadeli bir taahhüt olarak kullanılmamalı');
+  expect(byId.hovsan.tr.inv[2][1]).toBe('Demiryolu restorasyonu veya yol programının teyidi, pratik giriş tetikleyicisidir');
+  expect(byId.zikh.tr.inv[0][1]).toBe('Doğu kıyısındaki lojistik ve bağlantı iyileştirmeleri bir tezdir; ölçülmüş bir göç rakamı değildir');
+});
+
+test('English tool copy preserves punctuation and square-metre units', async ({ request }) => {
+  const response = await request.get('./data/content.json');
+  const content = await response.json();
+  expect(content.en.sections.time.title).toBe('Watch the decade: 2026–2036');
+  expect(content.en.sections.deal.description).toBe('Enter an asking price and size for a plain-words comparison with the area’s rough range.');
+  expect(content.en.sections.deal.whatThisMeans).toBe('A cheap result is a prompt to ask why—not a signal to buy.');
+  expect(content.en.sections.sources.description).toBe('Understand where the map comes from and what it can—and cannot—tell you.');
+  expect(content.en.labels.size).toBe('Size (m²)');
+});
+
+test('silent how-to walkthrough attachment opens a localized video page', async ({ page }) => {
+  await page.goto('./?cache=e2e-howto-video');
+  await waitForMap(page);
+  const link = page.locator('#howToVideoLink');
+  await expect(link).toBeVisible();
+  await expect(link).toHaveAttribute('target', '_blank');
+  await expect(link).toHaveAttribute('rel', 'noopener');
+  await expect(link).toHaveAttribute('href', 'how-to.html?lang=en');
+  await engage(page);
+  await page.locator('#langTr').click();
+  await expect(link).toHaveAttribute('href', 'how-to.html?lang=tr');
+
+  await page.goto('./how-to.html?lang=tr');
+  await expect(page.locator('html')).toHaveAttribute('lang', 'tr');
+  await expect(page.locator('#howToPageTitle')).toHaveText('Harita nasıl kullanılır?');
+  const video = page.locator('#howToVideo');
+  await expect(video).toBeVisible();
+  await expect(video).toHaveAttribute('controls', '');
+  await expect(video).toHaveAttribute('playsinline', '');
+  await expect(video).toHaveAttribute('preload', 'metadata');
+  await expect(video).not.toHaveAttribute('autoplay', '');
+  await expect(video.locator('track')).toHaveCount(0);
+  const duration = await video.evaluate(element => new Promise((resolve, reject) => {
+    const finish = () => Number.isFinite(element.duration) && element.duration > 0 ? resolve(element.duration) : reject(new Error('video duration is not available'));
+    if (element.readyState >= 1) finish();
+    else {
+      element.addEventListener('loadedmetadata', finish, { once: true });
+      element.addEventListener('error', () => reject(new Error('video failed to load')), { once: true });
+    }
+  }));
+  expect(duration).toBeLessThanOrEqual(20);
 });
 
 test('deal checker returns a verdict', async ({ page }) => {
@@ -111,6 +721,399 @@ test('all five runtime data files load as JSON', async ({ request }) => {
   }
 });
 
+test('city simulation content has five bilingual checkpoints and controls', async ({ request }) => {
+  const response = await request.get('./data/content.json');
+  const content = await response.json();
+  const years = ['2026', '2028', '2030', '2033', '2036'];
+  for (const language of ['en', 'tr']) {
+    expect(Object.keys(content[language].simulation.checkpoints)).toEqual(years);
+    for (const year of years) expect(content[language].simulation.checkpoints[year]).not.toBe('');
+    for (const key of ['pause', 'resume', 'skip', 'finish', 'progress']) {
+      expect(content[language].simulation.controls[key]).not.toBe('');
+    }
+  }
+});
+
+test('Mohammadi and Narimanov proof copy stays within its cited evidence', async ({ request }) => {
+  const [contentResponse, zonesResponse] = await Promise.all([
+    request.get('./data/content.json'),
+    request.get('./data/zones.json')
+  ]);
+  const content = await contentResponse.json();
+  const zones = await zonesResponse.json();
+  const narimanov = zones.find(zone => zone.id === 'narimanov');
+  const mohammadi = zones.find(zone => zone.id === 'mohammadi');
+  const visibleCopy = [
+    content.en.ui.proof.mohammadi,
+    content.en.ui.proof.narimanov,
+    content.en.ui.tour.mohammadi,
+    content.tr.ui.proof.mohammadi,
+    content.tr.ui.proof.narimanov,
+    content.tr.ui.tour.mohammadi,
+    narimanov.en.thesis,
+    narimanov.tr.thesis,
+    mohammadi.en.thesis,
+    mohammadi.tr.thesis,
+    mohammadi.en.inv[0][1],
+    mohammadi.tr.inv[0][1],
+    mohammadi.inv[0][1]
+  ].join(' ');
+
+  expect(visibleCopy).not.toMatch(/more than anywhere|prices jumped|\+20%|fastest in the city|led the entire city|repriced sharply|repriced it/i);
+  expect(visibleCopy).not.toMatch(/her yerden çok|%20 arttı|şehrin en hızlısı|herkesten çok|kəskin bahalaşdı|pahalandıran|fiyatlar fırladı/i);
+  expect(content.en.ui.proof.mohammadi).toContain('not a measured result');
+  expect(content.en.ui.proof.narimanov).toContain('not proof of a city-leading 20% rise');
+  expect(content.tr.ui.proof.mohammadi).toContain('ölçülmüş bir sonuç değil');
+  expect(content.tr.ui.proof.narimanov).toContain('şehir lideri %20 artışı kanıtlamaz');
+});
+
+test('all zones declare explicit scenario growth values', async ({ request }) => {
+  const response = await request.get('./data/zones.json');
+  const zones = await response.json();
+  expect(zones).toHaveLength(16);
+  for (const zone of zones) expect(zone.growthPct, `${zone.id} must declare growthPct`).toEqual(expect.any(Number));
+  expect(Object.fromEntries(zones.map(zone => [zone.id, zone.growthPct]))).toMatchObject({ zikh: 130, mohammadi: 150, alat: 120 });
+});
+
+test('affected evidence cards use durable official source documents', async ({ request }) => {
+  const response = await request.get('./data/zones.json');
+  const zones = await response.json();
+  const evidenceByZone = Object.fromEntries(zones.map(zone => [zone.id, zone.evidence[0]]));
+  const metroExpansion = 'https://www.aiib.org/en/projects/details/2025/_download/Azerbaijan/Baku-Metro-ESMPF-281125-to-Disclose.pdf';
+  const stateProgramme = 'https://static.president.az/upload/Files/2025/01/31/4f32a6bd6ffc6b39efcfb5153e868c88_5073315.pdf';
+  expect(evidenceByZone.whitecity.url).toBe(metroExpansion);
+  expect(evidenceByZone.khojasan.url).toBe(metroExpansion);
+  for (const zoneId of ['yasamal', 'hovsan']) expect(evidenceByZone[zoneId].url).toBe(stateProgramme);
+  for (const zoneId of ['whitecity', 'yasamal', 'khojasan', 'hovsan']) {
+    expect(evidenceByZone[zoneId].url).not.toMatch(/metro\.gov\.az|ayna\.gov\.az/);
+  }
+});
+
+test('scenario calculator uses the explicit growth value for Zikh', async ({ page }) => {
+  await page.goto('./?cache=e2e-scenario-growth#z=zikh&y=2026&lang=en');
+  await waitForMap(page);
+  await expect(page.locator('#panelTitle')).toHaveText('Zikh (Zığ)');
+  await expect(page.locator('#zoneBrief')).toContainText('+130% tracks Hovsan');
+  await page.locator('#accordion-scenarios .accordion-summary').click();
+  await page.locator('#scenarioOil').selectOption('bad');
+  await expect(page.locator('#scenarioOutput')).toContainText('Zikh (Zığ): 105%');
+});
+
+test('weak manat scenario changes the illustrative USD sensitivity', async ({ page }) => {
+  await page.goto('./?cache=e2e-scenario-currency#z=whitecity&y=2026&lang=en');
+  await waitForMap(page);
+  await page.locator('#accordion-scenarios .accordion-summary').click();
+  await expect(page.locator('#scenarioOutput')).toContainText('White City / Khatai: 140%');
+  await page.locator('#scenarioCurrency').selectOption('weak');
+  await expect(page.locator('#scenarioOutput')).toContainText('White City / Khatai: 110%');
+  await expect(page.locator('#scenarioOutput')).not.toContainText('White City / Khatai: 140%');
+  await expect(page.locator('#accordion-scenarios .tool-card:nth-child(2) > .tool-note')).toContainText('20% illustrative USD-value adjustment');
+  await page.locator('#scenarioCurrency').selectOption('stable');
+  await expect(page.locator('#scenarioOutput')).toContainText('White City / Khatai: 140%');
+});
+
+test('scenario breakdown exposes the editorial baseline and exact fixed modifiers', async ({ page }) => {
+  await page.goto('./?cache=e2e-scenario-breakdown&testHooks=1#z=whitecity&y=2026&lang=en');
+  await waitForMap(page);
+
+  const breakdown = await page.evaluate(() => window.__V3TestHooks.getScenarioBreakdown('whitecity', {
+    oil: 'bad',
+    infra: 'late',
+    cur: 'weak'
+  }));
+
+  expect(breakdown.baseGrowth).toBe(140);
+  expect(breakdown.modifiers).toEqual({
+    oil: { option: 'bad', multiplier: 0.8 },
+    infra: { option: 'late', multiplier: 0.72 },
+    cur: { option: 'weak', multiplier: 0.8 }
+  });
+  expect(breakdown.rawGrowth).toBeCloseTo(64.512, 6);
+  expect(breakdown.roundedGrowth).toBe(65);
+  expect(breakdown.roundingIncrement).toBe(5);
+});
+
+test('scenario selections load from and round-trip through the shareable hash', async ({ page }) => {
+  await page.goto('./?cache=e2e-scenario-hash#z=whitecity&y=2026&lang=en&oil=bad&infra=late&cur=weak');
+  await waitForMap(page);
+  await page.locator('#accordion-scenarios .accordion-summary').click();
+  await expect(page.locator('#scenarioOil')).toHaveValue('bad');
+  await expect(page.locator('#scenarioInfra')).toHaveValue('late');
+  await expect(page.locator('#scenarioCurrency')).toHaveValue('weak');
+  await expect(page.locator('#scenarioOutput')).toContainText('65%');
+
+  await page.locator('#scenarioOil').selectOption('good');
+  await expect(page).toHaveURL(/oil=good/);
+  await expect(page).toHaveURL(/infra=late/);
+  await expect(page).toHaveURL(/cur=weak/);
+});
+
+test('invalid scenario hash values fall back to existing defaults', async ({ page }) => {
+  await page.goto('./?cache=e2e-scenario-invalid#z=whitecity&y=2026&lang=en&oil=extreme&infra=never&cur=unknown');
+  await waitForMap(page);
+  await page.locator('#accordion-scenarios .accordion-summary').click();
+  await expect(page.locator('#scenarioOil')).toHaveValue('norm');
+  await expect(page.locator('#scenarioInfra')).toHaveValue('on');
+  await expect(page.locator('#scenarioCurrency')).toHaveValue('stable');
+  await expect(page.locator('#scenarioOutput')).toContainText('140%');
+});
+
+test('legacy hashes without scenario fields preserve existing defaults', async ({ page }) => {
+  await page.goto('./?cache=e2e-scenario-legacy#z=whitecity&y=2026&lang=en&heat=0&metro=1');
+  await waitForMap(page);
+  await page.locator('#accordion-scenarios .accordion-summary').click();
+  await expect(page.locator('#scenarioOil')).toHaveValue('norm');
+  await expect(page.locator('#scenarioInfra')).toHaveValue('on');
+  await expect(page.locator('#scenarioCurrency')).toHaveValue('stable');
+});
+
+test('fixed Turkish entry preserves scenario hash values while overriding language', async ({ page }) => {
+  await page.goto('./tr/?cache=e2e-scenario-fixed-tr#z=whitecity&y=2026&lang=en&oil=bad&infra=late&cur=weak');
+  await waitForMap(page);
+  await expect(page.locator('html')).toHaveAttribute('lang', 'tr');
+  await page.locator('#accordion-scenarios .accordion-summary').click();
+  await expect(page.locator('#scenarioOil')).toHaveValue('bad');
+  await expect(page.locator('#scenarioInfra')).toHaveValue('late');
+  await expect(page.locator('#scenarioCurrency')).toHaveValue('weak');
+  await expect(page.locator('#scenarioOutput')).toContainText('%65');
+});
+
+test('scenario output explains its editorial baseline, modifiers, rounding, and limitation', async ({ page }) => {
+  await page.goto('./?cache=e2e-scenario-explanation#z=whitecity&y=2026&lang=en&oil=bad&infra=late&cur=weak');
+  await waitForMap(page);
+  await page.locator('#accordion-scenarios .accordion-summary').click();
+  const breakdown = page.locator('#scenarioBreakdown');
+  await expect(breakdown).toHaveAttribute('data-scenario-base', '140');
+  await expect(breakdown).toHaveAttribute('data-scenario-result', '65');
+  await expect(breakdown).toContainText('Editorial scenario baseline');
+  await expect(breakdown).toContainText('×0.80');
+  await expect(breakdown).toContainText('×0.72');
+  await expect(breakdown).toContainText('Rounded to the nearest 5 percentage points');
+  await expect(breakdown).toContainText('not a valuation or forecast');
+
+  await engage(page);
+  await page.locator('#langTr').click();
+  await expect(page.locator('#scenarioBreakdown')).toContainText('Editoryal senaryo başlangıcı');
+  await expect(page.locator('#scenarioBreakdown')).toContainText('değerleme veya tahmin değildir');
+});
+
+test('sources disclose the scenario method in both languages', async ({ page }) => {
+  await page.goto('./?cache=e2e-scenario-method#z=whitecity&y=2026&lang=en');
+  await waitForMap(page);
+  await page.locator('#accordion-sources .accordion-summary').click();
+  await expect(page.locator('.scenario-methodology')).toContainText('editorial growth assumption');
+  await expect(page.locator('.scenario-methodology')).toContainText('does not statistically derive');
+  await expect(page.locator('.scenario-methodology')).toContainText('not trained on property transactions');
+
+  await engage(page);
+  await page.locator('#langTr').click();
+  await expect(page.locator('.scenario-methodology')).toContainText('editoryal bir büyüme varsayımı');
+  await expect(page.locator('.scenario-methodology')).toContainText('istatistiksel olarak üretmez');
+});
+
+test('Zikh deal checker uses the explicit scenario growth in its dollar output', async ({ page }) => {
+  async function checkDeal(expected) {
+    await page.locator('#accordion-deal .accordion-summary').click();
+    await page.locator('#dealZone').selectOption('zikh');
+    await page.locator('#dealPrice').fill('60000');
+    await page.locator('#dealArea').fill('100');
+    await page.locator('#dealCheck').click();
+    await expect(page.locator('#dealResult')).toContainText(expected);
+  }
+
+  await page.goto('./?cache=e2e-zikh-deal#z=zikh&y=2026&lang=en');
+  await waitForMap(page);
+  await checkDeal('$138,000');
+
+  await page.locator('#accordion-scenarios .accordion-summary').click();
+  await page.locator('#scenarioOil').selectOption('bad');
+  await checkDeal('$123,000');
+
+  await page.locator('#accordion-scenarios .accordion-summary').click();
+  await page.locator('#scenarioOil').selectOption('norm');
+  await page.locator('#scenarioInfra').selectOption('late');
+  await checkDeal('$117,000');
+});
+
+test('a valid seventeenth zone still hydrates the investment layer', async ({ page }) => {
+  await page.route('**/data/zones.json*', async route => {
+    const response = await route.fetch();
+    const zones = await response.json();
+    const testZone = JSON.parse(JSON.stringify(zones[0]));
+    testZone.id = 'test-seventeenth-zone';
+    testZone.coords = [49.81, 40.39];
+    const evidenceIdMap = new Map(testZone.evidence.map((evidence, index) => [evidence.id, `test-seventeenth-zone.evidence-${index}`]));
+    testZone.evidence.forEach((evidence, index) => { evidence.id = `test-seventeenth-zone.evidence-${index}`; });
+    testZone.scenarioFactors = testZone.scenarioFactors.map((factor, index) => ({
+      ...factor,
+      id: `test-seventeenth-zone.factor-${index}`,
+      evidenceIds: factor.evidenceIds.map(evidenceId => evidenceIdMap.get(evidenceId))
+    }));
+    zones.push(testZone);
+    await route.fulfill({ json: zones });
+  });
+  await page.goto('./?cache=e2e-seventeenth-zone');
+  await waitForMap(page);
+  await page.locator('#accordion-deal .accordion-summary').click();
+  await expect(page.locator('#dealZone option')).toHaveCount(17);
+});
+
+test('an empty zone payload surfaces localized validation copy and logs its diagnostic', async ({ page }) => {
+  const diagnostics = [];
+  page.on('console', message => {
+    if (message.type() === 'error') diagnostics.push(message.text());
+  });
+  await page.route('**/data/zones.json*', route => route.fulfill({ json: [] }));
+  await page.goto('./?cache=e2e-empty-zones#lang=en');
+  await expect(page.locator('#mapStatus')).toHaveClass(/error/);
+  await expect(page.locator('#mapStatus')).toContainText(/validate the map data/i);
+  expect(diagnostics.join('\n')).toContain('received 0');
+  page.__browserErrors = [];
+
+  await page.goto('./?cache=e2e-empty-zones-tr#lang=tr');
+  await expect(page.locator('#mapStatus')).toHaveClass(/error/);
+  await expect(page.locator('#mapStatus')).toContainText(/doğrulayamadık/i);
+  await expect(page.locator('#mapStatus')).not.toContainText('Zone data validation failed');
+  page.__browserErrors = [];
+});
+
+test('malformed administrative data fails validation without blocking basemap startup', async ({ page }) => {
+  await page.route('**/data/admin-absheron-5dp.geojson*', route => route.fulfill({ json: { type: 'FeatureCollection', features: [{ type: 'Feature', geometry: null, properties: {} }] } }));
+  await page.goto('./?cache=e2e-invalid-admin#lang=en');
+  await expect(page.locator('#mapStatus')).toHaveClass(/error/);
+  await expect(page.locator('#mapStatus')).toContainText(/validate the map data/i);
+  await expect(page.locator('#v2Map canvas')).toBeVisible();
+  await expect(page.locator('#retryData')).toBeVisible();
+  page.__browserErrors = [];
+});
+
+test('malformed metro data fails validation without blocking basemap startup', async ({ page }) => {
+  await page.route('**/data/metro.json*', route => route.fulfill({ json: { lines: [], stations: [] } }));
+  await page.goto('./?cache=e2e-invalid-metro#lang=en');
+  await expect(page.locator('#mapStatus')).toHaveClass(/error/);
+  await expect(page.locator('#mapStatus')).toContainText(/validate the map data/i);
+  await expect(page.locator('#v2Map canvas')).toBeVisible();
+  await expect(page.locator('#retryData')).toBeVisible();
+  page.__browserErrors = [];
+});
+
+test('malformed place data fails validation without blocking basemap startup', async ({ page }) => {
+  await page.route('**/data/places.json*', route => route.fulfill({ json: [{ id: 'broken-place', nameEn: 'Broken place', nameTr: 'Broken place', type: 'town', coords: ['not-a-number', 40.4], source: 'test' }] }));
+  await page.goto('./?cache=e2e-invalid-places#lang=en');
+  await expect(page.locator('#mapStatus')).toHaveClass(/error/);
+  await expect(page.locator('#mapStatus')).toContainText(/validate the map data/i);
+  await expect(page.locator('#v2Map canvas')).toBeVisible();
+  await expect(page.locator('#retryData')).toBeVisible();
+  page.__browserErrors = [];
+});
+
+test('unresolved qualitative factor references fail validation without blocking basemap startup', async ({ page }) => {
+  await page.route('**/data/zones.json*', async route => {
+    const response = await route.fetch();
+    const zones = await response.json();
+    zones[0].scenarioFactors[0].evidenceIds = ['missing-evidence-id'];
+    await route.fulfill({ json: zones });
+  });
+  await page.goto('./?cache=e2e-invalid-factor-reference#lang=en');
+  await expect(page.locator('#mapStatus')).toHaveClass(/error/);
+  await expect(page.locator('#mapStatus')).toContainText(/validate the map data/i);
+  await expect(page.locator('#v2Map canvas')).toBeVisible();
+  page.__browserErrors = [];
+});
+
+test('duplicate qualitative evidence IDs fail validation without blocking basemap startup', async ({ page }) => {
+  await page.route('**/data/zones.json*', async route => {
+    const response = await route.fetch();
+    const zones = await response.json();
+    zones[1].evidence[0].id = zones[0].evidence[0].id;
+    await route.fulfill({ json: zones });
+  });
+  await page.goto('./?cache=e2e-invalid-factor-evidence-id#lang=en');
+  await expect(page.locator('#mapStatus')).toHaveClass(/error/);
+  await expect(page.locator('#mapStatus')).toContainText(/validate the map data/i);
+  await expect(page.locator('#v2Map canvas')).toBeVisible();
+  page.__browserErrors = [];
+});
+
+test('invalid qualitative factor roles fail validation without blocking basemap startup', async ({ page }) => {
+  await page.route('**/data/zones.json*', async route => {
+    const response = await route.fetch();
+    const zones = await response.json();
+    zones[0].scenarioFactors[0].role = 'forecast';
+    await route.fulfill({ json: zones });
+  });
+  await page.goto('./?cache=e2e-invalid-factor-role#lang=en');
+  await expect(page.locator('#mapStatus')).toHaveClass(/error/);
+  await expect(page.locator('#mapStatus')).toContainText(/validate the map data/i);
+  await expect(page.locator('#v2Map canvas')).toBeVisible();
+  page.__browserErrors = [];
+});
+
+test('Turkish entry fallback remains valid UTF-8 when content omits it', async ({ page }) => {
+  await page.route('**/data/content.json*', async route => {
+    const response = await route.fetch();
+    const content = await response.json();
+    delete content.tr.ui.entry;
+    await route.fulfill({ json: content });
+  });
+  await page.goto('./?cache=e2e-tr-entry-fallback#z=whitecity&lang=tr');
+  await waitForMap(page);
+  await expect(page.locator('#zoneBrief')).toContainText('Bugünkü giriş');
+  await expect(page.locator('#zoneBrief')).not.toContainText('Bug?nk? giri?');
+});
+
+test('city snapshot exposes the current project and evidence status totals', async ({ page }) => {
+  await page.goto('./?cache=e2e-city-status-totals#y=2026&lang=en');
+  await waitForMap(page);
+  await page.getByRole('button', { name: '▶ Show me (1 minute)' }).click();
+  const story = page.locator('#cityStory');
+  await expect(story).toHaveAttribute('data-done-projects', '14');
+  await expect(story).toHaveAttribute('data-funded-projects', '10');
+  await expect(story).toHaveAttribute('data-planned-projects', '23');
+  await expect(story).toHaveAttribute('data-operational-evidence', '9');
+  await expect(story).toHaveAttribute('data-contracted-evidence', '2');
+  await expect(story).toHaveAttribute('data-programmed-evidence', '6');
+  await expect(story).toHaveAttribute('data-private-plan-evidence', '2');
+});
+
+test('selected city-event labels remain visible in English and Turkish', async ({ page }) => {
+  await page.goto('./?cache=e2e-city-event-label#y=2027&lang=en');
+  await waitForMap(page);
+  await page.evaluate(() => window.identifyLocation({ lng: 49.8282314, lat: 40.3937251 }, null, { includeNearbyEvent: true }));
+  await expect(page.locator('#panelIntro')).toContainText('Metro B-4 station (Purple Line) opens');
+  await page.locator('#langTr').evaluate(button => button.click());
+  await expect(page.locator('#panelIntro')).toContainText('Metro B-4 istasyonu (Mor Hat) açılıyor');
+});
+
+test('metro story, station sources, and route labels stay consistent', async ({ page }) => {
+  await page.goto('./?cache=e2e-metro-consistency&testHooks=1#y=2026&lang=en');
+  await waitForMap(page);
+  const sourceData = await page.evaluate(async () => {
+    const [metro, content] = await Promise.all([
+      fetch('data/metro.json').then(response => response.json()),
+      fetch('data/content.json').then(response => response.json())
+    ]);
+    return {
+      metro,
+      b4Event: content.en.events.find(event => event.en.includes('Metro B-4'))
+    };
+  });
+  const plannedB4 = sourceData.metro.stations.find(station => station.id === 'plan-b-4');
+  expect(sourceData.b4Event.y).toBe(plannedB4.builtYear);
+  expect(sourceData.b4Event.ll).toEqual(plannedB4.coords);
+  expect(sourceData.metro.lines.every(line => line.status === 'planned' && line.source === 'Baku 2036 scenario layer')).toBeTruthy();
+  await expect(page.locator('#metroLegend')).toContainText('scenario');
+
+  const metro = await page.evaluate(() => window.__V3TestHooks.getMetroFeatures(2026));
+  expect(metro.activeStations.some(station => station.id === 'plan-b-4')).toBeFalsy();
+  const imported = metro.stations.find(station => station.id.startsWith('osm-'));
+  expect(imported.line).toBe('unclassified');
+  expect(imported.color).toBe('#64748b');
+  const planned = metro.stations.find(station => station.id === 'plan-b-4');
+  expect(planned.color).toBe('#7d3c98');
+  expect(metro.lines.every(line => line.status === 'planned' && line.source === 'Baku 2036 scenario layer')).toBeTruthy();
+});
+
 test('click-to-identify returns a district and metro distance', async ({ page }) => {
   await page.goto('./?cache=e2e-identify#z=whitecity&y=2026&lang=en');
   await waitForMap(page);
@@ -119,6 +1122,67 @@ test('click-to-identify returns a district and metro distance', async ({ page })
   await map.click({ position: { x: box.width / 2, y: box.height / 2 } });
   await expect(page.locator('#rayonMetric')).not.toHaveText('—');
   await expect(page.locator('#stationMetric')).toHaveText(/\d+(\.\d+)?\s*(m|km)/);
+});
+
+test('first map click reveals essential controls for pointer users', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('./?cache=e2e-map-engagement#y=2026&lang=en');
+  await waitForMap(page);
+  await expect(page.locator('body')).not.toHaveClass(/engaged/);
+
+  const map = page.locator('#v2Map canvas');
+  const box = await map.boundingBox();
+  await map.click({ position: { x: box.width / 2, y: box.height / 2 } });
+
+  await expect(page.locator('body')).toHaveClass(/engaged/);
+  await page.locator('#placeSearch').click();
+  await expect(page.locator('#placeSearch')).toBeFocused();
+  await page.locator('#layersToggle').click();
+  await expect(page.locator('#layerMenu')).toHaveClass(/open/);
+});
+
+test('nearest metro and year snapshots exclude future duplicate stations', async ({ page }) => {
+  await page.goto('./?cache=e2e-metro-timeline#y=2026&lang=en');
+  await waitForMap(page);
+  await page.evaluate(() => window.identifyLocation({ lng: 49.94, lat: 40.47 }, null));
+  await expect(page.locator('#stationMetric')).toHaveText('Koroğlu metro stansiyası · 5.8 km');
+
+  await page.getByRole('button', { name: '▶ Show me (1 minute)' }).click();
+  const story = page.locator('#cityStory');
+  await expect(story).toHaveAttribute('data-built-stations', '30');
+  await expect(story).toHaveAttribute('data-planned-stations', '5');
+  await page.locator('#cityStoryFinish').click();
+  await page.locator('#yearSelect').selectOption('2030');
+  await page.getByRole('button', { name: '▶ Show me (1 minute)' }).click();
+  await expect(page.locator('#cityStory')).toHaveAttribute('data-built-stations', '33');
+  await expect(page.locator('#cityStory')).toHaveAttribute('data-planned-stations', '2');
+});
+
+test('buyer profile separates unaffordable matches from reachable planner results', async ({ page }) => {
+  await page.goto('./?cache=e2e-buyer-profile#lang=en');
+  await waitForMap(page);
+  await page.locator('#accordion-planner .accordion-summary').click();
+  await page.locator('#profileSelect').selectOption('safe');
+  await expect(page.locator('#budgetOutput')).toHaveText('$25,000');
+  await expect(page.locator('#budgetRange')).toHaveValue('25000');
+  await expect(page.locator('#plannerResults .zone-result')).toHaveCount(2);
+  await expect(page.locator('#plannerResults')).toContainText('Lokbatan');
+  await expect(page.locator('#plannerResults')).toContainText('Khirdalan');
+  await expect(page.locator('#plannerResults')).not.toContainText('Khojasan');
+  await expect(page.locator('#plannerOutOfReach')).toContainText('Khojasan');
+  await expect(page.locator('#plannerOutOfReach')).toContainText('$40,000');
+  await expect(page.locator('#plannerResults')).not.toContainText('White City');
+  await expect(page.evaluate(() => Object.keys(JSON.parse(localStorage.getItem('baku2036-v2-shortlist') || '{}')).sort())).resolves.toEqual(['khirdalan', 'khojasan', 'lokbatan']);
+});
+
+test('land planner output explains its rough midpoint estimate', async ({ page }) => {
+  await page.goto('./?cache=e2e-buyer-profile-land#lang=en');
+  await waitForMap(page);
+  await page.locator('#accordion-planner .accordion-summary').click();
+  await page.locator('#profileSelect').selectOption('summer');
+  await expect(page.locator('#plannerResults')).toContainText('Roughly 0.6 sot');
+  await expect(page.locator('#plannerResults')).toContainText('rough midpoint estimate');
+  await expect(page.locator('#plannerResults')).toContainText('not a guaranteed purchasable plot');
 });
 
 test('360px toolbar stays on one row and collapses to Layers', async ({ page }) => {
@@ -134,4 +1198,260 @@ test('360px toolbar stays on one row and collapses to Layers', async ({ page }) 
   });
   expect(layout.flexWrap).toBe('nowrap');
   expect(layout.scrollWidth).toBeLessThanOrEqual(layout.width + 1);
+});
+
+test('mobile scrolling can start over the map', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('./?cache=e2e-mobile-map-scroll#y=2026&lang=en');
+  await waitForMap(page);
+  const canvasContainer = page.locator('#v2Map .maplibregl-canvas-container');
+  await expect(canvasContainer).toHaveClass(/maplibregl-cooperative-gestures/);
+  await expect.poll(() => canvasContainer.evaluate(element => getComputedStyle(element).touchAction)).toBe('pan-x pan-y');
+  await page.evaluate(() => window.scrollTo(0, 0));
+  const mapBox = await page.locator('#v2Map').boundingBox();
+  expect(mapBox).not.toBeNull();
+  await page.mouse.move(mapBox.x + (mapBox.width / 2), mapBox.y + (mapBox.height / 2));
+  await page.mouse.wheel(0, 600);
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
+});
+
+test('mobile map gesture guidance follows the selected language', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('./?cache=e2e-mobile-map-guidance#y=2026&lang=tr');
+  await waitForMap(page);
+  await expect(page.locator('.maplibregl-cooperative-gesture-screen')).toContainText('Haritayı hareket ettirmek için iki parmağınızı kullanın');
+});
+
+test('mobile zone details use one page scroll and reach their final action', async ({ page }) => {
+  await page.setViewportSize({ width: 360, height: 800 });
+  await page.goto('./?cache=e2e-mobile-scroll#z=whitecity&y=2026&lang=en');
+  await waitForMap(page);
+  await expect(page.locator('#zoneBrief')).toBeVisible();
+  await expect(page.locator('#zoneQuickSummary')).toBeVisible();
+  await page.locator('#showDetails').click();
+  await expect(page.locator('#zoneDetailContent')).toBeVisible();
+  const layout = await page.locator('#v2ZoneDrawer').evaluate(element => {
+    const drawer = element.getBoundingClientRect();
+    const stageElement = document.querySelector('.map-stage');
+    const stage = stageElement?.getBoundingClientRect();
+    const style = getComputedStyle(element);
+    return {
+      hasStage: Boolean(stageElement),
+      position: style.position,
+      overflowY: style.overflowY,
+      drawerTop: drawer.top,
+      stageBottom: stage?.bottom || 0,
+      documentHeight: document.documentElement.scrollHeight,
+      viewportHeight: window.innerHeight
+    };
+  });
+  expect(layout.hasStage).toBeTruthy();
+  expect(layout.position).toBe('relative');
+  expect(layout.overflowY).toBe('visible');
+  expect(layout.drawerTop).toBeGreaterThanOrEqual(layout.stageBottom);
+  await page.locator('#clearSelection').scrollIntoViewIfNeeded();
+  await expect(page.locator('#clearSelection')).toBeInViewport();
+  await expect.poll(() => page.evaluate(() => window.scrollY > 0)).toBeTruthy();
+});
+
+test('mobile controls expose 44px touch targets', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('./?cache=e2e-touch-targets#z=whitecity&y=2026&lang=en');
+  await waitForMap(page);
+  await page.locator('#layersToggle').evaluate(element => element.click());
+  await expect(page.locator('#layerMenu')).toHaveClass(/open/);
+  const selectors = [
+    '.search-box', '.search-result', '#langEn', '#langTr', '.map-button:not(.layer-button):not(#layersToggle)', '#layersToggle',
+    '.layer-menu .layer-button', '#collapseDetails', '#closeDetails', '.drawer-action', '#clearSelection',
+    '.show-me', '.primary-action', '.secondary-action', '.city-story-actions button', '.tour-close', '#timeYear', '.howto-video-link'
+  ];
+  const sizes = await page.locator(selectors.join(', ')).evaluateAll(elements => elements
+    .filter(element => !element.hidden && element.offsetParent !== null && getComputedStyle(element).display !== 'none' && getComputedStyle(element).visibility !== 'hidden')
+    .map(element => {
+      const box = element.getBoundingClientRect();
+      return { id: element.id || element.className, width: Math.round(box.width), height: Math.round(box.height) };
+    }));
+  const undersized = sizes.filter(size => size.width < 44 || size.height < 44);
+  expect(undersized, JSON.stringify(sizes)).toEqual([]);
+});
+
+test('mobile metadata remains readable without enlarging primary headings', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('./?cache=e2e-mobile-type#z=whitecity&y=2026&lang=tr');
+  await waitForMap(page);
+  await page.locator('#showDetails').click();
+  await expect(page.locator('#zoneDetailContent')).toBeVisible();
+  const sizes = await page.evaluate(() => {
+    const read = selector => Number.parseFloat(getComputedStyle(document.querySelector(selector)).fontSize);
+    return {
+      metricLabel: read('.metric span'),
+      drawerMetricLabel: read('.brief-metric small'),
+      drawerTier: read('.brief-tier'),
+      evidenceMeta: read('.evidence-card-head'),
+      mapLegend: read('.map-legend'),
+      dataFreshness: read('.data-freshness'),
+      panelTitle: read('#panelTitle'),
+      drawerTitle: read('.brief-head h3')
+    };
+  });
+  expect(sizes).toMatchObject({
+    metricLabel: 10,
+    drawerMetricLabel: 10,
+    drawerTier: 10,
+    evidenceMeta: 10,
+    mapLegend: 11,
+    dataFreshness: 10,
+    panelTitle: 22,
+    drawerTitle: 19
+  });
+});
+test('review action keeps the concise summary and evidence tied to the selected place', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('./?cache=e2e-release-b-handoff#z=whitecity&y=2030&lang=en');
+  await waitForMap(page);
+
+  const drawer = page.locator('#v2ZoneDrawer');
+  const review = page.locator('#showDetails');
+  await expect(drawer).toHaveAttribute('data-zone-id', 'whitecity');
+  await expect(page.locator('#zoneBrief')).toHaveAttribute('data-zone-id', 'whitecity');
+  await expect(page.locator('#zoneQuickSummary')).toHaveAttribute('data-zone-id', 'whitecity');
+  await expect(review).toHaveText('Review evidence and risk');
+  await expect(review).toHaveAttribute('aria-controls', 'zoneBrief');
+  await expect(review).toHaveAttribute('aria-expanded', 'false');
+  await expect(review).toHaveAttribute('aria-label', 'Review evidence and risk for White City / Khatai');
+  const reviewHeight = await review.evaluate(element => element.getBoundingClientRect().height);
+  expect(reviewHeight).toBeGreaterThanOrEqual(44);
+  const buttonAfterSummary = await page.evaluate(() => {
+    const summary = document.querySelector('#zoneBrief');
+    const button = document.querySelector('#showDetails');
+    return Boolean(summary && button && (summary.compareDocumentPosition(button) & Node.DOCUMENT_POSITION_FOLLOWING));
+  });
+  expect(buttonAfterSummary).toBe(true);
+
+  await review.click();
+  await expect(review).toBeHidden();
+  await expect(page.locator('#collapseDetails')).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.locator('#zoneDetailContent')).toHaveAttribute('data-zone-id', 'whitecity');
+  await expect(page.locator('#zoneDetailContent')).toContainText('What could go wrong?');
+  await expect(page.locator('.evidence-section')).toBeVisible();
+
+  const bilgahCoords = await page.evaluate(async () => {
+    const zones = await fetch('data/zones.json').then(response => response.json());
+    return zones.find(zone => zone.id === 'bilgah').coords;
+  });
+  await page.evaluate(coords => window.identifyLocation({ lng: coords[0], lat: coords[1] }, null), bilgahCoords);
+  await expect(drawer).toHaveAttribute('data-zone-id', 'bilgah');
+  await expect(page.locator('#zoneBrief')).toHaveAttribute('data-zone-id', 'bilgah');
+  await expect(page.locator('#zoneQuickSummary')).toHaveAttribute('data-zone-id', 'bilgah');
+  await expect(page.locator('#panelTitle')).toHaveText('Bilgah / Sea Breeze');
+
+  await page.locator('#showDetails').click();
+  await expect(page.locator('#zoneDetailContent')).toHaveAttribute('data-zone-id', 'bilgah');
+});
+
+test('empty selected-place panel collapses and expands on desktop and mobile', async ({ page }) => {
+  for (const viewport of [{ width: 1280, height: 800 }, { width: 390, height: 844 }]) {
+    await page.setViewportSize(viewport);
+    await page.goto('./?cache=e2e-empty-panel-toggle');
+    await waitForMap(page);
+
+    const toggle = page.locator('#emptyPanelToggle');
+    await expect(toggle).toBeVisible();
+    await expect(toggle).toHaveAttribute('aria-controls', 'panelContent');
+    await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    await expect(page.locator('#panelContent')).toBeVisible();
+
+    await toggle.click();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    await expect(page.locator('#panelContent')).toBeHidden();
+    await expect(page.locator('#v2Map canvas')).toBeVisible();
+
+    await toggle.click();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    await expect(page.locator('#panelContent')).toBeVisible();
+  }
+});
+
+test('task groups keep the existing tools in Understand, Plan, Verify order', async ({ page }) => {
+  await page.goto('./?cache=e2e-task-groups&lang=en');
+  await waitForMap(page);
+
+  const expectedIds = [
+    'tool-group-understand', 'accordion-time', 'accordion-scenarios',
+    'tool-group-plan', 'accordion-planner', 'accordion-shortlist',
+    'tool-group-verify', 'accordion-deal', 'accordion-sources'
+  ];
+  await expect(page.locator('.tool-group-title')).toHaveCount(3);
+  await expect(page.locator('#tool-group-understand')).toHaveText('Understand');
+  await expect(page.locator('#tool-group-plan')).toHaveText('Plan');
+  await expect(page.locator('#tool-group-verify')).toHaveText('Verify');
+  expect(await page.locator('#v2Content > *').evaluateAll(elements => elements.map(element => element.id))).toEqual(expectedIds);
+
+  await engage(page);
+  await page.locator('#langTr').click();
+  await expect(page.locator('#tool-group-understand')).toHaveText('Anlayın');
+  await expect(page.locator('#tool-group-plan')).toHaveText('Planlayın');
+  await expect(page.locator('#tool-group-verify')).toHaveText('Doğrulayın');
+  expect(await page.locator('#v2Content > *').evaluateAll(elements => elements.map(element => element.id))).toEqual(expectedIds);
+});
+test('shortlist comparison shows the same seven decision facts for three places', async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('baku2036-v2-shortlist', JSON.stringify({ whitecity: true, yasamal: true, narimanov: true })));
+  await page.goto('./?cache=e2e-shortlist-comparison#lang=en');
+  await waitForMap(page);
+  await page.locator('#accordion-shortlist .accordion-summary').click();
+  const comparison = page.locator('#shortlistComparison');
+  await expect(comparison).toBeVisible();
+  await expect(comparison.locator('.comparison-desktop .comparison-place')).toHaveCount(3);
+  await expect(comparison).toContainText('White City / Khatai');
+  await expect(comparison).toContainText('Yasamal (New Yasamal)');
+  await expect(comparison).toContainText('Narimanov');
+  await expect(comparison.locator('.comparison-desktop [data-comparison-criterion]')).toHaveCount(7);
+});
+
+test('shortlist comparison becomes criterion-first without horizontal overflow on mobile', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.addInitScript(() => localStorage.setItem('baku2036-v2-shortlist', JSON.stringify({ whitecity: true, yasamal: true, narimanov: true })));
+  await page.goto('./?cache=e2e-shortlist-comparison-mobile#lang=en');
+  await waitForMap(page);
+  await page.locator('#accordion-shortlist .accordion-summary').click();
+  const comparison = page.locator('#shortlistComparison');
+  await expect(comparison).toBeVisible();
+  await expect(comparison.locator('.comparison-desktop')).toBeHidden();
+  await expect(comparison.locator('.comparison-mobile')).toBeVisible();
+  await expect(comparison.locator('.comparison-mobile [data-comparison-criterion]')).toHaveCount(7);
+  await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1)).toBeTruthy();
+});
+
+test('shortlist comparison uses localized criteria in Turkish', async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('baku2036-v2-shortlist', JSON.stringify({ whitecity: true, yasamal: true, narimanov: true })));
+  await page.goto('./tr/?cache=e2e-shortlist-comparison-tr#lang=tr');
+  await waitForMap(page);
+  await page.locator('#accordion-shortlist .accordion-summary').click();
+  const comparison = page.locator('#shortlistComparison');
+  await expect(comparison).toBeVisible();
+  await expect(page.locator('#accordion-shortlist')).toContainText('Aynı bilgileri kayıtlı en fazla üç yer için karşılaştırın');
+  for (const label of ['Kaba giriş aralığı', 'Mülk türü', 'Ana fırsat', 'Ana risk', 'Kanıt durumu', 'Kritik bağımlılık', 'Senaryo duyarlılığı']) await expect(comparison).toContainText(label);
+  await expect(comparison).not.toContainText('Rough entry range');
+  await expect(comparison).not.toContainText('Main risk');
+});
+
+test('layer controls stay collapsed behind one Layers toggle on desktop and mobile', async ({ page }) => {
+  for (const viewport of [{ width: 1280, height: 900 }, { width: 390, height: 844 }]) {
+    await page.setViewportSize(viewport);
+    await page.goto(`./?cache=e2e-collapsible-layers-${viewport.width}`);
+    await waitForMap(page);
+    await engage(page);
+    const toggle = page.locator('#layersToggle');
+    const menu = page.locator('#layerMenu');
+    await expect(toggle).toBeVisible();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    await expect(menu).toBeHidden();
+    await toggle.click();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    await expect(menu).toBeVisible();
+    await expect(menu.locator('.layer-button')).toHaveCount(4);
+    await toggle.click();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    await expect(menu).toBeHidden();
+  }
 });
