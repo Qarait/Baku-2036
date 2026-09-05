@@ -8,12 +8,15 @@ function Assert-True([bool]$condition, [string]$message) {
 $workflowPath = Join-Path $root '.github/workflows/pages.yml'
 Assert-True (Test-Path -LiteralPath $workflowPath) 'Pages workflow is missing'
 $workflow = [System.IO.File]::ReadAllText($workflowPath)
-Assert-True (([regex]::Matches($workflow, [regex]::Escape('--exclude-from=.pagesignore'))).Count -eq 3) 'Pages artifact stages must use the shared exclusion manifest'
+Assert-True (([regex]::Matches($workflow, [regex]::Escape('--exclude-from=.pagesignore'))).Count -eq 4) 'Both deployment paths must filter both sites using the shared exclusion manifest'
+$liveBuild = [regex]::Match($workflow, '(?s)- name: Build live artifact(?<block>.*?)- name:').Groups['block'].Value
+Assert-True ($liveBuild -match 'git archive origin/preview') 'Main deployments must preserve the preview branch'
+Assert-True ($liveBuild -match 'dist/preview/') 'Main deployments must populate the preview subdirectory'
 Assert-True (Test-Path -LiteralPath (Join-Path $root 'v2/index.html')) 'v2 snapshot must remain tracked for Git archival'
 
 $ignorePath = Join-Path $root '.pagesignore'
 Assert-True (Test-Path -LiteralPath $ignorePath) '.pagesignore is missing'
-$ignore = [System.IO.File]::ReadAllText($ignorePath)
+$ignore = [System.IO.File]::ReadAllText($ignorePath).Replace("`r", '')
 Assert-True ($ignore -match '(?m)^research/$') '.pagesignore must exclude research/'
 
 $topLevelPermissions = [regex]::Match($workflow, '(?ms)^permissions:\r?\n(?<block>.*?)(?=^\S|\z)').Groups['block'].Value
