@@ -112,7 +112,9 @@ async function measurePage(page, url, timeout) {
       supportedEntryTypes: m.supported
     };
   });
-  return { ...result, pageErrors, failedRequests, httpErrors, consoleErrors };
+  const adminResource = result.resources.find(resource =>
+    /\/admin-absheron(?:-5dp)?\.geojson(?:[?#]|$)/.test(resource.url)) ?? null;
+  return { ...result, adminResource, pageErrors, failedRequests, httpErrors, consoleErrors };
 }
 async function runMeasurement(options) {
   options = { profile: 'native', timeout: 90000, ...options };
