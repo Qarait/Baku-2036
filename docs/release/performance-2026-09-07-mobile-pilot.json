@@ -1,0 +1,442 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-07T08:52:24.409Z",
+  "url": "https://qarait.github.io/Baku-2036/",
+  "browser": "chromium",
+  "browserVersion": "151.0.7922.34",
+  "playwrightVersion": "1.62.1",
+  "host": {
+    "platform": "win32",
+    "arch": "x64",
+    "cpu": "12th Gen Intel(R) Core(TM) i5-1235U"
+  },
+  "cache": "cold",
+  "primingVisits": 0,
+  "profile": "mobile",
+  "profileSettings": {
+    "latency": 150,
+    "downloadThroughput": 200000,
+    "uploadThroughput": 93750,
+    "cpuRate": 4
+  },
+  "contextOptions": {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "isMobile": true,
+    "hasTouch": true,
+    "deviceScaleFactor": 1,
+    "serviceWorkers": "block"
+  },
+  "timeoutMs": 90000,
+  "attempted": 1,
+  "succeeded": 1,
+  "failed": 0,
+  "percentileMethod": "nearest-rank; successful samples only; failures reported separately",
+  "limitations": [
+    "Synthetic desktop host; not calibrated to a physical phone.",
+    "First map render signal is not proof that basemap tiles are painted.",
+    "Ready signal precedes possible worker/GPU completion; not measured selection latency.",
+    "Resource timing includes completed window resources at readiness; worker requests (including PMTiles) may be absent.",
+    "Zero transferSize can mean cache or restricted timing; it is not proof of a cache hit.",
+    "LCP is a readiness-time snapshot, not final page LCP. Long-task blocking is not Lighthouse TBT.",
+    "Native profile applies no artificial throttling. Mobile profile limits do not emulate GPU or radio behavior."
+  ],
+  "runs": [
+    {
+      "sample": 1,
+      "startedAt": "2026-09-07T08:52:16.140Z",
+      "ok": true,
+      "firstMapRenderSignalMs": 5170.4000000003725,
+      "overlaysReadySignalMs": 7017.299999999814,
+      "ttfbMs": 274.90000000037253,
+      "fcpMs": 1104,
+      "lcpAtReadyMs": 1104,
+      "longTaskCount": 8,
+      "longTaskBlockingMs": 685.0999999996275,
+      "resourceTransferBytesAtReady": 929522,
+      "navigationTransferBytes": 3166,
+      "resources": [
+        {
+          "url": "https://qarait.github.io/Baku-2036/vendor/maplibre-gl.css",
+          "initiatorType": "link",
+          "startTime": 403.90000000037253,
+          "requestStart": 410.70000000018626,
+          "responseStart": 669.9000000003725,
+          "responseEnd": 871.9000000003725,
+          "duration": 468,
+          "transferSize": 11035,
+          "encodedBodySize": 10735,
+          "decodedBodySize": 83195
+        },
+        {
+          "url": "https://qarait.github.io/Baku-2036/v3.css",
+          "initiatorType": "link",
+          "startTime": 404.90000000037253,
+          "requestStart": 411,
+          "responseStart": 633.9000000003725,
+          "responseEnd": 718.0999999996275,
+          "duration": 313.19999999925494,
+          "transferSize": 7423,
+          "encodedBodySize": 7123,
+          "decodedBodySize": 38909
+        },
+        {
+          "url": "https://qarait.github.io/Baku-2036/vendor/pmtiles.js",
+          "initiatorType": "script",
+          "startTime": 405.59999999962747,
+          "requestStart": 411.40000000037253,
+          "responseStart": 724.2000000001863,
+          "responseEnd": 856.5999999996275,
+          "duration": 451,
+          "transferSize": 8269,
+          "encodedBodySize": 7969,
+          "decodedBodySize": 20229
+        },
+        {
+          "url": "https://qarait.github.io/Baku-2036/v3.js?rev=single-audience-20260813",
+          "initiatorType": "script",
+          "startTime": 406.70000000018626,
+          "requestStart": 411.70000000018626,
+          "responseStart": 637.2999999998137,
+          "responseEnd": 935.2000000001863,
+          "duration": 528.5,
+          "transferSize": 30832,
+          "encodedBodySize": 30532,
+          "decodedBodySize": 121855
+        },
+        {
+          "url": "https://qarait.github.io/Baku-2036/vendor/maplibre-gl.mjs",
+          "initiatorType": "script",
+          "startTime": 1100.5999999996275,
+          "requestStart": 1102.5,
+          "responseStart": 1320.0999999996275,
+          "responseEnd": 2958.9000000003725,
+          "duration": 1858.300000000745,
+          "transferSize": 142928,
+          "encodedBodySize": 142628,
+          "decodedBodySize": 562881
+        },
+        {
+          "url": "https://qarait.github.io/Baku-2036/data/admin-absheron-5dp.geojson",
+          "initiatorType": "fetch",
+          "startTime": 1134.2999999998137,
+          "requestStart": 1135.4000000003725,
+          "responseStart": 1422.9000000003725,
+          "responseEnd": 4305.299999999814,
+          "duration": 3171,
+          "transferSize": 284870,
+          "encodedBodySize": 284570,
+          "decodedBodySize": 1304097
+        },
+        {
+          "url": "https://qarait.github.io/Baku-2036/data/metro.json",
+          "initiatorType": "fetch",
+          "startTime": 1135.2999999998137,
+          "requestStart": 1136.7000000001863,
+          "responseStart": 1418.0999999996275,
+          "responseEnd": 1471.7999999998137,
+          "duration": 336.5,
+          "transferSize": 1969,
+          "encodedBodySize": 1669,
+          "decodedBodySize": 8987
+        },
+        {
+          "url": "https://qarait.github.io/Baku-2036/data/places.json",
+          "initiatorType": "fetch",
+          "startTime": 1137.5,
+          "requestStart": 1138,
+          "responseStart": 1500.2999999998137,
+          "responseEnd": 1692.4000000003725,
+          "duration": 554.9000000003725,
+          "transferSize": 6936,
+          "encodedBodySize": 6636,
+          "decodedBodySize": 30679
+        },
+        {
+          "url": "https://qarait.github.io/Baku-2036/data/zones.json?rev=b35a571",
+          "initiatorType": "fetch",
+          "startTime": 1138.7000000001863,
+          "requestStart": 1139.2000000001863,
+          "responseStart": 1500.2999999998137,
+          "responseEnd": 2041.9000000003725,
+          "duration": 903.2000000001863,
+          "transferSize": 27726,
+          "encodedBodySize": 27426,
+          "decodedBodySize": 128346
+        },
+        {
+          "url": "https://qarait.github.io/Baku-2036/data/content.json?rev=b35a571",
+          "initiatorType": "fetch",
+          "startTime": 1139.5999999996275,
+          "requestStart": 1140.5,
+          "responseStart": 1418.5999999996275,
+          "responseEnd": 1802.7000000001863,
+          "duration": 663.1000000005588,
+          "transferSize": 17200,
+          "encodedBodySize": 16900,
+          "decodedBodySize": 51868
+        },
+        {
+          "url": "https://qarait.github.io/Baku-2036/vendor/maplibre-gl-shared.mjs",
+          "initiatorType": "script",
+          "startTime": 2981.9000000003725,
+          "requestStart": 2983.7000000001863,
+          "responseStart": 3208,
+          "responseEnd": 4448.4000000003725,
+          "duration": 1466.5,
+          "transferSize": 135326,
+          "encodedBodySize": 135026,
+          "decodedBodySize": 481937
+        },
+        {
+          "url": "https://qarait.github.io/Baku-2036/assets/baku-absheron.pmtiles",
+          "initiatorType": "fetch",
+          "startTime": 4850.799999999814,
+          "requestStart": 4852.299999999814,
+          "responseStart": 5347.0999999996275,
+          "responseEnd": 5442.4000000003725,
+          "duration": 591.6000000005588,
+          "transferSize": 16684,
+          "encodedBodySize": 16384,
+          "decodedBodySize": 16384
+        },
+        {
+          "url": "https://qarait.github.io/Baku-2036/vendor/maplibre-gl-worker.mjs",
+          "initiatorType": "other",
+          "startTime": 4999.799999999814,
+          "requestStart": 4999.799999999814,
+          "responseStart": 4999.799999999814,
+          "responseEnd": 4876.700000000186,
+          "duration": -123.09999999962747,
+          "transferSize": 6201,
+          "encodedBodySize": 5901,
+          "decodedBodySize": 18592
+        },
+        {
+          "url": "https://qarait.github.io/Baku-2036/vendor/maplibre-gl-shared.mjs",
+          "initiatorType": "script",
+          "startTime": 5002.5,
+          "requestStart": 5002.799999999814,
+          "responseStart": 5002.799999999814,
+          "responseEnd": 5005,
+          "duration": 2.5,
+          "transferSize": 0,
+          "encodedBodySize": 135026,
+          "decodedBodySize": 481937
+        },
+        {
+          "url": "https://qarait.github.io/Baku-2036/assets/glyphs/noto_sans_bold/0-255.pbf",
+          "initiatorType": "fetch",
+          "startTime": 5343.9000000003725,
+          "requestStart": 5344.9000000003725,
+          "responseStart": 5560.0999999996275,
+          "responseEnd": 6487.0999999996275,
+          "duration": 1143.199999999255,
+          "transferSize": 51888,
+          "encodedBodySize": 51588,
+          "decodedBodySize": 88670
+        },
+        {
+          "url": "https://qarait.github.io/Baku-2036/assets/glyphs/noto_sans_bold/256-511.pbf",
+          "initiatorType": "fetch",
+          "startTime": 5345.5,
+          "requestStart": 5346.5,
+          "responseStart": 5633.200000000186,
+          "responseEnd": 6756.9000000003725,
+          "duration": 1411.4000000003725,
+          "transferSize": 80691,
+          "encodedBodySize": 80391,
+          "decodedBodySize": 147005
+        },
+        {
+          "url": "https://qarait.github.io/Baku-2036/assets/glyphs/noto_sans_bold/512-767.pbf",
+          "initiatorType": "fetch",
+          "startTime": 5347.9000000003725,
+          "requestStart": 5349.799999999814,
+          "responseStart": 5580.4000000003725,
+          "responseEnd": 6612.799999999814,
+          "duration": 1264.8999999994412,
+          "transferSize": 58693,
+          "encodedBodySize": 58393,
+          "decodedBodySize": 100099
+        },
+        {
+          "url": "https://qarait.github.io/Baku-2036/assets/baku-absheron.pmtiles",
+          "initiatorType": "fetch",
+          "startTime": 5534.9000000003725,
+          "requestStart": 5535.9000000003725,
+          "responseStart": 5619.200000000186,
+          "responseEnd": 6123.200000000186,
+          "duration": 588.2999999998137,
+          "transferSize": 14740,
+          "encodedBodySize": 14440,
+          "decodedBodySize": 14440
+        },
+        {
+          "url": "https://qarait.github.io/Baku-2036/assets/baku-absheron.pmtiles",
+          "initiatorType": "fetch",
+          "startTime": 5539,
+          "requestStart": 5540.299999999814,
+          "responseStart": 5626.0999999996275,
+          "responseEnd": 6091,
+          "duration": 552,
+          "transferSize": 12852,
+          "encodedBodySize": 12552,
+          "decodedBodySize": 12552
+        },
+        {
+          "url": "https://qarait.github.io/Baku-2036/assets/baku-absheron.pmtiles",
+          "initiatorType": "fetch",
+          "startTime": 5543.0999999996275,
+          "requestStart": 5544.200000000186,
+          "responseStart": 5630.799999999814,
+          "responseEnd": 5932.9000000003725,
+          "duration": 389.80000000074506,
+          "transferSize": 7075,
+          "encodedBodySize": 6775,
+          "decodedBodySize": 6775
+        },
+        {
+          "url": "https://qarait.github.io/Baku-2036/assets/baku-absheron.pmtiles",
+          "initiatorType": "fetch",
+          "startTime": 5545.700000000186,
+          "requestStart": 5546.4000000003725,
+          "responseStart": 5630.799999999814,
+          "responseEnd": 5964.9000000003725,
+          "duration": 419.20000000018626,
+          "transferSize": 6184,
+          "encodedBodySize": 5884,
+          "decodedBodySize": 5884
+        }
+      ],
+      "longTasks": [
+        {
+          "startTime": 4310.5999999996275,
+          "duration": 67
+        },
+        {
+          "startTime": 4474.700000000186,
+          "duration": 263
+        },
+        {
+          "startTime": 4742.0999999996275,
+          "duration": 242
+        },
+        {
+          "startTime": 5055.9000000003725,
+          "duration": 170
+        },
+        {
+          "startTime": 5279.200000000186,
+          "duration": 50
+        },
+        {
+          "startTime": 5982.5,
+          "duration": 79
+        },
+        {
+          "startTime": 6797,
+          "duration": 164
+        },
+        {
+          "startTime": 6967.200000000186,
+          "duration": 261
+        }
+      ],
+      "resourceBufferFull": false,
+      "supportedEntryTypes": [
+        "element",
+        "event",
+        "first-input",
+        "interaction-contentful-paint",
+        "largest-contentful-paint",
+        "layout-shift",
+        "long-animation-frame",
+        "longtask",
+        "mark",
+        "measure",
+        "navigation",
+        "paint",
+        "resource",
+        "soft-navigation",
+        "visibility-state"
+      ],
+      "pageErrors": [],
+      "failedRequests": [],
+      "httpErrors": [],
+      "consoleErrors": [
+        "[.WebGL-0x657c001a9a00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+        "[.WebGL-0x657c001a9a00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+        "[.WebGL-0x657c001a9a00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+        "[.WebGL-0x657c001a9a00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+      ]
+    }
+  ],
+  "summaries": {
+    "ttfbMs": {
+      "count": 1,
+      "median": 274.90000000037253,
+      "p90": 274.90000000037253,
+      "min": 274.90000000037253,
+      "max": 274.90000000037253
+    },
+    "fcpMs": {
+      "count": 1,
+      "median": 1104,
+      "p90": 1104,
+      "min": 1104,
+      "max": 1104
+    },
+    "lcpAtReadyMs": {
+      "count": 1,
+      "median": 1104,
+      "p90": 1104,
+      "min": 1104,
+      "max": 1104
+    },
+    "firstMapRenderSignalMs": {
+      "count": 1,
+      "median": 5170.4000000003725,
+      "p90": 5170.4000000003725,
+      "min": 5170.4000000003725,
+      "max": 5170.4000000003725
+    },
+    "overlaysReadySignalMs": {
+      "count": 1,
+      "median": 7017.299999999814,
+      "p90": 7017.299999999814,
+      "min": 7017.299999999814,
+      "max": 7017.299999999814
+    },
+    "longTaskCount": {
+      "count": 1,
+      "median": 8,
+      "p90": 8,
+      "min": 8,
+      "max": 8
+    },
+    "longTaskBlockingMs": {
+      "count": 1,
+      "median": 685.0999999996275,
+      "p90": 685.0999999996275,
+      "min": 685.0999999996275,
+      "max": 685.0999999996275
+    },
+    "resourceTransferBytesAtReady": {
+      "count": 1,
+      "median": 929522,
+      "p90": 929522,
+      "min": 929522,
+      "max": 929522
+    },
+    "navigationTransferBytes": {
+      "count": 1,
+      "median": 3166,
+      "p90": 3166,
+      "min": 3166,
+      "max": 3166
+    }
+  }
+}
