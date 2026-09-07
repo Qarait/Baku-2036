@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-07T08:51:06.713Z",
+  "url": "https://qarait.github.io/Baku-2036/",
+  "browser": "chromium",
+  "browserVersion": "151.0.7922.34",
+  "playwrightVersion": "1.62.1",
+  "host": {
+    "platform": "win32",
+    "arch": "x64",
+    "cpu": "12th Gen Intel(R) Core(TM) i5-1235U"
+  },
+  "cache": "cold",
+  "primingVisits": 0,
+  "profile": "mobile",
+  "profileSettings": {
+    "latency": 150,
+    "downloadThroughput": 200000,
+    "uploadThroughput": 93750,
+    "cpuRate": 4
+  },
+  "contextOptions": {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "isMobile": true,
+    "hasTouch": true,
+    "deviceScaleFactor": 1,
+    "serviceWorkers": "block"
+  },
+  "timeoutMs": 90000,
+  "attempted": 1,
+  "succeeded": 0,
+  "failed": 1,
+  "percentileMethod": "nearest-rank; successful samples only; failures reported separately",
+  "limitations": [
+    "Synthetic desktop host; not calibrated to a physical phone.",
+    "First map render signal is not proof that basemap tiles are painted.",
+    "Ready signal precedes possible worker/GPU completion; not measured selection latency.",
+    "Resource timing includes completed window resources at readiness; worker requests (including PMTiles) may be absent.",
+    "Zero transferSize can mean cache or restricted timing; it is not proof of a cache hit.",
+    "LCP is a readiness-time snapshot, not final page LCP. Long-task blocking is not Lighthouse TBT.",
+    "Native profile applies no artificial throttling. Mobile profile limits do not emulate GPU or radio behavior."
+  ],
+  "runs": [
+    {
+      "sample": 1,
+      "startedAt": "2026-09-07T08:50:55.218Z",
+      "ok": false,
+      "error": "Site reported map error"
+    }
+  ],
+  "summaries": {
+    "ttfbMs": {
+      "count": 0,
+      "median": null,
+      "p90": null,
+      "min": null,
+      "max": null
+    },
+    "fcpMs": {
+      "count": 0,
+      "median": null,
+      "p90": null,
+      "min": null,
+      "max": null
+    },
+    "lcpAtReadyMs": {
+      "count": 0,
+      "median": null,
+      "p90": null,
+      "min": null,
+      "max": null
+    },
+    "firstMapRenderSignalMs": {
+      "count": 0,
+      "median": null,
+      "p90": null,
+      "min": null,
+      "max": null
+    },
+    "overlaysReadySignalMs": {
+      "count": 0,
+      "median": null,
+      "p90": null,
+      "min": null,
+      "max": null
+    },
+    "longTaskCount": {
+      "count": 0,
+      "median": null,
+      "p90": null,
+      "min": null,
+      "max": null
+    },
+    "longTaskBlockingMs": {
+      "count": 0,
+      "median": null,
+      "p90": null,
+      "min": null,
+      "max": null
+    },
+    "resourceTransferBytesAtReady": {
+      "count": 0,
+      "median": null,
+      "p90": null,
+      "min": null,
+      "max": null
+    },
+    "navigationTransferBytes": {
+      "count": 0,
+      "median": null,
+      "p90": null,
+      "min": null,
+      "max": null
+    }
+  }
+}
