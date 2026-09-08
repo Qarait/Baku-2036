@@ -223,13 +223,36 @@ test('city simulation data failure is visible and retryable', async ({ page }) =
 });
 
 test('missing MapLibre reports a retryable map error instead of loading forever', async ({ page }) => {
-  await page.route('**/vendor/maplibre-gl.mjs', route => route.fulfill({ status: 200, contentType: 'text/javascript', body: 'throw new Error("simulated missing MapLibre");' }));
+  let failRuntime = true;
+  await page.route('**/vendor/maplibre-gl.mjs*', route => failRuntime
+    ? route.fulfill({ status: 200, contentType: 'text/javascript', body: 'throw new Error("simulated missing MapLibre");' })
+    : route.continue());
   await page.goto('./?cache=e2e-maplibre-missing#lang=en');
   await expect(page.locator('#mapStatus')).toHaveClass(/error/, { timeout: 15000 });
   await expect(page.locator('#mapStatus')).toContainText('couldn’t load');
   await expect(page.locator('#retryData')).toBeVisible();
   await expect(page.locator('#mapStatus')).not.toContainText('Loading map data');
+  failRuntime = false;
   page.__browserErrors = [];
+  await page.locator('#retryData').click();
+  await expect(page.locator('#mapStatus')).toContainText('Click a location', { timeout: 30000 });
+  page.__browserErrors = [];
+});
+
+test('slow MapLibre download remains loading and becomes ready after five seconds', async ({ page }) => {
+  let delayed = false;
+  await page.route('**/vendor/maplibre-gl.mjs*', async route => {
+    if (!delayed) {
+      delayed = true;
+      await new Promise(resolve => setTimeout(resolve, 6500));
+    }
+    await route.continue();
+  });
+  await page.goto('./?cache=e2e-maplibre-slow#lang=en');
+  await page.waitForTimeout(5500);
+  await expect(page.locator('#mapStatus')).not.toHaveClass(/error/);
+  await expect(page.locator('#retryData')).toHaveCount(0);
+  await expect(page.locator('#mapStatus')).toContainText('Click a location', { timeout: 30000 });
 });
 
 test('missing PMTiles reports a retryable map error instead of loading forever', async ({ page }) => {
