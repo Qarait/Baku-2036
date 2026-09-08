@@ -10,9 +10,30 @@
   <link rel="stylesheet" href="v3.css">
   <script src="vendor/pmtiles.js"></script>
   <script type="module">
-    import * as maplibregl from './vendor/maplibre-gl.mjs';
-    window.__V3MapLibre = maplibregl;
-    window.dispatchEvent(new Event('v3-maplibre-ready'));
+    (() => {
+      let attempt = 0;
+      window.__V3LoadMapLibre = () => {
+        if (window.__V3MapLibre || window.__V3MapLibreLoading) return;
+        window.__V3MapLibreLoading = true;
+        window.__V3MapLibreError = null;
+        const runtimeUrl = new URL('vendor/maplibre-gl.mjs', document.baseURI);
+        if (attempt > 0) runtimeUrl.searchParams.set('retry', String(attempt));
+        attempt += 1;
+        import(runtimeUrl.href)
+          .then(maplibregl => {
+            window.__V3MapLibre = maplibregl;
+            window.dispatchEvent(new Event('v3-maplibre-ready'));
+          })
+          .catch(error => {
+            window.__V3MapLibreError = error;
+            window.dispatchEvent(new CustomEvent('v3-maplibre-error', { detail: error }));
+          })
+          .finally(() => {
+            window.__V3MapLibreLoading = false;
+          });
+      };
+      window.__V3LoadMapLibre();
+    })();
   </script>
 </head>
 <body>
