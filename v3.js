@@ -1850,24 +1850,32 @@
         if (state.mapRuntimeTimer) clearTimeout(state.mapRuntimeTimer);
         state.mapRuntimeTimer = null;
         window.removeEventListener('v3-maplibre-ready', onMapLibreReady);
+        window.removeEventListener('v3-maplibre-error', onMapLibreError);
         if (error) reject(error); else resolve();
       };
+      const runtimeError = () => Object.assign(new Error('MapLibre runtime unavailable'), { code: 'map-runtime' });
       const onMapLibreReady = () => {
         if (window.__V3MapLibre) {
           installMap(window.__V3MapLibre);
           finish();
-        } else finish(Object.assign(new Error('MapLibre runtime unavailable'), { code: 'map-runtime' }));
+        } else finish(runtimeError());
+      };
+      const onMapLibreError = () => {
+        reportMapFailure();
+        finish(runtimeError());
       };
       window.addEventListener('v3-maplibre-ready', onMapLibreReady, { once: true });
+      window.addEventListener('v3-maplibre-error', onMapLibreError, { once: true });
+      if (!window.__V3MapLibreLoading && typeof window.__V3LoadMapLibre === 'function') window.__V3LoadMapLibre();
       state.mapRuntimeTimer = setTimeout(() => {
         if (window.__V3MapLibre) {
           installMap(window.__V3MapLibre);
           finish();
         } else {
           reportMapFailure();
-          finish(Object.assign(new Error('MapLibre runtime unavailable'), { code: 'map-runtime' }));
+          finish(runtimeError());
         }
-      }, 5000);
+      }, 30000);
     });
   }
 

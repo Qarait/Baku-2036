@@ -76,6 +76,21 @@ jobs:
         run: |
           mkdir dist
           rsync -a --delete --exclude-from=.pagesignore ./ dist/
+          preview_source=$(mktemp -d)
+          git archive origin/preview | tar -x -C "$preview_source"
+          mkdir -p dist/preview
+          rsync -a --delete --exclude-from=.pagesignore "$preview_source/" dist/preview/
+      - name: Verify both published sites
+        shell: bash
+        run: |
+          for site in dist dist/preview; do
+            for file in index.html v3.js v3.css data/zones.json en/index.html tr/index.html how-to.html assets/how-to-use.webm THIRD_PARTY_NOTICES.md; do
+              test -s "$site/$file" || { echo "Missing published file: $site/$file"; exit 1; }
+            done
+            for excluded in .git .github docs scripts tests research package.json; do
+              test ! -e "$site/$excluded" || { echo "Private/development path in artifact: $site/$excluded"; exit 1; }
+            done
+          done
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
